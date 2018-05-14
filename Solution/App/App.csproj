@@ -1,0 +1,1296 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props" Condition="Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" />
+  <Import Project="..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props" Condition="Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" />
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>
+    </ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{6B309C6B-F7B2-4B34-A030-9EA7D8FD105A}</ProjectGuid>
+    <ProjectTypeGuids>{349c5851-65df-11da-9384-00065b846f21};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>App</RootNamespace>
+    <AssemblyName>App</AssemblyName>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <MvcBuildViews>false</MvcBuildViews>
+    <UseIISExpress>true</UseIISExpress>
+    <IISExpressSSLPort />
+    <IISExpressAnonymousAuthentication />
+    <IISExpressWindowsAuthentication />
+    <IISExpressUseClassicPipelineMode />
+    <UseGlobalApplicationHostFile />
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
+    <SccProjectName>SAK</SccProjectName>
+    <SccLocalPath>SAK</SccLocalPath>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccProvider>SAK</SccProvider>
+    <TargetFrameworkProfile />
+    <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\</SolutionDir>
+    <RestorePackages>true</RestorePackages>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Microsoft.AI.Agent.Intercept, Version=1.2.1.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Agent.Intercept.1.2.1\lib\net45\Microsoft.AI.Agent.Intercept.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.DependencyCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.DependencyCollector.2.0.0\lib\net45\Microsoft.AI.DependencyCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.PerfCounterCollector, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.PerfCounterCollector.2.0.0\lib\net45\Microsoft.AI.PerfCounterCollector.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.ServerTelemetryChannel, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.TelemetryChannel.2.0.0\lib\net45\Microsoft.AI.ServerTelemetryChannel.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.Web.2.0.0\lib\net45\Microsoft.AI.Web.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.AI.WindowsServer, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.WindowsServer.2.0.0\lib\net45\Microsoft.AI.WindowsServer.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.ApplicationInsights, Version=2.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.ApplicationInsights.2.0.0\lib\net45\Microsoft.ApplicationInsights.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CodeDom.Providers.DotNetCompilerPlatform, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\lib\net45\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.DynamicData" />
+    <Reference Include="System.Web.Entity" />
+    <Reference Include="System.Web.ApplicationServices" />
+    <Reference Include="System.ComponentModel.DataAnnotations" />
+    <Reference Include="System.Web" />
+    <Reference Include="System.Web.Abstractions" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web.Routing" />
+    <Reference Include="System.Xml" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.EnterpriseServices" />
+    <Reference Include="Microsoft.Web.Infrastructure, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.Web.Infrastructure.1.0.0.0\lib\net40\Microsoft.Web.Infrastructure.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+    </Reference>
+    <Reference Include="System.Net.Http.WebRequest">
+    </Reference>
+    <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Mvc, Version=5.2.3.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.3\lib\net45\System.Web.Mvc.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Optimization">
+      <HintPath>..\packages\Microsoft.AspNet.Web.Optimization.1.1.3\lib\net40\System.Web.Optimization.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.Razor.3.2.3\lib\net45\System.Web.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Deployment, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Deployment.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.WebPages.Razor, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <Private>True</Private>
+      <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.3\lib\net45\System.Web.WebPages.Razor.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="WebGrease">
+      <Private>True</Private>
+      <HintPath>..\packages\WebGrease.1.5.2\lib\WebGrease.dll</HintPath>
+    </Reference>
+    <Reference Include="Antlr3.Runtime">
+      <Private>True</Private>
+      <HintPath>..\packages\Antlr.3.4.1.9004\lib\Antlr3.Runtime.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.6.0.4\lib\net45\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="App_Start\BundleConfig.cs" />
+    <Compile Include="App_Start\FilterConfig.cs" />
+    <Compile Include="App_Start\RouteConfig.cs" />
+    <Compile Include="Common\APCookie.cs" />
+    <Compile Include="Common\AuthenticationAttribute.cs" />
+    <Compile Include="Common\AuthorizationParams.cs" />
+    <Compile Include="Common\AuthorizationUtils.cs" />
+    <Compile Include="Common\CookieHelper.cs" />
+    <Compile Include="Common\FileItem.cs" />
+    <Compile Include="Common\JsonHelper.cs" />
+    <Compile Include="Common\WebUtils.cs" />
+    <Compile Include="Controllers\BackboneRiverwayController.cs" />
+    <Compile Include="Controllers\EngineerSketchController.cs" />
+    <Compile Include="Controllers\FacilityStatisticsController.cs" />
+    <Compile Include="Controllers\FarmlandWaterController.cs" />
+    <Compile Include="Controllers\GcztStatisticsController.cs" />
+    <Compile Include="Controllers\GghdGclStatisticsController.cs" />
+    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\HydraulicEngineerController.cs" />
+    <Compile Include="Controllers\HydrologyController.cs" />
+    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\NCSHWSController.cs" />
+    <Compile Include="Controllers\ProOverViewController.cs" />
+    <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
+    <Compile Include="Controllers\RiverStatisticssController.cs" />
+    <Compile Include="Controllers\SHWSProjectStatisticsController.cs" />
+    <Compile Include="Controllers\SingleStatisticsController.cs" />
+    <Compile Include="Controllers\SmallCroplandStatisticsController.cs" />
+    <Compile Include="Controllers\UploaderController.cs" />
+    <Compile Include="Controllers\WaterResController.cs" />
+    <Compile Include="Controllers\ZHJCController.cs" />
+    <Compile Include="Controllers\ZXHDStatisticsController.cs" />
+    <Compile Include="Controllers\ZXRiverwayController.cs" />
+    <Compile Include="Global.asax.cs">
+      <DependentUpon>Global.asax</DependentUpon>
+    </Compile>
+    <Compile Include="Models\SignInResponse.cs" />
+    <Compile Include="Models\T_ENGIN_INFO.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Content\bootstrap.css" />
+    <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\element-ui.css" />
+    <Content Include="Content\overtime\css\404.css" />
+    <Content Include="Content\overtime\css\index.css" />
+    <Content Include="Content\overtime\css\public.css" />
+    <Content Include="Content\overtime\images\bird.png" />
+    <Content Include="Content\overtime\images\san.png" />
+    <Content Include="Content\overtime\images\yun0.png" />
+    <Content Include="Content\overtime\images\yun1.png" />
+    <Content Include="Content\overtime\images\yun2.png" />
+    <Content Include="favicon.ico" />
+    <Content Include="fonts\glyphicons-halflings-regular.svg" />
+    <Content Include="Global.asax" />
+    <Content Include="Content\Site.css" />
+    <Content Include="Images\gcgl\btn_add.png" />
+    <Content Include="Images\gcgl\btn_bianji.png" />
+    <Content Include="Images\gcgl\btn_bianji_no.png" />
+    <Content Include="Images\gcgl\btn_daochu_active.png" />
+    <Content Include="Images\gcgl\btn_daochu_normal.png" />
+    <Content Include="Images\gcgl\btn_download.png" />
+    <Content Include="Images\gcgl\btn_gongcct_huabi_active.png" />
+    <Content Include="Images\gcgl\btn_gongcct_huabi_normal.png" />
+    <Content Include="Images\gcgl\btn_gongcct_sou_active.png" />
+    <Content Include="Images\gcgl\btn_gongcct_sou_normal.png" />
+    <Content Include="Images\gcgl\btn_mobanxz_active.png" />
+    <Content Include="Images\gcgl\btn_mobanxz_normal.png" />
+    <Content Include="Images\gcgl\btn_piliangdr_active.png" />
+    <Content Include="Images\gcgl\btn_piliangdr_normal.png" />
+    <Content Include="Images\gcgl\btn_shanchu.png" />
+    <Content Include="Images\gcgl\btn_shangchuanwj_active.png" />
+    <Content Include="Images\gcgl\btn_shangchuanwj_normal.png" />
+    <Content Include="Images\gcgl\btn_wenjiangl.png" />
+    <Content Include="Images\gcgl\btn_wenjiangl_no.png" />
+    <Content Include="Images\gcgl\btn_xinzeng_active.png" />
+    <Content Include="Images\gcgl\btn_xinzeng_normal.png" />
+    <Content Include="Images\gczl\btn_close_active.png" />
+    <Content Include="Images\gczl\btn_close_normal.png" />
+    <Content Include="Images\gczl\btn_down.png" />
+    <Content Include="Images\gczl\btn_download.png" />
+    <Content Include="Images\gczl\btn_gongchengwg.png" />
+    <Content Include="Images\gczl\btn_gongcxq_active.png" />
+    <Content Include="Images\gczl\btn_gongcxq_normal.png" />
+    <Content Include="Images\gczl\btn_gongqianzb.png" />
+    <Content Include="Images\gczl\btn_juesuansp.png" />
+    <Content Include="Images\gczl\btn_jungongys.png" />
+    <Content Include="Images\gczl\btn_kaigong.png" />
+    <Content Include="Images\gczl\btn_left.png" />
+    <Content Include="Images\gczl\btn_right.png" />
+    <Content Include="Images\gczl\btn_tuli.png" />
+    <Content Include="Images\gczl\btn_up.png" />
+    <Content Include="Images\gczl\btn_wangong.png" />
+    <Content Include="Images\gczl\btn_wangongys.png" />
+    <Content Include="Images\gczl\gongcxq.png" />
+    <Content Include="Images\gczl\ico_gongchngfl.png" />
+    <Content Include="Images\gczl\ico_jiezhen.png" />
+    <Content Include="Images\gczl\ico_niandu.png" />
+    <Content Include="Images\gczl\img_tuli.png" />
+    <Content Include="Images\gc_main\btn_admin_active.png" />
+    <Content Include="Images\gc_main\btn_admin_normal.png" />
+    <Content Include="Images\gc_main\btn_gcgl_active.png" />
+    <Content Include="Images\gc_main\btn_gcgl_normal.png" />
+    <Content Include="Images\gc_main\btn_gczl_active.png" />
+    <Content Include="Images\gc_main\btn_gczl_normal.png" />
+    <Content Include="Images\gc_main\btn_shousuo.png" />
+    <Content Include="Images\gc_main\btn_tjfx_active.png" />
+    <Content Include="Images\gc_main\btn_tjfx_normal.png" />
+    <Content Include="Images\gc_main\btn_xtsz_active.png" />
+    <Content Include="Images\gc_main\btn_xtsz_normal.png" />
+    <Content Include="Images\gc_main\ico_biaozhi.png" />
+    <Content Include="Images\gc_main\ico_zxhd_active.png" />
+    <Content Include="Images\gc_main\ico_zxhd.png" />
+    <Content Include="Images\gc_main\ico_ncshws.png" />
+    <Content Include="Images\gc_main\ico_ncshws_active.png" />
+    <Content Include="Images\gc_main\ico_xxntsl.png" />
+    <Content Include="Images\gc_main\ico_xxntsl_active.png" />
+    <Content Include="Images\gc_main\ico_gczt.png" />
+    <Content Include="Images\gc_main\ico_gczt_active.png" />
+    <Content Include="Images\gc_main\ico_frgl.png" />
+    <Content Include="Images\gc_main\ico_frgl_active.png" />
+    <Content Include="Images\gc_main\ico_sjdwgl.png" />
+    <Content Include="Images\gc_main\ico_sjdwgl_active.png" />
+    <Content Include="Images\gc_main\ico_gghd.png" />
+    <Content Include="Images\gc_main\ico_gghd_active.png" />
+    <Content Include="Images\gc_main\img_header_gczxt.png" />
+    <Content Include="Images\gc_main\img_header_right_gczxt.png" />
+    <Content Include="Images\gc_main\img_header_x.png" />
+    <Content Include="Images\login\btn_login.png" />
+    <Content Include="Images\login\btn_login_hover.png" />
+    <Content Include="Images\login\img_gongchengxt_login.png" />
+    <Content Include="Images\login\img_login.png" />
+    <Content Include="Images\login\img_login_x.png" />
+    <Content Include="Images\zhjc\img_fxfxbg.png" />
+    <Content Include="Images\zhjc\legend\btn_initMapExtent.png" />
+    <Content Include="Images\zhjc\legend\btn_showLegend.png" />
+    <Content Include="Images\zhjc\legend\btn_zoomToBig.png" />
+    <Content Include="Images\zhjc\legend\btn_ZoomToSamll.png" />
+    <Content Include="Images\zhjc\legend\img_rgLegend.png" />
+    <Content Include="Images\zhjc\legend\img_zdjcdLegend.png" />
+    <Content Include="Images\zhjc\legend\img_ylLegend.png" />
+    <Content Include="Images\swsy\btn_dingw.png" />
+    <Content Include="Images\swsy\btn_jia.png" />
+    <Content Include="Images\swsy\btn_jian.png" />
+    <Content Include="Images\swsy\cztj.png" />
+    <Content Include="Images\swsy\ico_notice.png" />
+    <Content Include="Images\swsy\img_bg_cezhanbig.png" />
+    <Content Include="Images\swsy\img_bg_cezhansmall.png" />
+    <Content Include="Images\swsy\szdbl.png" />
+    <Content Include="Images\swsy\水位站.png" />
+    <Content Include="Images\swsy\水文站.png" />
+    <Content Include="Images\swsy\水质站.png" />
+    <Content Include="Images\swsy\雨量站.png" />
+    <Content Include="Images\szysy\ico_fenhu.png" />
+    <Content Include="Images\szysy\ico_kaihu.png" />
+    <Content Include="Images\szysy\ico_xiaj.png" />
+    <Content Include="Images\szysy\ico_xiaohu.png" />
+    <Content Include="Images\szysy\ico_yongsxl.png" />
+    <Content Include="Images\szysy\ico_zengz.png" />
+    <Content Include="Images\szysy\ico_greenpoint.png" />
+    <Content Include="Images\szysy\ico_redpoint.png" />
+    <Content Include="Images\zhjc\btn_biaoge_quyjl.png" />
+    <Content Include="Images\zhjc\btn_biaoge_shuizqs.png" />
+    <Content Include="Images\zhjc\btn_close_active.png" />
+    <Content Include="Images\zhjc\btn_close_normal.png" />
+    <Content Include="Images\zhjc\btn_down.png" />
+    <Content Include="Images\zhjc\btn_quyjl_active.png" />
+    <Content Include="Images\zhjc\btn_quyjl_normal.png" />
+    <Content Include="Images\zhjc\btn_shipin.png" />
+    <Content Include="Images\zhjc\btn_shuizqs_active.png" />
+    <Content Include="Images\zhjc\btn_shuizqs_normal.png" />
+    <Content Include="Images\zhjc\btn_up.png" />
+    <Content Include="Images\zhjc\btn_yunxingqx_active.png" />
+    <Content Include="Images\zhjc\btn_yunxingqx_normal.png" />
+    <Content Include="Images\zhjc\btn_zhaopian .png" />
+    <Content Include="Images\zhjc\hideleft.png" />
+    <Content Include="Images\zhjc\ico_jiezhen.png" />
+    <Content Include="Images\zhjc\ico_notice.png" />
+    <Content Include="Images\zhjc\ico_rengongqyd.png" />
+    <Content Include="Images\zhjc\ico_站点状态.png" />
+    <Content Include="Images\zhjc\ico_自动观测项目.png" />
+    <Content Include="Images\zhjc\img_nopic.png" />
+    <Content Include="Images\zhjc\rgqyd\btn_erlei.png" />
+    <Content Include="Images\zhjc\rgqyd\btn_liewul.png" />
+    <Content Include="Images\zhjc\rgqyd\btn_sanlei.png" />
+    <Content Include="Images\zhjc\rgqyd\btn_silei.png" />
+    <Content Include="Images\zhjc\rgqyd\btn_wulei.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_zhengc.png" />
+    <Content Include="Images\zhjc\rgqyd\rgqydpic.jpeg" />
+    <Content Include="Images\zhjc\showleft.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_中雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_大暴雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_大雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_小雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_无雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_暴雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_特大暴雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_短历时降雨.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_设备异常.png" />
+    <Content Include="Images\zhjc\zdjcd\btn_sbycgif.gif" />
+    <Content Include="Images\zhjc\zdjcd\btn_设备异常gif.gif" />
+    <Content Include="Images\zhjc\zdjcd\ico_baoj.png" />
+    <Content Include="Scripts\SuperMap2\libs\Lang\en.js" />
+    <Content Include="Scripts\SuperMap2\libs\Lang\zh-CN.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap.Include.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Animal.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Animal2.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Animator.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Bounds.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Class.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Credential.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Date.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Element.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\LonLat.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Pixel.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\BaseTypes\Size.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Carto\CartoCSS.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Carto\CartoLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Carto\CartoRenderer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Carto\CartoSymbolizer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Cloud.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\LocalSearch\POIInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\LocalSearch\POIInfosEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\LocalSearch\POIInfosParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\LocalSearch\POIInfosResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\LocalSearch\POIInfosServices.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\AddressComponent.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeocodingEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeocodingParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeocodingResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeocodingService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeoDecodingEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeoDecodingParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeoDecodingResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Location\GeoDecodingService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\MapViewer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Navigation\PathAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Navigation\PathAnalystParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Navigation\PathAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Navigation\PathAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Navigation\PathInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\Security.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferLines.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferSolution.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferSolutionEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferSolutionParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferSolutionResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferSolutionService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferStopInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Cloud\TrafficTransferAnalyst\TransferWalkInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\ArgParser.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Attribution.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\ChangeTilesVersion.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\DragFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\DragPan.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\DrawFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Geolocate.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\GOIs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\KeyboardDefaults.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\LayerSwitcher.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Measure.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\ModifyFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\MousePosition.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Navigation.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\OverviewMap.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Panel.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\PanZoomBar.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Permalink.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\PinchZoom.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\ScaleLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\SearchCity.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\SelectCluster.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\SelectFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\SelectGraphic.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\SelectGrid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\TiledVectorLayerEditor.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\TouchNavigation.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\UTFGrid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\Zoom.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Control\ZoomBox.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Event.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Events.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeFactory.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Circle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Image.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Label.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Line.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Point.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Polygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Rectangle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\ShapeParameters\Sector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\Theme.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\Theme\Graph.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\Theme\RankSymbol.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\Theme\Vector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Feature\Vector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Filter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Filter\Comparison.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Filter\Logical.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Filter\Spatial.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\CQL.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\Filter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\Filter\v1.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\Filter\v1_0_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\Filter\v1_1_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\GeoJSON.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\GML.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\GML\Base.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\GML\v2.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\GML\v3.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\JSON.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\KML.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\OGCExceptionReport.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\OWSCommon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\OWSCommon\v1.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\OWSCommon\v1_0_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\OWSCommon\v1_1_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\WFST.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\WFST\v1.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\WFST\v1_0_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\WFST\v1_1_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\WKT.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\XML.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Format\XML\VersionedOGC.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\Collection.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\Curve.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\GeoText.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\LinearRing.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\LineString.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\MultiLineString.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\MultiPoint.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\MultiPolygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\Point.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\Polygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Geometry\Rectangle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\GOIs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Graphic.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Box.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Click.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Drag.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Feature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Graphic.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Hover.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Keyboard.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\MouseWheel.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Path.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Pinch.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Point.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\Polygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Handler\RegularPolygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Icon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Kinetic.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Lang.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\AnimatorVector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Baidu.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Bing.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\BingMap.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\CanvasImage.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\CanvasLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\CloudLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\ClusterLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Elements.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\EventPane.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\FixedZoomLevels.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Google.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Google.v3.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Graphics.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Grid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\HeatGridLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\HeatMapFastLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\HeatMapLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\HeatMapWeight.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\HTTPRequest.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Image.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Markers.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\OSM.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\SimpleCachedLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Siweidg.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\SphericalMercator.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Tencent.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\CustomVector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\GeoFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\Graph.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\Range.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\RankSymbol.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Theme\Unique.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Tianditu.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\TiledDynamicRESTLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\TiledVectorLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\UTFGrid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Vector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\Vector\RootContainer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\WCS.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\WMS.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\WMTS.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Layer\XYZ.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Animation.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Animation\Clip.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Animation\easing.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Config.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Eventful.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Group.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Handler.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\LevelRenderer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Painter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicBrokenLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicCircle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicEllipse.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicImage.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicIsogon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicPoint.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicPolygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicRectangle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicRing.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicSector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicStar.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Shape\SmicText.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Storage.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Area.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Color.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\ComputeBoundingBox.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Curve.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Env.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Event.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Http.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Log.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Math.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Matrix.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Util.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Tool\Vector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Transformable.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\LevelRenderer\Util.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Map.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Marker.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\NameSpace.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Popup.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Popup\Anchored.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Popup\Framed.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Popup\FramedCloud.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Projection.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol\HTTP.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol\WFS.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol\WFS\v1.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol\WFS\v1_0_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Protocol\WFS\v1_1_0.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\AnimatorCanvas.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\AnimatorCanvas\RadiatePoint.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\AnimatorCanvas\StretchLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\AnimatorCanvas\TadpolePoint.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\Canvas.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\Canvas2.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\Elements.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\Graphic.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\SVG.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Renderer\VML.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Request.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Request\XMLHttpRequest.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\CoordTransfer\CoordTransferEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\CoordTransfer\CoordTransferParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\CoordTransfer\CoordTransferResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\CoordTransfer\CoordTransferService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\EditFeaturesEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\EditFeaturesParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\EditFeaturesResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\EditFeaturesService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\FieldStatisticEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\FieldStatisticResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\FieldStatisticService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByBoundsParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByBoundsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByBufferParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByBufferService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByGeometryParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByGeometryService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByIDsParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesByIDsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesBySQLParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesBySQLService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesParametersBase.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFeaturesServiceBase.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFieldsEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFieldsResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetFieldsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetGridCellInfosEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetGridCellInfosParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetGridCellInfosResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Data\GetGridCellInfosService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ChartAttributeSpec.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ChartFeatureInfoSpec.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ChartFeatureInfoSpecsResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ChartFeatureInfoSpecsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ColorDictionary.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\DatasetInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\GetLayersInfoEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\GetLayersInfoService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\Grid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\Image.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\LayerStatus.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\OverlapDisplayedOptions.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\ServerTheme.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayerInfoService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayerResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayersInfoEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayersInfoResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayersInfoService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayersStatusEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayerStatusParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\SetLayerStatusService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\UGCLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\UGCMapLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\UGCSubLayer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\LayerServices\Vector.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\MapService\MapService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\MapService\MapServiceEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\MapService\MapServiceResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Measure\MeasureEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Measure\MeasureParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Measure\MeasureResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Measure\MeasureService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalyst3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSinks3DEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSinks3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSinks3DResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSinks3DService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSources3DEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSources3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSources3DResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystSources3DService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTracedown3DEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTracedown3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTracedown3DResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTracedown3DService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTraceup3DEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTraceup3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTraceup3DResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystTraceup3DService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystUpstream3DEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystUpstream3DParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystUpstream3DResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst3D\FacilityAnalystUpstream3DService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\BurstPipelineAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\BurstPipelineAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\BurstPipelineAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\BurstPipelineAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ClosestFacilityPath.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ComputeWeightMatrixEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ComputeWeightMatrixParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ComputeWeightMatrixResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ComputeWeightMatrixService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\DemandResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FacilityAnalystStreamEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FacilityAnalystStreamParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FacilityAnalystStreamResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FacilityAnalystStreamService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindClosestFacilitiesEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindClosestFacilitiesParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindClosestFacilitiesService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindClosestFacilityResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindLocationEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindLocationParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindLocationResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindLocationService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindMTSPPathsEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindMTSPPathsParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindMTSPPathsResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindMTSPPathsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindPathEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindPathParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindPathResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindPathService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindServiceAreasEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindServiceAreasParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindServiceAreasResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindServiceAreasService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindTSPPathsEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindTSPPathsParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindTSPPathsResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\FindTSPPathsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\MTSPPath.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\Path.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\PathGuideItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\PointWithMeasure.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\Route.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\ServiceArea.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\SupplyCenter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\SupplyResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\TransportationAnalystParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\TransportationAnalystResultSetting.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\TSPPath.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateEdgeWeightEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateEdgeWeightParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateEdgeWeightResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateEdgeWeightService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateTurnNodeWeightEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateTurnNodeWeightParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateTurnNodeWeightResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\NetworkAnalyst\UpdateTurnNodeWeightService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\ChartQueryFilterParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\ChartQueryParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\ChartQueryService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\DatasourceConnectionInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\FilterParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\JoinItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\LinkItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByBoundsParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByBoundsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByDistanceParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByDistanceService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByGeometryParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryByGeometryService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryBySQLParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryBySQLService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\QueryService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\Recordset.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\ResourceInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\TilesetsEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\TilesetsResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Query\TilesetsService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\ServerType\ServerColor.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\ServerType\ServerFeature.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\ServerType\ServerGeometry.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\ServerType\ServerStyle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\ServerType\ServerTextStyle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Service\ServiceBase.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Service\ServiceEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Service\ServiceException.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Service\ServiceFailedEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Service\ServiceUrls.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\AreaSolarRadiationEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\AreaSolarRadiationParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\AreaSolarRadiationResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\AreaSolarRadiationService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\BufferAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\BufferAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\BufferAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\BufferDistance.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\BufferSetting.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\ClipParameter.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DataReturnOption.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetBufferAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetBufferAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetOverlayAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetOverlayAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetSurfaceAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DatasetThiessenAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DensityAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DensityAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DensityKernelAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\DensityKernelAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GenerateSpatialDataEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GenerateSpatialDataParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GenerateSpatialDataResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GenerateSpatialDataService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryBatchOverlayAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryBatchOverlayAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryBatchOverlayAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryBufferAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryBufferAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryOverlayAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryOverlayAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometrySurfaceAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeometryThiessenAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeoRelationAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeoRelationAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeoRelationAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeoRelationAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\GeoRelationResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationDensityAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationIDWAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationKrigingAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\InterpolationRBFAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\MathExpressionAnalysisEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\MathExpressionAnalysisParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\MathExpressionAnalysisResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\MathExpressionAnalysisService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\OverlayAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\OverlayAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\OverlayAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteCalculateMeasureEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteCalculateMeasureParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteCalculateMeasureResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteCalculateMeasureService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteLocatorEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteLocatorParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteLocatorResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\RouteLocatorService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SpatialAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SurfaceAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SurfaceAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SurfaceAnalystParametersSetting.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SurfaceAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\SurfaceAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\TerrainCurvatureCalculationEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\TerrainCurvatureCalculationParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\TerrainCurvatureCalculationResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\TerrainCurvatureCalculationService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\ThiessenAnalystEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\ThiessenAnalystParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\ThiessenAnalystResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\SpatialAnalyst\ThiessenAnalystService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\LabelImageCell.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\LabelMatrixCell.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\LabelMixedTextStyle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\LabelSymbolCell.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\LabelThemeCell.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\Theme.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeDotDensity.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeFlow.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraduatedSymbol.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraduatedSymbolStyle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraph.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraphAxes.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraphItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraphSize.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGraphText.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGridRange.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGridRangeItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGridUnique.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeGridUniqueItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabel.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabelAlongLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabelBackground.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabelItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabelText.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeLabelUniqueItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeMemoryData.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeOffset.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeRange.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeRangeItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeUnique.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\Theme\ThemeUniqueItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\StopQueryEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\StopQueryParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\StopQueryResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\StopQueryService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferGuide.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferGuideItem.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferLine.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferLines.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferPathEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferPathParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferPathResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferPathService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferSolution.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferSolutionEventArgs.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferSolutionParameters.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferSolutionResult.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferSolutionService.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\REST\TrafficTransferAnalyst\TransferStopInfo.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Rule.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Snap.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Strategy.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Strategy\BBOX.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Strategy\Fixed.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Strategy\GeoText.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\StyleMap.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Fill.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Gradient.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Image.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Image\Circle.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Image\Clover.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Image\HitClover.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Image\RegularShape.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\LinearGradient.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\RadialGradient.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Style\Stroke.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer\Line.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer\Point.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer\Polygon.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer\Raster.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Symbolizer\Text.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tile.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tile\Image.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tile\UTFGrid.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tile\VectorImage.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tool\ColorPicker.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tool\Slider.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Tween.js" />
+    <Content Include="Scripts\SuperMap2\libs\SuperMap\Util.js" />
+    <Content Include="Scripts\SuperMap2\theme\default\fonts\supermap-icon.svg" />
+    <Content Include="Scripts\SuperMap2\theme\default\google.css" />
+    <Content Include="Scripts\SuperMap2\theme\default\style.css" />
+    <Content Include="Scripts\SuperMap2\theme\images\blank.gif" />
+    <Content Include="Scripts\SuperMap2\theme\images\close.gif" />
+    <Content Include="Scripts\SuperMap2\theme\images\close.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\close_hover.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cloud-popup-relative.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cluster1.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cluster2.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cluster3.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cluster4.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\colorbtn.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\layer-switcher-maximize.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\layer-switcher-minimize.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\minimize.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\overView.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\zoom-minus-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinBlue\zoom-plus-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinWhite\layer-switcher-maximize.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinWhite\minimize.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinWhite\overView.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinWhite\zoom-minus-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\controlSkinWhite\zoom-plus-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\cursors\Pan.cur" />
+    <Content Include="Scripts\SuperMap2\theme\images\cursors\PanDown.cur" />
+    <Content Include="Scripts\SuperMap2\theme\images\east-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 2.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 3.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 4.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 5.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 6.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\fillStyle\System 7.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\hide.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\hide_hover.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\layer-switcher-off.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\layer-switcher-off_b.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\layer-switcher-on.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\layer-switcher-on_b.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\line.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\marker-gold.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\marker.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\north-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\overview_replacement.gif" />
+    <Content Include="Scripts\SuperMap2\theme\images\point.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\radial.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\region.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\shadow-popup-corner.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\shadow-popup-subject.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\slider.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\sliderbackground.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\sliderbtn.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\south-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\text.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tileservision-bcg-sliderbar.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-add.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-center.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-inf.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-inf_bottom.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-inf_left.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-inf_right.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-reduce.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-slider1.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\tilesversion-bcg-slider2.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\west-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom-maxextent-mini.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom-maxextent-mini_one.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoombar.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoombar_center.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoombar_glide.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom_city.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom_country.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom_province.png" />
+    <Content Include="Scripts\SuperMap2\theme\images\zoom_street.png" />
+    <Content Include="Scripts\SuperMap\libs\Lang\en.js" />
+    <Content Include="Scripts\SuperMap\libs\Lang\zh-CN.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap.Include.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_Basic-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_Cloud-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_IServer-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_OGC-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_Plot-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\libs\SuperMap_Visualization-8.1.1-14426.js" />
+    <Content Include="Scripts\SuperMap\theme\default\fonts\supermap-icon.svg" />
+    <Content Include="Scripts\SuperMap\theme\default\google.css" />
+    <Content Include="Scripts\SuperMap\theme\default\style.css" />
+    <Content Include="Scripts\SuperMap\theme\images\blank.gif" />
+    <Content Include="Scripts\SuperMap\theme\images\close.gif" />
+    <Content Include="Scripts\SuperMap\theme\images\close.png" />
+    <Content Include="Scripts\SuperMap\theme\images\close_hover.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cloud-popup-relative.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cluster1.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cluster2.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cluster3.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cluster4.png" />
+    <Content Include="Scripts\SuperMap\theme\images\colorbtn.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\layer-switcher-maximize.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\layer-switcher-minimize.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\minimize.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\overView.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\zoom-minus-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinBlue\zoom-plus-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinWhite\layer-switcher-maximize.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinWhite\minimize.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinWhite\overView.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinWhite\zoom-minus-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\controlSkinWhite\zoom-plus-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\cursors\Pan.cur" />
+    <Content Include="Scripts\SuperMap\theme\images\cursors\PanDown.cur" />
+    <Content Include="Scripts\SuperMap\theme\images\east-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 2.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 3.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 4.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 5.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 6.png" />
+    <Content Include="Scripts\SuperMap\theme\images\fillStyle\System 7.png" />
+    <Content Include="Scripts\SuperMap\theme\images\hide.png" />
+    <Content Include="Scripts\SuperMap\theme\images\hide_hover.png" />
+    <Content Include="Scripts\SuperMap\theme\images\layer-switcher-off.png" />
+    <Content Include="Scripts\SuperMap\theme\images\layer-switcher-off_b.png" />
+    <Content Include="Scripts\SuperMap\theme\images\layer-switcher-on.png" />
+    <Content Include="Scripts\SuperMap\theme\images\layer-switcher-on_b.png" />
+    <Content Include="Scripts\SuperMap\theme\images\line.png" />
+    <Content Include="Scripts\SuperMap\theme\images\marker-gold.png" />
+    <Content Include="Scripts\SuperMap\theme\images\marker.png" />
+    <Content Include="Scripts\SuperMap\theme\images\north-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\overview_replacement.gif" />
+    <Content Include="Scripts\SuperMap\theme\images\point.png" />
+    <Content Include="Scripts\SuperMap\theme\images\radial.png" />
+    <Content Include="Scripts\SuperMap\theme\images\region.png" />
+    <Content Include="Scripts\SuperMap\theme\images\shadow-popup-corner.png" />
+    <Content Include="Scripts\SuperMap\theme\images\shadow-popup-subject.png" />
+    <Content Include="Scripts\SuperMap\theme\images\slider.png" />
+    <Content Include="Scripts\SuperMap\theme\images\sliderbackground.png" />
+    <Content Include="Scripts\SuperMap\theme\images\sliderbtn.png" />
+    <Content Include="Scripts\SuperMap\theme\images\south-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\text.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tileservision-bcg-sliderbar.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-add.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-center.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-inf.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-inf_bottom.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-inf_left.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-inf_right.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-reduce.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-slider1.png" />
+    <Content Include="Scripts\SuperMap\theme\images\tilesversion-bcg-slider2.png" />
+    <Content Include="Scripts\SuperMap\theme\images\west-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom-maxextent-mini.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom-maxextent-mini_one.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoombar.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoombar_center.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoombar_glide.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom_city.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom_country.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom_province.png" />
+    <Content Include="Scripts\SuperMap\theme\images\zoom_street.png" />
+    <Content Include="Scripts\ai.0.22.9-build00167.js" />
+    <Content Include="Scripts\ai.0.22.9-build00167.min.js" />
+    <Content Include="Scripts\bootstrap.js" />
+    <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="ApplicationInsights.config">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Content\fonts\element-icons.woff" />
+    <None Include="Scripts\jquery-1.10.2.intellisense.js" />
+    <Content Include="Scripts\browser.min.js" />
+    <Content Include="Scripts\echarts\echarts.js" />
+    <Content Include="Scripts\echarts\echarts.min.js" />
+    <Content Include="Scripts\element-ui\index.js" />
+    <Content Include="Scripts\es\bluebird.min.js" />
+    <Content Include="Scripts\jquery-1.10.2.js" />
+    <Content Include="Scripts\jquery-1.10.2.min.js" />
+    <None Include="Scripts\jquery.validate-vsdoc.js" />
+    <Content Include="Scripts\jquery.validate.js" />
+    <Content Include="Scripts\jquery.validate.min.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.js" />
+    <Content Include="Scripts\jquery.validate.unobtrusive.min.js" />
+    <Content Include="Scripts\modernizr-2.6.2.js" />
+    <Content Include="Scripts\respond.js" />
+    <Content Include="Scripts\respond.min.js" />
+    <Content Include="Scripts\utils\moment.js" />
+    <Content Include="Scripts\video\video-js.css" />
+    <Content Include="Scripts\video\video.min.js" />
+    <Content Include="Scripts\viewer\viewer.css" />
+    <Content Include="Scripts\viewer\viewer.js" />
+    <Content Include="Scripts\vue\axios.min.js" />
+    <Content Include="Scripts\vue\vue-router.js" />
+    <Content Include="Scripts\vue\vue.js" />
+    <Content Include="Scripts\vue\vue.min.js" />
+    <Content Include="Scripts\vue\vuex.js" />
+    <Content Include="Scripts\_references.js" />
+    <Content Include="Web.config" />
+    <Content Include="Web.Debug.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Web.Release.config">
+      <DependentUpon>Web.config</DependentUpon>
+    </Content>
+    <Content Include="Views\Web.config" />
+    <Content Include="Views\_ViewStart.cshtml" />
+    <Content Include="Views\Shared\Error.cshtml" />
+    <Content Include="Views\Shared\_Layout.cshtml" />
+    <Content Include="Views\Home\Index.cshtml" />
+    <Content Include="Views\Home\components\query.cshtml" />
+    <Content Include="Views\components\echarts\com_line.cshtml" />
+    <Content Include="Views\components\echarts\com_bar.cshtml" />
+    <Content Include="Views\components\echarts\com_pie.cshtml" />
+    <Content Include="Views\components\tables\com_base_table.cshtml" />
+    <Content Include="Views\RainfallISOSurface\Index.cshtml" />
+    <Content Include="Views\RainfallISOSurface\components\com_query.cshtml" />
+    <Content Include="Views\RainfallISOSurface\components\com_map.cshtml" />
+    <Content Include="Views\SingleStatistics\Index.cshtml" />
+    <Content Include="Views\SingleStatistics\components\query.cshtml" />
+    <Content Include="Views\components\forms\com_select.cshtml" />
+    <Content Include="Views\ZHJC\Index.cshtml" />
+    <Content Include="Views\ZHJC\compomemts\com_zhjcmap.cshtml" />
+    <Content Include="Views\ZHJC\compomemts\com_zhjcleft.cshtml" />
+    <Content Include="Views\Hydrology\Index.cshtml" />
+    <Content Include="Views\Hydrology\components\com_swsymap.cshtml" />
+    <Content Include="Views\Hydrology\components\com_swsyleft.cshtml" />
+    <Content Include="Views\Hydrology\components\com_swsyright.cshtml" />
+    <Content Include="Views\Shared\_MainLayout.cshtml" />
+    <Content Include="Views\Home\demo.cshtml" />
+    <Content Include="Views\GcztStatistics\Index.cshtml" />
+    <Content Include="Views\GcztStatistics\components\query.cshtml" />
+    <Content Include="Views\WaterRes\Index.cshtml" />
+    <Content Include="Views\WaterRes\components\com_szymap.cshtml" />
+    <Content Include="Views\WaterRes\components\com_szyleft.cshtml" />
+    <Content Include="Views\WaterRes\components\com_szyright.cshtml" />
+    <Content Include="Views\GghdGclStatistics\Index.cshtml" />
+    <Content Include="Views\GghdGclStatistics\components\query.cshtml" />
+    <Content Include="Scripts\SuperMap2\theme\default\fonts\supermap-icon.eot" />
+    <Content Include="Scripts\SuperMap2\theme\default\fonts\supermap-icon.ttf" />
+    <Content Include="Scripts\SuperMap2\theme\default\fonts\supermap-icon.woff" />
+    <Content Include="Scripts\SuperMap\theme\default\fonts\supermap-icon.eot" />
+    <Content Include="Scripts\SuperMap\theme\default\fonts\supermap-icon.ttf" />
+    <Content Include="Scripts\SuperMap\theme\default\fonts\supermap-icon.woff" />
+    <Content Include="Views\FarmlandWater\Index.cshtml" />
+    <Content Include="Views\FarmlandWater\components\query.cshtml" />
+    <Content Include="Views\SHWSProjectStatistics\Index.cshtml" />
+    <Content Include="Views\SHWSProjectStatistics\components\query.cshtml" />
+    <Content Include="Views\SmallCroplandStatistics\Index.cshtml" />
+    <Content Include="Views\SmallCroplandStatistics\components\query.cshtml" />
+    <Content Include="Views\ZXHDStatistics\Index.cshtml" />
+    <Content Include="Views\ZXHDStatistics\components\query.cshtml" />
+    <Content Include="Views\BackboneRiverway\Index.cshtml" />
+    <Content Include="Views\BackboneRiverway\components\query.cshtml" />
+    <Content Include="Views\BackboneRiverway\components\com_table.cshtml" />
+    <Content Include="Views\BackboneRiverway\AddProject.cshtml" />
+    <Content Include="Views\EngineerSketch\Index.cshtml" />
+    <Content Include="Views\Home\components\mapTest.cshtml" />
+    <Content Include="Views\BackboneRiverway\LookProject.cshtml" />
+    <Content Include="Views\FarmlandWater\AddPage.cshtml" />
+    <Content Include="Views\RiverStatisticss\Index.cshtml" />
+    <Content Include="Views\FacilityStatistics\Index.cshtml" />
+    <Content Include="Views\BackboneRiverway\FileManage.cshtml" />
+    <Content Include="Views\ZXRiverway\Index.cshtml" />
+    <Content Include="Views\FarmlandWater\DetailPage.cshtml" />
+    <Content Include="Views\components\gcctMap\com_gcctEdit.cshtml" />
+    <Content Include="Views\components\gcctMap\com_gcctView.cshtml" />
+    <Content Include="Views\HydraulicEngineer\Index.cshtml" />
+    <Content Include="Views\HydraulicEngineer\Edit.cshtml" />
+    <Content Include="Views\HydraulicEngineer\Detail.cshtml" />
+    <Content Include="Views\HydraulicEngineer\components\com_query.cshtml" />
+    <Content Include="Views\ProOverView\Index.cshtml" />
+    <Content Include="Views\ProOverView\components\com_map.cshtml" />
+    <Content Include="Views\FarmlandWater\EditPage.cshtml" />
+    <Content Include="Views\Login\Index.cshtml" />
+    <Content Include="Views\Login\OverTime.cshtml" />
+    <Content Include="Views\ZXRiverway\components\com_table.cshtml" />
+    <Content Include="Views\ZXRiverway\components\query.cshtml" />
+    <Content Include="Views\NCSHWS\Index.cshtml" />
+    <Content Include="Views\NCSHWS\components\query.cshtml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="App_Data\" />
+    <Folder Include="Views\EngineerSketch\components\" />
+    <Folder Include="Views\Uploader\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="fonts\glyphicons-halflings-regular.woff" />
+    <Content Include="fonts\glyphicons-halflings-regular.ttf" />
+    <Content Include="fonts\glyphicons-halflings-regular.eot" />
+    <Content Include="packages.config" />
+    <None Include="Project_Readme.html" />
+    <Content Include="Scripts\jquery-1.10.2.min.map" />
+  </ItemGroup>
+  <PropertyGroup>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Import Project="$(VSToolsPath)\WebApplications\Microsoft.WebApplication.targets" Condition="'$(VSToolsPath)' != ''" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v10.0\WebApplications\Microsoft.WebApplication.targets" Condition="false" />
+  <Target Name="MvcBuildViews" AfterTargets="AfterBuild" Condition="'$(MvcBuildViews)'=='true'">
+    <AspNetCompiler VirtualPath="temp" PhysicalPath="$(WebProjectOutputDir)" />
+  </Target>
+  <ProjectExtensions>
+    <VisualStudio>
+      <FlavorProperties GUID="{349c5851-65df-11da-9384-00065b846f21}">
+        <WebProjectProperties>
+          <UseIIS>False</UseIIS>
+          <AutoAssignPort>True</AutoAssignPort>
+          <DevelopmentServerPort>34389</DevelopmentServerPort>
+          <DevelopmentServerVPath>/</DevelopmentServerVPath>
+          <IISUrl>http://localhost:34264/</IISUrl>
+          <NTLMAuthentication>False</NTLMAuthentication>
+          <UseCustomServer>False</UseCustomServer>
+          <CustomServerUrl>
+          </CustomServerUrl>
+          <SaveServerSettingsInUserFile>False</SaveServerSettingsInUserFile>
+        </WebProjectProperties>
+      </FlavorProperties>
+    </VisualStudio>
+  </ProjectExtensions>
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.Net.Compilers.1.0.0\build\Microsoft.Net.Compilers.props'))" />
+    <Error Condition="!Exists('..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.1.0.0\build\Microsoft.CodeDom.Providers.DotNetCompilerPlatform.props'))" />
+  </Target>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target> -->
+</Project>

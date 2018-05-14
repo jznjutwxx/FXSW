@@ -1,0 +1,220 @@
+﻿
+<script type="text/x-template" id="query">
+    <div>
+        <div class="query">
+            <el-form v-bind:inline="true" size="small">
+                <el-form-item label="年度:">
+                    @*<com-select v-on:change="getStartYear" v-bind:options="getStartYearOption" class="selCss"></com-select>*@
+                    <el-date-picker v-model="startYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsS">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="至">
+                    @*<com-select v-on:change="getEndYear" v-bind:options="getEndYearOption" class="selCss"></com-select>*@
+                    <el-date-picker v-model="endYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="工程状态">
+                    <el-select v-on:change="changeStatus" v-model="gStatus" class="selCss">
+                        <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属镇">
+                    <el-select v-on:change="changeTown" v-model="gTown" class="selCss">
+                        <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-input placeholder="请输入工程名称/项目编号"
+                              prefix-icon="el-icon-search" size="small">
+                    </el-input>
+                </el-form-item>
+                <el-form-item style="padding-left:50px;">
+                    <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent" class="btnSel">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" class="btnAdd"></el-button>
+                    <el-button type="primary" class="btnDown"></el-button>
+                    <el-button type="primary" class="btnImport"></el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+        <div class="centerQuery">
+            
+        </div>
+    </div>
+</script>
+
+    @Html.Partial("~/Views/components/forms/com_select.cshtml")
+
+    <script>
+    var query = ({
+        template: '#query',
+        data: function () {
+            return {
+                param: {
+                    startYear: '',
+                    endYear: '',
+                    Status: '',
+                    Town: '',
+                },
+                startYearValue: moment().format('YYYY'),
+                endYearValue: moment().format('YYYY'),
+                StatusOption: [],
+                TownOption: [],
+                gStatus: '',
+                gTown: '',
+                pickerOptionsS: {
+                    disabledDate: (time) => {
+                        if (this.endYearValue != "") {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
+                        } else {
+                            return time.getTime() > Date.now();
+                        }
+
+                    }
+                },
+                pickerOptionsE: {
+                    disabledDate: (time) => {
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
+                    }
+                },
+
+            }
+        },
+        mounted: function() {
+            this.init();
+        },
+        components: {
+            'com-select': comSelect
+        },
+        methods: {
+            init: function () {
+                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
+                this.getTown("/BackboneRiverway/GetSelect", { Type: "街镇" });
+            },
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                      this.gStatus = this.StatusOption[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getTown: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.TownOption = tempData.DictionaryGetResponse.list;
+                      this.gTown = this.TownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            emitEvent: function () {
+                this.param.startYear = new Date(this.startYearValue).getFullYear();
+                this.param.endYear = new Date(this.endYearValue).getFullYear();
+                this.param.Status = this.gStatus;
+                this.param.Town = this.gTown;
+                this.$emit('emit-event', this.param)
+                },
+            
+            changeStatus: function (param) {
+                this.gStatus = param;
+            },
+            changeTown: function (param) {
+                this.gTown = param;
+            },
+            getData: function () { }
+        }
+    })
+    </script>
+
+    <style>
+        .query {
+            font-size: 14px;
+            padding: 10px 20px 0px 20px;
+            border-bottom: 1px solid #dcdcdc;
+        }
+
+        .centerQuery {
+            padding: 10px 20px 10px 20px;
+            float: left;
+        }
+
+        .selCss {
+            width: 120px;
+        }
+
+        .txtInput {
+            float: left;
+            padding-right: 20px;
+        }
+        .btnSel {
+            height: 32px;
+            padding-left: 20px;
+            padding-top:-3px;
+        }
+        .btnAdd {
+            width: 73px;
+            height: 32px;
+            padding-left: 20px;
+            background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+            border:0px;
+        }
+
+            .btnAdd:focus {
+                background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+            }
+
+            .btnAdd:hover {
+                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+            }
+
+            .btnAdd:active {
+                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+            }
+
+        .btnDown {
+            width: 100px;
+            height: 32px;
+            padding-left: 20px;
+            background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+            border:0px;
+        }
+
+            .btnDown:focus {
+                background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+            }
+
+            .btnDown:hover {
+                background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+            }
+
+        .btnImport {
+            width: 100px;
+            height: 32px;
+            padding-left: 20px;
+            background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+            border:0px;
+        }
+
+            .btnImport:focus {
+                background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+            }
+
+            .btnImport:hover {
+                background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+            }
+    </style>

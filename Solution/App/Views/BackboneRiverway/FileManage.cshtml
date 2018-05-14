@@ -1,0 +1,376 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "工程管理-文件管理";
+}
+
+<div id="app">
+    <div id="appTop" style="padding-left:20px;">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="项目编号：">
+                <span style="padding-right:30px;">
+                    {{num}}
+                </span>
+            </el-form-item>
+            <el-form-item label="工程分类：" >
+                <span style="padding-right:30px;">
+                    {{type}}
+                </span>
+            </el-form-item>
+            <el-form-item label="工程状态：">
+                <span style="padding-right:30px;">
+                    <el-select class="selCss" v-model="Status" v-bind:disabled="isFinish">
+                        <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        </el-option>
+                    </el-select>
+                </span>
+            </el-form-item>
+        </el-form>
+        
+    </div>
+    <div id="appFile">
+        @*v-bind:value="Status"*@
+        <el-collapse accordion v-on:change="changeSel">
+            <el-collapse-item name="工前准备">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">工前准备</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                @*<el-button type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           multiple
+                           action="/BackboneRiverway/GetFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:auto-upload="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="开工">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">开工</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>
+            </el-collapse-item>
+            <el-collapse-item name="完工">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">完工</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>
+            </el-collapse-item>
+            <el-collapse-item name="完工验收">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">完工验收</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>
+            </el-collapse-item>
+            <el-collapse-item name="决算审批">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">决算审批</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>
+            </el-collapse-item>
+            <el-collapse-item name="竣工验收">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">竣工验收</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>
+            </el-collapse-item>
+        </el-collapse>
+    </div>
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
+        <el-button plain v-on:click="openIndex">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish">保存</el-button>
+        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            s_id: '',
+            num: '',
+            type: '',
+            Status: '',
+            StatusOption: [],
+            projectFile: [],
+            height: '200',
+            tableData: [],
+            isFinish: false,
+            isShow: false,
+        },
+        components: {
+        },
+        mounted: function () {
+            this.init()
+        },
+        methods: {
+            submitUpload() {
+                this.$refs.upload.submit();
+            },
+            handleRemove(file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview(file) {
+                console.log(file);
+            },
+            getFile: function (file, fileList) {
+            },
+            sucess: function (response, file, fileList) {
+                debugger
+            },
+            init: function () {
+                this.s_id = this.getRequest().id;
+                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
+                this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
+                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+            },
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getProjectData: function (url, s_id) {
+                axios.post(url, s_id)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.EnginCoreGetResponse.info;
+                      this.num = datas.s_project_no; 
+                      this.type = datas.n_type;
+                      this.Status = datas.n_pace_status;
+                      if (this.Status == "工程完结") {
+                          this.isFinish = true;
+                      } else {
+                          this.isFinish = false;
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            changeSel: function (name) {
+                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+            },
+            getProjectFile: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.projectFile = tempData.EnginFileManagerListGetResponse.file_list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            saveStatus: function () {
+                axios.post('/BackboneRiverway/SaveProjectStatus', { s_id: this.s_id, Status: this.Status })
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getRequest: function () {
+                var url = window.location.search; //获取url中"?"符后的字串
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for (var i = 0; i < strs.length; i++) {
+
+                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+
+                    }
+                }
+                return theRequest;
+            },
+            downloadFile: function (url, name) {
+                var $a = document.createElement('a');
+                $a.setAttribute("href", url);
+                $a.setAttribute("download", name);
+                var evObj = document.createEvent('MouseEvents');
+                evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+                $a.dispatchEvent(evObj);
+            },
+            downloadFile2: function (url, name) {
+                window.location.href = '/Uploader/Download?pathid=1';
+            },
+            projectFinish: function () {
+                this.isFinish = true;
+            },
+            openIndex: function () {
+                if (this.type == "骨干河道") {
+                    window.location = "Index";
+                }
+                if (this.type == "中小河道") {
+                    window.location = "/ZXRiverway/Index";
+                }
+            },
+        },
+        watch: {
+            Status: function(){
+                if (this.Status == "60") {
+                    this.isShow = true;
+                } else
+                {
+                    this.isShow = false;
+                }
+            }
+        }
+    })
+</script>
+
+<style>
+    #app {
+        padding:20px;
+        font-size:14px;
+    }
+    #appFile .tableCss th{
+        background-color:#F5F5F5;
+    }
+    #appTop .selCss {
+        width: 120px;
+    }
+    #app .titleCss {
+        overflow:hidden;
+    }
+    #app .blueTitle {
+        width:7px;
+        height:18px;
+        background-color:#409eff;
+        float:left;
+        margin-top:12px;
+    }
+    #app .appTitle {
+        float:left;
+        font-size:14px;
+        font-weight:bold;
+        color:#666666;
+        padding-left:10px;
+    }
+    #app .btnUpp {
+        margin:10px 0 10px 0;
+    }
+    #app .btnUp {
+        width: 100px;
+        height: 32px;
+        float: left;
+        margin:10px 0 10px 0;
+        border:0px;
+        background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
+    }
+            #app .btnUp:focus {
+                background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
+            }
+
+            #app .btnUp:hover {
+                background-image: url(/Images/gcgl/btn_shangchuanwj_active.png);
+            }
+</style>

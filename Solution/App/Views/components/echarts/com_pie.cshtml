@@ -1,0 +1,78 @@
+﻿
+<script type="text/x-template" id="com-pie">
+    <div class="charts" ref="compie"></div>
+</script>
+
+<script>
+    var comPie = {
+        template: '#com-pie',
+        props: {
+            option: {
+                type: Object,
+                default: function () {
+                    return {
+                        color: [],
+                        title: {},
+                        legend: {},
+                        series: []
+                    }
+                }
+            }
+        },
+        watch: {
+            option: function (val, oldVal) {
+                this.updateCharts(val)
+                this.charts.resize();
+            }
+        },
+        data: function () {
+            return {
+                options: {
+                    color: [],
+                    title: {
+                        text: '',
+                        subtext: '',
+                        x: 'center'
+                    },
+                    //tooltip: {
+                    //    trigger: 'item',
+                    //    formatter: "{a} <br/>{b} : {c} ({d}%)"
+                    //},
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: []
+                    },
+                    series: []
+                }
+            }
+        },
+        mounted: function () {
+            this.drawcharts()
+        },
+        methods: {
+            drawcharts: function () {
+                this.charts = echarts.init(this.$refs.compie)
+                this.charts.setOption(this.options);
+                $(window).resize(function () {
+                    setTimeout(function () {
+                        this.charts.resize();
+                    }.bind(this), 100);
+                }.bind(this));
+            },
+            updateCharts: function (option) {
+                this.options.color = option.color
+                this.options.title = option.title
+                this.options.legend = option.legend
+                this.options.series = option.series
+                this.charts.setOption(this.options);
+            }
+        }
+    };
+</script>
+
+<style scoped>
+    #app .charts {
+         width: 100%;
+    }
+</style>

@@ -1,0 +1,56 @@
+﻿<script type="text/x-template" id="com-gcctmapView">
+    <div>
+        <div id="tp_mapview"></div>
+    </div>
+</script>
+
+<script>
+    var comgcctmapView = {
+        template: "#com-gcctmapView",
+        data: function () {
+            return {
+                gcctxqMap: null,
+                baseurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                gccturl: "http://localhost:8090/iserver/services/map-gcct04202/rest/maps/gcctdxm0420_test",
+                layer_gcct: null,
+                baselayer: null,
+                gcctlayer: null,
+                layers: []
+            }
+        },
+        mounted: function () {
+            this.initMap();
+        },
+        methods: {
+            initMap: function () {
+                this.gcctxqMap = new SuperMap.Map("tp_mapview", { allOverlays: true });
+                this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.baseurl, {
+                    transparent: true,
+                    cacheEnabled: true
+                }, {
+                    maxResolution: 'auto'
+                });
+                this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.gccturl, {
+                    transparent: true,
+                    cacheEnabled: false
+                }, null);
+                this.layers = [this.baselayer, this.layer_gcct];
+                this.baselayer.events.on({
+                    'layerInitialized': this.addLayer
+                });
+            },
+            addLayer: function () {
+                this.gcctxqMap.addLayers(this.layers);
+                this.gcctxqMap.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+            },
+        }
+    };
+</script>
+
+<style scoped>
+    #tp_mapview{
+        width:100%;
+        height:100%;
+        border:none !important;
+    }
+</style>

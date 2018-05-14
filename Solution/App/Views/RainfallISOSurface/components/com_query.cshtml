@@ -1,0 +1,41 @@
+﻿<template id="isoquery">
+    <div class="isoquery">
+        <span>日期：</span>
+        <el-date-picker type="datetimerange" v-model="timerange"  range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" format="yyyy-MM-dd HH时" value-format="yyyy-MM-dd HH" v-on:change="ChangeTime"></el-date-picker>
+        <el-button type="primary" icon="el-icon-search" class="searchbtn">查询</el-button>
+        <el-button type="primary" icon="el-icon-upload" class="searchbtn">导出</el-button>
+    </div>
+</template>
+
+<script>
+    var isoquery = {
+        template: '#isoquery',
+        data: function () {
+            return {
+                timerange:[],
+                curDate:new Date()
+            }
+        },
+        methods: {
+            ChangeTime: function (val) {
+                
+            }
+        },
+        computed: {
+            //timerange: function () {
+            //    return new Array(new Date(this.curDate.getTime() - 24 * 60 * 60 * 1000),this.curDate);
+            //}
+        }
+    }
+
+</script>
+
+<style scoped>
+    #app .isoquery {
+        border-bottom: 1px solid #ccc;
+        padding: 10px 20px;
+    }
+    #app .searchbtn{
+        margin-left:10px;
+    }
+</style>

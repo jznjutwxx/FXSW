@@ -1,0 +1,75 @@
+﻿<script type="text/x-template" id="comtable">
+    <el-table v-bind:data="tableData" v-bind:height="height" border stripe style="width: 100%" class="tableCss">
+        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+        <el-table-column prop="files" label="文件名称" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="man" label="上传人" header-align="center" align="center"></el-table-column>
+        <el-table-column prop="date" label="上传时间" header-align="center" align="center"></el-table-column>
+        <el-table-column label="操作" header-align="center" align="center" width="200">
+            <template slot-scope="scope">
+                <el-button size="mini" class="btnCss btnDownload"></el-button>
+            </template>
+        </el-table-column>
+    </el-table>
+</script>
+
+<script>
+    var comTable = {
+        template: '#com-table',
+        props: {
+            height: 0,
+            tabledatas: {
+                type: Object,
+                default: function () {
+                    return { 
+                        tableData: []
+                    }
+                }
+            }
+        },
+        watch: {
+            tabledatas: function (val, oldVal) {
+                this.setTableData(val)
+            },
+            height: function (val, oldVal) {
+                this.maxHeight = val
+            }
+        },
+        data: function () {
+            return {
+                maxHeight: 0,
+                tableData: [],
+            }
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            setTableData: function (data) {
+                this.tableData = data.tableData
+            }
+        }
+    };
+</script>
+
+<style>
+    .btnCss {
+        width:20px;
+        height:20px;
+        border:0;
+        background: rgba(255, 255, 255, 0);
+        background-repeat:no-repeat;
+    }
+    .btnDownload {
+        background-image: url(/Images/gcgl/btn_download.png);
+    }
+    .btnDownload:hover {
+        background: rgba(255, 255, 255, 0);
+        background-repeat:no-repeat;
+        background-image: url(/Images/gcgl/btn_download.png);
+    }
+    .btnDownload:focus {
+        background: rgba(255, 255, 255, 0);
+        background-repeat:no-repeat;
+        background-image: url(/Images/gcgl/btn_download.png);
+    }
+</style>

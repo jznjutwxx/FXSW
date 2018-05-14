@@ -1,0 +1,84 @@
+﻿<template id="isomap">
+    <div>
+        <div class="isomap" id="map">
+
+        </div>
+        <div class="tl">
+            <div class="tl_head">
+                <span>雨情图例（24小时）（mm）</span>
+            </div>
+            <div class="tl_main">
+                <table>
+                    
+                </table>
+            </div>
+        </div>
+    </div>
+</template>
+
+<script>
+    var isomap = {
+        template: '#isomap',
+        data: function () {
+            return {
+                map: null,
+                layer: null,
+                url: 'http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu'
+            }
+        },
+        mounted: function () {
+            this.init();
+        },
+        methods: {
+            init: function () {
+                this.map = new SuperMap.Map("map", {
+                    controls: [
+                        new SuperMap.Control.Navigation(),
+                        new SuperMap.Control.Zoom()
+                    ],
+                    allOverlays:true
+                });
+                this.map.addControl(new SuperMap.Control.MousePosition());
+                this.layer = new SuperMap.Layer.TiledDynamicRESTLayer("China", this.url, null, { maxResolution: "auto" });
+                this.layer.events.on({ "layerInitialized": this.addLayer });
+            },
+            addLayer: function () {
+                this.map.addLayer(this.layer);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    #app .isomap {
+        /*待调整*/
+        height: 800px;
+    }
+
+    #app .tl {
+        width: 260px;
+        height: 150px;
+        position: absolute;
+        left: 5px;
+        bottom: 5px;
+        border: 1px solid #c3cbd9;
+        color:#4C4C4C;
+        border-radius:5px;
+        z-index:9999;
+    }
+
+        #app .tl .tl_head {
+            height:24px;
+            line-height:24px;
+            background-color: #ccc;
+            padding:3px 7px;
+        }
+
+        #app .tl .tl_main {
+            height:100px;
+            line-height:10px;
+            padding: 10px;
+            background-color:#ffffff;
+        }
+</style>

@@ -1,0 +1,296 @@
+﻿<script type="text/x-template"  id="com-swsyright">
+    <div id="rightContent" v-bind:style="{height:rightheight+'px'}">
+        <div class="titlediv cztj" v-on:click="getFaterZctj">测站统计</div>
+
+        <div class="topdiv">
+            <el-row class="topleft">
+                <el-col v-bind:span="24" class="col">
+                    <span class="divcss swzcss">水文站总数(座)：</span>
+                    <span class="text-gra swzcss">37</span>
+                </el-col>
+            </el-row>
+            <el-row type="flex" class="topicon" justify="center" align="middle">
+                <el-col v-bind:span="2"> </el-col>
+                <el-col v-bind:span="4">
+                    <div style="float:left;"><img src="/Images/swsy/雨量站.png"></div>
+                </el-col>
+                <el-col v-bind:span="7">
+                    <div class="cztjname">雨量站</div>
+                    <div class="col cztjnum">14</div>
+                </el-col>
+                <el-col v-bind:span="4">
+                    <div style="float:left;"><img src="/Images/swsy/水位站.png"></div>
+                </el-col>
+                <el-col v-bind:span="7">
+                    <div class="cztjname">水位站</div>
+                    <div class="col cztjnum">142</div>
+                </el-col>
+            </el-row>
+            <el-row type="flex" class="topicon" justify="center" align="middle">
+                <el-col v-bind:span="2"> </el-col>
+                <el-col v-bind:span="4">
+                    <div style="float:left;"><img src="/Images/swsy/水质站.png"></div>
+                </el-col>
+                <el-col v-bind:span="7">
+                    <div class="cztjname">水质站</div>
+                    <div class="col cztjnum">14</div>
+                </el-col>
+                <el-col v-bind:span="4">
+                    <div style="float:left;"><img src="/Images/swsy/水文站.png"></div>
+                </el-col>
+                <el-col v-bind:span="7">
+                    <div class="cztjname">水文站</div>
+                    <div class="col cztjnum">142</div>
+                </el-col>
+            </el-row>
+        </div>
+
+        <div class="bardiv" style="height: 35%;">
+            <div class="titlediv">雨量统计</div>
+            <com-bar v-bind:option="barOption" class="barcss"></com-bar>
+        </div>
+
+        <div class="tablediv">
+            <div class="titlediv">实时报警信息</div>
+            <div class="tablecss">
+                <el-row class="titlecss">
+                    <el-col v-bind:span="3">序号</el-col>
+                    <el-col v-bind:span="8">站点名称</el-col>
+                    <el-col v-bind:span="8">报警类型</el-col>
+                    <el-col v-bind:span="5">报警信息</el-col>
+                </el-row>
+                <el-row class="titlecss" v-for="todo in tableList">
+                    <el-col v-bind:span="3">{{todo.id}}</el-col>
+                    <el-col v-bind:span="8">{{todo.text}}</el-col>
+                    <el-col v-bind:span="8">{{todo.type}}</el-col>
+                    <el-col v-bind:span="5">{{todo.imformation}}</el-col>
+                </el-row>
+            </div>
+        </div>
+    </div>
+</script>
+
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+
+<script>
+    var comSwsyright = {
+        template: "#com-swsyright",
+        data: function () {
+            return {
+                rightheight: document.documentElement.clientHeight - 32,
+                barOption: null,
+                tableList: [
+      { id: 1, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
+      { id: 2, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
+      { id: 3, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
+       { id: 4, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
+      { id: 5, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" }
+                ]
+            }
+        },
+        components: {
+            "com-bar": comBar
+        },
+        watch: {
+            rightheight: function (val) {
+                this.rightheight = val;
+            },
+        },
+        mounted: function () {
+            const that = this;
+            $(window).resize(function () {
+                that.rightheight = document.body.clientHeight - 32;
+            });
+            this.setSize();
+            this.resize();
+            this.init();
+        },
+
+        methods: {
+            getFaterZctj: function () {
+                this.$emit('getcztj-event')
+            },
+            init: function () {
+                this.setData('/Hydrology/GetData', null);
+            },
+            setData: function (url, param) {
+                this.setBarData(url, param);
+            },
+            setBarData: function (url, param) {
+                this.$children[3].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[3].charts.hideLoading();
+                    this.barOption = {
+                        color: '#38C9E2',
+                        tooltip: {
+                            trigger: 'axis',
+                            axisPointer: {
+                                type: 'shadow'
+                            }
+                        },
+                        grid: {
+                            top: '2%',
+                            left: '4%',
+                            right: '4%',
+                            bottom: '5%',
+                        },
+                        xAxis: {
+                            name: '(mm)',
+                            nameLocation: 'end',
+                            type: 'value',
+                            boundaryGap: [0, 0.01],
+                            splitLine: { show: false },//去除网格线
+                            axisTick: { show: false },
+                            axisLabel: {
+                                color: '#ffffff'
+                            },
+                        },
+                        yAxis: {
+                            type: 'category',
+                            data: ['齐贤', '金汇', '中港闸内', '金汇港南闸内', '南竹港出海闸', '南竹港出海闸外'],
+                            axisTick: { show: false },
+                            axisLabel: {
+                                color: '#ffffff'
+                            },
+                        },
+                        series: [
+                            {
+                                name: '',
+                                type: 'bar',
+                                data: [200, 145, 155, 134, 200, 125],
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: ['45%', '40%'],
+                                        color: '#000000',
+                                        fontSize: 14,
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight;
+                var contentH = docH - 30;
+                // this.styles.height = (contentH / 3) + 'px';
+                this.height = contentH / 3;
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    #rightContent {
+        width: 100%;
+        overflow: hidden;
+        min-width: 315px;
+        min-height: 650px;
+    }
+
+    .topleft {
+        height: 50px !important;
+    }
+    .cztj{
+        left: 35px !important;
+        width:70px !important;
+    }
+
+    .topicon {
+        height: 50px;
+    }
+
+    .col {
+        height: 30px;
+        margin-left: 10px;
+        margin-top: 16px;
+        line-height: 30px;
+        text-align: center;
+        width: 95%;
+    }
+
+    .marcss {
+        margin-left: 0 !important;
+    }
+
+    .swzcss {
+        float: none !important;
+        text-align: center !important;
+    }
+
+    .text-gra {
+        line-height: 30px !important;
+    }
+
+    .divcss {
+        float: left;
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-family: 'microsoft yahei' !important;
+    }
+
+    .cztjname {
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-family: 'microsoft yahei' !important;
+    }
+
+    .cztjnum {
+        color: #ffffff !important;
+        font-size: 14px !important;
+        font-family: Arial !important;
+        margin-top: -10px;
+        margin-left: 0 !important;
+        text-align: left;
+    }
+
+    .barcss {
+        height: 95%;
+        width: 90%;
+    }
+
+    .tablediv {
+        height: 40%;
+        margin-top: 16px;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+
+    .tablecss {
+        width: 100%;
+        height: 95%;
+        margin-top: 10px;
+        overflow: auto;
+    }
+
+    .titlecss {
+        text-align: center;
+        color: #ffffff;
+        float: left;
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+        height: 45px;
+        padding-top: 8px;
+        width: 100%;
+    }
+
+    .tabcss {
+        color: #ffffff;
+        float: left;
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+        text-align: left;
+        height: 45px;
+        padding-top: 8px;
+    }
+</style>

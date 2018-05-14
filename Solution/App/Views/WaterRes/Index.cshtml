@@ -1,0 +1,76 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "水资源首页";
+}
+@Html.Partial("~/Views/WaterRes/components/com_szyleft.cshtml")
+@Html.Partial("~/Views/WaterRes/components/com_szymap.cshtml")
+@Html.Partial("~/Views/WaterRes/components/com_szyright.cshtml")
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+<div id="app">
+    <el-row v-bind:gutter="15" class="row_bg">
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
+            <com-szyleft ref="szyleft" ></com-szyleft>
+        </el-col>
+        <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
+            <com_szymap ref="comSzyMap">
+
+            </com_szymap>
+        </el-col>
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
+            <com-szyright>
+
+            </com-szyright>
+        </el-col>
+    </el-row>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        components: {
+            "com-szyleft": comSzyLeft,
+            "com_szymap": comSzyMap,
+            "com-szyright": comSzyRight
+        },
+        data: {
+            
+        },
+        mounted: function () {
+            
+        },
+        watch: {
+            
+        },
+        methods: {
+            
+        },
+    })
+</script>
+
+<style scoped>
+    html, body, #app {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        padding: 0;
+        /*overflow: auto;*/
+        background-color: #051266;
+    }
+    body{
+        overflow:hidden;
+    }
+    #app {
+        min-width: 1000px;
+        min-height: 700px;
+        overflow-y:auto;
+        overflow-x:hidden;
+    }
+
+    .row_bg {
+        margin: 15px 0 0 15px;
+    }
+
+    #app .sidescss {
+        position: relative;
+    }
+</style>

@@ -1,0 +1,233 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "工程子系统";
+}
+
+<title>工程子系统</title>
+
+<div id="app" v-bind:style="styleApp">
+    <div class="container">
+        <div class="center" v-bind:style="styleCenter">
+            <div class="login" v-bind:style="styleLogin" ref="login">
+                <el-form ref="form" v-bind:model="form" v-bind:rules="rules">
+                    <el-form-item class="username" prop="name">
+                        <el-input v-model="form.name" auto-complete="off" placeholder="请输入用户名"></el-input>
+                    </el-form-item>
+                    <el-form-item class="password" prop="pwd">
+                        <el-input v-model="form.pwd" type="password" placeholder="请输入密码" v-on:keyup.enter.native="submitForm('form')"></el-input>
+                    </el-form-item>
+                    <el-form-item class="submitBtn">
+                        <el-button  v-bind:loading="loading" v-on:click="submitForm('form')">登 录</el-button>
+                    </el-form-item>
+                </el-form>
+</div>
+        </div>
+        <div class="footer">
+            <span>版权所有：奉贤水务局</span>
+            <span>技术支持：超图软件</span>
+        </div>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            loading:false,
+            styleApp: {
+                backgroundColor: '#eff9fd',
+                fontSize: '14px',
+                height: document.documentElement.clientHeight + 'px'
+            },
+            styleCenter: {
+                top: ((document.documentElement.clientHeight - 472) / 2) + 'px'
+            },
+            styleLogin: {
+                right: ((document.documentElement.clientWidth - 1000) / 2) + 'px'
+            },
+            form: {
+                name: 'admin',
+                pwd: '123456'
+            },
+            rules: {
+                name: [
+                  { required: true, message: '请输入用户名', trigger: 'blur' }
+                ],
+                pwd: [
+                  { required: true, message: '请输入密码', trigger: 'blur' },
+                  { min: 6, max: 18, message: '长度在 6 到 8 个字符', trigger: 'blur' }
+                ],
+            }
+        },
+        mounted: function () {
+            this.resize()
+        },
+        watch: {
+
+        },
+        methods: {
+            submitForm: function(form) {
+                this.$refs[form].validate(function (valid)  {
+                    if (valid) {
+                        this.loading = true
+                        this.login('/login/checkLogin', this.form)
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                }.bind(this));
+            },
+            login: function (url,param) {
+                axios.post(url, param)
+                 .then(function (response) {
+                     if (response.data.result == 'sucess') {
+                         window.location = "/Home/Index"
+                         // this.loading = false
+                     } else {
+                         this.loading = false
+                         this.Message('用户名或密码错误！！！', 'error')
+                     }
+                 }.bind(this))
+                 .catch(function (error) {
+                     this.loading = false
+                     this.Message('用户名或密码错误！！！', 'error')
+                 });
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this))
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight
+                var docW = document.documentElement.clientWidth
+
+                var loginH = this.$refs.login.clientHeight
+                var loginW = this.$refs.login.clientWidth
+
+                var contentH = docH - loginH
+                var contentW = docW - loginW
+
+                this.styleApp.height = docH + 'px'
+
+                this.styleCenter.top = (contentH / 2) + 'px'
+
+                this.styleLogin.right = (contentW / 2) + 'px'   
+            },
+            Message: function (msg,type) {
+                this.$message({
+                    showClose: true,
+                    message: msg,
+                    type: type
+                })
+            }
+        },
+    });
+</script>
+
+<style scoped>
+    body {
+        margin: 0px;
+        padding: 0px;
+        font-size:14px;
+        font-family:"Microsoft YaHei",微软雅黑,"MicrosoftJhengHei",华文细黑,STHeiti,MingLiu;
+    }
+
+    ::-ms-clear,::-ms-reveal{display:none;}
+
+    .container {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+
+    .container .center {
+        width: 100%;
+        height: 100%;
+        max-height: 472px;
+        top: 251px;
+        position: absolute;
+        background-image: url('../../Images/login/img_login_x.png');
+        background-repeat: repeat-x;
+    }
+
+    .container .center .login {
+        max-width:1000px;
+        max-height:472px;
+        height: 100%;
+        width: 100%;
+        background-image: url('../../Images/login/img_gongchengxt_login.png');
+        background-repeat: no-repeat;
+        background-size: cover;
+        position:absolute;
+        top:-81px;
+    }
+    .container .center .login .el-form {
+        width: 312px;
+        height: 302px;
+        right: 0;
+        position: absolute;
+        top: 143px;
+    }
+
+    .container .center .login .el-form-item {
+        padding-left: 70px;
+        padding-right: 24px;
+    }
+
+    .container .center .login .el-form .el-form-item .el-input input{
+        border:0px;
+    }
+
+     .container .center .login .el-form-item .el-input input:-webkit-autofill, 
+     textarea:-webkit-autofill, 
+     select:-webkit-autofill 
+     { 
+         -webkit-box-shadow:0 0 0 1000px #fff inset;
+
+     } 
+     
+    .container .center .login .el-form .el-form-item .el-input input[type=text]:focus,input[type=password]:focus, textarea:focus {       
+         -webkit-box-shadow: 0 0 0 1000px #fff  inset;              
+     }
+
+    .container .center .login .username {  
+        padding-top: 90px;
+    }
+    .container .center .login .password {
+        padding-top: 2px;
+    }
+
+    .container .center .login .submitBtn {
+        padding-left: 26px;
+        padding-right: 24px;
+    }
+
+    .container .center .login .el-button {
+        width:100%;
+        color:#ffffff;
+        font-size:15px;
+        background-color:#ff9900;
+        border-color: #ff9900;
+    }
+
+    .container .center .login .el-button:focus,.container .center .login .el-button:hover {
+        color: #ffffff;
+        border-color: #ffb100;
+        background-color: #ffb100;
+    }
+
+    .container .footer {
+        position: absolute;
+        bottom: 20px;
+        width: 100%;
+        text-align: center;
+        color: #666666;
+    }
+
+   .container .footer span {
+       padding-right:30px;
+   }
+</style>
+
+

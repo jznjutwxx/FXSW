@@ -1,0 +1,46 @@
+﻿<script type="text/x-template" id="com-select">
+    <el-select v-model="value" filterable placeholder="请选择" v-on:change="change">
+        <el-option v-for="item in options"
+                   v-bind:key="item.value"
+                   v-bind:label="item.label"
+                   v-bind:value="item.value">
+        </el-option>
+    </el-select>
+</script>
+
+
+<script>
+    var comSelect = {
+        template: '#com-select',
+        props: {
+            options: {
+                type: Array
+            }
+        },
+        data: function(){
+            return {
+                value:''
+            }
+        },
+        watch: {
+            options: function (val, oldVal) {
+                this.setValue(val[0].value)
+            },
+        },
+        methods: {
+            change: function (val) {
+                this.setValue(val)
+            },
+            setValue: function (val) {
+                this.value = val
+                this.$emit('change', val)
+            }
+        }
+    };
+</script>
+
+<style scoped>
+    #com-select {
+        display:none;
+    }
+</style>

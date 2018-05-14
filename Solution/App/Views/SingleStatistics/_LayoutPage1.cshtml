@@ -1,0 +1,56 @@
+﻿
+@*
+<div id="test">
+    <el-form class="titleForm" inline="true" rules="titleFormAdd" ref="titleForm" model="titleForm" label-width="96px">
+        <el-form-item label="申报地海关" prop="CustomMaster">
+            <el-input v-model="titleForm.CustomMaster" auto-complete="off" style="{width:'156px'}"></el-input>
+        </el-form-item>
+        <el-form-item label-width="0px" label="" prop="TypistNo">
+            <el-input v-model="titleForm.TypistNo" type="hidden" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="操作员" prop="Typistname">
+            <el-input v-model="titleForm.Typistname" auto-complete="off" style="{width:'156px'}"></el-input>
+        </el-form-item>
+        <el-form-item label-width="0px" label="" prop="PreEntryId">
+            <el-input v-model="titleForm.PreEntryId" type="hidden" auto-complete="off"></el-input>
+        </el-form-item>
+        <el-form-item label="单位" prop="PreEntryName">
+            <el-input v-model="titleForm.PreEntryName" auto-complete="off" style="{width:'156px'}"></el-input>
+        </el-form-item>
+        <el-form-item label="海关十位编码" prop="CustomsCode">
+            <el-input v-model="titleForm.CustomsCode" auto-complete="off" style="{width:'156px'}"></el-input>
+        </el-form-item>
+    </el-form>
+
+   
+</div>
+
+
+<script>
+    new Vue({
+        el: '#test',
+        data: {
+    rules:
+    titleFormAdd: {
+            CustomMaster:[
+            {validator: chkCustomMaster,trigger:'blur'}
+            ],
+            Typistname:[
+            {validator: chkTypistname,trigger:'click'}
+            ]
+    }},
+    var chkCustomMaster = (rule, value, callback) => {
+        if (!value) {
+            callback(
+            this.errorMsg = '申报地海关是必填项'
+            )
+        }
+    }
+    var chkTypistname = (rule, value, callback) => {
+        if (!value) {
+            callback(
+            this.errorMsg = '操作员是必填项'
+            )
+        }
+    }
+</script>*@

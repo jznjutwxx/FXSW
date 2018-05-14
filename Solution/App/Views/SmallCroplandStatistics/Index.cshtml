@@ -1,0 +1,267 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "小型农田水利工程量统计";
+}
+<div id="app">
+    <small-query v-on:emit-event="getEmitEvent" ref="smallQuery"></small-query>
+    <div class="center">
+        <com-bar v-bind:option="barOption" v-bind:style='styles'></com-bar>
+        <div class="centerradio">
+            <el-radio-group v-model="choose" v-on:change="changeChecked" size="small">
+                <el-radio label="1">罐区数量</el-radio>
+                <el-radio label="2">罐区面积</el-radio>
+                <el-radio label="3">泵站（座）</el-radio>
+                <el-radio label="4">泵站（台套）</el-radio>
+                <el-radio label="5">地下渠道</el-radio>
+                <el-radio label="6">渡槽</el-radio>
+                <el-radio label="7">倒虹吸</el-radio>
+                <el-radio label="8">衬砌明渠</el-radio>
+                <el-radio label="9">新翻建道路</el-radio>
+            </el-radio-group>
+        </div>
+    </div>
+    <com-base-table v-bind:height="height" v-bind:tabledatas="tableData" class="com-base-table"></com-base-table>
+</div>
+@Html.Partial("~/Views/SmallCroplandStatistics/components/query.cshtml")
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/components/tables/com_base_table.cshtml")
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            styles: {
+                width: '90%',
+                height: '0px',
+                float: 'left',
+            },
+            barOption: null,
+            height: '0px',
+            choose: '1',
+            tableData: {
+                tableKey: [],
+                tableData: []
+            },
+            tabTitle: '全区（批复）',
+            barTitle: '小型农田水利工程量（罐区数量）统计图',
+        },
+        components: {
+            'small-query': query,
+            'com-bar': comBar,
+            'com-base-table': comBaseTable,
+        },
+        mounted: function () {
+            this.setSize()
+            this.resize()
+            this.setData('/SmallCroplandStatistics/GetData', { startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), qchoose: 'pf' })
+        },
+        methods: {
+            checkDate:function(date){
+                var date=date;
+                var date1 =new Date(date);
+                var y=date1.getFullYear();
+                return y;
+            },
+            getEmitEvent: function (param) {
+                this.setBarTitle();
+                if (param.qchoose == "pf") {
+                    this.tabTitle = "全区（批复）";
+                }
+                else {
+                    this.tabTitle = "全区（完成）";
+                }
+                this.setData('/SmallCroplandStatistics/GetData', { startYear: this.checkDate(param.startYear), endYear: this.checkDate(param.endYear), qchoose: param.qchoose })
+            },
+            changeChecked: function () {
+                this.setBarTitle();
+                if (this.$refs.smallQuery.querychoose == "pf") {
+                    this.tabTitle = "全区（批复）";
+                }
+                else {
+                    this.tabTitle = "全区（完成）";
+                }
+                this.setData('/SmallCroplandStatistics/GetData', { startYear: this.checkDate(this.$refs.smallQuery.sYear), endYear: this.checkDate(this.$refs.smallQuery.eYear), qchoose: this.$refs.smallQuery.querychoose })
+            },
+            setData: function (url, param) {
+                this.setBarTitle();
+                this.setBarData(url, param)
+                this.setTableData(url, param)
+            },
+
+            setBarData: function (url, param) {
+                this.$children[1].charts.showLoading();
+                axios.post(url, param).then(function (response) {
+                    var tempData = JSON.parse(response.data);
+                    var datas = tempData.StatisticsEnginFarmGetResponse.statistics_engin_gcl[parseInt(this.choose) - 1];
+                    this.$children[1].charts.hideLoading();
+                    this.barOption = {
+                        title: {
+                            left: 'center',
+                            text: this.barTitle,
+                            textStyle: {
+                                color: '#666666',
+                                fontWeight: 'normal',
+                                fontSize: 16
+                            }
+                        },
+                        legend: {
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['庄行镇', '南桥镇', '拓林镇', '金汇镇', '青村镇', '海湾镇', '奉城镇', '四团镇'],
+                            axisLabel: {
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                        },
+                        yAxis: {
+                            type: 'value',
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#999'
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: '',
+                                type: 'bar',
+                                barWidth: '20%',
+                                data: [datas.zh, datas.nq, datas.tl, datas.jh, datas.qc, datas.hw, datas.fc,datas.st ]
+                            }
+                        ]}
+                    }.bind(this))
+                      .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+
+            setTableData: function (url, param) {
+                axios.post(url, param)
+                    .then(function (response) {
+                        var tempData = JSON.parse(response.data);
+                        var datas = tempData.StatisticsEnginFarmGetResponse.statistics_engin_gcl;
+                           this.tableData = {
+                                tableKey: [
+                                    {
+                                        name: '序号',
+                                        type: 'index',
+                                        width: '60',
+                                    }, {
+                                        name: '工程量',
+                                        value: 'gcl',
+                                    }, {
+                                        name: this.tabTitle,
+                                        value: 'alllent',
+                                    }, {
+                                        name: '庄行镇',
+                                        value: 'zh',
+                                    }, {
+                                        name: '南桥镇',
+                                        value: 'nq',
+                                    }, {
+                                        name: '拓林镇',
+                                        value: 'tl',
+                                    }, {
+                                        name: '金汇镇',
+                                        value: 'jh',
+                                    }, {
+                                        name: '青村镇',
+                                        value: 'qc',
+                                    }, {
+                                        name: '海湾镇',
+                                        value: 'hw',
+                                    }, {
+                                        name: '奉城镇',
+                                        value: 'fc',
+                                    }, {
+                                        name: '四团镇',
+                                        value: 'st',
+                                    }],
+                                tableData: datas
+                            }
+                    }.bind(this))
+                    .catch(function (error) {
+                        console.log(error);
+                    });
+            },
+            setBarTitle: function () {
+                        switch (this.choose) {
+                            case '1':
+                                this.barTitle = '小型农田水利工程量（罐区数量）统计图';
+                                break;
+                            case '2':
+                                this.barTitle = '小型农田水利工程量（罐区面积）统计图';
+                                break;
+                            case '3':
+                                this.barTitle = '小型农田水利工程量（泵站-座）统计图';
+                                break;
+                            case '4':
+                                this.barTitle = '小型农田水利工程量（泵站-台套）统计图';
+                                break;
+                            case '5':
+                                this.barTitle = '小型农田水利工程量（地下渠道）统计图';
+                                break;
+                            case '6':
+                                this.barTitle = '小型农田水利工程量（渡槽）统计图';
+                                break;
+                            case '7':
+                                this.barTitle = '小型农田水利工程量（倒虹吸）统计图';
+                                break;
+                            case '8':
+                                this.barTitle = '小型农田水利工程量（衬砌明渠）统计图';
+                                break;
+                            case '9':
+                                this.barTitle = '小型农田水利工程量（新翻建道路）统计图';
+                                break;
+                            default:
+                                break;
+                        }
+                    },
+               
+            setSize: function () {
+                var docH = document.documentElement.clientHeight
+                var queryH = this.$refs.smallQuery.$el.clientHeight
+                var contentH = docH - queryH - 40
+                this.styles.height = (contentH / 2) + 'px'
+                this.height = contentH / 2
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+
+        }
+
+
+    })
+</script>
+
+<style>
+    .center {
+        width: 99%;
+        position: relative;
+    }
+
+    .centerradio {
+        width: 6%;
+        float: left;
+        padding-top: 50px;
+        font-family: 'Microsoft YaHei';
+    }
+
+        .centerradio .el-radio + .el-radio {
+            margin-left: 0px !important;
+            padding-top: 16px;
+        }
+</style>

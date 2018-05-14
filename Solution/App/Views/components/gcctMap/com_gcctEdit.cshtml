@@ -1,0 +1,640 @@
+﻿<script type="text/x-template" id="com-gcctmapEdit">
+    <div id="tp_gcctmap">
+        <div id="tp_map">
+            <div id="tp_toolbar">
+                <el-input placeholder="经度" v-model.number="coorX" clearable style="width:130px;">
+                    <template slot="prepend">X:</template>
+                </el-input>
+                <el-input placeholder="纬度" v-model.number="coorY" clearable style="width:130px;">
+                    <template slot="prepend">Y:</template>
+                </el-input>
+                <el-button type="primary" icon="el-icon-search" v-on:click="location"></el-button>
+                <el-button type="primary" v-on:click="activatePoint">画点</el-button>
+                <el-button type="primary" v-on:click="activatePath">画线</el-button>
+                <el-button type="primary" v-on:click="activatePolygon">画面</el-button>
+                <el-button type="primary" v-on:click="activateEditFeature">编辑</el-button>
+                <el-button type="primary" v-on:click="activateDeleteFeature">删除</el-button>
+            </div>
+        </div>
+        
+    </div>
+</script>
+<script>
+    var comgcctmapEdit = {
+        template: "#com-gcctmapEdit",
+        data: function () {
+            return {
+                url1: 'http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu', //基础底图
+                url2: 'http://localhost:8090/iserver/services/map-gcct04202/rest/maps/gcctdxm0420_test', //工程草图地图服务
+                url3: 'http://localhost:8090/iserver/services/data-gcct04202/rest/data/datasources/gcct0420/datasets/', //草图编辑数据服务
+                url4: 'http://localhost:8090/iserver/services/data-gcct04202/rest/data',
+                map: null,
+                drawPoint: null, //画点
+                drawLine: null, //画线
+                drawPolygon: null, //画面
+                drawPoint_Edit: null, //编辑按钮
+                drawPoint_Delete: null, //删除按钮
+                modifyFeature: null,
+                layer: null, //底图图层
+                layer_gcct: null, //工程草图图层
+                vectorLayer: null, //几何画板图层
+                ids: [],
+                dataset: '',
+                coorX: '',
+                coorY:'',
+                style: {
+                    strokeColor: "#304DBE", //描边颜色
+                    strokeWidth: 1, //描边宽度
+                    pointerEvents: "visiblePainted", //CSS3新属性pointer-events.."none"表示它将捕获不到任何点击，而是让
+                    //事件穿透到它的下面；"auto"效果和没有定义这个属性一样
+                    fillColor: "#304DBE", //填充颜色
+                    fillOpacity: 0.8, //填充不透明度
+                    pointRadius: 2 //像素点半径
+                },
+                plstyle: {
+                    strokeColor: "#304DBE", //描边颜色
+                    strokeWidth: 2, //描边宽度
+                },
+                ptstyle: {
+                    fillColor: "red",
+                    strokeColor: "yellow",
+                    pointRadius: 6
+                }
+            }
+        },
+        watch: {
+
+        },
+        mounted: function () {
+            this.init();
+        },
+        methods: {
+            open: function () {
+                window.open('/EngineerSketch/Index', 'newwindow', 'height=750,width=900,top=180,left=500,toolbar=no,menubar=no,scrollbars=no, Resizable=no,location=no, status=no');
+            },
+            close: function () {
+                window.close();
+            },
+            location: function () {
+                var lonlat = new SuperMap.LonLat(this.coorX, this.coorY);
+                this.map.setCenter(lonlat, 6);
+            },
+            init: function () {
+                this.layer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.url1, {
+                    transparent: true,
+                    cacheEnabled: true
+                }, {
+                    maxResolution: 'auto'
+                });
+                this.layer.events.on({
+                    'layerInitialized': this.addCTLayer
+                });
+                this.vectorLayer = new SuperMap.Layer.Vector("Vector Layer");
+                this.vectorLayer.events.on({
+                    'afterfeaturemodified': this.editFeatureCompleted
+                });
+                this.modifyFeature = new SuperMap.Control.ModifyFeature(this.vectorLayer);
+                this.drawPoint = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Point);
+                this.drawPoint.events.on({
+                    "featureadded": this.addPointCompleted
+                });
+                this.drawLine = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Path);
+                this.drawLine.events.on({
+                    "featureadded": this.addPathCompleted
+                });
+                //编辑点控件
+                this.drawPoint_Edit = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Point);
+                this.drawPoint_Edit.events.on({
+                    "featureadded": this.editSelectedFeature
+                });
+                //删除点控件
+                this.drawPoint_Delete = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler
+                    .Point);
+                this.drawPoint_Delete.events.on({
+                    "featureadded": this.deleteSelectedFeature
+                });
+
+                this.drawPolygon = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Polygon);
+                this.drawPolygon.events.on({
+                    'featureadded': this.addPolygonCompleted
+                });
+
+                this.map = new SuperMap.Map('tp_map', {
+                    controls: [
+                        new SuperMap.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        }),
+                        this.drawPolygon,
+                        this.drawPoint,
+                        this.drawLine,
+                        this.modifyFeature,
+                        this.drawPoint_Delete,
+                        this.drawPoint_Edit
+                    ],
+                    allOverlays: true
+                });
+            },
+            //添加草图展示图层
+            addCTLayer: function () {
+                this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.url2, {
+                    transparent: true,
+                    cacheEnabled: false
+                }, {
+                    // maxResolution: "auto",
+                    bufferImgCount: 0
+                });
+                this.layer_gcct.events.on({
+                    'layerInitialized': this.addLayer
+                });
+                this.layer_gcct.setOpacity(0.6);
+            },
+            addLayer: function () {
+                this.map.addLayers([this.layer, this.layer_gcct, this.vectorLayer]);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+            },
+            //编辑要素完成
+            editFeatureCompleted: function (event) {
+                this.modifyFeature.deactivate();
+                var editFeatureParameter, editFeatureService, features, attributes,
+                    feature = event.feature;
+                attributes = feature.attributes;
+                var attrNames = [];
+                var attrValues = [];
+                for (var attr in attributes) {
+                    attrNames.push(attr);
+                    attrValues.push(attributes[attr]);
+                }
+                features = {
+                    fieldNames: attrNames,
+                    fieldValues: attrValues,
+                    geometry: feature.geometry
+                };
+                features.geometry.id = feature.fid;
+                editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
+                    features: [features],
+                    editType: SuperMap.REST.EditType.UPDATE
+                });
+                editFeatureService = new SuperMap.REST.EditFeaturesService(this.url3 + this.dataset, {
+                    eventListeners: {
+                        "processCompleted": this.updateFeaturesProcessCompleted,
+                        "processFailed": this.processFailed
+                    }
+                });
+                editFeatureService.processAsync(editFeatureParameter);
+            },
+            //更新要素完成
+            updateFeaturesProcessCompleted: function (editFeaturesEventArgs) {
+                if (editFeaturesEventArgs.result.resourceInfo.succeed) {
+                    this.$message({
+                        message: '更新成功！',
+                        type: 'success'
+                    });
+                    //重新加载图层
+                    this.vectorLayer.removeAllFeatures();
+                    this.layer_gcct.redraw();
+                } else {
+                    this.$message({
+                        message: '更新失败！',
+                        type: 'error'
+                    });
+                }
+            },
+            addPointCompleted: function (drawGeometryArgs) {
+                this.drawPoint.deactivate();
+                var geometry = drawGeometryArgs.feature.geometry,
+                feature = new SuperMap.Feature.Vector();
+                feature.geometry = geometry;
+                feature.style = this.ptstyle;
+                this.vectorLayer.addFeatures(feature);
+
+                geometry.id = "300000";
+                var editFeatureParameter, editFeatureService,
+                features = {
+                    fieldNames: ["S_PROJECT_NO", "N_PROJECT_STATUS", "REMARK"],
+                    fieldValues: ["点状要素", "3", "隆昌路城市概念园区北区C01室"],
+                    geometry: geometry
+                };
+                editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
+                    features: [features],
+                    editType: SuperMap.REST.EditType.ADD,
+                    returnContent: false
+                });
+                editFeatureService = new SuperMap.REST.EditFeaturesService(this.url3 + this.dataset, {
+                    eventListeners: {
+                        'processCompleted': this.addPTFeaturesProcessCompleted,
+                        'processFailed': this.processFailed
+                    }
+                });
+                editFeatureService.processAsync(editFeatureParameter);
+            },
+            addPTFeaturesProcessCompleted: function (editFeaturesEventArgs) {
+                var addResultIds = editFeaturesEventArgs.result.IDs,
+                resourceInfo = editFeaturesEventArgs.result.resourceInfo;
+                if (addResultIds === null && resourceInfo === null) return;
+                if ((addResultIds && addResultIds.length > 0) || (resourceInfo && resourceInfo.succeed)) {
+                    this.$message({
+                        type: 'success',
+                        message: '添加成功！'
+                    });
+                    this.vectorLayer.removeAllFeatures();
+                    //重新加载图层
+                    this.layer_gcct.redraw();
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: '添加失败！'
+                    });
+                }
+            },
+            addPathCompleted: function (drawGeometryArgs) {
+                this.drawLine.deactivate();
+                var geometry = drawGeometryArgs.feature.geometry,
+                    feature = new SuperMap.Feature.Vector();
+                feature.geometry = geometry;
+                feature.style = this.plstyle;
+                this.vectorLayer.addFeatures(feature);
+
+                geometry.id = "200000";
+                var editFeatureParameter, editFeatureService,
+                    features = {
+                        fieldNames: ["S_PROJECT_NO", "N_PROJECT_STATUS", "REMARK"],
+                        fieldValues: ["线状要素", 2, "隆昌路城市概念园区北区C01室"],
+                        geometry: geometry
+                    };
+                editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
+                    features: [features],
+                    editType: SuperMap.REST.EditType.ADD,
+                    returnContent: false
+                });
+                editFeatureService = new SuperMap.REST.EditFeaturesService(this.url3 + this.dataset, {
+                    eventListeners: {
+                        'processCompleted': this.addPLFeaturesProcessCompleted,
+                        'processFailed': this.processFailed
+                    }
+                });
+                editFeatureService.processAsync(editFeatureParameter);
+            },
+            addPLFeaturesProcessCompleted: function (editFeaturesEventArgs) {
+                var addResultIds = editFeaturesEventArgs.result.IDs,
+                    resourceInfo = editFeaturesEventArgs.result.resourceInfo;
+                if (addResultIds === null && resourceInfo === null) return;
+                if ((addResultIds && addResultIds.length > 0) || (resourceInfo && resourceInfo.succeed)) {
+                    this.$message({
+                        type: 'success',
+                        message: '添加成功！'
+                    });
+                    this.vectorLayer.removeAllFeatures();
+                    this.layer_gcct.redraw();
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: '添加失败！'
+                    });
+                }
+            },
+            addPolygonCompleted: function (drawGeometryArgs) {
+                this.drawPolygon.deactivate();
+                var geometry = drawGeometryArgs.feature.geometry,
+                    feature = new SuperMap.Feature.Vector();
+                feature.geometry = geometry;
+                feature.style = this.style;
+                this.vectorLayer.addFeatures(feature);
+
+                geometry.id = "100000";
+                var editFeatureParameter, editFeatureService,
+                    features = {
+                        fieldNames: ["S_PROJECT_NO", "N_PROJECT_STATUS", "REMARK"],
+                        fieldValues: ["面状要素", 1, "隆昌路城市概念园区北区C01室"],
+                        geometry: geometry
+                    };
+                editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
+                    features: [features],
+                    editType: SuperMap.REST.EditType.ADD,
+                    returnContent: false
+                });
+                editFeatureService = new SuperMap.REST.EditFeaturesService(this.url3 + this.dataset, {
+                    eventListeners: {
+                        'processCompleted': this.addFeaturesProcessCompleted,
+                        'processFailed': this.processFailed
+                    }
+                });
+                editFeatureService.processAsync(editFeatureParameter);
+            },
+            addFeaturesProcessCompleted: function (editFeaturesEventArgs) {
+                var addResultIds = editFeaturesEventArgs.result.IDs,
+                    resourceInfo = editFeaturesEventArgs.result.resourceInfo;
+                if (addResultIds === null && resourceInfo === null) return;
+                if ((addResultIds && addResultIds.length > 0) || (resourceInfo && resourceInfo.succeed)) {
+                    this.$message({
+                        type: 'success',
+                        message: '添加成功！'
+                    });
+                    this.vectorLayer.removeAllFeatures();
+                    this.layer_gcct.redraw();
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: '添加失败！'
+                    });
+                }
+            },
+            //编辑要素
+            editSelectedFeature: function (drawGeometryArgs) {
+                this.drawPoint_Edit.deactivate();
+                this.ids.length = 0;
+                var getFeaturesByGeometryParams, getFeaturesByGeometryService,
+                    geometry = drawGeometryArgs.feature.geometry;
+
+                //绘制一个小圆用于查询（解决查询半径过小无法查询出的问题）
+                var centerPoint = new SuperMap.Geometry.Point(geometry.x, geometry.y);
+                // var circleP = this.createCircle(centerPoint, 6, 20, 360, 360);
+                var circleP = new SuperMap.Geometry.Polygon.createRegularPolygon(centerPoint, 0.001, 20,
+                    270);
+
+                getFeaturesByGeometryParams = new SuperMap.REST.GetFeaturesByGeometryParameters({
+                    datasetNames: ["gcct0420:gcct_pl", "gcct0420:gcct_pt", "gcct0420:gcct_ln"],
+                    spatialQueryMode: SuperMap.REST.SpatialQueryMode.INTERSECT,
+                    geometry: circleP
+                });
+                getFeaturesByGeometryService = new SuperMap.REST.GetFeaturesByGeometryService(this.url4, {
+                    eventListeners: {
+                        'processCompleted': this.editFeatureProcessCompleted,
+                        'processFailed': this.processFailed
+                    }
+                });
+                getFeaturesByGeometryService.processAsync(getFeaturesByGeometryParams);
+            },
+            //画圆
+            //origin多边形的中心 radius半径 sides边数，20个近似一个圆 rotation 旋转角度，单位为degrees。沿着x轴正方向的逆时针方向 resolution当前地图的分辨率
+            createCircle: function (origin, radius, sides, r, angel) {
+                var rR = r * Math.PI / (180 * sides);
+                var rotatedAngle, x, y;
+                var points = [];
+                for (var i = 0; i < sides; ++i) {
+                    rotatedAngle = rR * i;
+                    x = origin.x + (radius * Math.cos(rotatedAngle));
+                    y = origin.y + (radius * Math.sin(rotatedAngle));
+                    points.push(new SuperMap.Geometry.Point(x, y));
+                }
+                rotatedAngle = r * Math.PI / 180;
+                x = origin.x + (radius * Math.cos(rotatedAngle));
+                y = origin.y + (radius * Math.sin(rotatedAngle));
+                points.push(new SuperMap.Geometry.Point(x, y));
+
+                var ring = new SuperMap.Geometry.LinearRing(points);
+                ring.rotate(parseFloat(angel), origin);
+                var geo = new SuperMap.Geometry.Collection([ring]);
+                geo.origin = origin;
+                geo.radius = radius;
+                geo.r = r;
+                geo.angel = angel;
+                geo.sides = sides;
+                geo.polygonType = "Curve";
+                return geo;
+            },
+            editFeatureProcessCompleted: function (getFeaturesEventArgs) {
+                var features, feature,
+                    _this = this;
+                originFeatures = getFeaturesEventArgs.originResult.features,
+                    result = getFeaturesEventArgs.result;
+
+                if (originFeatures.length == 0 || originFeatures[0].geometry == undefined) {
+                    this.$alert('未选中要素，请放大后点击!', '提示信息', {
+                        confirmButtonText: '确定',
+                        type: 'error',
+                        center: true,
+                        callback: function () {
+                            _this.clearAllDeactivate();
+                            _this.vectorLayer.removeAllFeatures();
+                            return;
+                        }
+                    });
+                } else {
+                    //判断选中要素几何类型
+                    var originType = originFeatures[0].geometry["type"];
+                    if (originType == "REGION") {
+                        this.dataset = 'gcct_pl';
+                    } else if (originType == "LINE") {
+                        this.dataset = 'gcct_ln';
+                    }
+
+                    this.vectorLayer.removeAllFeatures();
+                    for (var i = 0, len = originFeatures.length; i < len; i++) {
+                        this.ids.push(originFeatures[i].ID);
+                    }
+                    if (result && result.features) {
+                        features = result.features;
+                        for (var j = 0, len = features.length; j < len; j++) {
+                            feature = features[j];
+                            feature.style = this.style;
+                            this.vectorLayer.addFeatures(feature);
+                        }
+                        this.modifyFeature.activate();
+                    }
+                }
+            },
+            processFailed: function (e) {
+                this.$message({
+                    type: 'info',
+                    message: e.error.errorMsg
+                });
+            },
+            //激活删除要素
+            activateDeleteFeature: function () {
+                this.vectorLayer.removeAllFeatures();
+                this.clearAllDeactivate();
+                this.drawPoint_Delete.activate();
+            },
+            //激活编辑要素
+            activateEditFeature: function () {
+                this.vectorLayer.removeAllFeatures();
+                this.clearAllDeactivate();
+                this.drawPoint_Edit.activate();
+            },
+            //删除要素
+            deleteSelectedFeature: function (drawGeometryArgs) {
+                this.drawPoint_Delete.deactivate();
+                this.ids.length = 0;
+                var getFeaturesByGeometryParams, getFeaturesByGeometryService,
+                    geometry = drawGeometryArgs.feature.geometry;
+
+                //绘制一个小圆用于查询（解决查询半径过小无法查询出的问题）
+                var centerPoint = new SuperMap.Geometry.Point(geometry.x, geometry.y);
+                var circleP = new SuperMap.Geometry.Polygon.createRegularPolygon(centerPoint, 0.001, 20,
+                    270);
+
+                getFeaturesByGeometryParams = new SuperMap.REST.GetFeaturesByGeometryParameters({
+                    // datasetNames: ["gcct0419:Engineer0419"],
+                    datasetNames: ["gcct0420:gcct_pl", "gcct0420:gcct_pt", "gcct0420:gcct_ln"],
+                    spatialQueryMode: SuperMap.REST.SpatialQueryMode.INTERSECT,
+                    geometry: circleP
+                });
+                getFeaturesByGeometryService = new SuperMap.REST.GetFeaturesByGeometryService(this.url4, {
+                    eventListeners: {
+                        'processCompleted': this.deleteFeatureProcessCompleted,
+                        'processFailed': this.processFailed
+                    }
+                });
+                getFeaturesByGeometryService.processAsync(getFeaturesByGeometryParams);
+            },
+            deleteFeatureProcessCompleted: function (getFeaturesEventArgs) {
+                var features, feature,
+                    _this = this;
+                originFeatures = getFeaturesEventArgs.originResult.features,
+                    result = getFeaturesEventArgs.result;
+                if (originFeatures.length == 0 || originFeatures[0].geometry == undefined) {
+                    this.$alert('未选中要素，请放大后点击!', '提示信息', {
+                        confirmButtonText: '确定',
+                        type: 'error',
+                        center: true,
+                        callback: function () {
+                            _this.clearAllDeactivate();
+                            _this.vectorLayer.removeAllFeatures();
+                            return;
+                        }
+                    });
+                } else {
+                    //判断选中要素几何类型
+                    var originType = originFeatures[0].geometry["type"];
+                    if (originType == "REGION") {
+                        this.dataset = 'gcct_pl';
+                    } else if (originType == "LINE") {
+                        this.dataset = 'gcct_ln';
+                    }
+
+                    this.vectorLayer.removeAllFeatures();
+                    for (var i = 0, len = originFeatures.length; i < len; i++) {
+                        this.ids.push(originFeatures[i].ID);
+                    }
+                    if (result && result.features) {
+                        features = result.features;
+                        for (var j = 0, len = features.length; j < len; j++) {
+                            feature = features[j];
+                            feature.style = this.style;
+                            this.vectorLayer.addFeatures(feature);
+                        }
+                        this.$confirm('是否删除此要素？', '提示', {
+                            confirmButtonText: '确定',
+                            cancelButtonText: '取消',
+                            type: 'warning'
+                        }).then(function () {
+                            if (_this.ids.length == 0) {
+                                this.$message({
+                                    message: '请先选择要素！',
+                                    type: 'warning'
+                                });
+                            } else {
+                                var editFeatureParameter, editFeatureService;
+                                editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
+                                    IDs: _this.ids,
+                                    editType: SuperMap.REST.EditType.DELETE
+                                });
+                                editFeatureService = new SuperMap.REST.EditFeaturesService(_this.url3 +
+                                    _this.dataset, {
+                                        eventListeners: {
+                                            "processCompleted": _this.deleteFeaturesProcessCompleted,
+                                            "processFailed": _this.processFailed
+                                        }
+                                    });
+                                editFeatureService.processAsync(editFeatureParameter);
+                            }
+                        }).catch(function () {
+                            _this.vectorLayer.removeAllFeatures();
+                            _this.$message({
+                                type: 'info',
+                                message: '已取消删除'
+                            });
+                        });
+                    }
+                }
+            },
+            //删除地物成功
+            deleteFeaturesProcessCompleted: function (editFeaturesEventArgs) {
+                if (editFeaturesEventArgs.result.resourceInfo.succeed) {
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功！'
+                    });
+                    //重新加载图层
+                    this.vectorLayer.removeAllFeatures();
+                    this.layer_gcct.redraw();
+                } else {
+                    this.$message({
+                        message: '删除失败！',
+                        type: 'error'
+                    });
+                }
+            },
+            //画面
+            activatePolygon: function () {
+                this.dataset = 'gcct_pl';
+                this.vectorLayer.removeAllFeatures();
+                this.clearAllDeactivate();
+                this.drawPolygon.activate();
+            },
+            //画线
+            activatePath: function () {
+                this.dataset = 'gcct_ln';
+                this.vectorLayer.removeAllFeatures();
+                this.clearAllDeactivate();
+                this.drawLine.activate();
+            },
+            //画点
+            activatePoint: function () {
+                this.dataset = 'gcct_pt';
+                this.vectorLayer.removeAllFeatures();
+                this.clearAllDeactivate();
+                this.drawPoint.activate();
+            },
+            //取消激活状态
+            clearAllDeactivate: function () {
+                this.modifyFeature.deactivate();
+                this.drawPoint.deactivate();
+                this.drawPolygon.deactivate();
+                this.drawPoint_Delete.deactivate();
+                this.drawPoint_Edit.deactivate();
+                this.drawLine.deactivate();
+            }
+        }
+    };
+</script>
+<style scoped>
+    #com-gcctmapEdit{
+        display:none;
+    }
+    html {
+        height: 100%;
+    }
+
+    body {
+        height: 100%;
+        margin: 0;
+        overflow: hidden;
+    }
+
+    #tp_gcctmap {
+        width: 100%;
+        height: 100%;
+    }
+
+    #tp_map {
+        width: 100%;
+        height: 100%;
+        border: none !important;
+    }
+
+    #tp_toolbar {
+        position: absolute;
+        top: 79px;
+        left: 31px;
+        height: 50px;
+        width: 100%;
+        z-index: 10000;
+    }
+
+    /*.el-input {
+        width: 130px;
+    }*/
+</style>

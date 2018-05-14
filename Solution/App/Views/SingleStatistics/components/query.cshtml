@@ -1,0 +1,183 @@
+﻿<script type="text/x-template"  id="query">
+    <div class="query">
+        <el-form v-bind:inline="true" class="center" size="small">
+            <el-form-item>
+                <el-radio-group v-model="choose">
+                    <el-radio-button label="1" checked="checked;">逐日</el-radio-button>
+                    <el-radio-button label="2">逐月</el-radio-button>
+                    <el-radio-button label="3">逐年</el-radio-button>
+                </el-radio-group>
+            </el-form-item>
+        </el-form>
+
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="所属镇:">
+                <com-select v-on:change="getXzqh" v-bind:options="xzqhSelectOptions"></com-select>
+            </el-form-item>
+            <el-form-item label="站点名称:">
+                <com-select v-on:change="getSiteName" v-bind:options="siteSelectOptions"></com-select>
+            </el-form-item>
+
+            <el-form-item label="日期：" v-if="choose ==='1'">
+                <el-button icon="el-icon-arrow-left" v-on:click="getLastMonth">上一月</el-button>
+                <el-date-picker v-model="monthValue" style="width:120px;"
+                                type="month"
+                                value-format="yyyy-MM"
+                                placeholder="选择月份">
+                </el-date-picker>
+                <el-button v-on:click="getNextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+            </el-form-item>
+            <el-form-item label="日期：" v-else-if="choose ==='2'">
+                <el-button icon="el-icon-arrow-left" v-on:click="getLastYear">上一年</el-button>
+                <el-date-picker v-model="yearValue" style="width:120px;"
+                                type="year"
+                                value-format="yyyy"
+                                placeholder=" 选择年份">
+                </el-date-picker>
+                <el-button v-on:click="getNextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+            </el-form-item>
+            <el-form-item label="日期：" v-else-if="choose ==='3'">
+                <el-date-picker v-model="startYearValue" style="width:120px;"
+                                type="year"
+                                value-format="yyyy"
+                                placeholder=" 选择年份">
+                </el-date-picker>---
+                <el-date-picker v-model="endYearValue" style="width:120px;"
+                                type="year"
+                                value-format="yyyy"
+                                placeholder=" 选择年份">
+                </el-date-picker>
+            </el-form-item>
+
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+                <el-button type="primary" icon="el-icon-upload2" v-on:click="getData">导出</el-button>
+            </el-form-item>
+        </el-form>
+    </div> 
+</script>
+
+@Html.Partial("~/Views/components/forms/com_select.cshtml")
+
+<script>
+    var query = {
+        template: '#query',
+        data: function () {
+            return {
+                param: {
+                    xzqh: '',
+                    site: '',
+                    monthValue: '',
+                    yearValue: '',
+                    startYearValue: '',
+                    endYearValue: '',
+                },
+                xzqhSelectOptions: [],
+                siteSelectOptions: [],
+                xzqhVal:'',
+                siteVal:'',
+                monthValue: moment().format("YYYY-MM"),
+                yearValue: moment().format("YYYY"),
+                startYearValue: moment().add(-8,"y").format("YYYY"),
+                endYearValue: moment().format("YYYY"),
+                choose: "1",
+            }
+        },
+        components: {
+            "com-select": comSelect
+        },
+        mounted: function () {
+            this.init();
+        },
+        watch:{
+            choose: function (val, oldval) {
+                this.emitEvent();
+            }
+        },
+        methods: {
+            init: function () {
+                this.xzqhSelectOptions = [{
+                    value: '1',
+                    label: '奉贤区'
+                }, {
+                    value: '2',
+                    label: '宝山区'
+                }, {
+                    value: '3',
+                    label: '金山区'
+                }, {
+                    value: '4',
+                    label: '浦东新区'
+                }],
+
+                this.siteSelectOptions = [{
+                    value: '1',
+                    label: '金汇港北闸'
+                }, {
+                    value: '2',
+                    label: '南桥'
+                }, {
+                    value: '3',
+                    label: '南桥新城'
+                }];
+            },
+            getLastMonth: function () { //点击 上一月
+                this.monthValue = moment(this.monthValue, "YYYY-MM").subtract(1, "M").format("YYYY-MM");
+            },
+            getNextMonth: function () { //点击 下一月
+                this.monthValue = moment(this.monthValue, "YYYY-MM").add(1, "M").format("YYYY-MM");
+            },
+            getLastYear: function () { //点击 上一年
+                this.yearValue = moment(this.yearValue, "YYYY").subtract(1, "y").format("YYYY");
+            },
+            getNextYear: function () { //点击 下一年
+                this.yearValue = moment(this.yearValue, "YYYY").add(1, "y").format("YYYY");
+            },
+            getData: function () {
+                var _this = this;
+                axios.post("/SingleStatistics/GetData").then(function (response) {
+                    _this.$message("返回结果为：" + response.data.result);
+
+                }).catch(function (error) {
+                    alert(error);
+                });
+            },
+            emitEvent: function () {
+                this.param.site = this.siteVal;
+                this.param.xzqh = this.xzqhVal;
+                this.param.month = this.monthValue;
+                this.param.year = this.yearValue;
+                this.param.sYear = this.startYearValue;
+                this.param.eYear = this.endYearValue;
+                this.$emit('emit-event', this.param);
+            },
+            getXzqh: function (param) {
+                this.siteVal = param;
+            },
+            getSiteName: function (param) {
+                this.xzqhVal = param;
+            },
+        }
+    };
+</script>
+
+<style>
+    .query {
+        border-bottom: 1px solid #dcdcdc;
+        padding: 10px 20px 0px 20px;
+        font-size: 14px;
+    }
+
+    #app .query .el-form {
+        /*height: 35px;*/
+    }
+
+    .center {
+        text-align: center;
+    }
+    
+     #app .query .el-form .el-form-item {
+        margin-bottom: 10px;
+    }
+
+    </style >

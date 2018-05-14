@@ -1,0 +1,185 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "其他水利工程";
+}
+
+<div id="otherirrigation">
+    <com-query v-on:emit-event="getEmitEvent" ref="comquery"></com-query>
+    <div>
+        <el-table v-bind:data="tableData"
+                  border
+                  stripe
+                  v-bind:height="tableheight">
+            <el-table-column type="index"
+                             label="序号"
+                             header-align="center"
+                             align="center"
+                             width="60">
+            </el-table-column>
+            <el-table-column prop="year" 
+                             label="年度"
+                             header-align="center"
+                             align="center"
+                             width="100">
+            </el-table-column>
+            <el-table-column header-align="center"
+                             align="left"
+                             label="工程名称"
+                             width="320">
+                <template slot-scope="scope">
+                    <el-button type="text" v-on:click="location">{{scope.row.name}}</el-button>
+                </template>
+            </el-table-column>
+            <el-table-column prop="number"
+                             header-align="center"
+                             align="center"
+                             width:100
+                             label="项目编号">
+            </el-table-column>
+            <el-table-column prop="state"
+                             width="100"
+                             header-align="center"
+                             align="center"
+                             label="工程状态">
+            </el-table-column>
+            <el-table-column prop="address"
+                             header-align="center"
+                             align="center"
+                             label="所属镇"
+                             width="100">
+            </el-table-column>
+            <el-table-column prop="company"
+                             header-align="center"
+                             label="设计单位"
+                             width:220>
+            </el-table-column>
+            <el-table-column prop="man"
+                             header-align="center"
+                             align="center"
+                             label="项目法人" 
+                             width="100">
+            </el-table-column>
+            <el-table-column label="操作"
+                             header-align="center"
+                             align="center"
+                             width="300">
+                <template slot-scope="scope">
+                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" type="info">文件管理</el-button>
+                    <el-button size="mini" type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
+</div>
+
+@Html.Partial("~/Views/HydraulicEngineer/components/com_query.cshtml")
+<script>
+    new Vue({
+        el: "#otherirrigation",
+        data: {
+            tableData: [],
+            tableheight: 0
+        },
+        components: {
+            "com-query": comquery
+        },
+        mounted: function () {
+            this.resize();
+            this.setSize();
+            this.setTableData('/BackboneRiverway/GetData', null);
+        },
+        methods: {
+            getEmitEvent: function (param) {
+                //console.log(param)
+            },
+            setTableData: function (url, param) {
+                axios.post(url)
+                  .then(function (response) {
+                      //模拟数据
+                      this.tableData = [{
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }, {
+                          year: '2018',
+                          name: '金汇港河道整治三期',
+                          number: '110000221',
+                          state: '完工验收',
+                          address: '拓林镇',
+                          company: '北京超图软件有限公司',
+                          man: '田俊'
+                      }];
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            location:function(){
+                //跳转详细信息页面
+
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight;
+                var queryH = this.$refs.comquery.$el.clientHeight;
+                var contentH = docH - queryH - 64;
+                this.tableheight = contentH - 40;
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            }
+        }
+    });
+</script>
+
+<style scoped>
+    
+</style>
+

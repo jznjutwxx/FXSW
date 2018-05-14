@@ -1,0 +1,64 @@
+﻿
+    <script type="text/x-template" id="com-base-table">
+        <el-table v-bind:data="tableData"
+                  size="small"
+                  border
+                  stripe
+                  v-bind:height="maxHeight"
+                  class="tables">
+            <el-table-column v-for="(item,key) in tableKey"
+                             v-bind:key="key"
+                             v-bind:type="item.type?item.type:''"
+                             v-bind:width="item.width?item.width:''"
+                             v-bind:prop="item.value"
+                             v-bind:label="item.name">
+            </el-table-column>
+        </el-table>
+        </script>
+
+
+
+<script>
+    var comBaseTable = {
+        template: '#com-base-table',
+        props: {
+            height: 0,
+            tabledatas: {
+                type: Object,
+                default: function () {
+                    return {
+                        tableData: [],
+                        tableKey:[]
+                    }
+                }
+            }
+        },
+        watch: {
+            tabledatas: function (val, oldVal) {
+                this.setData(val)
+            },
+            height: function (val, oldVal) {
+                this.maxHeight = val
+            }
+        },
+        data: function () {
+            return {
+                maxHeight:0,
+                tableData: [],
+                tableKey:[]
+            }
+        },
+        mounted: function () {
+            
+        },
+        methods: {
+            setData: function (data) {
+                this.tableData = data.tableData
+                this.tableKey = data.tableKey
+            }
+        }
+    };
+</script>
+
+<style scoped>
+</style>

@@ -1,0 +1,528 @@
+﻿<script type="text/x-template"  id="com-szyleft">
+    <div id="leftContent" v-bind:style="{height:leftheight+'px'}">
+        <div class="topdiv">
+            <div class="title" style="text-align:center;">月用水量(1月)</div>
+            <el-row class="row">
+                <el-col v-bind:span="12" class="col">
+                    <div class="text-gra">645252m³</div>
+                </el-col>
+                <el-col v-bind:span="12" class="col">
+                    <span class="divcss">环比增长：</span>
+                    <span class="divcss" style="font-family:Arial;">12.5%</span>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="8" class="col">
+                    <span class="divcss">自来水</span>
+                </el-col>
+                <el-col v-bind:span="8" class="col">
+                    <span class="divcss">地表水</span>
+                </el-col>
+                <el-col v-bind:span="8" class="col">
+                    <span class="divcss">农业用水</span>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="8" class="col">
+                    <span class="text-gra" style="font-size:16px;">125252m³</span>
+                </el-col>
+                <el-col v-bind:span="8" class="col">
+                    <span class="text-gra" style="font-size:16px;">64252m³</span>
+                </el-col>
+                <el-col v-bind:span="8" class="col">
+                    <span class="text-gra" style="font-size:16px;">435252m³</span>
+                </el-col>
+            </el-row>
+        </div>
+
+        <div class="center">
+            <div style="height:55%;">
+                <div class="title" style="width:70px;">用水统计</div>
+                <com-line v-bind:option="lineOption" class="chartcss" style="height:99%;"></com-line>
+            </div>
+            <div style="width:100%;height:53%;">
+                <div class="divcss ysqk">累计用水情况</div>
+                <div class="piediv">
+                    <com-pie v-bind:option="GYpieOption" class="charts"></com-pie>@*class="chartcss"*@
+                    <com-pie v-bind:option="SHpieOption" class="charts"></com-pie>
+                    <com-pie v-bind:option="NYpieOption" class="charts"></com-pie>
+                </div>
+                <div class="divcss textdiv">
+                    <span class="textcss">工业用水</span>
+                    <span class="textcss">生活用水</span>
+                    <span class="textcss">农业用水</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="bardiv">
+            <div class="title" style="width:100px;">用水性质分布</div>
+            <com-bar v-bind:option="barOption" class="barcss"></com-bar>
+        </div>
+    </div>
+</script>
+@Html.Partial("~/Views/components/echarts/com_line.cshtml")
+@Html.Partial("~/Views/components/echarts/com_pie.cshtml")
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+
+<script>
+    var comSzyLeft = {
+        template: '#com-szyleft',
+        data: function() {
+            return {
+                leftheight: document.documentElement.clientHeight - 32,
+                param: {
+
+                },
+                lineOption:null,
+                GYpieOption: null,
+                SHpieOption: null,
+                NYpieOption: null,
+                barOption: null,
+                barOption: null
+            }
+        },
+        components: {
+            "com-line": comLine,
+            "com-pie": comPie,
+            "com-bar": comBar
+        },
+        watch: {
+            leftheight: function (val) {
+                this.leftheight = val;
+            },
+        },
+        mounted: function () {
+            const that = this;
+            $(window).resize(function () {
+                that.leftheight = document.body.clientHeight - 32;
+            });
+            that.init();
+        },
+        methods: {
+            init: function () {
+                this.setData('/WaterRes/GetData', null);
+            },
+            setData: function (url, param) {
+                this.setLineData(url, param);
+                this.setGYPieData(url, param);
+                this.setSHPieData(url, param);
+                this.setNYpieData(url, param);
+                this.setBarData(url, param);
+            },
+            setLineData: function (url, param) {
+                this.$children[3].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[3].charts.hideLoading();
+                    this.lineOption = {
+                        color: ['#ebcf12', '#0dd9dc'],
+                        legend: {
+                            selectedMode: false,
+                            data: ['计划用水量', '实际用水量'],
+                            textStyle: {
+                                color: '#ffffff'
+                            }
+                        },
+                        grid: {
+                            top: '2%',
+                            left: '4%',
+                            right: '4%',
+                            bottom: '5%',
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['二月', '四月', '六月', '八月', '十月', '十二月'],
+                            axisLabel: {
+                                interval: 0,//横轴信息全部显示  
+                                rotate: 30,//-30度角倾斜显示  
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#ffffff',
+                                }
+                            },
+                            axisTick: {
+                                show: false
+                            }
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '亿（m³）',
+                            nameTextStyle: {
+                                padding: [0, 0, 0, 30]
+                            },
+                            axisLine: {
+                                show: false,
+                                lineStyle: {
+                                    color: '#ffffff',
+                                }
+                            },
+                        },
+                        series: [
+                            {
+                                name: '计划用水量',
+                                type: 'line',
+                                smooth: true,
+                                symbol: 'rect',
+                                data: [1.1, 3.8, 1.7, 2.6, 3.5, 3.2, 4.2, 1.5, 2],
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top'
+                                    }
+                                }
+                            },
+                            {
+                                name: '实际用水量',
+                                type: 'line',
+                                smooth: true,
+                                symbol: 'rect',
+                                data: [1, 3.4, 2, 4.2, 3, 2, 0, 2, 2.1],
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top'
+                                    }
+                                }
+                            }
+                        ]
+                    };
+                   
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setGYPieData: function (url, param) {
+                this.$children[4].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[4].charts.hideLoading();
+                    this.GYpieOption = {
+                        color: ['#1486FD', '#849BE2'],
+                        
+                        title: {
+                            subtext: '54%',
+                            subtextStyle: {
+                                fontSize: 14,
+                                color: '#ffffff',
+                                fontWeight: 'normal'
+                            },
+                            left: '25%',
+                            top: '17%'
+                        },
+                        series: [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius: ['45%', '65%'],
+                                center: ['45%', '40%'],
+                                label: {
+                                    normal: {
+                                        show: false,
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data: [
+                                    { value: 54, name: '工业用水' },
+                                    { value: 46, name: '' }
+                                ]
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setSHPieData: function (url, param) {
+                 
+                this.$children[5].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[5].charts.hideLoading();
+                    this.SHpieOption = {
+                        color: ['#BD64E5', '#849BE2'],
+                        title: {
+                            subtext: '26%',
+                            subtextStyle: {
+                                fontSize: 14,
+                                color: '#ffffff',
+                                fontWeight: 'normal'
+                            },
+                            left: '25%',
+                            top: '17%'
+                        },
+                        series: [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius: ['45%', '65%'],
+                                center: ['45%', '40%'],
+                                label: {
+                                    normal: {
+                                        show: false,
+                                        position: 'inner',
+                                        formatter: "{d}%"
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data: [
+                                    { value: 26, name: '生活用水' },
+                                    { value: 74, name: '' }
+                                ]
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setNYpieData: function (url, param) {
+                 
+                this.$children[6].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[6].charts.hideLoading();
+                    this.NYpieOption = {
+                        color: ['#04C9A8', '#849BE2'],
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{d}%"
+                        },
+                        title: {
+                            subtext: '24%',
+                            subtextStyle: {
+                                fontSize: 14,
+                                color: '#ffffff',
+                                fontWeight: 'normal'
+                            },
+                            left: '25%',
+                            top: '17%'
+                        },
+                        series: [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius: ['45%', '65%'],
+                                center: ['45%', '40%'],
+                                label: {
+                                    normal: {
+                                        show: false,
+                                        position: 'inner',
+                                        formatter: "{d}%"
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data: [
+                                    { value: 24, name: '农业用水' },
+                                    { value: 76, name: '' }
+                                ]
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setBarData: function (url, param) {
+                this.$children[7].charts.showLoading();
+                axios.post(url).then(function (response) {
+                    this.$children[7].charts.hideLoading();
+                    this.barOption = {
+                        color: '#5788ec',
+                        xAxis: {
+                            type: 'category',
+                            data: ['民用', '重工业', '企业单位', '医用', '消防', '餐饮'],
+                            axisLabel: {
+                                color:'#ffffff',
+                                interval: 0,//横轴信息全部显示  
+                                rotate: 30,//-30度角倾斜显示  
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            splitLine: { show: false },//去除网格线
+                        },
+                        yAxis: {
+                            type: 'value',
+                            name: '亿（m³）',
+
+                            nameTextStyle: {
+                                color: '#ffffff',
+                                padding: 10
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                textStyle: {
+                                    color: '#ffffff'
+                                }
+                            },
+                            splitLine: {
+                                show: true,//保留网格线
+                                lineStyle: {
+                                    color: '#3d4997'
+                                }
+                            },
+                        },
+                        series: [
+                            {
+                                type: 'bar',
+                                barWidth: '60%',
+                                data: [1.3, 2.2, 2.0, 1.7, 1.5, 3.2],
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top',
+                                        formatter: '{c} ',
+                                        color: '#ffffff'
+                                    }
+                                }
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize();
+                }.bind(this));
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight;
+                var contentH = docH - 50;
+                this.styles.height = (contentH / 2) + 'px';
+                this.height = contentH / 3;
+            }
+        }
+    }
+</script>
+
+<style scoped>
+    #leftContent {
+         width: 100%;
+        overflow: hidden;
+        min-width: 350px;
+        min-height: 700px;
+    }
+    .topdiv {
+        height: 17%;
+        width: 99%;
+        border: 1px solid #0146b2;
+    }
+    .title {
+        position: absolute;
+        top: -10px;
+        left: 35px;
+        z-index: 1400;
+        background-color: #051266;
+        width: 120px;
+        height: 30px;
+        color: #22eff8;
+        font-size:16px;
+        font-family: "microsoft yahei";
+    }
+    .topleft {
+        height:90%;
+    }
+    .row {
+        padding-top:30px;
+    }
+    .col {
+        height: 30px;
+        padding-left: 20px;
+        line-height: 30px;
+        text-align: center;
+    }
+    .text-gra {
+        float: left;
+        font-size: 28px;
+        font-weight:bold;
+        font-family: Arial;
+        color: #ffffff;
+        line-height: 30px;
+        padding-left: 20px !important;
+        background: linear-gradient(#ffffff, #05d2ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    .divcss {
+        color: #ffffff;
+        font-size: 14px;
+        font-family: 'microsoft yahei';
+    }
+    .ysqk {
+        width: 5%;
+        float: left;
+        padding-left: 16px;
+    }
+    .center {
+        height: 40%;
+        width: 99%;
+        margin-top: 16px;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+    .piediv {
+        width: 90%;
+        height: 50%;
+        float: left;
+    }
+
+    .charts {
+        width: 32% !important;
+        height: 90%;
+        float: left;
+    }
+     .chartcss {
+        height: 50%;
+        width: 100% !important;
+        float: left;
+    }
+    .textdiv {
+        height: 20%;
+        width: 90%;
+        float: left;
+    }
+    .textcss {
+        text-align: center;
+        height: 50%;
+        width: 30%;
+        float: left;
+    }
+    .bardiv {
+        height: 38%;
+        width: 99%;
+        margin-top: 16px;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+    .barcss {
+        height: 97%;
+        width: 95% !important;
+        padding-top: 5px !important;
+    }
+</style>

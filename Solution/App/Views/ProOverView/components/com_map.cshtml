@@ -1,0 +1,702 @@
+﻿
+<script id="com_map" type="text/x-template">
+    <div class="htmlContent" v-bind:style="{height:contentheight+'px'}">
+        <div class="hideLeft" ref="hideLe" title="隐藏" v-on:click="hideLeft">
+            <img src="/Images/gczl/btn_left.png" alt="隐藏" />
+        </div>
+        <div class="showLeft" ref="" title="显示" v-on:click="showLeft">
+            <img src="/Images/gczl/btn_right.png" alt="显示" />
+        </div>
+        <div class="proFilter font-yahei">
+            <div class="filter_title">
+                <b>工程总览筛选（共<span class="filter_title_val font-ariel">{{ filterTitleVal }}</span>条数据）</b>
+            </div>
+            @* 街镇的选择块 *@
+            <div class="filter_town font-size-14">
+                <!--indeterminate 属性用以表示 checkbox 的不确定状态，一般用于实现全选的效果-->
+                <el-row class="filter_town_title">
+                    <el-col v-bind:span="8">
+                        <img src="/Images/gczl/ico_jiezhen.png" />&nbsp;&nbsp;街镇
+                    </el-col>
+                    <el-col v-bind:span="7" :offset="9">
+                        <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true">
+                            全选
+                        </el-checkbox>
+                    </el-col>
+                </el-row>
+                <el-checkbox-group v-model="checkTwons" v-on:change="handleCheckTwonsChange">
+                    <el-row class="town_row">
+                        <el-col :span="11" class="town_col_style"><el-checkbox label="庄行镇"></el-checkbox></el-col>
+                        <el-col :span="9" class="town_col_style"><el-checkbox label="柘林镇"></el-checkbox></el-col>
+                    </el-row>
+                    <el-row class="town_row">
+                        <el-col :span="11" class="town_col_style"><el-checkbox label="南桥镇"></el-checkbox></el-col>
+                        <el-col :span="9" class="town_col_style"><el-checkbox label="青村镇"></el-checkbox></el-col>
+                    </el-row>
+                    <el-row class="town_row">
+                        <el-col :span="11" class="town_col_style"><el-checkbox label="金汇镇"></el-checkbox></el-col>
+                        <el-col :span="9" class="town_col_style"><el-checkbox label="奉城镇"></el-checkbox></el-col>
+                    </el-row>
+                    <el-row class="town_row">
+                        <el-col :span="11" class="town_col_style"><el-checkbox label="四团镇"></el-checkbox></el-col>
+                        <el-col :span="9" class="town_col_style"><el-checkbox label="海湾镇"></el-checkbox></el-col>
+                    </el-row>
+                </el-checkbox-group>
+            </div>
+            @* 工程的选择块 *@
+            <div class="filter_town font-size-14">
+                <!--indeterminate 属性用以表示 checkbox 的不确定状态，一般用于实现全选的效果-->
+                <el-row class="filter_town_title">
+                    <el-col v-bind:span="12">
+                        <img src="/Images/gczl/ico_gongchngfl.png" />&nbsp;&nbsp;工程分类
+                    </el-col>
+                    <el-col v-bind:span="7" :offset="5">
+                        <el-checkbox v-bind:indeterminate="isProIndeterminate" v-model="checkProAll" v-on:change="handleCheckProAllChange" v-bind:checked="false">
+                            全选
+                        </el-checkbox>
+                    </el-col>
+                </el-row>
+                <el-checkbox-group v-model="checkPros" v-on:change="handleCheckProChange">
+                    <el-row class="town_row">
+                        <el-col :span="12" class="town_col_style"><el-checkbox label="1">骨干河道</el-checkbox></el-col>
+                        <el-col :span="12" class="town_col_style"><el-checkbox label="2">中小河道</el-checkbox></el-col>
+                    </el-row>
+                    <el-row class="town_row">
+                        <el-col :span="12" class="town_col_style"><el-checkbox label="3">小型农田水利</el-checkbox></el-col>
+                        <el-col :span="12" class="town_col_style"><el-checkbox label="4">农村生活污水</el-checkbox></el-col>
+                    </el-row>
+                    <el-row class="town_row">
+                        <el-col :span="12" class="town_col_style"><el-checkbox label="5">其他水利工程</el-checkbox></el-col>
+                    </el-row>
+                </el-checkbox-group>
+            </div>
+            <div class="filter_town font-size-14">
+                <el-row class="filter_town_title">
+                    <el-col v-bind:span="12">
+                        <img src="/Images/gczl/ico_niandu.png" />&nbsp;&nbsp;年度
+                    </el-col>
+                </el-row>
+                <el-row class="town_row">
+                    <el-col :span="8">
+                        <el-date-picker v-model="dateBeginParam"
+                                        type="year"
+                                        size="mini"
+                                        :editable="false"
+                                        :clearable="false"
+                                        format="yyyy年"
+                                        value-format="yyyy"
+                                        placeholder="选择年"
+                                        style="width:80px;">
+                        </el-date-picker>
+                    </el-col>
+                    <el-col :span="3" style="text-align:center;padding-top:4px;">
+                        <span>至</span>
+                    </el-col>
+                    <el-col :span="8">
+                        <el-date-picker v-model="dateEndParam"
+                                        type="year"
+                                        size="mini"
+                                        :editable="false"
+                                        :clearable="false"
+                                        format="yyyy年"
+                                        value-format="yyyy"
+                                        placeholder="选择年"
+                                        style="width:80px;">
+                        </el-date-picker>
+                    </el-col>
+                    <el-col :span="5" style="text-align:center;">
+                        <el-button type="primary" 
+                                   icon="el-icon-check" 
+                                   size="mini"
+                                   v-on:click="dateChange"
+                                   style="padding:7px 10px;"
+                                   circle>
+                        </el-button>
+                    </el-col>
+                </el-row>
+            </div>
+        </div>
+        @* 地图上的四个图标按钮 *@
+        <div class="map_Btn refresh_map" title="初始地图范围" v-on:click="refreshMap"></div>
+        <div class="map_Btn tuli_btn" icon="el-icon-menu" v-on:click="onMouseOver"></div>
+        <div class="map_Btn big_map" icon="el-icon-plus" v-on:click="mapZoomBig"></div>
+        <div class="map_Btn small_map" icon="el-icon-minus" v-on:click="mapZoomSmall"></div>
+        <div class="tuli_img">
+            <img src="/Images/gczl/img_tuli.png"/>
+        </div>
+        <div id="showMap" style="height:100%;border:0;">
+
+        </div>
+        <div class="hideDown" ref="hideDw" title="隐藏" v-on:click="hideDown">
+            <img src="/Images/gczl/btn_down.png" alt="隐藏" />
+        </div>
+        <div class="showUp" ref="showUp" title="显示" v-on:click="showUp">
+            <img src="/Images/gczl/btn_up.png" alt="显示" />
+        </div>
+        <div class="proTable">
+            <el-tabs v-model="editableTabsValue2" type="card" v-on:tab-click="clickTabsPane">
+                <el-tab-pane v-for="(item, index) in editableTabs2"
+                             :key="item.name"
+                             :label="item.title"
+                             :name="item.name"
+                             :value="item.content"
+                             >
+                    <el-table v-bind:data="tableData"
+                              stripe
+                              border
+                              size="small"
+                              height="202"
+                              v-bind:key="index"
+                              style="width: 100%">
+                        <el-table-column type="index"
+                                         label="序号"
+                                         align="right"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_name"
+                                         label="工程名称"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_project_no"
+                                         label="项目编号"
+                                         align="right"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="n_pace_status"
+                                         label="工程状态"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_town"
+                                         label="所属镇"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="n_total_invest"
+                                         label="投资总金额(万元)"
+                                         align="right"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_legal_person"
+                                         label="项目法人"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                        <el-table-column prop="s_unit_design"
+                                         label="设计单位"
+                                         align="left"
+                                         header-align="center">
+                        </el-table-column>
+                    </el-table>
+                    @* 分页 *@
+                    <el-form v-bind:inline="true" label-position="left" size="mini">
+                        <div style="text-align:left;">
+                            <el-form-item>
+                                <el-pagination @@size-change="sizeChange" 
+                                               @@current-change="currentChange" 
+                                               layout="total, prev, pager, next, jumper" 
+                                               v-bind:current-page.sync="currentPage" 
+                                               v-bind:page-size="pagesize" 
+                                               v-bind:total="total">
+                                </el-pagination>
+                            </el-form-item>
+                        </div>
+                    </el-form>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </div>
+</script>
+<script>
+    var comMap = {
+        template: "#com_map",
+        components: {
+
+        },
+        data: function () {
+            return {
+                contentheight: document.documentElement.clientHeight,
+                checkAll: false,
+                //选中的街镇
+                checkTwons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                isIndeterminate: false,
+                twons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                checkProAll: false,
+                checkPros: ['1'],//选中工程分类
+                isProIndeterminate: false,
+                pros: ['1','2','3','4','5'],
+                map: null,
+                centerDialogVisible: false,
+                layers: null,
+                markerLayer: null,   //工程点叠加的图层
+                fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                filterTitleVal: '28',//筛选后的总的工程数量
+                GGCount: 5,//骨干河道筛选后数量
+                ZXXCount: 6,//中小型河道筛选后数量
+                XXNTCount: 8,//小型农田水利筛选后数量
+                NCSHCount: 4,//农村生活污水筛选后数量
+                QTSLCount: 5,//其他水利工程筛选后数量
+                //年度时间选项
+                dateBeginParam: moment().format("YYYY"),
+                dateEndParam: moment().format("YYYY"),
+                //下面几项是动态生成tabs和表格的信息
+                editableTabsValue2: '1',
+                editableTabs2: [],
+                //table中展示的数据
+                tableData: [],
+                //分页所用参数
+                total: 0, //默认数据总数
+                pagesize: 4,//每页的数据条数
+                currentPage: 1,//默认开始页面
+                stype: '1',//点击的Tabs标签
+                mapDbData: [],
+                mapSpaceData:[],
+            }
+        },
+        mounted: function () {
+            this.getDataEvent();//请求数据
+            this.initMap();
+            const that = this;
+            $(window).resize(function () {
+                that.contentheight = document.body.clientHeight;
+            });
+        },
+        watch: {
+            contentheight: function (val) {
+                this.contentheight = val;
+            },
+        },
+        methods: {
+            initMap: function() {
+                this.map = new SuperMap.Map("showMap", {
+                    controls: [
+                        //new SuperMap.Control.ScaleLine(),
+                        //new SuperMap.Control.MousePosition(),
+                        //new SuperMap.Control.Zoom(),
+                        new SuperMap.Control.Navigation({
+                            dragPanOptions: {
+                                enableKinetic: true
+                            }
+                        })],
+                    allOverlays: true
+                });
+                var baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
+                //标注点图层
+                this.markerLayer = new SuperMap.Layer.Markers("标注");
+
+                this.layers = [baselayer];
+                baselayer.events.on({ "layerInitialized": this.addLayers });
+            },
+            //加载图层信息
+            addLayers: function () {
+                this.map.addLayers(this.layers);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+                //this.addMarkerPoints();//加载marker标注点
+            },
+            dateChange: function (val) {
+                //var that = this.dateBeginParam;
+                console.log(this.dateBeginParam + "---" + this.dateEndParam);
+                //后台获取数据
+                this.getDataEvent();
+            },
+            addTab:function (name,val,px) {
+                this.editableTabs2.push({
+                    title: name+'（'+val+'）',
+                    name: px+'',
+                    value: name,
+                    content: val
+                });
+                this.editableTabsValue2 = px + '';
+                this.stype = px;
+            },
+            getDataEvent: function () {
+                this.getTableData('/ProOverView/GetData', {
+                    page: this.currentPage, pagesize: this.pagesize,
+                    sYear: this.dateBeginParam, eYear: this.dateEndParam,
+                    status: this.checkPros.join(','), towns: this.checkTwons.join(","),
+                    stype: this.stype
+                });
+            },
+            getTableData: function (url, param) {
+                axios.post(url, param).then(function (response) {
+                     var li = JSON.parse(response.data);
+                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
+                     this.tableData = datas;
+                     this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
+                     this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
+                     this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
+                     this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
+                     this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
+                     this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
+                     this.initTab();
+                     this.getMapDBData();
+                 }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getMapDBData:function() {
+                axios.post('/ProOverView/GetMapData', {
+                    sYear: this.dateBeginParam, eYear: this.dateEndParam,
+                    status: this.checkPros.join(','), towns: this.checkTwons.join(",")
+                }).then(function (response) {
+                    var li = JSON.parse(response.data);
+                    var datas = li.EnginPandectGetResponse.engin_pandect_list;
+                    this.mapDbData = datas;
+                    console.log(datas);
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            initTab: function() {
+                var that = this;
+                that.editableTabs2 = [];
+                var name = "";
+                for (var i = 0; i < that.checkPros.length; i++) {
+                    let val;
+                    switch (that.checkPros[i]) {
+                        case '1':
+                            val = this.GGCount;
+                            this.total = this.GGCount;
+                            name = "骨干河道";
+                            break;
+                        case '2':
+                            val = this.ZXXCount;
+                            this.total = this.ZXXCount;
+                            name = "中小河道";
+                            break;
+                        case '3':
+                            val = this.XXNTCount;
+                            this.total = this.XXNTCount;
+                            name = "小型农田水利";
+                            break;
+                        case '4':
+                            val = this.NCSHCount;
+                            this.total = this.NCSHCount;
+                            name = "农村生活污水";
+                            break;
+                        case '5':
+                            val = this.QTSLCount;
+                            this.total = this.QTSLCount;
+                            name = "其他水利工程";
+                            break;
+                    }
+                    this.addTab(name, val, that.checkPros[i]);
+                };
+                this.refreshTableData();
+            },
+            clickTabsPane: function (obj) {
+                this.currentPage = 1;
+                this.stype = obj.name + '';
+                this.total = obj.$attrs.value;
+                let ct = this.checkTwons.join(",");
+                axios.post('/ProOverView/GetData', {
+                    page: this.currentPage, pagesize: this.pagesize,
+                    sYear: this.dateBeginParam, eYear: this.dateEndParam,
+                    status: this.checkPros.join(','), towns: ct, stype: this.stype
+                }).then(function (response) {
+                    var li = JSON.parse(response.data);
+                    var datas = li.EnginPandectGetResponse.engin_pandect_list;
+                    this.tableData = datas;
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            refreshTableData: function() {
+                axios.post('/ProOverView/GetData', {
+                    page: this.currentPage, pagesize: this.pagesize,
+                    sYear: this.dateBeginParam, eYear: this.dateEndParam,
+                    status: this.checkPros.join(','), towns: this.checkTwons.join(","),
+                    stype: this.stype
+                }).then(function (response) {
+                    var li = JSON.parse(response.data);
+                    var datas = li.EnginPandectGetResponse.engin_pandect_list;
+                    this.tableData = datas;
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            hideLeft: function () {
+                $(".hideLeft").hide();
+                $(".proFilter").animate({ width: "hide" }, "normal", function () {
+                    $(".showLeft").show();
+                })
+            },
+            showLeft: function () {
+                $(".showLeft").hide();
+                $(".proFilter").animate({ width: "show" }, "normal", function () {
+                    $(".hideLeft").show();
+                })
+            },
+            hideDown: function () {
+                $(".hideDown").hide();
+                $(".proTable").animate({ height: "hide" }, "normal", function () {
+                    $(".showUp").show();
+                })
+            },
+            showUp: function () {
+                $(".showUp").hide();
+                $(".proTable").animate({ height: "show" }, "normal", function () {
+                    $(".hideDown").show();
+                })
+            },
+            currentChange: function (currentPage) {
+                this.currentPage = currentPage;
+                this.refreshTableData();
+            },
+            sizeChange: function (pagesize) {
+                this.currentPage = pagesize;
+                this.refreshTableData();
+            },
+            //街镇全选框的事件
+            handleCheckAllChange: function (val) {
+                this.checkTwons = val ? this.twons : [];//
+                this.isIndeterminate = false; //当全选或者全不选时，不确定性为false
+                if (val) {
+                    this.getDataEvent();
+                } else {
+                    this.filterTitleVal = '0';
+                    this.editableTabs2 = [];
+                }
+            },
+            //具体街镇change事件
+            handleCheckTwonsChange: function (value) {
+                var checkedCount = value.length;
+                this.checkAll = (checkedCount === this.twons.length);
+                this.isIndeterminate = (checkedCount > 0 && checkedCount < this.twons.length);
+                //后台取数据
+                if (checkedCount > 0) {
+                    this.getDataEvent();
+                } else {
+                    this.filterTitleVal = '0';
+                    this.editableTabs2 = [];
+                };
+            },
+            //工程分布全选的事件
+            handleCheckProAllChange: function (val) {
+                this.checkPros = val ? this.pros : [];//
+                this.isProIndeterminate = false; //当全选或者全不选时，不确定性为false
+                if (val) {
+                    this.stype = '5';
+                    this.getDataEvent();
+                } else {
+                    this.filterTitleVal = '0';
+                    this.editableTabs2 = [];
+                }
+            },
+            //具体的工程分布的改变（change）事件
+            handleCheckProChange: function (value) {
+                var checkedCount = value.length;
+                this.checkProAll = (checkedCount === this.pros.length);
+                this.isProIndeterminate = (checkedCount > 0 && checkedCount < this.pros.length);
+                if (checkedCount > 0) {
+                    this.stype = value[value.length-1];
+                    this.getDataEvent();
+                } else {
+                    this.filterTitleVal = '0';
+                    this.editableTabs2 = [];
+                };
+            },
+            //图例鼠标悬停事件
+            onMouseOver: function () {
+                $('.tuli_img').toggle();
+            },
+            refreshMap: function () {   //复原地图
+                debugger
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+            },
+            mapZoomBig: function () {
+                this.map.zoomTo(this.map.getZoom() + 1)
+            },
+            mapZoomSmall: function () {
+                this.map.zoomTo(this.map.getZoom() - 1);
+            },
+        }
+    }
+</script>
+<style scoped>
+    #com_map {
+        display: none;
+    }
+    .htmlContent{
+        width: 100%;
+        /*border:1px solid rgb(76, 255, 0);*/
+    }
+    .hideLeft {
+        position: absolute;
+        z-index: 1355;
+        left: 258px;
+        top: 12px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+    }
+    .showLeft {
+        position: absolute;
+        z-index: 1355;
+        left: 0px;
+        top: 12px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+        display: none;
+    }
+    .proFilter{
+        position:absolute;
+        z-index: 1255;
+        top:0px;
+        left:0px;
+        width: 240px;
+        height:320px;
+        /*border:1px solid #0026ff;*/
+    }
+    .hideDown {
+        position: absolute;
+        z-index: 1355;
+        left: 49%;
+        bottom: 270px;
+        width: 32px;
+        text-align: center;
+        height: 22px;
+    }
+    .showUp {
+        position: absolute;
+        z-index: 1355;
+        left: 49%;
+        bottom: 4px;
+        width: 32px;
+        text-align: center;
+        height: 22px;
+        display: none;
+    }
+    .proTable{
+        overflow: auto;
+        z-index:1254;
+        position:absolute;
+        bottom:0px;
+        left:0px;
+        width:100%;
+        height:270px;
+        background-color: #ffffff;
+        /*border:1px solid #0026ff;*/
+    }
+    .filter_title{
+        font-size:14px;
+        padding:8px 0 8px 16px;
+        background-color:#ececec;
+        color:#333333;
+        width:100%;
+        border:1px solid #dcdcdc;
+    }
+    .filter_town{
+        background-color: #ffffff;
+        padding-left:16px;
+        width:100%;
+        border:1px solid #dcdcdc;
+        border-top:0;
+    }
+    .filter_town_title{
+        padding-top:6px;
+        padding-bottom:0px;
+        margin-bottom:10px;
+    }
+    .town_row{
+        margin-bottom:6px;
+    }
+    .town_col_style{
+
+    }
+    /*地图上的四个悬浮的图标按钮*/
+    .map_Btn{
+        position:absolute;
+        right:15px;
+        width:34px;
+        height:34px;
+        cursor:pointer;
+        z-index:1253;
+    }
+    .refresh_map{
+        top:140px;
+        background:url(/Images/zhjc/legend/btn_initMapExtent.png) no-repeat;
+    }
+    .tuli_btn{
+        top:174px;
+        background:url(/Images/zhjc/legend/btn_showLegend.png) no-repeat;
+    }
+    .big_map{
+        top:209px;
+        background:url(/Images/zhjc/legend/btn_zoomToBig.png) no-repeat;
+    }
+    .small_map{
+        top:241px;
+        background:url(/Images/zhjc/legend/btn_ZoomToSamll.png) no-repeat;
+    }
+    /*显示图例信息的div*/
+    .tuli_img{
+        position:absolute;
+        right:120px;
+        top:130px;
+        z-index:1555;
+        width:252px;
+        height:165px;
+        display:none;
+    }
+
+    /*时间选择框的样式重写*/
+    .el-input--suffix .el-input__inner{
+        padding-right:5px;
+    }
+    .el-date-picker {
+        width: 220px;
+    }
+    .el-date-picker .el-picker-panel__content{
+        width:87%;
+    }
+    /*tabs标签页的样式重写*/
+    .el-tabs--card > .el-tabs__header .el-tabs__nav {
+        border: none;
+        padding-left:55px;
+    }
+    .el-tabs--card > .el-tabs__header .el-tabs__item {
+        height: 30px;
+        line-height: 30px;
+    }
+    .el-tabs__nav-wrap.is-scrollable {
+        padding: 0 !important;
+    }
+    .el-tabs__nav-prev {
+        display: none;
+    }
+    .el-tabs__nav-next {
+        display: none;
+    }
+    /**tab栏选中时的样式*/
+    .el-tabs__item.is-active {
+        color: white;
+        background-color: #2288f1;
+        border: none;
+    }
+    .el-tabs__header{
+        margin:0;
+    }
+
+    /*表格中分页的样式重写*/
+    .el-form-item--mini.el-form-item, .el-form-item--small.el-form-item{
+        margin-bottom:0;
+    }
+
+    /*通用的定义class */
+    .font-yahei{
+        font-family:'Microsoft YaHei';
+    }
+    .font-ariel{
+        font-family:Arial;
+    }
+    .font-size-14{
+        font-size:14px;
+    }
+</style>

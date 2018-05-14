@@ -1,0 +1,202 @@
+﻿<script type="text/x-template" id="query">
+    <div class="query">
+
+        <el-form v-bind:inline="true" size="small">
+            <el-row>
+                <el-col class="center">
+                    <el-form-item>
+                        <el-radio-group v-model="type">
+                            <el-radio-button label="1">逐日</el-radio-button>
+                            <el-radio-button label="2">逐月</el-radio-button>
+                            <el-radio-button label="3">逐年</el-radio-button>
+                        </el-radio-group>
+                    </el-form-item>
+                </el-col>
+                <el-col>
+                    <el-form-item label="水位类型：">
+                        <com-select v-on:change="getArea" v-bind:options="waterLevelOptions" style="width:150px;"></com-select>
+                    </el-form-item>
+                    <el-form-item label="站点名称：">
+                        <com-select v-on:change="getSite" v-bind:options="siteOptions" style="width:150px;"></com-select>
+                    </el-form-item>
+                    <el-form-item label="日期：" v-if="type ==='1'">
+                        <el-button icon="el-icon-arrow-left" v-on:click="preMonth">上一月</el-button>
+                        <el-date-picker v-model="dateValue" style="width:120px;"
+                                        type="month"
+                                        value-format="yyyy-MM"
+                                        placeholder="选择月"
+                                        key="key-date">
+                        </el-date-picker>
+                        <el-button v-on:click="nextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                    </el-form-item>
+                    <el-form-item label="日期：" v-else-if="type ==='2'">
+                        <el-button icon="el-icon-arrow-left" v-on:click="preYear">上一年</el-button>
+                        <el-date-picker v-model="monthValue" style="width:120px;"
+                                        type="year"
+                                        value-format="yyyy"
+                                        placeholder="选择年"
+                                        key="key-month">
+                        </el-date-picker>
+                        <el-button v-on:click="nextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                    </el-form-item>
+                    <el-form-item label="日期：" v-else-if="type ==='3'">
+                        <el-date-picker v-model="beginYearValue" style="width:120px;"
+                                        type="year"
+                                        value-format="yyyy"
+                                        placeholder="选择年"
+                                        key="key-byear">
+                        </el-date-picker>
+                        -
+                        <el-date-picker v-model="endYearValue" style="width:120px;"
+                                        type="year"
+                                        value-format="yyyy"
+                                        placeholder="选择年"
+                                        key="key-eyear">
+                        </el-date-picker>
+                    </el-form-item>
+                    <el-form-item class="btn">
+                        <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+                        <el-button type="primary" icon="el-icon-upload2" v-on:click="getData">导出</el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+        </el-form>
+    </div>
+    </script>
+    @Html.Partial("~/Views/components/forms/com_select.cshtml")
+
+    <script>
+        var query = {
+            template: '#query',
+            data: function () {
+                return {
+                    param: {
+                        area: '',
+                        site: '',
+                        date: '',
+                        month: '',
+                        bYear: '',
+                        eYear: ''
+                    },
+                    waterLevelOptions: [],
+                    siteOptions: [],
+                    areaValue: '',
+                    siteValue: '',
+                    dateValue: moment().format('YYYY-MM'),
+                    monthValue: moment().format('YYYY'),
+                    beginYearValue: moment().subtract(8, 'y').format('YYYY'),
+                    endYearValue: moment().format('YYYY'),
+                    type: '1'
+                }
+            },
+            components: {
+                'com-select': comSelect
+            },
+            mounted: function () {
+                this.init()
+            },
+            watch: {
+                type: function (val, oldVal) {
+                    this.emitEvent()
+                }
+            },
+            methods: {
+                init: function () {
+                    this.setSelect()
+                },
+                setSelect: function () {
+                    this.waterLevelOptions = [{
+                        value: '1',
+                        label: '河道水位'
+                    }, {
+                        value: '2',
+                        label: '潮水位'
+                    }]
+
+                    this.siteOptions = [{
+                        value: '1',
+                        label: '金汇港北闸内'
+                    }, {
+                        value: '2',
+                        label: '南桥'
+                    }, {
+                        value: '3',
+                        label: '南桥新城'
+                    }]
+                },
+                preMonth: function () {
+                    this.dateValue = moment(this.dateValue, "YYYY-MM").subtract(1, 'M').format('YYYY-MM')
+                },
+                nextMonth: function () {
+                    this.dateValue = moment(this.dateValue, "YYYY-MM").add(1, 'M').format('YYYY-MM')
+                },
+                preYear: function () {
+                    this.monthValue = moment(this.monthValue, "YYYY").subtract(1, 'y').format('YYYY')
+                },
+                nextYear: function () {
+                    this.monthValue = moment(this.monthValue, "YYYY").subtract(1, 'y').format('YYYY')
+                },
+                getData: function () {
+                    var _this = this;
+                    axios.post('/Home/GetData')
+                      .then(function (response) {
+                          _this.$message('返回结果是：' + response.data.result);
+                          console.log(response);
+                      })
+                      .catch(function (error) {
+                          console.log(error);
+                      });
+                },
+                emitEvent: function () {
+                    this.param.area = this.areaValue
+                    this.param.site = this.siteValue
+                    this.param.date = this.dateValue
+                    this.param.month = this.monthValue
+                    this.param.bYear = this.beginYearValue
+                    this.param.eYear = this.endYearValue
+                    console.log(this.param)
+                    this.$emit('emit-event', this.param)
+                },
+                getArea: function (param) {
+                    this.areaValue = param
+                },
+                getSite: function (param) {
+                    this.siteValue = param
+                }
+            }
+        };
+    </script>
+
+    <style scoped>
+        #app .query {
+            border-bottom: 1px solid #bfbfbf;
+            padding: 10px 20px 0px 20px;
+            font-size: 14px;
+        }
+
+        #query {
+            display: none;
+        }
+
+        #app .query .el-form {
+            /*height: 35px;*/
+        }
+
+            #app .query .el-form .center {
+                text-align: center;
+            }
+
+            #app .query .el-form .el-form-item {
+                margin-bottom: 10px;
+            }
+
+            #app .query .el-form .el-radio-button, #app .query .el-form .el-radio-button span {
+                width: 150px;
+            }
+
+        @@media screen and (max-width: 1060px) {
+            #app .query .btn {
+                float: right;
+            }
+        }
+    </style>

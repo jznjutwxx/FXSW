@@ -1,0 +1,406 @@
+﻿
+<script type="text/x-template" id="com-swsyleft">
+    <div id="leftContent" v-bind:style="{height:leftheight+'px'}">
+        <div class="titlediv hdgkdiv" v-on:click="getFatherHD">河道概况</div>
+        <div class="topdiv">
+            <el-row type="flex" justify="end" class="xzqhrow">
+                <el-col v-bind:span="24" class="xzqh" >{{lefttwon}}</el-col>
+            </el-row>
+            <el-row class="topleft">
+                <el-col v-bind:span="24" class="col">
+                    <div class="divcss">河道总数(条)：</div>
+                    <div class="text-gra">4598</div>
+                </el-col>
+                <el-col v-bind:span="24" class="col">
+                    <div class="divcss">重污染河道(条)：</div>
+                    <div class="text-gra">115</div>
+                </el-col>
+
+                <el-col v-bind:span="8">
+                    <div class="colcss">合格:</div>
+                    <div class="colcss"> 220条</div>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <div class="colcss">不合格:</div>
+                    <div class="colcss"> 112条</div>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <div class="colcss">合格率:</div>
+                    <div class="colcss"> 62.7%</div>
+                </el-col>
+            </el-row>
+        </div>
+
+        <div class="piediv">
+            <div class="titlediv szybdiv">水质月报(12月)</div>
+            <com-pie v-bind:option="pieOption" class="piecss"></com-pie>
+            <div class="centerdiv">
+                <div>根据有机物污染综合评价</div>
+                <div class="paddingcss">A值法(各断面均值)</div>
+                <div class="paddingcss">同比：5.2%</div>
+                <div class="paddingcss">环比：2.2%</div>
+            </div>
+        </div>
+
+        <div class="bardiv">
+            <div class="titlediv szdiv" v-on:click="getFaterSzdbl">清洁水行动水质达标率(12月)</div>
+            <com-bar v-bind:option="barOption" class="barcss"></com-bar>
+        </div>
+    </div>
+</script>
+
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/components/echarts/com_pie.cshtml")
+
+<script>
+    var comSwsyleft = {
+        template: "#com-swsyleft",
+        data: function () {
+            return {
+                leftheight: document.documentElement.clientHeight - 32,
+                param: {
+
+                },
+                pieOption: null,
+                barOption: null
+            }
+        },
+        props: ['lefttwon'],
+        components: {
+            "com-bar": comBar,
+            "com-pie": comPie
+        },
+        watch: {
+            leftheight: function (val) {
+                this.leftheight = val;
+            },
+        },
+        mounted: function () {
+            const that = this;
+            $(window).resize(function () {
+                that.leftheight = document.body.clientHeight - 32;
+            });
+            this.init();
+        },
+
+        methods: {
+            //获取地图河道信息
+            getFatherHD: function () {
+                this.$emit('gethd-event');
+                    
+            },
+            getFaterSzdbl:function(){
+                this.$emit('getszdbl-event')
+            },
+            init: function () {
+                this.setData('/Hydrology/GetData', null);
+            },
+            setData: function (url, param) {
+                this.setPieData(url, param);
+                this.setBarData(url, param);
+            },
+            setPieData: function (url, param) {
+                this.$children[2].charts.showLoading();
+
+                axios.post(url).then(function (response) {
+                    this.$children[2].charts.hideLoading();
+
+                    this.pieOption = {
+                        color: ['#20C684', '#E2B72D', '#ED5150', '#FA6AB2', '#434343'],
+                        tooltip: {
+                            trigger: 'item',
+                            formatter: "{d}%"
+                        },
+                        title: {
+                            text: "总数",
+                            subtext: 140,
+                            textStyle: {
+                                fontSize: 14,
+                                color: '#ffffff',
+                                fontWeight: 'normal'
+                            },
+                            subtextStyle: {
+                                color: '#4BDFFF',
+                                fontSize: 14,
+                                fontWeight: 'bold'
+                            },
+                            left: '36%',
+                            top: '33%'
+                        },
+                        legend: {
+                            orient: 'horizontal',
+                            bottom: 10,
+                            left: 8,
+                            selectedMode: false,
+                            data: ['Ⅱ类', 'Ⅲ类', 'Ⅳ类', 'Ⅴ类', '劣Ⅴ类'],
+                            width: 240,
+                            textStyle: {
+                                color: '#ffffff'
+                            }
+                        },
+                        series: [
+                            {
+                                name: '访问来源',
+                                type: 'pie',
+                                radius: ['40%', '75%'],
+                                center: ['45%', '40%'],
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'inner',
+                                        formatter: "{d}%"
+                                    }
+                                },
+                                labelLine: {
+                                    normal: {
+                                        show: false
+                                    }
+                                },
+                                data: [
+                                    { value: 20, name: 'Ⅱ类' },
+                                    { value: 30, name: 'Ⅲ类' },
+                                    { value: 30, name: 'Ⅳ类' },
+                                    { value: 10, name: 'Ⅴ类' },
+                                    { value: 10, name: '劣Ⅴ类' }
+                                ]
+                            }
+                        ]
+                    }
+                }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setBarData: function (url, param) {
+                this.$children[3].charts.showLoading();
+                axios.post(url)
+                  .then(function (response) {
+                      this.$children[3].charts.hideLoading();
+                      this.barOption = {
+                          color: '#50a6ff',
+                          title: {
+                              left: 'center',
+                              textStyle: {
+                                  color: '#666666',
+                                  fontWeight: 'normal',
+                                  fontSize: 14
+                              }
+                          },
+                          legend: {
+                          },
+                          xAxis: {
+                              type: 'category',
+                              data: ['庄行', '拓林', '南桥', '青村', '金汇', '奉城', '四团', '海湾'],
+                              axisLabel: {
+                                  color: '#ffffff'
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLine: {
+                                  show: false
+                              },
+                              splitLine: { show: false },//去除网格线
+                          },
+                          yAxis: {
+                              type: 'value',
+                              name: '镇达标率',
+                              min: 60,
+                              nameTextStyle: {
+                                  color: '#ffffff',
+                                  padding: 10
+                              },
+                              axisLine: {
+                                  show: false
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLabel: {
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              splitLine: {
+                                  show: true,//保留网格线
+                                  lineStyle: {
+                                      color: '#3d4997'
+                                  }
+                              },
+                          },
+                          series: [
+                              {
+                                  name: '达标率',
+                                  type: 'bar',
+                                  barWidth: '60%',
+                                  data: [100, 95, 100, 100, 100, 100, 100, 100],
+                                  label: {
+                                      normal: {
+                                          show: true,
+                                          position: 'top',
+                                          formatter: '{c} %',
+                                          color: '#ffffff'
+                                      }
+                                  }
+                              }
+                          ]
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            //resize: function () {
+            //    $(window).resize(function () {
+            //        this.setSize()
+            //    }.bind(this));
+            //},
+            //setSize: function () {
+            //    var docH = document.documentElement.clientHeight;
+            //    var contentH = docH - 40
+            //    this.styles.height = (contentH / 2) + 'px'
+            //    this.height = contentH / 2
+            //}
+        }
+    }
+</script>
+
+<style scoped>
+    #leftContent {
+        width: 100%;
+        overflow: hidden;
+        /*min-width: 315px;*/
+        min-height: 650px;
+    }
+    .xzqhrow {
+        padding: 10px 40px 0 0;
+    }
+    .xzqh {
+        width:64px;height:22px;color:white; text-align:center; background-color:#0056ce;
+    }
+    .titlediv {
+        position: absolute;
+        top: -11px;
+        left:30px;
+        z-index: 1246;
+        background-color: #051266;
+        width: 100px;
+        height: 30px;
+        color: #22eff8;
+        font-size:16px;
+        font-family: "微软雅黑";
+    }
+    .hdgkdiv {
+        left:35px !important;
+        width: 70px !important;
+    }
+    .szybdiv {
+        width: 120px !important;
+    }
+
+    .szdiv {
+        width: 210px !important;
+    }
+
+    .topdiv {
+        height: 20%;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+
+    .piediv {
+        height: 35%;
+        margin-top: 16px;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+
+    .bardiv {
+        height:40%;
+        margin-top: 16px;
+        position: relative;
+        border: 1px solid #0146b2;
+    }
+
+    .topleft {
+        height: 90%;
+    }
+
+    .bottomleft {
+        width: 90%;
+        height: 30%;
+        border: 1px solid yellow;
+    }
+
+    .col {
+        height: 30px;
+        margin-left: 10px;
+        margin-top: 5px !important;
+        line-height: 30px;
+    }
+
+    .colcss {
+        margin-top: 16px;
+        color: #ffffff;
+        font-size: 14px;
+        font-family: 'microsoft yahei';
+        float: left;
+    }
+
+    .labelcss {
+        color: #08e5f5 !important;
+        font-size: 16px !important;
+        font-family: 'microsoft yahei' !important;
+        float: left !important;
+    }
+
+    .text-gra {
+        float: left;
+        font-size: 28px;
+        font-weight:bold;
+        font-family: Arial;
+        color: #ffffff;
+        line-height: 21px;
+        margin-left: 20px !important;
+        background: linear-gradient(#ffffff, #05d2ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .centercol {
+        height: 90%;
+        width: 100%;
+    }
+
+    .piecss {
+        height: 95%;
+        width: 60% !important;
+        float: left;
+    }
+
+    .centerdiv {
+        width: 38%;
+        height: 80%;
+        float: left;
+        color: #ffffff;
+        font-size:14px;
+        font-family:'Microsoft YaHei';
+        margin-top:50px;
+    }
+
+    .barcss {
+        height: 97%;
+        width: 90%;
+    }
+
+    .divcss {
+        float: left;
+        color: #ffffff !important;
+        font-size: 16px !important;
+        font-family: 'microsoft yahei' !important;
+    }
+    .paddingcss {
+        padding-top:15px;
+    }
+
+</style>

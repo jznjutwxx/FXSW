@@ -1,0 +1,280 @@
+﻿
+<script type="text/x-template" id="com-szyright">
+    <div id="rightContent" v-bind:style="{height:rightheight+'px'}">
+        <div class="righttop">
+            <div class="title ysxl">用水效率(2017年上半年)</div>
+
+            <el-row type="flex" align="middle" class="toprow">
+                <el-col v-bind:span="4">
+                    <div class="imgcss"><img src="/Images/szysy/ico_yongsxl.png"></div>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <span class="fontcss">奉贤区总供水量：</span>
+                    <span class="fontcss">奉贤区总售水量：</span>
+                </el-col>
+                <el-col v-bind:span="4">
+                    <span class="numcss">400万m³</span>
+                    <span class="numcss">320万m³</span>
+                </el-col>
+            </el-row>
+            <el-row type="flex" align="middle" style="padding-top: 15px;">
+                <el-col v-bind:span="2"></el-col>
+                <el-col v-bind:span="5">
+                    <span class="fontcss">用水效率:</span>
+                </el-col>
+                <el-col v-bind:span="4">
+                    <span class="numcss">80.2%</span>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <span class="fontcss">对比去年上升</span>
+                </el-col>
+                <el-col v-bind:span="6">
+                    <span class="numcss">10.2%</span>
+                    <span><img src="/Images/szysy/ico_zengz.png"></span>
+                </el-col>
+            </el-row>
+
+            <div class="righttopdiv">
+                <div class="bgcolorcss lsdiv">
+                    <div class="fontcss aligncss leftpadding" style="padding-top: 10px;">漏损水量</div>
+                    <div class="numcss aligncss leftpadding">80万m³</div>
+                    <div class="numcss aligncss leftpadding">9.5% <span><img src="/Images/szysy/ico_zengz.png"></span></div>
+                </div>
+                <div class="bgcolorcss rightdiv">
+                    <div class="fontcss aligncss" style="padding-bottom: 12px;">
+                        <span class="spancss">免费供水</span>
+                        <span class="spancss">12万m³</span>
+                        <span class="spancss">10.23% <span><img src="/Images/szysy/ico_zengz.png"></span></span>
+                    </div>
+                    <div class="fontcss" style="padding-bottom: 12px;">
+                        <span class="spancss">物理漏水</span>
+                        <span class="spancss">12万m³</span>
+                        <span class="spancss">10.23% <span><img src="/Images/szysy/ico_zengz.png"></span></span>
+                    </div>
+                    <div class="fontcss" style="padding-bottom: 12px;">
+                        <span class="spancss">账面漏水</span>
+                        <span class="spancss">12万m³</span>
+                        <span class="spancss">10.23% <span><img src="/Images/szysy/ico_zengz.png"></span></span>
+                    </div>
+                    <div class="fontcss">
+                        <span class="spancss">其他漏水</span>
+                        <span class="spancss">12万m³</span>
+                        <span class="spancss">10.23% <span><img src="/Images/szysy/ico_xiaj.png"></span></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="rightbottom">
+            <div class="title">用水户管理统计</div>
+            <el-row type="flex" align="middle" style="margin:30px 0 0 14px;">
+                <el-col v-bind:span="7"><div class="fontcss">用水户总数(户):</div></el-col>
+                <el-col v-bind:span="6"><div class="numcss ">12345</div></el-col>
+                <el-col v-bind:span="6"><div class="fontcss">水表总数(户):</div></el-col>
+                <el-col v-bind:span="5"><div class="numcss">3343</div></el-col>
+            </el-row>
+
+            <el-row type="flex" align="middle" style="padding-top: 16px; padding-left: 26px;">
+                <el-col v-bind:span="8">
+                    <span><img src="/Images/szysy/ico_kaihu.png"></span>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <span><img src="/Images/szysy/ico_xiaohu.png"></span>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <span><img src="/Images/szysy/ico_fenhu.png"></span>
+                </el-col>
+            </el-row>
+            <el-row type="flex" align="middle" style="padding-top: 5px; padding-left: 26px;">
+                <el-col v-bind:span="8">
+                    <span class="fontcss">开户：</span><span class="numcss "> 134</span>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <span class="fontcss">销户：</span><span class="numcss "> 234</span>
+                </el-col>
+                <el-col v-bind:span="8">
+                    <span class="fontcss">分户：</span><span class="numcss "> 434</span>
+                </el-col>
+            </el-row>
+
+            <div class="tablecss">
+                <el-row class="titlecss">
+                    <el-col v-bind:span="3">序号</el-col>
+                    <el-col v-bind:span="8">用水户名称</el-col>
+                    <el-col v-bind:span="8">超出计划用水量(m³)</el-col>
+                    <el-col v-bind:span="5">未交费用水量(m³)</el-col>
+                </el-row>
+                <el-row class="titlecss" v-for="li in lists" v-bind:key="li.id">
+                    <el-col v-bind:span="3">{{li.id}}</el-col>
+                    <el-col v-bind:span="9" v-bind:title="li.name">{{retListName(li.name)}}</el-col>
+                    <el-col v-bind:span="6">{{li.exceWater}}</el-col>
+                    <el-col v-bind:span="6">{{li.noAmountWater}}</el-col>
+                </el-row>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+    var comSzyRight = {
+        template: "#com-szyright",
+        data: function () {
+            return {
+                rightheight: document.documentElement.clientHeight - 32,
+                lists: [{
+                    id: "1", name: "巴斯夫聚氨酯有限公司", exceWater: "12344", noAmountWater: "12344"
+                }, {
+                    id: "2", name: "巴斯夫聚氨酯有限公司ww", exceWater: "12344", noAmountWater: "12344"
+                }, {
+                    id: "3", name: "巴斯夫聚氨酯有限公司哈哈", exceWater: "12344", noAmountWater: "12344"
+                }, {
+                    id: "4", name: "巴斯夫聚氨酯有限公司版本", exceWater: "12344", noAmountWater: "12344"
+                }, {
+                    id: "5", name: "巴斯夫聚氨酯有限公司密码", exceWater: "12344", noAmountWater: "12344"
+                }, {
+                    id: "6", name: "巴斯夫聚氨酯有限公司", exceWater: "12344", noAmountWater: "12344"
+                }]
+            }
+        },
+        components: {
+        },
+        mounted: function () {
+            const that = this;
+            $(window).resize(function () {
+                that.rightheight = document.body.clientHeight - 32;
+            });
+        },
+        watch: {
+            rightheight: function (val) {
+                this.rightheight = val;
+            },
+        },
+        methods: {
+            retListName: function (objname) {
+                var objname = objname + "";
+                if (objname.length > 6) {
+                    return objname.substring(0, 6) + "...";
+                } else {
+                    return objname;
+                }
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight;
+                var contentH = docH - 30;
+                // this.styles.height = (contentH / 3) + 'px';
+                this.height = contentH / 2;
+            }
+        },
+    }
+</script>
+
+<style>
+    #rightContent {
+        width: 100%;
+        overflow: hidden;
+        min-width: 365px;
+        min-height: 660px;
+    }
+    .righttop {
+        height: 38%;
+        width: 100%;
+        border: 1px solid #0146b2;
+    }
+
+    .rightbottom {
+        height: 59%;
+        width: 100%;
+        border: 1px solid #0146b2;
+        position: relative;
+        margin-top: 16px;
+    }
+
+    .imgcss {
+        float: left;
+        margin-top: 5px;
+    }
+
+    .toprow {
+        margin-top: 30px;
+        margin-left: 26px;
+    }
+
+    .ysxl {
+        width: 190px;
+        text-align: center;
+    }
+
+    .righttopdiv {
+        margin: 16px 0 0 14px;
+    }
+
+    .rightdiv {
+        margin-left: 15px;
+        float: left;
+        text-align: center;
+    }
+
+    .lsdiv {
+        width: 100px;
+        float: left;
+    }
+
+    .leftpadding {
+        padding-bottom: 16px;
+    }
+
+    .fontcss {
+        color: #ffffff;
+        font-size: 14px;
+        font-family: 'microsoft yahei';
+        text-align: left;
+    }
+
+    .aligncss {
+        text-align: center !important;
+    }
+
+    .spancss {
+        padding-left: 8px;
+    }
+
+    .bgcolorcss {
+        background-color: #2d3a8d;
+    }
+
+    .numcss {
+        color: #ffffff;
+        font-size: 14px;
+        font-family: Arial;
+        font-weight: bold;
+        text-align: left;
+        margin-left: 0;
+    }
+
+    .tablecss {
+        width: 100%;
+        height: 58%;
+        margin-top: 10px;
+        overflow: auto;
+    }
+
+    .tablecss .titlecss:nth-child(2){
+        margin-top:15px;
+    }
+
+    .titlecss {
+        text-align: center;
+        color: #ffffff;
+        float: left;
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+        height: 30px;
+        padding-top: 8px;
+        width: 100%;
+    }
+</style>

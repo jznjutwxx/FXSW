@@ -1,0 +1,88 @@
+﻿
+@{
+    ViewBag.Title = "";
+}
+<script id="com_testmap" type="text/x-template">
+    <div id="mapContainer" v-bind:style="mapContainerStyle" style="height:900px;">
+        <button v-on:click="">test</button>
+    </div>
+</script>
+<script>
+    var com_testmap = {
+        template: "#com_testmap",
+        data: function () {
+            return {
+                mapContainerStyle: {
+                    width: document.documentElement.clientWidth+ "px",
+                },
+                map: null,
+                layers: [],
+                baselayer:null,
+                vectorLayer: null,
+                fxbaselayerurl: "http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                //fxbaselayerurl:"http://localhost:8090/iserver/services/map-world/rest/maps/World",
+            };
+        },
+        created: function () {
+
+        },
+        mounted: function () {
+             this.initMap();
+             this.initPosition();
+            this.resize();
+        },
+        methods: {
+            initMap: function () {
+                debugger;
+                this.map = new SuperMap.Map("mapContainer", { allOverlays: true });
+                //this.map.size = new SuperMap.Size(1920, 900);
+                this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
+                this.vectorLayer = new SuperMap.Layer.Vector("查询高亮图层");
+                this.layers = [this.baselayer, this.vectorLayer];
+                this.drawPolygon = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Polygon);
+                //图层控制器
+                var layerSwitcher = new SuperMap.Control.LayerSwitcher();
+                //图层控制器中图层的显示顺序
+                layerSwitcher.ascending = true;
+                //this.map.addControl(layerSwitcher, new SuperMap.Pixel((document.body.clientWidth - 200), 10));
+                this.map.addControl(this.drawPolygon);
+                this.baselayer.events.on({ "layerInitialized": this.addLayers });
+            },
+            addLayers: function () {
+                debugger;
+                console.log(1);
+                //下面这步报错
+                //this.map.size = new SuperMap.Size(1920,900);
+                this.map.addLayers(this.layers);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+            },
+            resize: function () {
+                var that = this;
+                $(window).resize(function () {
+                    that.initPosition();
+                })
+            },
+            initPosition: function () {
+                debugger;
+                console.log(2);
+                var bodyWidth = document.body.clientWidth;
+                setTimeout(function () {
+                    $(".olAlphaImg").css("top", "50px");
+                    $(".olAlphaImg").css("left", bodyWidth - 200 + "px");
+                },100)
+            }
+        },
+    }
+</script>
+<style>
+    #com_zhjcmap {
+        display: none;
+    }
+
+    #mapContainer {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        border: #b9b9b9 1px solid;
+    }
+</style>

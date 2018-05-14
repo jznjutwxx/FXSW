@@ -1,0 +1,93 @@
+﻿
+<script type="text/x-template" id="query">
+    <div class="query">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="年度:">
+                <el-date-picker v-model="sYear" style="width:120px;"
+                                type="year"
+                                placeholder="选择年份" v-bind:picker-options="pickerOptionsS">
+                </el-date-picker>   
+              </el-form-item>
+            <el-form-item label="至">
+                <el-date-picker v-model="eYear" style="width:120px;"
+                                type="year"
+                                placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
+                </el-date-picker>
+              </el-form-item>
+            <el-form-item label="统计纬度:" style="padding-left:20px;">
+                <el-radio-group v-model="querychoose" size="small" v-on:change="changeChecked">
+                    <el-radio label="pf">批复工程量</el-radio>
+                    <el-radio label="wc">完成工程量</el-radio>
+                </el-radio-group>
+            </el-form-item>
+            <el-form-item style="padding-left:50px;">
+                <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+             
+                </el-form-item>
+        </el-form>
+    </div>
+</script>
+
+    @Html.Partial("~/Views/components/forms/com_select.cshtml")
+
+
+    <script>
+        var query = ({
+            template: '#query',
+            data: function () {
+                return {
+                    param: {
+                        startYear: '',
+                        endYear: '',
+                        qchoose: '',
+                    },
+                    querychoose: 'pf',
+                    sYear: moment().format("YYYY"),
+                    eYear: moment().format("YYYY"),
+                    pickerOptionsS: {
+                        disabledDate: function (time) {
+                            if (this.eYear != "") {
+                                return time.getTime() > Date.now() || time.getTime() > new Date(this.eYear);
+                            } else {
+                                return time.getTime() > Date.now();
+                            }
+                        }.bind(this)
+                    },
+                    pickerOptionsE: {
+                        disabledDate: function (time) {
+                            return time.getTime() < new Date(this.sYear) || time.getTime() > Date.now();
+                        }.bind(this)
+                    },
+                }
+            },
+            components: {
+                'com-select': comSelect
+            },
+            watch: {
+                type: function (val, oldVal) {
+                    this.emitEvent()
+                }
+            },
+            methods: {
+                emitEvent: function () {
+                    this.param.startYear = this.sYear;
+                    this.param.endYear = this.eYear;
+                    this.param.qchoose = this.querychoose;
+                    console.log(this.param)
+                    this.$emit('emit-event', this.param)
+                },
+               
+                changeChecked: function () {
+                    this.$parent.changeChecked()
+                }
+            }
+        })
+    </script>
+
+    <style>
+        .query {
+            font-size: 14px;
+            padding: 10px 20px 0px 20px;
+            border-bottom: 1px solid #dcdcdc;
+        }
+    </style>

@@ -1,0 +1,1109 @@
+﻿
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/components/echarts/com_line.cshtml")
+
+<script id="com_swsymap" type="text/x-template">
+    <div class="bigBox">
+        <div id="mapContainer" v-bind:style="{height:mapheight+'px'}">
+            @*<el-row>
+                    <el-button type="primary" plain v-on:click="showHDnum">河道概况</el-button>
+                    <el-button type="primary" plain v-on:click="showZCnum">测站统计</el-button>
+                    <el-button type="primary" plain v-on:click="showSZDBL">水质达标率</el-button>
+                </el-row>*@
+        </div>
+        <div id="mapTitle">
+            {{mapTitle}}
+        </div>
+        <!--水质达标率图例-->
+        <div id="szdbltl" v-show="controlSzdbltlShow">
+            <el-row v-bind:gutter="0" id="longLine">
+                <el-col v-bind:span="24"><div class=""></div></el-col> <!--冒号用v-bind:代替：-->
+            </el-row>
+            <el-row v-bind:gutter="20">
+                <el-col v-bind:span="12"><div class="grid-content bg-green"></div></el-col>
+                <el-col v-bind:span="12">
+                    <div class="text"> 95%以上</div>
+                </el-col>
+            </el-row>
+            <el-row v-bind:gutter="20">
+                <el-col v-bind:span="12"><div class="grid-content bg-blue"></div></el-col>
+                <el-col v-bind:span="12"><div class="text">80%-95%</div></el-col>
+            </el-row>
+            <el-row v-bind:gutter="20">
+                <el-col v-bind:span="12"><div class="grid-content bg-red"></div></el-col>
+                <el-col v-bind:span="12"><div class="text">80%以下</div></el-col>
+            </el-row>
+        </div>
+        <!--潮位预备信息-->
+        <div id="cwyb">
+            <div>
+                <span v-text="cwybTitle"></span><span>-潮位预报</span>
+                <div id="cwfg"></div>
+                <span id="nzName">金汇港南闸(外)站</span><span>金汇港北闸(外)站</span>
+            </div>
+            <el-table v-bind:data="cwybTableData" stripe>
+                <el-table-column prop="nzcs" label="潮时" width="50">
+                </el-table-column>
+                <el-table-column prop="nzcg" label="潮高" width="75">
+                </el-table-column>
+                <el-table-column prop="bzcs" label="潮时" width="50">
+                </el-table-column>
+                <el-table-column prop="bzcg" label="潮高" width="50">
+                </el-table-column>
+            </el-table>
+            <div id="hideLine">
+
+            </div>
+        </div>
+        <el-dialog id="ysPop" title=" 南竹北阀（阀内）" v-bind:visible.sync="dialogVisible" v-bind:before-close="handleClose">
+            <el-tabs v-model="activeName" v-on:tab-click="handleClick">
+                <el-tab-pane label="雨量趋势图" name="ylBar">
+                    <com_bar v-bind:option="barOption" class="ysCharts" ref="ylbar"></com_bar>
+                </el-tab-pane>
+                <el-tab-pane label="水位趋势图" name="swLine">
+                    <com_line v-bind:option="swLineOption" class="ysCharts" ref="swline"></com_line>
+                </el-tab-pane>
+                <el-tab-pane label="流量趋势图" name="llLine">
+                    <com_line v-bind:option="llLineOption" class="ysCharts" ref="llline"></com_line>
+                </el-tab-pane>
+            </el-tabs>
+            <!--时间查询区域-->
+            <div id="tiemSelect">
+                <span class="demonstration">时间：</span>
+                <el-date-picker v-model="stratTime" type="datetime" placeholder="选择日期时间">
+                </el-date-picker>
+                <span class="demonstration">-</span>
+                <el-date-picker v-model="endTime" type="datetime" placeholder="选择日期时间">
+                </el-date-picker>
+                <el-button type="primary" icon="el-icon-search">查询</el-button>
+            </div>
+            <!--图表重点内容提示区域-->
+            <div id="noticeMsg">
+                <img src="~/Images/swsy/ico_notice.png" />
+                <span v-text="noticeMsg">
+
+                </span>
+            </div>
+        </el-dialog>
+    </div>
+</script>
+<script>
+    var com_swsymap = {
+        template: "#com_swsymap",
+        components: {
+            "com_bar": comBar,
+            "com_line": comLine
+        },
+        data: function () {
+            return {
+                mapheight: document.documentElement.clientHeight - 32,
+                mapTitle: "河道概况",
+                activeName: 'ylBar', //设置默认激活哪一个tab页
+                hdInfo: null,
+                map: { supmap: "" },
+                drawPoint: null,
+                layers: [],
+                hdNumCoverLayer: null,//河道数量图层
+                czNumCoverLayer: null,//各个镇的测站总数量图层
+                representativeMarkersLayer: null,//一镇一站标记图层,测站代表图层
+                jtczLayer: null,   //具体测站图层
+                dxvectorLayer: null,  //点选
+                szdblVectorLayer: null,   //水质达标率高亮图层
+                controlSzdbltlShow: false,  //控制水质达标率图例的显示
+                isCZnumModel: false,
+                fxbaselayerurl: "http://172.18.1.25:8090/iserver/services/map-ugcv5-fxjztiled/rest/maps/fxjz_tiled",
+                //数据库中读取的数据，
+                swAllInfo: [
+                     { x: 121.37811, y: 30.93234, twon: "庄行镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 18, zctype: "雨量站" },
+                     { x: 121.45077, y: 30.95084, twon: "南桥镇", hdnum: 200, szdbl: 0.9, percent: "90%", cznum: 20, zctype: "水文站" },
+                     { x: 121.43657, y: 30.84199, twon: "柘林镇", hdnum: 200, szdbl: 0.8, percent: "80%", cznum: 5, zctype: "水质站" },
+                     { x: 121.55052, y: 30.97956, twon: "金汇镇", hdnum: 200, szdbl: 0.7, percent: "70%", cznum: 9, zctype: "水位站" },
+                     { x: 121.54104, y: 30.91457, twon: "青村镇", hdnum: 200, szdbl: 0.6, percent: "60%", cznum: 4, zctype: "雨量站" },
+                     { x: 121.60198, y: 30.85589, twon: "海湾镇", hdnum: 200, szdbl: 0.5, percent: "50%", cznum: 7, zctype: "雨量站" },
+                     { x: 121.65426, y: 30.93564, twon: "奉城镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" },
+                     { x: 121.72939, y: 30.94165, twon: "四团镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" }],
+                dialogVisible: false,
+                barOption: null, //雨量柱状图的参数
+                swLineOption: null, //水位图
+                llLineOption: null,//流量图
+                llLiNEOption: null,
+                stratTime: this.getDateStr(-1),
+                endTime: this.getDateStr(0),
+                noticeMsg: "01-04 4时水位最高为2.6m(超警戒)，当日累计流量173m3", //雨水提示信息
+                cwybTitle: "4月17号", //地图潮位预报的title
+                //潮位预备表格数据
+                cwybTableData: [{
+                    nzcs: '8:30',
+                    nzcg: '50',
+                    bzcs: '9:30',
+                    bzcg: '10',
+                }, {
+                    nzcs: '17:30',
+                    nzcg: '50',
+                    bzcs: '18:30',
+                    bzcg: '10',
+                }],
+            }
+        },
+        mounted: function () {
+            this.getHDnum();  //默认显示河道信息
+            this.initMap();
+            const that = this;
+            $(window).resize(function () {
+                debugger;
+                that.mapheight = document.body.clientHeight - 32;
+            });
+        },
+        watch: {
+            mapheight: function (val) {
+                this.mapheight = val;
+                console.log(this.mapheight);
+            },
+
+        },
+        methods: {
+            initMap: function () {
+                this.map = new SuperMap.Map("mapContainer", { allOverlays: true });
+                var baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
+                this.szdblVectorLayer = new SuperMap.Layer.Vector("水质达标率高亮图层");
+                this.hdNumCoverLayer = new SuperMap.Layer.Vector("河道数量图层");
+                this.czNumCoverLayer = new SuperMap.Layer.Vector("各个镇的测站总数量图层");
+                this.representativeMarkersLayer = new SuperMap.Layer.Markers("一镇一站图层");
+                this.jtczLayer = new SuperMap.Layer.Markers("具体测站图层");
+                this.dxvectorLayer = new SuperMap.Layer.Vector("点选图层");
+                this.layers = [baselayer, this.szdblVectorLayer, this.hdNumCoverLayer, this.representativeMarkersLayer, this.czNumCoverLayer, this.dxvectorLayer];
+                //图层控制器
+                var layerSwitcher = new SuperMap.Control.LayerSwitcher();
+                //图层控制器中图层的显示顺序
+                layerSwitcher.ascending = true;
+                var mousePosition = new SuperMap.Control.MousePosition();
+                mousePosition.prefix = "经度:";
+                mousePosition.separator = "/纬度:";
+                //点查询
+                this.drawPoint = new SuperMap.Control.DrawFeature(this.dxvectorLayer, SuperMap.Handler.Point);
+                this.map.addControl(this.drawPoint); 
+                this.drawPoint.events.on({ "featureadded": this.drawPointCompleted });
+                //显示经纬度坐标的控件
+                // this.map.addControl(mousePosition, new SuperMap.Pixel(10, this.mapheight - 100));
+                baselayer.events.on({ "layerInitialized": this.addLayers });
+                this.map.events.on({ "zoomend": this.mapIsZoomend });
+                //一镇一站图层单击时
+                this.representativeMarkersLayer.events.on({ "mouseover": this.activePoint });
+                this.representativeMarkersLayer.events.on({ "mouseout": this.deactivePoint });
+            },
+            addLayers: function () {
+                var that = this;
+
+                setTimeout(function () {
+                    that.map.addLayers(that.layers);
+                    that.map.zoomTo(2);
+                    that.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+                }, 100)      
+                //默认显示河道数量,父页面调用
+                // this.showHDnum();
+
+
+            },
+            activePoint: function () {
+                this.dxvectorLayer.removeAllFeatures();
+                this.drawPoint.activate();
+            },
+            deactivePoint: function (e) {
+                this.drawPoint.deactivate();
+            },
+            //在marke上单击时触发
+            showPop: function (e) {
+                //当前单击的marker的经纬度坐标对象，根据经纬度坐标去获取当前点的数据（雨量、水位、流量）
+                //alert("解决");
+                var nowMarkerLonlat = e.object.lonlat;
+                this.dialogVisible = true;
+                setTimeout(function () {
+                    //初始化图表数据
+                    this.initEchartData(nowMarkerLonlat)
+                }.bind(this), 100)
+            },
+            //tab分页上的单击事件
+            handleClick: function (tab, event) {
+
+                this.initEchartData();
+                //设置提示信息
+                if (this.activeName == "ylBar") {
+                    this.noticeMsg = "雨量图";
+                } else if (this.activeName == "swLine") {
+                    this.noticeMsg = "水位图";
+                }
+                else if (this.activeName == "llLine") {
+                    this.noticeMsg = "流量图";
+                }
+                // console.log(tab, event);
+            },
+            handleClose: function (done) {
+                this.$confirm('确认关闭？')
+                  .then(function () {
+                      done();
+                  })
+                  .catch(function () {
+                  });
+            },
+            mapIsZoomend: function (e) {
+                var zom = this.map.getZoom();
+                var allLayers = this.map.layers
+                if (this.isCZnumModel) {
+                    if (zom > 2) {
+                        //当缩放级别大于3时，不显示representativeMarkersLayer和czNumCoverLayer，显示具体测站图层
+                        for (var i = 0; i < allLayers.length; i++) {
+                            if (allLayers[i].name == "一镇一站图层") {
+                                this.map.removeLayer(this.representativeMarkersLayer);
+                            }
+                            if (allLayers[i].name != "具体测站图层") {
+                                this.map.addLayer(this.jtczLayer);
+                            }
+                            if (allLayers[i].name == "各个镇的测站总数量图层") {
+                                this.map.removeLayer(this.czNumCoverLayer);
+                            }
+                        }
+                        this.map.addLayer(this.jtczLayer);
+                    } else {
+                        //当缩放级别小于等于3时，不显示具体测站图层,显示representativeMarkersLayer和czNumCoverLayer
+                        for (var i = 0; i < allLayers.length; i++) {
+                            if (allLayers[i].name != "一镇一站图层") {
+                                this.map.addLayer(this.representativeMarkersLayer);
+                            }
+                            if (allLayers[i].name == "具体测站图层") {
+                                this.map.removeLayer(this.jtczLayer);
+                            }
+                            if (allLayers[i].name != "各个镇的测站总数量图层") {
+                                this.map.addLayer(this.czNumCoverLayer);
+                            }
+                        }
+                    }
+                }
+            },
+            //图层上完成点击后的回调函数
+            drawPointCompleted: function (drawGeometryArgs) {
+                debugger;
+                var feature = new SuperMap.Feature.Vector();
+                feature.geometry = drawGeometryArgs.feature.geometry;
+                var style = {
+                    strokeColor: "white",
+                    strokeWidth: 0.5,
+                    fillColor: "red",
+                    fillOpacity: "1"
+                };
+                feature.style = style;
+                this.dxvectorLayer.addFeatures(feature);
+                this.drawPoint.deactivate();
+                this.map.zoomToExtent(drawGeometryArgs.feature.geometry.bounds);
+                this.map.zoomTo(3);
+                var url = "http://172.18.1.25:8090/iserver/services/map-fxjz2/rest/maps/fxjz_20180410222";
+                var queryParam = new SuperMap.REST.FilterParameter({ name: "奉贤8街镇@奉贤8街镇" });
+                var queryByGeometryParameters = new SuperMap.REST.QueryByGeometryParameters({
+                    queryParams: [queryParam],
+                    geometry: drawGeometryArgs.feature.geometry,
+                    spatialQueryMode: SuperMap.REST.SpatialQueryMode.INTERSECT
+                });
+                var queryService = new SuperMap.REST.QueryByGeometryService(url, {
+                    eventListeners: {
+                        "processCompleted": this.dxCompleted,
+                        "processFailed": this.dxFailed
+                    }
+                });
+                queryService.processAsync(queryByGeometryParameters);
+            },
+            //点选
+            dxCompleted: function (getFeaturesEventArgs) {
+                debugger;
+                var result = getFeaturesEventArgs.result;
+                console.log(result);
+                var style = {
+                    strokeColor: "white",
+                    strokeWidth: 0.5,
+                    fillColor: "rgba(255,128,255,0.6)",
+                    fillOpacity: "1"
+                };
+                if (result) {
+                    debugger;
+                    var features = result.recordsets[0].features
+                    console.log(features);
+                    for (var i = 0; i < features.length; i++) {
+                        var feature = features[i];
+                        feature.style = style;
+                        this.dxvectorLayer.addFeatures(feature);
+                    }
+                }
+            },
+            dxFailed: function (e) {
+
+            },
+            getHDnum: function () {
+                var that = this;
+                axios.post('/Hydrology/GetHDnum')
+                  .then(function (response) {
+                      debugger;
+                      //that.$message('河道信息：' + response.data.result);
+                      that.hdInfo = response.data.result;
+                      // console.log(that.hdInfo);
+                  }).catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            showHDnum: function () {
+                //this.map.zoomTo(2);
+                //this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+                this.controlSzdbltlShow = false;
+                this.isCZnumModel = false;
+                this.mapTitle = "河道概况";
+                this.hdNumCoverLayer.removeAllFeatures();
+                this.szdblVectorLayer.removeAllFeatures();
+                this.dxvectorLayer.removeAllFeatures();
+                this.representativeMarkersLayer.clearMarkers();
+                this.jtczLayer.clearMarkers();
+                this.czNumCoverLayer.removeAllFeatures();
+                for (var i = 0; i < this.swAllInfo.length; i++) {
+                    var pt = new SuperMap.Geometry.Point(this.swAllInfo[i].x, this.swAllInfo[i].y);
+                    var hdFeature = new SuperMap.Feature.Vector(pt, null);
+                    var hdNumStyle = {
+                        strokeColor: "white",
+                        fillColor: "#FF00FF",
+                        strokeWidth: 2,
+                        fillOpacity: 0.4,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        label: this.swAllInfo[i].hdnum.toString(),
+                        labelYOffset: 10,
+                        labelXOffset: 20,
+                        labelAlign: "cm",
+                        fontColor: "#eceb2c",
+                        pointRadius: 0 //圆半径设置为0
+                    }
+                    hdFeature.style = hdNumStyle;
+                    this.hdNumCoverLayer.addFeatures(hdFeature);
+                }
+            },
+            showZCnum: function () {
+                //一镇一站，缩小到一定程度时，8个镇固定显示某一个测站
+                this.controlSzdbltlShow = false;
+                this.isCZnumModel = true;  //是否测站统计模块
+                this.mapTitle = "测站统计"
+                this.hdNumCoverLayer.removeAllFeatures(); //清除河道数量图层
+                this.szdblVectorLayer.removeAllFeatures();
+                this.dxvectorLayer.removeAllFeatures();
+                this.representativeMarkersLayer.clearMarkers();
+                var that = this;
+                $.each(that.swAllInfo, function (index, item) {
+                    //显示数字
+                    var pt = new SuperMap.Geometry.Point(item.x, item.y);
+                    var czFeature = new SuperMap.Feature.Vector(pt, null);
+                    var czNumStyle = {
+                        strokeColor: "white",
+                        fillColor: "#FF00FF",
+                        strokeWidth: 2,
+                        fillOpacity: 0.4,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        label: item.cznum.toString(),
+                        labelYOffset: 10,
+                        labelXOffset: 20,
+                        labelAlign: "cm",
+                        fontColor: "#eceb2c",
+                        pointRadius: 0 //圆半径设置为0
+                    }
+                    czFeature.style = czNumStyle;
+                    that.czNumCoverLayer.addFeatures(czFeature);
+                    //显示图标
+                    var dbsize = new SuperMap.Size(21, 25);
+                    var dboffset = new SuperMap.Pixel(-(dbsize.w / 2), -dbsize.h);
+                    var dbpicUrl = "/Images/swsy/cztj.png";
+                    var dbicon = new SuperMap.Icon(dbpicUrl, dbsize, dboffset);
+                    that.representativeMarkersLayer.addMarker(new SuperMap.Marker(new SuperMap.LonLat(item.x, item.y), dbicon));
+                });
+                //街镇详细测站情况
+                var jzxxczqk = [{ x: 121.38372, y: 30.98031, twon: "庄行镇", zctype: "雨量站" },
+                                   { x: 121.38039, y: 30.9556, twon: "庄行镇", zctype: "水文站" },
+                                   { x: 121.37469, y: 30.90437, twon: "庄行镇", zctype: "水质站" },
+                                   { x: 121.40939, y: 30.89665, twon: "庄行镇", zctype: "水位站" },
+                                   { x: 121.44504, y: 30.99077, twon: "南桥镇", zctype: "雨量站" },
+                                   { x: 121.47832, y: 30.967, twon: "南桥镇", zctype: "水文站" },
+                                   { x: 121.44219, y: 30.9228, twon: "南桥镇", zctype: "水质站" },
+                                   { x: 121.48307, y: 30.90378, twon: "南桥镇", zctype: "水位站" },
+                                   { x: 121.39656, y: 30.84769, twon: "柘林镇", zctype: "雨量站" },
+                                   { x: 121.48497, y: 30.83485, twon: "柘林镇", zctype: "水文站" },
+                                   { x: 121.46073, y: 30.80823, twon: "柘林镇", zctype: "水质站" },
+                                   { x: 121.5154, y: 30.98982, twon: "金汇镇", zctype: "雨量站" },
+                                   { x: 121.51540, y: 30.96273, twon: "金汇镇", zctype: "雨量站" },
+                                   { x: 121.60619, y: 30.97984, twon: "金汇镇", zctype: "雨量站" },
+                                   { x: 121.57529, y: 30.94181, twon: "青村镇", zctype: "雨量站" },
+                                   { x: 121.52253, y: 30.91186, twon: "青村镇", zctype: "雨量站" },
+                                   { x: 121.56626, y: 30.88524, twon: "青村镇", zctype: "雨量站" },
+                                   { x: 121.52395, y: 30.83723, twon: "海湾镇", zctype: "雨量站" },
+                                   { x: 121.55247, y: 30.83913, twon: "海湾镇", zctype: "雨量站" },
+                                   { x: 121.58242, y: 30.86052, twon: "海湾镇", zctype: "雨量站" },
+                                   { x: 121.64137, y: 30.97556, twon: "奉城镇", zctype: "雨量站" },
+                                   { x: 121.62283, y: 30.92755, twon: "奉城镇", zctype: "雨量站" },
+                                   { x: 121.66513, y: 30.89237, twon: "奉城镇", zctype: "雨量站" },
+                                   { x: 121.69936, y: 30.96843, twon: "四团镇", zctype: "雨量站" },
+                                   { x: 121.70554, y: 30.94181, twon: "四团镇", zctype: "雨量站" },
+                                   { x: 121.7312, y: 30.91139, twon: "四团镇", zctype: "雨量站" }];
+                var markers = [];//存储所有具体测站的marke
+                $.each(jzxxczqk, function (index, item) {
+                    var size = new SuperMap.Size(40, 40);
+                    var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
+                    var picUrl = "/Images/swsy/水位站.png";
+                    switch (item.zctype) {
+                        case "雨量站": picUrl = "/Images/swsy/雨量站.png";
+                            break;
+                        case "水文站": picUrl = "/Images/swsy/水文站.png";
+                            break;
+                        case "水质站": picUrl = "/Images/swsy/水质站.png";
+                            break;
+                        case "水位站":
+                            break;
+                    }
+                    var icon = new SuperMap.Icon(picUrl, size, offset);
+                    var czmarker = new SuperMap.Marker(new SuperMap.LonLat(item.x, item.y), icon);
+                    that.jtczLayer.addMarker(czmarker);
+                    //把所有的测站都存放到markers中
+                    markers.push(czmarker);
+
+                });
+                this.mapIsZoomend();
+                for (var i = 0; i < markers.length; i++) {
+                    //给所有的marker注册单击事件
+                    markers[i].events.on({ "click": this.showPop });
+                }
+
+            },
+            showSZDBL: function () {
+                this.controlSzdbltlShow = true;
+                this.isCZnumModel = false;
+                this.mapTitle = "水质达标率（12月）"
+                this.hdNumCoverLayer.removeAllFeatures();
+                this.representativeMarkersLayer.clearMarkers();
+                this.czNumCoverLayer.removeAllFeatures();
+                this.szdblVectorLayer.removeAllFeatures();
+                this.dxvectorLayer.removeAllFeatures();
+                this.jtczLayer.clearMarkers();
+                this.queryBySql();
+                var that = this;
+                $.each(that.swAllInfo, function (index, item) {
+                    debugger;
+                    var pt = new SuperMap.Geometry.Point(item.x, item.y);
+                    //显示水质
+                    var szFeature = new SuperMap.Feature.Vector(pt, null);
+                    //显示街镇
+                    var jzFeature = new SuperMap.Feature.Vector(pt, null);
+                    var szStyle = {
+                        strokeColor: "white",
+                        fillColor: "#FF00FF",
+                        strokeWidth: 2,
+                        fillOpacity: 0.4,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        label: item.percent.toString(),
+                        labelYOffset: 10,
+                        labelXOffset: 20,
+                        fontColor: "#eceb2c",
+                        pointRadius: 0 //圆半径设置为0
+                    }
+                    var jzStyle = {
+                        strokeColor: "white",
+                        fillColor: "#FF00FF",
+                        strokeWidth: 2,
+                        fillOpacity: 0.4,
+                        fontWeight: "bold",
+                        fontSize: 14,
+                        label: item.twon,
+                        labelYOffset: -10,
+                        labelXOffset: 5,
+                        fontColor: "white",
+                        pointRadius: 0 //圆半径设置为0
+                    }
+                    szFeature.style = szStyle;
+                    jzFeature.style = jzStyle;
+                    that.hdNumCoverLayer.addFeatures(szFeature);
+                    //设置要不要重新加载街镇名
+                    // that.hdNumCoverLayer.addFeatures(jzFeature);
+                });
+            },
+            queryBySql: function () {
+                this.szdblVectorLayer.removeAllFeatures();
+                var queryParam, queryBySQLParams, queryBySQLService;
+                var url = "http://172.18.1.25:8090/iserver/services/map-fxjz2/rest/maps/fxjz_20180410222";
+                queryParam = new SuperMap.REST.FilterParameter({
+                    name: "奉贤8街镇@奉贤8街镇",  //查询的是街镇数据集，里面包含了奉贤所有街镇的信息（街镇名字）
+                });
+                queryBySQLParams = new SuperMap.REST.QueryBySQLParameters({
+                    queryParams: [queryParam]
+                });
+                debugger;
+                queryBySQLService = new SuperMap.REST.QueryBySQLService(url, {
+                    eventListeners: { "processCompleted": this.sqlCompleted, "processFailed": this.sqlFailed }
+                });
+                queryBySQLService.processAsync(queryBySQLParams);
+            },
+            sqlCompleted: function (queryEventArgs) {
+                //queryEventArgs.result.recordsets[0].features[0].data.townname
+                var result = queryEventArgs.result;
+                debugger
+                var jzfeatures = queryEventArgs.result.recordsets[0].features;
+                debugger
+                var style1 = {
+                    strokeColor: "white",
+                    strokeWidth: 0.5,
+                    fillColor: "rgba(40,160,112,0.76)",
+                    fillOpacity: "1"
+                };
+                var style2 = {
+                    strokeColor: "white",
+                    strokeWidth: 0.5,
+                    fillColor: "rgba(0,86,206,0.76)",
+                    fillOpacity: "1"
+                };
+                var style3 = {
+                    strokeColor: "white",
+                    strokeWidth: 0.5,
+                    fillColor: "rgba(247,68,68,0.76)",
+                    fillOpacity: "1"
+                }
+                //模拟数据库中的数据，swAllInfo是从数据库读取
+                var swAllInfo = this.swAllInfo;
+                if (jzfeatures) {
+                    for (i = 0; i < jzfeatures.length; i++) {
+                        for (var j = 0; j < swAllInfo.length; j++) {
+                            //如果地图服务上的镇名==数据库中的镇名，根据数据库中对应镇名的水质达标率去渲染地图服务上对应镇名的区域
+                            if (jzfeatures[i].data.NAME == swAllInfo[j].twon) {
+                                debugger;
+                                if (swAllInfo[j].szdbl >= 0.95) {
+                                    debugger;
+                                    jzfeatures[i].style = style1;
+                                } else if (swAllInfo[j].szdbl < 0.95 && swAllInfo[j].szdbl >= 0.8) {
+                                    jzfeatures[i].style = style2;
+                                } else if (swAllInfo[j].szdbl < 0.8) {
+                                    jzfeatures[i].style = style3;
+                                }
+                                else {
+                                    alert("数据错误");
+                                }
+                            }
+                            this.szdblVectorLayer.addFeatures(jzfeatures[i]);
+                        }
+                    }
+                }
+            },
+            sqlFailed: function (e) {
+                alert(e.error.errorMsg);
+            },
+            //加载图形数据的方法
+            initEchartData: function (nowMarkerLonlat) {
+                this.setData('/Hydrology/GetData', nowMarkerLonlat);  //把当前点的经纬度坐标传过去，请求对应点的数据
+            },
+            setData: function (url, param) {
+                if (this.activeName == "ylBar" && this.barOption == null) {
+                    this.setBarData(url, param);
+                } else if (this.activeName == "swLine" && this.swLineOption == null) {
+                    this.setSwLineData(url, param);
+                }
+                else if (this.activeName == "llLine" && this.llLineOption == null) {
+                    this.setLlLineData(url, param)
+                }
+            },
+            //雨量图
+            setBarData: function (url, param) {
+                try {
+                    console.log(this.$refs.ylbar);
+                    debugger;
+                    this.$refs.ylbar.charts.showLoading();
+                } catch (e) {
+                    alert("showloading报错了");
+                }
+                debugger;
+                axios.post(url)
+                  .then(function (response) {
+                      this.$refs.ylbar.charts.hideLoading();
+                      this.barOption = {
+                          color: '#50a6ff',
+                          title: {
+                              left: 'center',
+                              textStyle: {
+                                  color: '#666666',
+                                  fontWeight: 'normal',
+                                  fontSize: 14
+                              }
+                          },
+                          legend: {
+                          },
+                          xAxis: {
+                              type: 'category',
+                              // name: '时间',
+                              nameTextStyle: {
+                                  color: '#ffffff',
+                                  padding: 0
+                              },
+                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
+                              axisLabel: {
+                                  color: '#ffffff'
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLine: {
+                                  show: false
+                              },
+                              splitLine: { show: false },//去除网格线
+                          },
+                          yAxis: {
+                              type: 'value',
+                              name: '雨量(单位：cm)',
+                              min: 0,  //设置y轴的最小值
+                              nameTextStyle: {
+                                  color: '#ffffff',
+                                  padding: 15
+                              },
+                              axisLine: {
+                                  show: false
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLabel: {
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              splitLine: {
+                                  show: true,//保留网格线
+                                  lineStyle: {
+                                      color: '#3d4997'
+                                  }
+                              },
+                          },
+                          series: [
+                              {
+                                  name: '降雨量',
+                                  type: 'bar',
+                                  barWidth: '40%',
+                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
+                                  label: {
+                                      normal: {
+                                          show: true,
+                                          position: 'top',
+                                          formatter: '{c}',
+                                          color: '#ffffff'
+                                      }
+                                  }
+                              }
+                          ]
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            //水位图
+            setSwLineData: function (url, param) {
+                this.$refs.swline.charts.showLoading();
+                axios.post(url)
+                  .then(function (response) {
+                      this.$refs.swline.charts.hideLoading();
+                      this.swLineOption = {
+                          color: '#50a6ff',
+                          title: {
+                              left: 'center',
+                              //text: '水位逐时统计',
+                              textStyle: {
+                                  color: 'white',
+                                  fontSize: 16,
+                                  fontWeight: 'normal'
+                              }
+                          },
+                          /* legend: {
+                               data: ['雨量'],
+                               textStyle: {
+                                   color: ' ',
+                                   fontFamily: "宋体",
+                                   fontSize: "12"
+                               },
+                               //控制图例文字的颜色，空串时，文字颜色为图例颜色
+                               textStyle: {
+                                   color: "#FFFFFF",
+                                   fontFamily: "宋体",
+                                   fontSize: "12",
+                               }
+                           },*/
+
+                          xAxis: {
+                              type: 'category',
+                              //name: '时间',//坐标轴名称
+                              nameLocation: 'center',
+                              nameTextStyle: {  //坐标轴名称的样式
+                                  color: '#ffffff',
+                                  //padding:5
+                              },
+                              axisLabel: {  //坐标轴刻度标签的相关设置
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              /******凸显X轴*****/
+                              axisLine: {
+                                  lineStyle: {
+                                      color: 'white',
+                                      width: 2,
+                                  }
+                              },
+                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
+                          },
+                          yAxis: {
+                              name: '水位(单位：cm)',
+                              nameTextStyle: {  //坐标轴名称的样式
+                                  color: '#ffffff',
+                                  padding: 12
+                              },
+                              axisLabel: {  //坐标轴刻度标签的相关设置
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              type: 'value',
+                              axisLine: {
+                                  lineStyle: {
+                                      color: 'white',
+                                      width: 2,
+                                  }
+                              },
+
+                          },
+                          series: [
+                              {
+                                  name: '水位',
+                                  type: 'line',
+                                  //barWidth: '60%',
+                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
+                                  itemStyle: {
+                                      normal: {
+                                          color: '#00FF00',  //设置折线点的颜色
+                                          lineStyle: {
+                                              color: '#00FF00' //设置折线的颜色
+                                          }
+                                      }
+                                  },
+                              }
+                          ]
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            //流量图
+            setLlLineData: function (url, param) {
+
+                this.$refs.llline.charts.showLoading();
+                axios.post(url)
+                  .then(function (response) {
+                      this.$refs.llline.charts.hideLoading();
+                      this.llLineOption = {
+                          color: '#50a6ff',
+                          title: {
+                              left: 'center',
+                              //text: '水位逐时统计',
+                              textStyle: {
+                                  color: 'white',
+                                  fontSize: 16,
+                                  fontWeight: 'normal'
+                              }
+                          },
+                          xAxis: {
+                              type: 'category',
+                              //name: '时间',//坐标轴名称
+                              nameLocation: 'center',
+                              nameTextStyle: {  //坐标轴名称的样式
+                                  color: '#ffffff',
+                                  //padding:5
+                              },
+                              axisLabel: {  //坐标轴刻度标签的相关设置
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              /******凸显X轴*****/
+                              axisLine: {
+                                  lineStyle: {
+                                      color: 'white',
+                                      width: 2,
+                                  }
+                              },
+                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', ],
+                          },
+                          yAxis: {
+                              name: '流量(单位：cm)',
+                              nameTextStyle: {  //坐标轴名称的样式
+                                  color: '#ffffff',
+                                  padding: 12
+                              },
+                              axisLabel: {  //坐标轴刻度标签的相关设置
+                                  textStyle: {
+                                      color: '#ffffff'
+                                  }
+                              },
+                              type: 'value',
+                              axisLine: {
+                                  lineStyle: {
+                                      color: 'white',
+                                      width: 2,
+                                  }
+                              },
+
+                          },
+                          series: [
+                              {
+                                  name: '流量',
+                                  type: 'line',
+                                  //barWidth: '60%',
+                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80],
+                                  itemStyle: {
+                                      normal: {
+                                          color: '#00FF00',  //设置折线点的颜色
+                                          lineStyle: {
+                                              color: '#ffffff' //设置折线的颜色
+                                          }
+                                      }
+                                  },
+
+                              }
+                          ]
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getDateStr: function (addDay) {
+                var date = new Date();
+                //date对象的setDate()方法，参数可以超出常规的1 ~ 31日期范围，也可以为负数，Date对象内部会自动转换为对应的日期。
+                date.setDate(date.getDate() + addDay);
+                var year = date.getFullYear();
+                var month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1);
+                var day = (date.getDate() > 9) ? date.getDate() : "0" + date.getDate();
+                var dateStr = year + "-" + month + "-" + day;
+                return dateStr;
+            },
+        }
+    }
+</script>
+<style scoped>
+    #com_swsymap {
+        display: none;
+    }
+
+    #mapContainer {
+        width: 100%;
+        border: 1px solid #0146b2;
+        overflow: hidden;
+        min-width: 400px;
+        min-height: 650px;
+        background-color: #051266;
+    }
+
+    #mapTitle {
+        position: absolute;
+        top: -11px;
+        left: 35px;
+        z-index: 1246;
+        background-color: #051266;
+        width: 160px;
+        height: 30px;
+        color: #1ED6E4;
+        font-family: "微软雅黑";
+        text-align: center;
+    }
+
+    #szdbltl {
+        position: absolute;
+        left: 35px;
+        z-index: 1500;
+        width: 176px;
+        height: 95px;
+        bottom: 16px;
+        background-color: #051266;
+    }
+
+    .bigBox {
+        width: 100%;
+        height: 100%;
+        position: relative;
+    }
+    /*.el-row {
+        margin: 10px 0 0 300px;
+    }*/
+    #szdbltl .el-row {
+        margin: 12px 0 !important;
+        height: 8px;
+    }
+
+    #szdbltl .el-col-12 {
+        padding-left: 0 !important;
+        margin-top: -12px !important;
+    }
+
+    #szdbltl #longLine {
+        background-color: #2844a3;
+        width: 176px;
+        height: 4px;
+        margin-bottom: 30px !important;
+        margin-top: 0px !important;
+    }
+
+    #szdbltl .bg-green {
+        background-color: rgba(40,160,112,0.76);
+    }
+
+    #szdbltl .bg-blue {
+        background-color: rgba(0,86,206,0.76);
+    }
+
+    #szdbltl .bg-red {
+        background-color: rgba(247,68,68,0.76);
+    }
+
+    #szdbltl .grid-content {
+        min-height: 8px;
+        min-width: 100px;
+        font-size: 2px;
+        color: white;
+    }
+
+    #szdbltl .text {
+        color: white;
+        font-size: 3px;
+        margin: -4px 0px 0 114px;
+        height: 15px;
+        width: 80px;
+    }
+    /**潮位预报*/
+    #cwyb {
+        position: absolute;
+        right: 35px;
+        z-index: 1500;
+        height: 127px;
+        bottom: 5px;
+        background-color: #051266;
+        color: white;
+        font-size: 14px;
+        width: 240px;
+    }
+
+        #cwyb .el-table__row {
+            height: 25px;
+        }
+
+        #cwyb .el-table {
+            font-size: 12px;
+            color: #606266;
+            width: 225px;
+        }
+
+            #cwyb .el-table td, .el-table th {
+                padding: 1px 0px;
+                background-color: #051266;
+                color: white;
+            }
+
+            #cwyb .el-table .cell {
+                padding-left: 8px;
+            }
+
+            #cwyb .el-table td, .el-table th.is-leaf {
+                border: none;
+            }
+
+    #nzName {
+        margin-right: 20px;
+    }
+    /**潮位预报下面的潮位分割线*/
+    #cwfg {
+        background-color: #2844a3;
+        width: 240px;
+        height: 4px;
+        margin: 3px 0;
+    }
+
+    #hideLine {
+        position: absolute;
+        right: 13px;
+        z-index: 1500;
+        height: 127px;
+        bottom: 2px;
+        width: 227px;
+        height: 6px;
+        background-color: #051266;
+    }
+
+    div.smMapViewport {
+        color: white !important;
+    }
+    /**具体测站点的弹框样式*/
+    .el-dialog {
+        height: 484px;
+        width: 916px;
+        background: url(/Images/swsy/img_bg_cezhanbig.png) no-repeat;
+        background-size: 1073px 484px;
+        position: relative;
+    }
+
+    .el-dialog__header {
+        padding: 40px 57px 0px;
+    }
+
+    .el-dialog__title {
+        line-height: 24px;
+        font-size: 18px;
+        font-family: 微软雅黑;
+        color: white;
+    }
+
+    .el-dialog__body {
+        width: 800px;
+        height: 375px;
+        margin: -30px auto 0 auto !important;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+        margin: 18px 38px 0 0 !important;
+    }
+
+    .el-tabs__item {
+        color: white;
+    }
+
+    #ylBar {
+        width: 700px;
+        height: 310px;
+        margin: 5px auto 0 auto;
+    }
+
+    .ysCharts {
+        width: 700px;
+        height: 310px;
+        margin: 5px auto 0 auto;
+    }
+
+    #tiemSelect {
+        position: absolute;
+        top: 112px;
+        left: 142px;
+    }
+
+        #tiemSelect span {
+            color: white;
+        }
+
+    #noticeMsg {
+        position: absolute;
+        left: 82px;
+        bottom: 22px;
+        color: white;
+        font-size: 14px;
+        font-family: 微软雅黑;
+    }
+</style>

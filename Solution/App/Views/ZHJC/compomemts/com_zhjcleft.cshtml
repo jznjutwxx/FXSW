@@ -1,0 +1,472 @@
+﻿
+@{
+    ViewBag.Title = "com_zhjcleft";
+}
+<script id="com_zhjcleft" type="text/x-template">
+    <div>
+        <div id="hideLeft" ref="hideLe" title="隐藏" v-on:click="hideLeft">
+            <img src="/Images/zhjc/hideleft.png" alt="隐藏" />
+        </div>
+        <div id="showLeft" ref="" title="显示" v-on:click="showLeft">
+            <img src="/Images/zhjc/showleft.png" alt="显示" />
+        </div>
+        <div id="leftcontent">
+            <header class="title">
+                <span>综合监测筛选</span>
+                <span class="smallZt">(共</span><span class="smallZt figure">30</span><span class="smallZt">条数据)</span>
+            </header>
+            <div id="jzSelect">
+                <!--indeterminate 属性用以表示 checkbox 的不确定状态，一般用于实现全选的效果-->
+                <img src="/Images/zhjc/ico_jiezhen.png" /><span class="jztext">街镇</span>
+                <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true">
+                    全选
+                </el-checkbox>
+                <div style="margin: 15px 0;"></div>
+                <el-checkbox-group v-model="checkedTwons" v-on:change="handleCheckedTwonsChange">
+                    <el-checkbox label="庄行镇"></el-checkbox>
+                    <el-checkbox label="柘林镇"></el-checkbox><br />
+                    <el-checkbox label="南桥镇"></el-checkbox>
+                    <el-checkbox label="青村镇"></el-checkbox><br />
+                    <el-checkbox label="金汇镇"></el-checkbox>
+                    <el-checkbox label="奉城镇"></el-checkbox><br />
+                    <el-checkbox label="四团镇"></el-checkbox>
+                    <el-checkbox label="海湾镇"></el-checkbox>
+                </el-checkbox-group>
+            </div>
+            <div id="jcdSelect">
+                <el-tabs v-model="jclx" type="card" v-on:tab-click="handleClick">
+                    <el-tab-pane label="自动监测点" name="zdjcd">
+                        <div id="zdgcxm">
+                            <div id="zdgcxmTitle">
+                                <img src="/Images/zhjc/ico_自动观测项目.png" />
+                                <span>自动观测项目</span>
+                            </div>
+                            <el-dropdown v-on:command="handleCommand">
+                                <div class="el-dropdown-link">
+                                    <span ref="selectItem">风速风向</span><i class="el-icon-arrow-down el-icon--right"></i>
+                                </div>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item command="雨量">雨量</el-dropdown-item>
+                                    <el-dropdown-item command="水位">水位</el-dropdown-item>
+                                    <el-dropdown-item command="流量">流量</el-dropdown-item>
+                                    <el-dropdown-item command="风速风向">风速风向</el-dropdown-item>
+                                    <el-dropdown-item command="水质监测">水质监测</el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </div>
+                        <div id="zdzt">
+                            <div id='zdztTitle'><img src="/Images/zhjc/ico_站点状态.png" /> <span>站点状态</span></div>
+                            <el-checkbox-group v-on:change="zdztChange" v-model="checkedZdzt">
+                                <el-checkbox label="正常"></el-checkbox>
+                                <el-checkbox label="设备异常"></el-checkbox>
+                            </el-checkbox-group>
+                        </div>
+                    </el-tab-pane>
+                    <el-tab-pane label="人工取样点" name="rgqyd">
+                        <div id="rgqyd">
+                            <div>水质检测任务</div>
+                            <el-checkbox-group v-on:change="szjcrwChange" v-model="checkedSzjcrw">
+                                <el-row>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="重污染"></el-checkbox>
+                                    </el-col>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="黑臭"></el-checkbox>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="水功能"></el-checkbox>
+                                    </el-col>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="进出水"></el-checkbox>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="清洁水"></el-checkbox>
+                                    </el-col>
+                                    <el-col v-bind:span="12">
+                                        <el-checkbox label="劣五类"></el-checkbox>
+                                    </el-col>
+                                </el-row>
+                            </el-checkbox-group>
+                        </div>
+                    </el-tab-pane>
+                </el-tabs>
+            </div>
+        </div>
+    </div>
+</script>
+<script>
+    var com_zhjcleft = {
+        template: "#com_zhjcleft",
+        data: function () {
+            return {
+                checkAll: false,
+                checkedTwons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                isIndeterminate: false,
+                twons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                jclx: "zdjcd",
+                checkedZdzt: ['正常', '设备异常'],
+                checkedSzjcrw: ["重污染", "黑臭", "清洁水", "进出水"],
+                finalMapData: [],//最后地图和表格中展示的数据
+                belowTableTitle: "",//下方表格的title
+            };
+        },
+        created: function () {
+
+        },
+        mounted: function () {
+            this.getJCdate();
+
+        },
+        updated: function () {
+
+        },
+        methods: {
+            hideLeft: function () {
+                $("#hideLeft").hide();
+                $("#jcdSelect").hide();
+                $("#leftcontent").animate({ width: "hide" }, "fast", function () {
+                    $("#showLeft").show();
+                })
+            },
+            showLeft: function () {
+                $("#showLeft").hide();
+                $("#jcdSelect").show();
+                $("#leftcontent").animate({ width: "show" }, "fast", function () {
+                    $("#hideLeft").show();
+                })
+            },
+            //街镇全选框的事件
+            handleCheckAllChange: function (val) {
+                debugger;
+                this.checkedTwons = val ? this.twons : [];//
+                this.isIndeterminate = false; //当全选或者全不选时，不确定性为false
+                this.getJCdate();
+            },
+            //具体街镇change事件
+            handleCheckedTwonsChange: function (value) {
+                debugger;
+                var checkedCount = value.length;
+                this.checkAll = (checkedCount === this.twons.length);
+                this.isIndeterminate = (checkedCount > 0 && checkedCount < this.twons.length);
+                //后台取数据
+                this.getJCdate();
+
+            },
+            //自动、人工监测点tab页的切换事件
+            handleClick: function (tab, event) {
+                this.getJCdate();
+            },
+            //检测点下来菜单，菜单项的选择（单击）事件
+            handleCommand: function (command) {
+                //alert(command);
+                debugger;
+                this.$refs.selectItem.innerHTML = command;
+                this.getJCdate();
+            },
+            //站点状态改变时
+            zdztChange: function () {
+                this.getJCdate();
+            },
+            //水质监测任务改变时
+            szjcrwChange: function () {
+                this.getJCdate();
+            },
+            //获取监测数据
+            getJCdate: function () {
+                var vm = this;
+                var strTwons = this.checkedTwons.join(',');
+                /**------------------------------------------后台获取数据开始----------------------------------------------------*/
+                if (this.jclx == "zdjcd") {
+                    debugger;
+                    vm.belowTableTitle = vm.$refs.selectItem.innerHTML;
+                    //自动监测点分2个接口去数据[{水质监测},{雨量、水位、流量、风速风向}]
+                    if (vm.belowTableTitle == "水质监测") {
+                        axios.post('/ZHJC/getSZJCdata', { zdzt: vm.checkedZdzt, twons: strTwons }).then(function (response) {
+                            debugger
+                            var zdjcd_szjc_datas = JSON.parse(response.data).StationInfoGetResponse.station_info_list;      
+                            console.log(zdjcd_szjc_datas);
+                            vm.finalMapData = zdjcd_szjc_datas;
+                            vm.dataToFather();
+                        });
+                    }
+                    else { //雨量、水位、流量、风速风向
+                        axios.post('/ZHJC/getOtherJCdata', { zdzt: this.checkedZdzt, twons: strTwons, jcxm: this.belowTableTitle }).then(function (response) {
+                            debugger
+                            var zdjcd_othterJcd_datas = JSON.parse(response.data).StationDistributionInfoGetResponse.station_distribution_info_list;
+                            console.log(zdjcd_othterJcd_datas);
+                            vm.finalMapData = zdjcd_othterJcd_datas;
+                            vm.dataToFather();
+                        });
+                    }
+                }
+                else if (vm.jclx == 'rgqyd') {
+                    var rgqydjcrw = vm.checkedSzjcrw.join(',');
+                    vm.belowTableTitle = "人工取样点";
+                    axios.post('/ZHJC/getRgqydData', { jcrw: rgqydjcrw, twons: strTwons }).then(function (response) {
+                        debugger
+                        var rgqyd_datas = JSON.parse(response.data).SamplingPointListGetResponse.sampling_point_list;
+                        vm.finalMapData = rgqyd_datas;
+                        vm.dataToFather();
+                    });
+                }
+                /***---------------------------------------------后台获取数据结束------------------------------------------*/
+                /*---------------------------------------------------------测试数据开始----------------------------------------------------*/
+               /* if (this.jclx == "zdjcd") {
+                    this.belowTableTitle = this.$refs.selectItem.innerHTML;
+                    var zdjcsj = [];//后台获取到的自动监测数据
+                    var that = this;
+                    //一个检测类型中的不同观测项目
+                    zdjcsj = [{ type: "自动监测点", x: 121.38542, y: 30.94459, twon: "庄行镇", 自动观测项目: "雨量", 站点状态: "正常", 所属街道: "庄行街道1", 所属河道: "庄行河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.47157, y: 30.93587, twon: "南桥镇", 自动观测项目: "雨量", 站点状态: "设备异常", 所属街道: "南桥街道1", 所属河道: "南桥河道1", 雨量: "42mm", 水位: "42mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                               { type: "自动监测点", x: 121.47282, y: 30.93587, twon: "南桥镇", 自动观测项目: "雨量", 站点状态: "设备异常", 所属街道: "南桥街道1", 所属河道: "南桥河道1", 雨量: "42mm", 水位: "42mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.46939, y: 30.83337, twon: "柘林镇", 自动观测项目: "水位", 站点状态: "正常", 所属街道: "柘林街道1", 所属河道: "柘林河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.55052, y: 30.97956, twon: "金汇镇", 自动观测项目: "流量", 站点状态: "设备异常", 所属街道: "金汇街道1", 所属河道: "金汇河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.54104, y: 30.91457, twon: "青村镇", 自动观测项目: "风速风向", 站点状态: "正常", 所属街道: "青村街道1", 所属河道: "青村河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.55, y: 30.90258, twon: "青村镇", 自动观测项目: "风速风向", 站点状态: "正常", 所属街道: "青村街道1", 所属河道: "青村河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '100m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.60198, y: 30.85589, twon: "海湾镇", 自动观测项目: "水质监测", 站点状态: "正常", 所属街道: "海湾街道1", 所属河道: "海湾河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.65758, y: 30.94997, twon: "奉城镇", 自动观测项目: "雨量", 站点状态: "正常", 所属街道: "奉城街道1", 所属河道: "奉城河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' },
+                              { type: "自动监测点", x: 121.71592, y: 30.95052, twon: "四团镇", 自动观测项目: "雨量", 站点状态: "正常", 所属街道: "四团街道1", 所属河道: "四团河道1", 雨量: "32mm", 水位: "22mm", 时间: "2018-4-24", 风速: '5m/s', 风向: '东风' }];
+                    var jzData = []; //根据选中的街镇筛选数据
+                    for (var i = 0; i < that.checkedTwons.length; i++) {
+                        //如果后台自动监测点数据的镇名=当前选中的证明
+                        for (var j = 0; j < zdjcsj.length; j++) {
+                            if (zdjcsj[j].twon == that.checkedTwons[i]) {
+                                jzData.push(zdjcsj[j]); //筛选出当前选中镇的数据
+                            }
+                        }
+                    }
+                    var gzxmData = []; //根据观测项目筛选出的数据
+                    for (var i = 0; i < jzData.length; i++) {
+                        if (jzData[i].自动观测项目 == that.$refs.selectItem.innerHTML) {
+                            gzxmData.push(jzData[i]);
+                        }
+                    }
+                    var zdztData = [];//根据站点状态帅选出来的数据
+                    for (var i = 0; i < gzxmData.length; i++) {
+                        for (var j = 0; j < that.checkedZdzt.length; j++) {
+                            if (gzxmData[i].站点状态 == that.checkedZdzt[j]) {
+                                zdztData.push(gzxmData[i]);
+                            }
+                        }
+                    }
+                    that.finalMapData = zdztData;//最终的筛选结果
+                    that.dataToFather();
+                }
+                else if (this.jclx == "rgqyd") {
+                    //人工取样点
+                    var that = this;
+                    this.belowTableTitle = "人工取样点";
+                    rgqysj = [{ type: "人工取样点", x: 121.38542, y: 30.94459, twon: "庄行镇", 水质监测任务: "重污染", 水质类型: "二类", 所属河道: "庄行河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24 8:00 " },
+                           { type: "人工取样点", x: 121.47157, y: 30.93587, twon: "南桥镇", 水质监测任务: "清洁水", 水质类型: "三类", 所属河道: "南桥河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24 9:00 " },
+                           { type: "人工取样点", x: 121.46939, y: 30.83337, twon: "柘林镇", 水质监测任务: "清洁水", 水质类型: "四类", 所属河道: "柘林河道1", 取样点地址: "隆昌路619号城市概念软件园区8号楼北区c01", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24 10:00" },
+                           { type: "人工取样点", x: 121.55052, y: 30.97956, twon: "金汇镇", 水质监测任务: "水资源", 水质类型: "五类", 所属河道: "金汇河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24 15:55" },
+                           { type: "人工取样点", x: 121.54104, y: 30.91457, twon: "青村镇", 水质监测任务: "水资源", 水质类型: "劣五类", 所属河道: "青村河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24" },
+                           { type: "人工取样点", x: 121.60198, y: 30.85589, twon: "海湾镇", 水质监测任务: "水资源", 水质类型: "二类", 所属河道: "海湾河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24" },
+                           { type: "人工取样点", x: 121.65758, y: 30.94997, twon: "奉城镇", 水质监测任务: "水资源", 水质类型: "二类", 所属河道: "奉城镇河道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24" },
+                           { type: "人工取样点", x: 121.71592, y: 30.95052, twon: "四团镇", 水质监测任务: "水资源", 水质类型: "二类", 所属河道: "四团镇道1", 取样点地址: "固定地址", 取样操作员: "李白", 管理单位: "奉贤水务局", 取样时间: "2018-4-24" }];
+                    var jzData = []; //根据选中的街镇筛选数据
+                    for (var i = 0; i < that.checkedTwons.length; i++) {
+                        //如果后台人工取样点数据的镇名=当前选中的镇名
+                        for (var j = 0; j < rgqysj.length; j++) {
+                            if (rgqysj[j].twon == that.checkedTwons[i]) {
+                                jzData.push(rgqysj[j]); //筛选出当前选中镇的数据
+                            }
+                        }
+
+                    }
+                    var szjcrw = [];//根据水质监测任务筛选出的数据
+                    for (var i = 0; i < jzData.length; i++) {
+                        for (var j = 0; j < that.checkedSzjcrw.length; j++) {
+                            if (jzData[i].水质监测任务 == that.checkedSzjcrw[j]) {
+                                szjcrw.push(jzData[i]);
+                            }
+                        }
+                    };
+                    that.finalMapData = szjcrw;
+                    that.dataToFather();
+                }*/
+                /*---------------------------------------------------------测试数据结束-----------------------------------------------------*/
+            },
+            //注册事件，向父组件传递参数
+            dataToFather: function () {
+                this.$emit("get-data", this.finalMapData, this.belowTableTitle, this.jclx);
+            }
+        }
+    }
+</script>
+<style>
+    #com_zhjcleft {
+        display: none;
+    }
+
+    #leftcontent {
+        width: 240px;
+        height: 420px;
+        border-right: #cccccc 1px solid;
+        border-bottom: #cccccc 1px solid;
+        position: absolute;
+        z-index: 1301;
+        color: #333333;
+        background-color:white;
+    }
+
+        #leftcontent .title {
+            width: 100%;
+            height: 32px;
+            /*border-bottom: #b9b9b9 1px solid;*/
+            /*border-right: 1px solid transparent;*/
+            line-height: 32px;
+            text-align: center;
+            font-family: 'Microsoft YaHei';
+            background-color: #ececec;
+        }
+
+        #leftcontent .smallZt {
+            font-size: 13px;
+        }
+
+            #leftcontent .smallZt.figure {
+                font-family: Arial;
+            }
+    /**检测点区域样式*/
+    #jcdSelect {
+        height: 247px;
+    }
+
+        #jcdSelect .el-tabs--card > .el-tabs__header .el-tabs__nav {
+            border: none;
+        }
+
+        #jcdSelect .el-tabs--card > .el-tabs__header .el-tabs__item {
+            width: 120px;
+            height: 30px;
+            line-height: 30px;
+        }
+
+        #jcdSelect .el-tabs__nav-wrap.is-scrollable {
+            padding: 0 !important;
+        }
+
+        #jcdSelect .el-tabs__nav-prev {
+            display: none;
+        }
+
+        #jcdSelect .el-tabs__nav-next {
+            display: none;
+        }
+        /**tab栏选中时的样式*/
+        #jcdSelect .el-tabs__item.is-active {
+            color: white;
+            background-color: #2288f1;
+            border: none;
+        }
+
+    #hideLeft {
+        position: absolute;
+        z-index: 1255;
+        left: 240px;
+        top: 0px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+    }
+
+    #showLeft {
+        position: absolute;
+        z-index: 1255;
+        left: 0px;
+        top: 0px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+        display: none;
+    }
+
+    #jzSelect {
+        height: 150px;
+        border-bottom: 1px solid #cccccc;
+        text-align: center;
+    }
+
+        #jzSelect > img {
+            height: 12px;
+            margin-top: 15px;
+        }
+
+        #jzSelect .jztext {
+            font-size: 14px;
+            margin: 0 77px 0 10px;
+        }
+
+        #jzSelect .el-checkbox {
+            margin-bottom: 5px;
+        }
+
+        #jzSelect .el-checkbox-group {
+            margin: -10px 0 0 -25px;
+        }
+
+    #zdgcxm, #zdzt {
+        margin-left: 15px;
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+    }
+
+    #zdgcxmTitle {
+        margin-bottom: 10px;
+    }
+
+        #zdgcxmTitle img {
+            margin-bottom: -1px;
+            height: 13px;
+        }
+
+    #zdztTitle {
+        margin: 20px 0 10px;
+    }
+
+    #zdgcxm .el-dropdown-link {
+        border: 1px solid #ececec;
+        width: 190px;
+        height: 25px;
+        border-radius: 4px;
+        line-height: 25px;
+    }
+
+        #zdgcxm .el-dropdown-link > span {
+            margin-left: 10px;
+        }
+
+    #zdgcxm .el-icon--right {
+        /*margin-left:100px;*/
+    }
+
+    .el-dropdown-menu {
+        width: 190px !important;
+        height: 150px;
+        margin-top: 5px;
+        top: 287px;
+    }
+
+    .el-dropdown-menu__item {
+        line-height: 30px !important;
+    }
+
+    #zdzt .el-checkbox {
+        margin-bottom: 10px;
+    }
+
+    #rgqyd {
+        margin-left: 15px;
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+    }
+
+        #rgqyd .el-checkbox {
+            margin: 10px 0;
+        }
+</style>

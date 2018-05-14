@@ -1,0 +1,206 @@
+﻿
+<script type="text/x-template" id="query">
+    <div>
+        <el-form v-bind:inline="true" class="query" size="small">
+            <el-form-item label="年度：">
+                <el-date-picker v-model="startYearValue"
+                                type="year"
+                                value-format="yyyy"
+                                placeholder="选择年份" style="width: 100px;">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item label="至">
+                <el-date-picker v-model="endYearValue"
+                                type="year"
+                                value-format="yyyy"
+                                placeholder="选择年份" style="width: 100px;">
+                </el-date-picker>
+            </el-form-item>
+
+            <el-form-item label="工程状态：">
+                <el-select v-model="staticVal" style="width: 100px;">
+                    <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="所属镇：">
+                <el-select v-model="xzqhVal" style="width: 100px;">
+                    <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item>
+                <el-input placeholder="请输入工程名称/项目编号" size="small" >
+                    <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                </el-input>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" class="addbtn" v-on:click="add"></el-button>
+                <el-button type="primary" class="downbtn"></el-button>
+                <el-button type="primary" class="importbtn"></el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</script>
+
+<script>
+    var query = ({
+        template: '#query',
+        data: function () {
+            return {
+                param: {
+                    sYear: '',
+                    eYear: '',
+                    status: [],
+                    town: []
+                },
+                staticsOptions: [],
+                xzqhOptions: [],
+                staticVal: "",
+                xzqhVal: "",
+                startYearValue: moment().add(-8, "y").format("YYYY"),
+                endYearValue: moment().add(1, "y").format("YYYY"),
+            }
+        },
+        components: {
+        },
+        mounted: function () {
+            this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
+            this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
+            this.emitEvent();
+        },
+        methods: {
+            getTown: function (url, type) {
+                axios.post(url, type)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.DictionaryGetResponse.list;
+                      this.xzqhOptions = datas;
+                      this.xzqhVal = this.xzqhOptions[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getStatics: function (url, type) {
+                axios.post(url, type)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.DictionaryGetResponse.list;
+                      this.staticsOptions = datas;
+                      this.staticVal = this.staticsOptions[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            emitEvent: function () {
+                this.param.status = this.staticVal;
+                this.param.town = this.xzqhVal;
+                this.param.sYear = this.startYearValue;
+                this.param.eYear = this.endYearValue;
+                this.$emit('emit-event', this.param);
+            },
+            changeStatics: function (param) {
+                this.staticVal = param;
+            },
+            changeXzqh: function (param) {
+                this.xzqhVal = param;
+            },
+            add: function () {
+                window.location.href = "/FarmlandWater/AddPage";
+            }
+        }
+    });
+</script>
+
+<style>
+    #query {
+        display: none;
+    }
+    #query.el-form-item__content{
+        width:100px !important;
+    }
+    .query {
+        font-size: 14px;
+        padding: 15px 20px 0px 20px;
+        border-bottom: 1px solid #dcdcdc;
+    }
+
+    .inputcss {
+        padding-left: 20px;
+        float: left;
+    }
+
+    .addbtn {
+        border: 0;
+        width: 75px;
+        height: 32px;
+        background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        background-repeat: round;
+    }
+
+        .addbtn:focus {
+            background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        }
+
+        .addbtn:active {
+            background-image: url('/Images/gcgl/btn_xinzeng_active.png');
+        }
+
+        .addbtn:hover {
+            background-image: url('/Images/gcgl/btn_xinzeng_active.png');
+            cursor: pointer;
+        }
+
+    .downbtn {
+        width: 100px;
+        height: 32px;
+        border: 0;
+        background-repeat: round;
+        background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+    }
+
+        .downbtn:focus {
+            background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        }
+
+        .downbtn:active {
+            background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+        }
+
+        .downbtn:hover {
+            background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+            cursor: pointer;
+        }
+
+    .importbtn {
+        width: 100px;
+        height: 32px;
+        border: 0;
+        background-repeat: round;
+        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+    }
+
+        .importbtn:focus {
+            background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        }
+
+        .importbtn:active {
+            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+        }
+
+        .importbtn:hover {
+            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+            cursor: pointer;
+        }
+
+    .butcss {
+        float: left;
+        padding-left: 30px;
+        /**/
+    }
+</style>

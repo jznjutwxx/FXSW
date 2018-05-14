@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "雨量等值面分析";
+}
+
+<div id="app">
+    <com_query></com_query>
+    <com_map></com_map>
+</div>
+
+@Html.Partial("~/Views/RainfallISOSurface/components/com_query.cshtml")
+@Html.Partial("~/Views/RainfallISOSurface/components/com_map.cshtml")
+
+@section scripts{ 
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+}
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+
+        },
+        components: {
+            "com_query": isoquery,
+            "com_map":isomap
+        },
+        mounted: function () {
+
+        },
+        methods: {
+
+        }
+
+    })
+</script>
+
+<style>
+    body{
+        width:100%;
+        height:100%;
+        margin:0;
+    }
+</style>
+

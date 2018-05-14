@@ -1,0 +1,33 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "工程总览";
+}
+@Html.Partial("~/Views/ProOverView/components/com_map.cshtml")
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+<div id="app">
+    <com_map ref="comMap">
+
+    </com_map>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        components: {
+            "com_map": comMap
+        },
+        data: {
+
+        },
+        mounted: function () {
+
+        },
+        watch: {
+
+        },
+        methods: {
+
+        },
+    });
+</script>
+

@@ -1,0 +1,235 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "工程状态统计";
+}
+
+<div id="app">
+    <gcztstatistics-query v-on:emit-event="getEmitEvent" ref="gcztstatisticsQuery"></gcztstatistics-query>
+    <div class="center">
+        <com-bar v-bind:option="barOption" v-bind:style='styles'></com-bar>
+        <div class="centerradio" >
+            <el-radio-group v-model="choose" v-on:change="changeChecked" size="small">
+                <el-radio label="1" >骨干河道</el-radio>
+                <el-radio label="2" >中小河道</el-radio>
+                <el-radio label="3">小型农田水利</el-radio>
+                <el-radio label="4">农村生活污水</el-radio>
+                <el-radio label="5">海塘提防泵闸</el-radio>
+            </el-radio-group>
+        </div>
+    </div>
+    <com-base-table v-bind:height="height" v-bind:tabledatas="tableData" class="com-base-table"></com-base-table>
+</div>
+
+@Html.Partial("~/Views/GcztStatistics/components/query.cshtml")
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/components/tables/com_base_table.cshtml")
+
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            styles: {
+                height: '0px',
+                width: '85%',
+                float:'left'
+            },
+            barOption: null,
+            height: 0,
+            choose: '1',
+            tableData: {
+                tableKey: [],
+                tableData: []
+            },
+            charTitle: '骨干河道状态统计图',
+        },
+        components: {
+            'gcztstatistics-query': query,
+            'com-bar': comBar,
+            'com-base-table': comBaseTable,
+        },
+        mounted: function () {
+            this.setSize()
+            this.resize()
+            this.setData('/GcztStatistics/GetData', { startYear: moment().format("YYYY"), endYear: moment().format("YYYY")})
+        },
+        methods: {
+            checkDate: function (date) {
+                var date = date;
+                var date1 = new Date(date);
+                var y = date1.getFullYear();
+                return y;
+            },
+            getEmitEvent: function (param) {
+                this.setBarTitle();
+                this.setData('/GcztStatistics/GetData', { startYear: param.startYear, endYear: param.endYear})
+            },
+            changeChecked: function () {
+                this.setBarTitle()
+                this.setData('/GcztStatistics/GetData', { startYear: this.checkDate(this.$refs.gcztstatisticsQuery.sYear), endYear: this.checkDate(this.$refs.gcztstatisticsQuery.eYear), qchoose: this.$refs.gcztstatisticsQuery.querychoose })
+
+            },
+            setData: function (url, param) {
+                //this.setBarTitle();
+                this.setBarData(url, param)
+                this.setTableData(url, param)
+            },
+            setBarData: function (url, param) {
+                this.$children[1].charts.showLoading();
+                axios.post(url,param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.StatisticsEnginStatusGetResponse.statistics_engin_status[parseInt(this.choose) - 1];
+                      this.$children[1].charts.hideLoading();
+                      this.barOption = {
+                          title: {
+                              left: 'center',
+                              text: this.charTitle,
+                              textStyle: {
+                                  color: '#666666',
+                                  fontWeight: 'normal',
+                                  fontSize: 16
+                              }
+                          },
+                          legend: {
+                          },
+                          xAxis: {
+                              type: 'category',
+                              data: ['工前准备', '开工', '完工', '完工验收', '决算审批', '竣工验收'],
+                              axisLabel: {
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLine: {
+                                  show: false
+                              },
+                          },
+                          yAxis: {
+                              type: 'value',
+                              axisLine: {
+                                  show: false
+                              },
+                              axisTick: {
+                                  show: false
+                              },
+                              axisLabel: {
+                                  textStyle: {
+                                      color: '#999'
+                                  }
+                              }
+                          },
+                          series: [
+                              {
+                                  name: '',
+                                  type: 'bar',
+                                  barWidth: '60%',
+                                  data: [datas.gqzb, datas.kg, datas.wg, datas.wgys, datas.jssp, datas.jgys]
+                              }
+                          ]
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setTableData: function (url, param) {
+                axios.post(url,param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.StatisticsEnginStatusGetResponse.statistics_engin_status;
+                      this.tableData = {
+                          tableKey: [
+                          {
+                              name: '序号',
+                              type: 'index',
+                              width: '60',
+                          }, {
+                              name: '统计类别',
+                              value: 'gctype',
+                          }, {
+                              name: '全部(个)',
+                              value: 'allcount',
+                          }, {
+                              name: '工前',
+                              value: 'gqzb',
+                          }, {
+                              name: '开工',
+                              value: 'kg',
+                          }, {
+                              name: '完工',
+                              value: 'wg',
+                          }, {
+                              name: '完工验收',
+                              value: 'wgys',
+                          }, {
+                              name: '决算审批',
+                              value: 'jssp',
+                          }, {
+                              name: '竣工验收',
+                              value: 'jgys',
+                          }],
+                          tableData: datas
+                          }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            setBarTitle: function (url, param) {
+                switch (this.choose) {
+                    case '1':
+                        this.barTitle = '骨干河道状态统计图';
+                        break;
+                    case '2':
+                        this.barTitle = '中小河道状态统计图';
+                        break;
+                    case '3':
+                        this.barTitle = '小型农田水利状态统计图';
+                        break;
+                    case '4':
+                        this.barTitle = '农村生活污水状态统计图';
+                        break;
+                    case '5':
+                        this.barTitle = '海塘提防泵闸状态统计图';
+                        break;
+                    default:
+                        break;
+                }
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight
+                var queryH = this.$refs.gcztstatisticsQuery.$el.clientHeight
+                var contentH = docH - queryH - 40
+                this.styles.height = (contentH / 2) + 'px'
+                this.height = contentH / 2
+            },
+
+        }
+    });
+</script>
+
+<style>
+    .center {
+        width: 99%;
+        position: relative;
+    }
+    .centerradio {
+        width: 7%;
+        height: 80%;
+        float: left;
+        padding-top:100px;
+        font-family: 'Microsoft YaHei';
+    }
+    .el-radio + .el-radio {
+        margin-left:0px !important;
+        padding-top:16px;
+    }
+     
+</style>
