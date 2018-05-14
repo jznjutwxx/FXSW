@@ -7,10 +7,11 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
+using System.IO;
 
 namespace App.Controllers
 {
-    //[Authentication]
+    [Authentication]
     public class BackboneRiverwayController : Controller
     {
         // GET: BackboneRiverway
@@ -43,6 +44,7 @@ namespace App.Controllers
         public JsonResult GetSelect(string Type)
         {
             // 接口
+
             string method = "wavenet.fxsw.dictionary.get";
 
             // 接口所需传递的参数
@@ -113,6 +115,42 @@ namespace App.Controllers
             return Json(authorization);
         }
 
+        public JsonResult SaveOneFile(string s_id, string Files, string Type)
+        {
+            //文件路径
+            string path = Request.ApplicationPath;//Server.MapPath("/upload/");
+            path = Server.MapPath(path += "/upload/" + Files);
+            Type = GetFilesType(Type);
+            Type = Type + "1";
+            // 接口
+            string method = "wavenet.fxsw.engin.file.manager.report";
+
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_id", s_id);//id
+            paramDictionary.Add("s_person", "小张");//上传人名
+
+            Dictionary<string, string> fileParams = new Dictionary<string, string>();
+            fileParams.Add(Type, path);
+            
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
+            return Json(authorization);
+        }
+
+        public JsonResult DeleteFile(string file_ids)
+        {
+            // 接口
+            string method = "wavenet.fxsw.engin.file.del";
+
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("file_ids", file_ids);
+
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
         public JsonResult SaveProjectStatus(string s_id, string Status)
         {
             //var result = JsonConvert.DeserializeObject<T_ENGIN_INFO[]>(param);
@@ -133,17 +171,64 @@ namespace App.Controllers
             return Json(authorization);
         }
 
-
-        public JsonResult GetFiles()
+        public JsonResult UpFiles()
         {
+            String TempR = "";
             string path = Request.ApplicationPath;//Server.MapPath("/upload/");
-            if (Request.Files.Count > 0)
+            path = Server.MapPath(path += "/upload/");
+            try
             {
-                var f = Request.Files[0];
-                path += "/upload/"+f.FileName;
-                f.SaveAs(Server.MapPath(path));
+                if (Request.Files.Count > 0)
+                {
+                    var f = Request.Files[0];
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    f.SaveAs(path + f.FileName);
+                }
+                TempR = "OK";
             }
-            return Json(new { result = true  });
+            catch (Exception ex)
+            {
+                TempR = ex.Message;
+            }
+
+            return Json(TempR);//return Json(new { result = true  });
+        }
+
+        /// <summary>
+        /// 文件类型名称转换
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public string GetFilesType (string Type)
+        {
+            switch (Type)
+            {
+                case "工前准备":
+                    Type = "gqzb_file";
+                    break;
+                case "开工":
+                    Type = "kg_file";
+                    break;
+                case "完工":
+                    Type = "wg_file";
+                    break;
+                case "完工验收":
+                    Type = "wgys_file";
+                    break;
+                case "决算审批":
+                    Type = "jssp_file";
+                    break;
+                case "竣工验收":
+                    Type = "jgys_file";
+                    break;
+                default:
+                    Type = "";
+                    break;
+            }
+            return Type;
         }
     }
 }

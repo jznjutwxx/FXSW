@@ -108,13 +108,13 @@ namespace App.Controllers
         /// 自动监测点-雨量、水位、流量曲线图接口
         /// </summary>
         /// <returns></returns>
-        public JsonResult getZdjcdChartData()
+        public JsonResult getZdjcdChartData(string zdName,string startTime,string endTime)
         {
             string method = "wavenet.fxsw.ylsw.diagram.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            paramDictionary.Add("name", "南桥");
-            paramDictionary.Add("time_begin", "2018-5-01 00:00:00");
-            paramDictionary.Add("time_end", "2018-5-03 00:00:00");
+            paramDictionary.Add("name", zdName);
+            paramDictionary.Add("time_begin", startTime);
+            paramDictionary.Add("time_end", endTime);
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
         }

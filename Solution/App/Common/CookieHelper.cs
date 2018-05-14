@@ -97,14 +97,14 @@ namespace App.Common
         /// <param name="strname">cookie名称</param>
         /// <param name="strvalue">cookie值</param>
         /// <param name="days">保存天数</param>
-        public static void WriteCookie(string strname, string strvalue, int days)
+        public static void WriteCookie(string strname, string strvalue, int minutes)
         {
             HttpCookie cookie = HttpContext.Current.Request.Cookies[strname];
             if (cookie == null)
                 cookie = new HttpCookie(strname);
             cookie.Value = UrlEncode(strvalue);
-            if (days > 0)
-                cookie.Expires = DateTime.Now.AddDays(days);
+            if (minutes > 0)
+                cookie.Expires = DateTime.Now.AddMinutes(minutes);
             HttpContext.Current.Response.AppendCookie(cookie);
         }
 

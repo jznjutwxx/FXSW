@@ -46,7 +46,7 @@
                             <template slot-scope="scope">
                                 @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -55,13 +55,12 @@
                 @*<el-button type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           multiple
-                           action="/BackboneRiverway/GetFiles"
+                           action="/BackboneRiverway/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:auto-upload="false">
+                           v-bind:show-file-list="false">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
                     @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
@@ -192,33 +191,75 @@
             s_id: '',
             num: '',
             type: '',
-            Status: '',
+            Status: '', 
             StatusOption: [],
             projectFile: [],
             height: '200',
             tableData: [],
             isFinish: false,
             isShow: false,
+            tableName: '',
         },
         components: {
+
         },
         mounted: function () {
             this.init()
         },
         methods: {
-            submitUpload() {
-                this.$refs.upload.submit();
-            },
-            handleRemove(file, fileList) {
+            //submitUpload:function () {
+            //    this.$refs.upload.submit();
+            //},
+            handleRemove: function (file, fileList) {
                 console.log(file, fileList);
             },
-            handlePreview(file) {
+            handlePreview: function (file, fileList) {
                 console.log(file);
             },
             getFile: function (file, fileList) {
+                console.log(file);
             },
-            sucess: function (response, file, fileList) {
-                debugger
+            sucess: function (response, file, fileList,data) {
+                if (response == "OK")
+                {
+                    this.saveFiles("/BackboneRiverway/SaveOneFile", { s_id: this.s_id, Files: file.name, Type: this.tableName, });
+                }
+            },
+            saveFiles: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileManagerReportResponse.result) {
+                          this.$message({
+                              message: '上传成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('上传失败！' + tempData.EnginFileManagerReportResponse.result);
+                      }
+                      this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            deleteFiles: function (id) {
+                axios.post("/BackboneRiverway/DeleteFile", { file_ids: id })
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileDelResponse.result) {
+                          this.$message({
+                              message: '删除成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginFileDelResponse.result);
+                      }
+                      this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
             },
             init: function () {
                 this.s_id = this.getRequest().id;
@@ -244,7 +285,8 @@
                       var datas = tempData.EnginCoreGetResponse.info;
                       this.num = datas.s_project_no; 
                       this.type = datas.n_type;
-                      this.Status = datas.n_pace_status;
+                      //this.Status = datas.n_pace_status;
+                      this.Status = 1;
                       if (this.Status == "工程完结") {
                           this.isFinish = true;
                       } else {
@@ -256,6 +298,7 @@
                   });
             },
             changeSel: function (name) {
+                this.tableName = name;
                 this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
             },
             getProjectFile: function (url, param) {

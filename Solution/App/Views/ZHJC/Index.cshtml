@@ -133,7 +133,7 @@
                         <li>
                             <el-row>
                                 <el-col v-bind:span="6" v-bind:id="'qypicture'+index">
-                                    <div style="margin-top:6px;width:195px;height:110px;background:url(/Images/zhjc/img_nopic.png) no-repeat;cursor:pointer" v-bind:id="'nopic'+index" title="暂无图片" v-if="!isHavePic(qyjl)">
+                                    <div style="margin-top:6px;width:195px;height:110px;background:url(/Images/zhjc/rgqyd/img_暂无图片.png) no-repeat;cursor:pointer" v-bind:id="'nopic'+index" title="暂无图片" v-if="!isHavePic(qyjl)">
                                         <!--没有图片的时候显示的图片-->
                                     </div>
                                     <el-carousel trigger="click" height="130px" arrow="hover" v-bind:autoplay='false' v-if="isHavePic(qyjl)" style="width:195px;">
@@ -163,12 +163,12 @@
 
                                             <el-col v-bind:span="12">
                                                 <span>查看视频:</span><img v-on:click="showVideoDialog(qyjl.full_paths)" src="/Images/zhjc/btn_shipin.png" style="margin-left:3px;cursor:pointer;" title="查看视频" />
-                                            </el-col>    
+                                            </el-col>
                                     </el-row>
                                     <el-row>
                                         <el-col v-bind:span="24"><span style="margin-left:27px;">备注:</span>{{qyjl.s_remark}}</el-col>
                                     </el-row>
-                                </el-col>                        
+                                </el-col>
                             </el-row>
                             <hr style="margin-right:10px;" />
                         </li>
@@ -364,55 +364,9 @@
             zdjcdLegendShow: false,
             rgLegendShow: false,
             jcdLegendShow: false,
-            zdjcdTableData: [{
-                time: '04-25 8:00',
-                value: '60',
-            }, {
-                time: '04-25 9:00',
-                value: '60',
-            }, {
-                time: '04-25 10:00',
-                value: '60',
-            }, {
-                time: '04-25 11:00',
-                value: '60',
-            }, {
-                time: '04-25 12:00',
-                value: '60',
-            }, {
-                time: '04-25 13:00',
-                value: '60',
-            }, {
-                time: '04-25 14:00',
-                value: '60',
-            }, {
-                time: '04-25 15:00',
-                value: '60',
-            }, {
-                time: '04-25 16:00',
-                value: '60',
-            }, {
-                time: '04-25 17:00',
-                value: '60',
-            }, {
-                time: '04-26 10:00',
-                value: '60',
-            }, {
-                time: '04-26 11:00',
-                value: '60',
-            }, {
-                time: '04-26 12:00',
-                value: '60',
-            }, {
-                time: '04-26 13:00',
-                value: '60',
-            }, {
-                time: '04-26 14:00',
-                value: '60',
-            }, {
-                time: '04-26 15:00',
-                value: '60',
-            }],
+            //雨量、水位、流量数据
+            yslDatas:[],
+            zdjcdTableData: [],  //图形右侧表格数据
             /*人工取样点水质趋势弹窗的数据*/
             szqsPopTitle: '水质趋势title',
             szqsDialogVisible: false,
@@ -711,7 +665,7 @@
                 }
             },
             resize: function () {
-                var that = this;     
+                var that = this;
             },
             //initPosition方法没用
             initPosition: function () {
@@ -1053,7 +1007,7 @@
                 this.map.addPopup(framedCloud);
                 $('#showZdjcdYxqx').click(function () {
                     //显示自动监测点的运行曲线
-                    that.showZdjcdYxqx();
+                    that.showZdjcdYxqx(nowPtAttr);
                 })
                 $('#showRgqydSzqs').click(function () {
                     //显示人工取样点的水质趋势
@@ -1175,16 +1129,14 @@
                 }
             },
             //显示自动检测点的运行曲线
-            showZdjcdYxqx: function () {
+            showZdjcdYxqx: function (nowPtAttr) {
                 this.closeInfoWin();
                 this.getDateStrByDay(0);
                 this.zdjcdDialogVisible = true;
                 this.activeName = "ylBar";
-                debugger;
-                var nowMarkerLonlat = "经纬度坐标";
                 setTimeout(function () {
                     //初始化图表数据
-                    this.initEchartData(nowMarkerLonlat)
+                    this.initEchartData(nowPtAttr.stationname) //站点名字
                 }.bind(this), 100);
             },
             preYear: function () {
@@ -1195,15 +1147,19 @@
             },
             //tab分页上的单击事件
             handleClick: function (tab, event) {
-                this.initEchartData();
+                // this.initEchartData();
                 //设置提示信息
                 if (this.activeName == "ylBar") {
                     this.noticeMsg = "雨量图";
+                    this.zdjcdTableData = this.yslDatas.yl_diagram;
+                   
                 } else if (this.activeName == "swLine") {
                     this.noticeMsg = "水位图";
+                    this.zdjcdTableData = this.yslDatas.sw_diagram;
                 }
                 else if (this.activeName == "llLine") {
                     this.noticeMsg = "流量图";
+                    this.zdjcdTableData = this.yslDatas.ll_diagram;
                 }
                 // console.log(tab, event);
             },
@@ -1212,314 +1168,312 @@
                 done();
             },
             //加载图形数据的方法
-            initEchartData: function (nowMarkerLonlat) {
+            initEchartData: function (stationname) {
                 //this.setData('/ZHJC/getZdjcdChartData', nowMarkerLonlat);  //把当前点的经纬度坐标传过去，请求对应点的数据
-                var yslDatas;
-                axios.post('/ZHJC/getZdjcdChartData').then(function (response) {
-                    yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
+                const vm = this;
+                axios.post('/ZHJC/getZdjcdChartData', { zdName: stationname, startTime: '2018-5-02 00:00:00', endTime: '2018-5-03 00:00:00' }).then(function (response) {
+                    debugger
+                    vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
+                    vm.setChartDatas(vm.yslDatas);
+                }).bind(this).catch(function (error) {
+                    console.log(error);
                 });
-                this.setChartDatas(yslDatas); 
+
             },
-            setChartDatas:function(yslDatas){
-                if (yslDatas.sw_diagram.length) {
+            setChartDatas: function (yslDatas) {
+                if (yslDatas.sw_diagram && yslDatas.sw_diagram.length) {
                     //水位数据
+                    var swTime = [], swValue = [];
+                    for (var i = 0; i < yslDatas.sw_diagram.length; i++) {
+                        swTime.push(yslDatas.sw_diagram[i].time.slice(11, 13));
+                        swValue.push(yslDatas.sw_diagram[i].value);
+                    }
+                    this.setSwLineData(swTime, swValue);
+                    this.zdjcdTableData = yslDatas.sw_diagram;
                 }
-                else if (yslDatas.yl_diagram.length) {
+                if (yslDatas.yl_diagram && yslDatas.yl_diagram.length) {
                     //雨量
+                    var ylTime = [], ylValue = [];
+                    for (var i = 0; i < yslDatas.yl_diagram.length; i++) {
+                        ylTime.push(yslDatas.yl_diagram[i].time.slice(11,13));
+                        ylValue.push(yslDatas.yl_diagram[i].value);
+                    }
+                    this.setBarData(ylTime, ylValue);
+                    this.zdjcdTableData = yslDatas.yl_diagram;
                 }
-                else if (yslDatas.ll_diagram.length) {
+                if (yslDatas.ll_diagram && yslDatas.ll_diagram.length) {
                     //流量
+                    var llTime = [], llValue = [];
+                    for (var i = 0; i < yslDatas.ll_diagram.length; i++) {
+                        llTime.push(yslDatas.ll_diagram[i].time.slice(11, 13));
+                        llValue.push(yslDatas.ll_diagram[i].value);
+                    }
+                    this.setLlLineData(llTime, llValue);
+                    this.zdjcdTableData = yslDatas.ll_diagram;
                 }
             },
             //取样图表数据
-            setData: function (url, param) {
-                if (this.activeName == "ylBar" && this.barOption == null) {
-                    debugger;
-                    this.setBarData(url);
-                } else if (this.activeName == "swLine" && this.swLineOption == null) {
-                    debugger;
-                    this.setSwLineData(url);
-                }
-                else if (this.activeName == "llLine" && this.llLineOption == null) {
-                    debugger;
-                    this.setLlLineData(url, param);
-                }
-                    //人工取样点水质趋势
-                else if (this.activeName == 'szqsLine') {
-                    this.setSzqsLineData(url, param);
-                }
-            },
+            /* setData: function (url, param) {
+                 if (this.activeName == "ylBar" && this.barOption == null) {
+                     debugger;
+                     this.setBarData(url);
+                 } else if (this.activeName == "swLine" && this.swLineOption == null) {
+                     debugger;
+                     this.setSwLineData(url);
+                 }
+                 else if (this.activeName == "llLine" && this.llLineOption == null) {
+                     debugger;
+                     this.setLlLineData(url, param);
+                 }
+                     //人工取样点水质趋势
+                 else if (this.activeName == 'szqsLine') {
+                     this.setSzqsLineData(url, param);
+                 }
+             },*/
             //雨量图
-            setBarData: function (url, param) {
+            setBarData: function (ylTime, ylValue) {
+                this.$refs.ylbar.charts.showLoading();
                 debugger;
-                try {
-                    this.$refs.ylbar.charts.showLoading();
-                } catch (e) {
-                    alert("找不到初始化的元素");
+                this.$refs.ylbar.charts.hideLoading();
+                this.barOption = {
+                    color: '#50a6ff',
+                    title: {
+                        left: 'center',
+                        textStyle: {
+                            color: '#666666',
+                            fontWeight: 'normal',
+                            fontSize: 14
+                        }
+                    },
+                    legend: {
+                    },
+                    xAxis: {
+                        type: 'category',
+                        // name: '时间',
+                        nameTextStyle: {
+                            color: '',
+                            padding: 0
+                        },
+                        data: ylTime,//['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
+                        axisLabel: {
+                            color: 'black'
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        splitLine: { show: false },//去除网格线
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '雨量(单位：cm)',
+                        min: 0,  //设置y轴的最小值
+                        nameTextStyle: {
+                            color: 'black',
+                            padding: 15
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        splitLine: {
+                            show: true,//保留网格线
+                            lineStyle: {
+                                color: '#3d4997'
+                            }
+                        },
+                    },
+                    series: [
+                        {
+                            name: '降雨量',
+                            type: 'bar',
+                            barWidth: '40%',
+                            data: ylValue,//[10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top',
+                                    formatter: '{c}',
+                                    color: '#ffffff'
+                                }
+                            }
+                        }
+                    ]
                 }
-                debugger;
-                axios.post(url)
-                  .then(function (response) {
-                      var yslDatas = JSON.parse(response.data);
-                      debugger;
-                      this.$refs.ylbar.charts.hideLoading();
-                      this.barOption = {
-                          color: '#50a6ff',
-                          title: {
-                              left: 'center',
-                              textStyle: {
-                                  color: '#666666',
-                                  fontWeight: 'normal',
-                                  fontSize: 14
-                              }
-                          },
-                          legend: {
-                          },
-                          xAxis: {
-                              type: 'category',
-                              // name: '时间',
-                              nameTextStyle: {
-                                  color: '',
-                                  padding: 0
-                              },
-                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
-                              axisLabel: {
-                                  color: 'black'
-                              },
-                              axisTick: {
-                                  show: false
-                              },
-                              axisLine: {
-                                  show: false
-                              },
-                              splitLine: { show: false },//去除网格线
-                          },
-                          yAxis: {
-                              type: 'value',
-                              name: '雨量(单位：cm)',
-                              min: 0,  //设置y轴的最小值
-                              nameTextStyle: {
-                                  color: 'black',
-                                  padding: 15
-                              },
-                              axisLine: {
-                                  show: false
-                              },
-                              axisTick: {
-                                  show: false
-                              },
-                              axisLabel: {
-                                  textStyle: {
-                                      color: 'black'
-                                  }
-                              },
-                              splitLine: {
-                                  show: true,//保留网格线
-                                  lineStyle: {
-                                      color: '#3d4997'
-                                  }
-                              },
-                          },
-                          series: [
-                              {
-                                  name: '降雨量',
-                                  type: 'bar',
-                                  barWidth: '40%',
-                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
-                                  label: {
-                                      normal: {
-                                          show: true,
-                                          position: 'top',
-                                          formatter: '{c}',
-                                          color: '#ffffff'
-                                      }
-                                  }
-                              }
-                          ]
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
             },
             //水位图
-            setSwLineData: function (url, param) {
+            setSwLineData: function (swTime, swValue) {
                 debugger;
                 this.$refs.swline.charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
-                      this.$refs.swline.charts.hideLoading();
-                      this.swLineOption = {
-                          color: '#50a6ff',
-                          title: {
-                              left: 'center',
-                              //text: '水位逐时统计',
-                              textStyle: {
-                                  color: 'black',
-                                  fontSize: 16,
-                                  fontWeight: 'normal'
-                              }
-                          },
-                          /* legend: {
-                               data: ['雨量'],
-                               textStyle: {
-                                   color: ' ',
-                                   fontFamily: "宋体",
-                                   fontSize: "12"
-                               },
-                               //控制图例文字的颜色，空串时，文字颜色为图例颜色
-                               textStyle: {
-                                   color: "#FFFFFF",
-                                   fontFamily: "宋体",
-                                   fontSize: "12",
-                               }
-                           },*/
-                          xAxis: {
-                              type: 'category',
-                              //name: '时间',//坐标轴名称
-                              nameLocation: 'center',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  //padding:5
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'blcak'
-                                  }
-                              },
-                              /******凸显X轴*****/
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
-                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
-                          },
-                          yAxis: {
-                              name: '水位(单位：cm)',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  padding: 12
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'black'
-                                  }
-                              },
-                              type: 'value',
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
+                this.$refs.swline.charts.hideLoading();
+                this.swLineOption = {
+                    color: '#50a6ff',
+                    title: {
+                        left: 'center',
+                        //text: '水位逐时统计',
+                        textStyle: {
+                            color: 'black',
+                            fontSize: 16,
+                            fontWeight: 'normal'
+                        }
+                    },
+                    /* legend: {
+                         data: ['雨量'],
+                         textStyle: {
+                             color: ' ',
+                             fontFamily: "宋体",
+                             fontSize: "12"
+                         },
+                         //控制图例文字的颜色，空串时，文字颜色为图例颜色
+                         textStyle: {
+                             color: "#FFFFFF",
+                             fontFamily: "宋体",
+                             fontSize: "12",
+                         }
+                     },*/
+                    xAxis: {
+                        type: 'category',
+                        //name: '时间',//坐标轴名称
+                        nameLocation: 'center',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            //padding:5
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'blcak'
+                            }
+                        },
+                        /******凸显X轴*****/
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
+                        data: swTime,//['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
+                    },
+                    yAxis: {
+                        name: '水位(单位：cm)',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            padding: 12
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        type: 'value',
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
 
-                          },
-                          series: [
-                              {
-                                  name: '水位',
-                                  type: 'line',
-                                  //barWidth: '60%',
-                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
-                                  itemStyle: {
-                                      normal: {
-                                          color: 'red',  //设置折线点的颜色
-                                          lineStyle: {
-                                              color: 'black' //设置折线的颜色
-                                          }
-                                      }
-                                  },
-                              }
-                          ]
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+                    },
+                    series: [
+                        {
+                            name: '水位',
+                            type: 'line',
+                            //barWidth: '60%',
+                            data: swValue,//[10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
+                            itemStyle: {
+                                normal: {
+                                    color: 'red',  //设置折线点的颜色
+                                    lineStyle: {
+                                        color: 'black' //设置折线的颜色
+                                    }
+                                }
+                            },
+                        }
+                    ]
+                }
             },
             //流量图
             setLlLineData: function (url, param) {
-
                 this.$refs.llline.charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
-                      this.$refs.llline.charts.hideLoading();
-                      this.llLineOption = {
-                          color: '#50a6ff',
-                          title: {
-                              left: 'center',
-                              //text: '水位逐时统计',
-                              textStyle: {
-                                  color: 'black',
-                                  fontSize: 16,
-                                  fontWeight: 'normal'
-                              }
-                          },
-                          xAxis: {
-                              type: 'category',
-                              //name: '时间',//坐标轴名称
-                              nameLocation: 'center',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  //padding:5
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'black'
-                                  }
-                              },
-                              /******凸显X轴*****/
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
-                              data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', ],
-                          },
-                          yAxis: {
-                              name: '流量(单位：cm)',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  padding: 12
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'black'
-                                  }
-                              },
-                              type: 'value',
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
+                this.$refs.llline.charts.hideLoading();
+                this.llLineOption = {
+                    color: '#50a6ff',
+                    title: {
+                        left: 'center',
+                        //text: '水位逐时统计',
+                        textStyle: {
+                            color: 'black',
+                            fontSize: 16,
+                            fontWeight: 'normal'
+                        }
+                    },
+                    xAxis: {
+                        type: 'category',
+                        //name: '时间',//坐标轴名称
+                        nameLocation: 'center',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            //padding:5
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        /******凸显X轴*****/
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
+                        data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', ],
+                    },
+                    yAxis: {
+                        name: '流量(单位：cm)',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            padding: 12
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        type: 'value',
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
+                    },
+                    series: [
+                        {
+                            name: '流量',
+                            type: 'line',
+                            //barWidth: '60%',
+                            data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80],
+                            itemStyle: {
+                                normal: {
+                                    color: 'blue',  //设置折线点的颜色
+                                    lineStyle: {
+                                        color: 'black' //设置折线的颜色
+                                    }
+                                }
+                            },
 
-                          },
-                          series: [
-                              {
-                                  name: '流量',
-                                  type: 'line',
-                                  //barWidth: '60%',
-                                  data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80],
-                                  itemStyle: {
-                                      normal: {
-                                          color: 'blue',  //设置折线点的颜色
-                                          lineStyle: {
-                                              color: 'black' //设置折线的颜色
-                                          }
-                                      }
-                                  },
-
-                              }
-                          ]
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+                        }
+                    ]
+                }
             },
             //人工取样点水质趋势折线图
             setSzqsLineData: function (url, param) {

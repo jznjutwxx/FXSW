@@ -388,7 +388,7 @@
                 <el-button type="text" v-on:click="showgcctMapEdit">工程位置草图</el-button>
             </div>
             <el-dialog title="工程位置草图编辑" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
-                <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit"></com-gcctmap-edit>
+                <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
             </el-dialog>
             <div style="padding-top:20px;">
                 <span>工程图片上传:</span>
@@ -407,6 +407,20 @@
     new Vue({
         el: '#add',
         data: {
+            gcctinfo: {
+                S_PROJECT_NO: "",
+                N_PACE_STATUS: "",
+                N_YEAR: "",
+                N_TYPE: "",
+                S_LEGAL_PERSON: "",
+                S_TOWN: "",
+                S_ADDRESS: "",
+                S_UNIT_DESIGN: "",
+                S_UNIT_BUILD: "",
+                S_UNIT_SUPERVISE: "",
+                N_RECKON_TOTAL_AMT: "",
+                REMARK:""
+            },
             YearOption: [],
             staticsOptions: [],
             N_PACE_STATUS: "",
@@ -480,7 +494,22 @@
             },
         },
         methods: {
+            bindGCCTData:function(val){
+                this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO; 
+                this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;
+                this.gcctinfo.N_YEAR = this.addForm.N_YEAR;
+                this.gcctinfo.N_YEAR = "小型农田水利";
+                this.gcctinfo.S_LEGAL_PERSON = this.addForm.S_LEGAL_PERSON;
+                this.gcctinfo.S_TOWN = this.addForm.S_TOWN;
+                this.gcctinfo.S_ADDRESS = this.addForm.S_ADDRESS;
+                this.gcctinfo.S_UNIT_DESIGN = this.addForm.S_UNIT_DESIGN;
+                this.gcctinfo.S_UNIT_BUILD = this.addForm.S_UNIT_BUILD;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.addForm.S_UNIT_SUPERVISE;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.addForm.N_RECKON_TOTAL_AMT;
+                this.gcctinfo.REMARK = this.addForm.S_REMARK;
+            },
             showgcctMapEdit: function () {
+                this.bindGCCTData();
                 this.mapEditDialogVisible = true;
             },
             getYear: function (url, type) {

@@ -189,6 +189,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\BackboneRiverwayInfo.cs" />
     <Compile Include="Models\SignInResponse.cs" />
     <Compile Include="Models\T_ENGIN_INFO.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -334,12 +335,12 @@
     <Content Include="Images\zhjc\ico_rengongqyd.png" />
     <Content Include="Images\zhjc\ico_站点状态.png" />
     <Content Include="Images\zhjc\ico_自动观测项目.png" />
-    <Content Include="Images\zhjc\img_nopic.png" />
     <Content Include="Images\zhjc\rgqyd\btn_erlei.png" />
     <Content Include="Images\zhjc\rgqyd\btn_liewul.png" />
     <Content Include="Images\zhjc\rgqyd\btn_sanlei.png" />
     <Content Include="Images\zhjc\rgqyd\btn_silei.png" />
     <Content Include="Images\zhjc\rgqyd\btn_wulei.png" />
+    <Content Include="Images\zhjc\rgqyd\img_暂无图片.png" />
     <Content Include="Images\zhjc\zdjcd\btn_zhengc.png" />
     <Content Include="Images\zhjc\rgqyd\rgqydpic.jpeg" />
     <Content Include="Images\zhjc\showleft.png" />

@@ -5,24 +5,24 @@
 }
 
 <div id="edit">
-    <el-form v-bind:inline="true" label-position="right" label-width="100px" size="small">
+    <el-form v-model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small">
         <div id="BasicInfo">
             <div class="titlecss">基本信息</div>
             <el-row type="flex">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="工程名称：" style="width:100%;">
-                        <el-input  v-model="detail.s_name">
+                        <el-input v-model="editForm.S_NAME">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="项目编号：">
-                        <el-input  v-model="detail.s_project_no">
+                        <el-input v-model="editForm.S_PROJECT_NO">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="年度：">
-                        <el-select v-model="yearVal" class="selectwidth">
-                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeYear">
+                        <el-select v-model="editForm.N_YEAR" v-on:change="changeYear" class="selectwidth">
+                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -36,16 +36,16 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="工程状态：">
-                        <el-select v-model="staticVal" class="selectwidth">
-                            <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
+                        <el-select v-model="editForm.N_PACE_STATUS" class="selectwidth">
+                            <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
                             </el-option>
                         </el-select>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="所属镇：">
-                        <el-select v-model="xzqhVal" class="selectwidth">
-                            <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
+                        <el-select v-model="editForm.S_TOWN" class="selectwidth">
+                            <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -54,12 +54,12 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="16" class="colheight el-col-16">
                     <el-form-item label="工程地址：">
-                        <el-input  v-model="detail.s_address" style="width:118.5%;">
+                        <el-input v-model="editForm.S_ADDRESS" style="width:118.5%;">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="项目法人：" style="padding-left: 15px;">
-                        <el-select v-model="LegalperVal" class="selectwidth">
+                        <el-select v-model="editForm.S_LEGAL_PERSON" class="selectwidth">
                             <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeLegalper">
                             </el-option>
                         </el-select>
@@ -70,28 +70,27 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="监理单位：">
-                        <el-input  v-model="detail.s_unit_supervise">
+                        <el-input v-model="editForm.S_UNIT_SUPERVISE">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="施工单位：">
-                        <el-input  v-model="detail.s_unit_build">
+                        <el-input v-model="editForm.S_UNIT_BUILD">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="设计单位：">
-                        <el-select v-model="DesignUnitVal" class="selectwidth">
+                        <el-select v-model="editForm.S_UNIT_DESIGN" class="selectwidth">
                             <el-option v-for="item in DesignUnitOption" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeDesignUnit">
-                                @*v-bind:key="item.s_id"*@
-                        </el-option>
-                    </el-select>
+                            </el-option>
+                        </el-select>
                     </el-form-item>
                 </el-col>
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="估算总投资：">
-                        <el-input  v-model="detail.n_reckon_total_amt">
+                        <el-input v-model="editForm.N_RECKON_TOTAL_AMT">
                             <span>万元</span>
                     </el-form-item>
                 </el-col>
@@ -100,7 +99,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="24">
                     <el-form-item label="备注：">
-                        <el-input type="textarea" style="width:78%;"></el-input>
+                        <el-input type="textarea" v-model="editForm.S_REMARK" style="width:78%;"></el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -111,7 +110,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区数量：">
-                        <el-input v-model="replyData.n_ggsl" >
+                        <el-input v-model="editForm.N_GGSL">
                             <template slot="append">
                                 个
                             </template>
@@ -120,7 +119,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区面积：">
-                        <el-input v-model="replyData.n_ggmj">
+                        <el-input v-model="editForm.N_GGMJ">
                             <template slot="append">
                                 亩
                             </template>
@@ -129,7 +128,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="泵站座数：">
-                        <el-input v-model="replyData.n_bzzs">
+                        <el-input v-model="editForm.N_BZZS">
                             <template slot="append">
                                 座
                             </template>
@@ -140,7 +139,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="泵站台套：">
-                        <el-input v-model="replyData.n_bztt" >
+                        <el-input v-model="editForm.N_BZTT">
                             <template slot="append">
                                 台套
                             </template>
@@ -149,7 +148,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="地下渠道：">
-                        <el-input v-model="replyData.n_dxqd" >
+                        <el-input v-model="editForm.N_DXQD">
                             <template slot="append">
                                 公里
                             </template>
@@ -158,7 +157,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="渡槽：">
-                        <el-input v-model="replyData.n_dc">
+                        <el-input v-model="editForm.N_DC">
                             <template slot="append">
                                 座
                             </template>
@@ -169,7 +168,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="倒虹吸：">
-                        <el-input v-model="replyData.n_dxh">
+                        <el-input v-model="editForm.N_DXH">
                             <template slot="append">
                                 道
                             </template>
@@ -178,7 +177,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="衬砌明渠：">
-                        <el-input v-model="replyData.n_cqmq" >
+                        <el-input v-model="editForm.N_CMMQ">
                             <template slot="append">
                                 公里
                             </template>
@@ -187,7 +186,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="新翻建道路：">
-                        <el-input v-model="replyData.n_xfjdl" >
+                        <el-input v-model="editForm.N_XFJDL">
                             <template slot="append">
                                 平方米
                             </template>
@@ -202,7 +201,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="总投资：">
-                        <el-input v-model="investData.n_total_invest" >
+                        <el-input v-model="editForm.N_TOTAL_INVEST">
                             <template slot="append">
                                 万元
                             </template>
@@ -211,7 +210,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="工程直接费：">
-                        <el-input v-model="investData.n_engin_cost" >
+                        <el-input v-model="editForm.N_ENGIN_COST">
                             <template slot="append">
                                 万元
                             </template>
@@ -220,7 +219,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="独立费用：">
-                        <el-input v-model="investData.n_independent_cost" >
+                        <el-input v-model="editForm.N_INDEPENDENT_COST">
                             <template slot="append">
                                 万元
                             </template>
@@ -231,7 +230,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="预备费：">
-                        <el-input v-model="investData.n_prep_cost" >
+                        <el-input v-model="editForm.N_PREP_COST">
                             <template slot="append">
                                 万元
                             </template>
@@ -240,7 +239,7 @@
                 </el-col>
                 <el-col v-bind:span="8" label-position="right" class="colheight">
                     <el-form-item label="景观等费用：">
-                        <el-input v-model="investData.n_sight_cost" >
+                        <el-input v-model="editForm.N_SIGHT_COST">
                             <template slot="append">
                                 万元
                             </template>
@@ -255,7 +254,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="市补:">
-                        <el-input v-model="fundData.n_subsidy_city">
+                        <el-input v-model="editForm.N_SUBSIDY_CITY">
                             <template slot="append">
                                 万元
                             </template>
@@ -264,7 +263,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="区配套:">
-                        <el-input v-model="fundData.n_subsidy_district">
+                        <el-input v-model="editForm.N_SUBSIDY_DISTRICT">
                             <template slot="append">
                                 万元
                             </template>
@@ -273,7 +272,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="镇配套:">
-                        <el-input v-model="fundData.n_subsidy_town">
+                        <el-input v-model="editForm.N_SUBSIDY_TOWN">
                             <template slot="append">
                                 万元
                             </template>
@@ -288,7 +287,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区数量：">
-                        <el-input v-model="finishData.n_ggsl">
+                        <el-input v-model="editForm.N_WCGGSL">
                             <template slot="append">
                                 个
                             </template>
@@ -297,7 +296,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区面积：">
-                        <el-input v-model="finishData.n_ggmj">
+                        <el-input v-model="editForm.N_WCGGMJ">
                             <template slot="append">
                                 亩
                             </template>
@@ -306,7 +305,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="泵站座数：">
-                        <el-input v-model="finishData.n_bzzs">
+                        <el-input v-model="editForm.N_WCBZZS">
                             <template slot="append">
                                 座
                             </template>
@@ -317,7 +316,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="泵站台套：">
-                        <el-input v-model="finishData.n_bztt" >
+                        <el-input v-model="editForm.N_WCBZTT">
                             <template slot="append">
                                 台套
                             </template>
@@ -326,7 +325,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="地下渠道：">
-                        <el-input v-model="finishData.n_dxqd" >
+                        <el-input v-model="editForm.N_WCDXQD">
                             <template slot="append">
                                 公里
                             </template>
@@ -335,7 +334,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="渡槽：">
-                        <el-input v-model="finishData.n_dc">
+                        <el-input v-model="editForm.N_WCDC">
                             <template slot="append">
                                 座
                             </template>
@@ -346,7 +345,7 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="倒虹吸：">
-                        <el-input v-model="finishData.n_dxh">
+                        <el-input v-model="editForm.N_WCDXH">
                             <template slot="append">
                                 道
                             </template>
@@ -355,7 +354,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="衬砌明渠：">
-                        <el-input v-model="finishData.n_cqmq" >
+                        <el-input v-model="editForm.N_WCCQMQ">
                             <template slot="append">
                                 公里
                             </template>
@@ -364,7 +363,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="新翻建道路：">
-                        <el-input v-model="finishData.n_xfjdl" >
+                        <el-input v-model="editForm.N_WCXFJDL">
                             <template slot="append">
                                 平方米
                             </template>
@@ -373,7 +372,7 @@
                 </el-col>
             </el-row>
         </div>
-        
+
 
         <div id="editInfo">
             <div class="titlecss">补充信息</div>
@@ -405,21 +404,51 @@
         el: '#edit',
         data: {
             YearOption: [],
-            yearVal: "",
             staticsOptions: [],
-            staticVal: "",
             xzqhOptions: [],
-            xzqhVal: "",
             LegalPerOption: [],
-            LegalperVal: "",
             DesignUnitOption: [],
-            DesignUnitVal: "",
-           
-            detail: {},
-            replyData: {},
-            investData: {},
-            fundData: {},
-            finishData: {},
+
+            editForm: {
+                S_NAME: '',
+                S_PROJECT_NO: '',
+                N_YEAR: '',
+                N_PACE_STATUS: '',
+                S_TOWN: '',
+                S_ADDRESS: '',
+                S_LEGAL_PERSON: '',
+                S_UNIT_DESIGN: '',
+                S_UNIT_BUILD: '',
+                S_UNIT_SUPERVISE: '',
+                N_RECKON_TOTAL_AMT: '',
+                S_REMARK: '',
+                N_GGSL: '',
+                N_GGMJ: '',
+                N_BZZS: '',
+                N_BZTT: '',
+                N_DXQD: '',
+                N_DC: '',
+                N_DXH: '',
+                N_CQMQ: '',
+                N_XFJDL: '',
+                N_TOTAL_INVEST: '',
+                N_ENGIN_COST: '',
+                N_INDEPENDENT_COST: '',
+                N_PREP_COST: '',
+                N_SIGHT_COST: '',
+                N_SUBSIDY_CITY: '',
+                N_SUBSIDY_DISTRICT: '',
+                N_SUBSIDY_TOWN: '',
+                N_WCGGSL: '',
+                N_WCGGMJ: '',
+                N_WCBZZS: '',
+                N_WCBZTT: '',
+                N_WCDXQD: '',
+                N_WCDC: '',
+                N_WCDXH: '',
+                N_WCCQMQ: '',
+                N_WCXFJDL: '',
+            }
         },
         mounted: function () {
             var t = this.GetId();
@@ -487,20 +516,22 @@
                       console.log(error);
                   });
             },
-            changeYear: function (param) {
-                this.yearVal = param;
-            },
-            changeStatics: function (param) {
-                this.staticVal = param;
-            },
+            //changeYear: function (param) {
+            //    debugger
+            //    this.editForm.N_YEAR = param;
+            //},
+            //changeStatics: function (param) {
+            //    debugger
+            //    this.editForm.N_PACE_STATUS = param;
+            //},
             changeXzqh: function (param) {
-                this.xzqhVal = param;
+                this.editForm.S_TOWN = param;
             },
             changeLegalper: function (param) {
-                this.LegalperVal = param;
+                this.editForm.S_LEGAL_PERSON = param;
             },
             changeDesignUnit: function (param) {
-                this.DesignUnitVal = param;
+                this.editForm.S_UNIT_DESIGN = param;
             },
 
             cancel: function () {
@@ -524,22 +555,66 @@
                  .then(function (response) {
                      debugger
                      var li = JSON.parse(response.data);
-                     this.detail = li.EnginFarmGetResponse.info;
-                     this.replyData = li.EnginFarmGetResponse.info.EnginMainFarm;
-                     this.investData = li.EnginFarmGetResponse.info.EnginInvestmentFarm;
-                     this.fundData = li.EnginFarmGetResponse.info.EnginCapitalFarm;
-                     this.finishData = li.EnginFarmGetResponse.info.EnginCompleteFarm;
+                     this.editForm = li;
+                     this.editForm.S_NAME = li.EnginFarmGetResponse.info.s_name;
+                     this.editForm.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
+                     this.editForm.N_YEAR = li.EnginFarmGetResponse.info.n_year;
+                     this.editForm.N_PACE_STATUS = 30;// li.EnginFarmGetResponse.info.n_pace_status;
+                     this.editForm.S_TOWN = li.EnginFarmGetResponse.info.s_town;
+                     this.editForm.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
+                     this.editForm.S_LEGAL_PERSON = li.EnginFarmGetResponse.info.s_legal_person;
+                     this.editForm.S_UNIT_DESIGN = li.EnginFarmGetResponse.info.s_unit_design;
+                     this.editForm.S_UNIT_BUILD = li.EnginFarmGetResponse.info.s_unit_build;
+                     this.editForm.S_UNIT_SUPERVISE = li.EnginFarmGetResponse.info.s_unit_supervise;
+                     this.editForm.N_RECKON_TOTAL_AMT = li.EnginFarmGetResponse.info.n_reckon_total_amt;
+                     this.editForm.S_REMARK = li.EnginFarmGetResponse.info.s_remark;
+                     this.editForm.N_GGSL = li.EnginFarmGetResponse.info.EnginMainFarm.n_ggsl;
+                     this.editForm.N_GGMJ = li.EnginFarmGetResponse.info.EnginMainFarm.n_ggmj;
+                     this.editForm.N_BZZS = li.EnginFarmGetResponse.info.EnginMainFarm.n_bzzs;
+                     this.editForm.N_BZTT = li.EnginFarmGetResponse.info.EnginMainFarm.n_bztt;
+                     this.editForm.N_DXQD = li.EnginFarmGetResponse.info.EnginMainFarm.n_dxqd;
+                     this.editForm.N_DC = li.EnginFarmGetResponse.info.EnginMainFarm.n_dc;
+                     this.editForm.N_DXH = li.EnginFarmGetResponse.info.EnginMainFarm.n_dxh;
+                     this.editForm.N_CQMQ = li.EnginFarmGetResponse.info.EnginMainFarm.n_cqmq;
+                     this.editForm.N_XFJDL = li.EnginFarmGetResponse.info.EnginMainFarm.n_xfjdl;
+                     this.editForm.N_TOTAL_INVEST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_total_invest;
+                     this.editForm.S_UNIT_DESIGN = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_engin_cost;
+                     this.editForm.N_INDEPENDENT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_independent_cost;
+                     this.editForm.N_PREP_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_prep_cost;
+                     this.editForm.N_SIGHT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_sight_cost;
+                     this.editForm.N_SUBSIDY_CITY = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_city;
+                     this.editForm.N_SUBSIDY_DISTRICT = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
+                     this.editForm.N_SUBSIDY_TOWN = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_town;
+                     this.editForm.N_WCGGSL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggsl;
+                     this.editForm.N_WCGGMJ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggmj;
+                     this.editForm.N_WCBZZS = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_bzzs;
+                     this.editForm.N_WCBZTT = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_bztt;
+                     this.editForm.N_WCDXQD = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxqd;
+                     this.editForm.N_WCDC = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dc;
+                     this.editForm.N_WCDXH = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxh;
+                     this.editForm.N_WCCQMQ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_cqmq;
+                     this.editForm.N_WCXFJDL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_xfjdl;
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
+            edit: function () {
+                axios.post('/FarmlandWater/Edit',
+               { param: JSON.stringify(this.editForm) }
+               ).then(function (response) {
+                   var datas = JSON.parse(response.data);
+                   if (datas.EnginFarmUpdateResponse.result == true) {
+                       window.location.href = "/FarmlandWater/Index";
+                   }
+               });
+            }
         }
     });
 </script>
 
 <style>
-      #edit input, textarea {
+    #edit input, textarea {
         max-width: none;
         width: 100%;
     }
@@ -563,20 +638,24 @@
         font-size: 14px;
     }
 
-        .titlecss {
+    .titlecss {
         font-size: 18px;
         font-weight: bold;
     }
-            .rowpadding {
+
+    .rowpadding {
         padding-bottom: 10px;
     }
-            .colheight {
+
+    .colheight {
         height: 40px;
     }
-               .selectwidth {
+
+    .selectwidth {
         width: 100%;
     }
-               .el-col-16 {
+
+    .el-col-16 {
         width: 65.5%;
     }
 </style>

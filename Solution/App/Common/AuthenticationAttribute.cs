@@ -11,13 +11,20 @@ namespace App.Common
     {
         public override void OnResultExecuting(ResultExecutingContext filterContext)
         {
-            var account = filterContext.HttpContext.Session["name"];
             var appKey = CookieHelper.ReadCookie("app_key");
-            if (account == null||appKey == null|| appKey == "")
+            var account = filterContext.HttpContext.Session["name"];
+            if (account == null || appKey == "")
             {
-                filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["OverTimeUrl"] + "'; </script>");
-                filterContext.Result = new EmptyResult();
-                return;
+                if (appKey != "")
+                {
+                    filterContext.HttpContext.Session["name"] = CookieHelper.ReadCookie("unit_name");
+                }
+                else
+                {
+                    filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["OverTimeUrl"] + "'; </script>");
+                    filterContext.Result = new EmptyResult();
+                    return;
+                }
             }
         }
     }
