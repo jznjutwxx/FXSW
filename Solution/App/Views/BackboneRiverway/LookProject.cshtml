@@ -611,11 +611,11 @@
             'com-gcctmapview': comgcctmapView
         },
         mounted: function () {
-            s_id = this.getRequest().id;
+            this.s_id = this.getRequest().id;
             this.setSize();
             this.reSize();
-            this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: s_id });
-            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: s_id, s_type: "工程图纸" });
+            this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
+            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "工程图纸" });
         },
         computed: {
         },

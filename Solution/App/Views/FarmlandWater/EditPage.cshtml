@@ -21,8 +21,8 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="年度：">
-                        <el-select v-model="editForm.N_YEAR" v-on:change="changeYear" class="selectwidth">
-                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        <el-select v-model="editForm.N_YEAR" class="selectwidth">
+                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeYear">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -45,7 +45,7 @@
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="所属镇：">
                         <el-select v-model="editForm.S_TOWN" class="selectwidth">
-                            <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
+                            <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -60,7 +60,7 @@
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="项目法人：" style="padding-left: 15px;">
                         <el-select v-model="editForm.S_LEGAL_PERSON" class="selectwidth">
-                            <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeLegalper">
+                            <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_name" v-on:change="changeLegalper">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -82,6 +82,7 @@
                     <el-form-item label="设计单位：">
                         <el-select v-model="editForm.S_UNIT_DESIGN" class="selectwidth">
                             <el-option v-for="item in DesignUnitOption" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeDesignUnit">
+                                @*v-bind:key="item.s_id"*@
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -516,14 +517,12 @@
                       console.log(error);
                   });
             },
-            //changeYear: function (param) {
-            //    debugger
-            //    this.editForm.N_YEAR = param;
-            //},
-            //changeStatics: function (param) {
-            //    debugger
-            //    this.editForm.N_PACE_STATUS = param;
-            //},
+            changeYear: function (param) {
+                this.editForm.N_YEAR = param;
+            },
+            changeStatics: function (param) {
+                this.editForm.N_PACE_STATUS = param;
+            },
             changeXzqh: function (param) {
                 this.editForm.S_TOWN = param;
             },
@@ -537,7 +536,7 @@
             cancel: function () {
                 window.location.href = "/FarmlandWater/Index";
             },
-            edit:function(){},
+            edit: function () { },
             GetId: function () {
                 var url = window.location.search;
                 var theRequest = new Object();
@@ -553,13 +552,13 @@
             GetDetail: function (url, id) {
                 axios.post(url, id)
                  .then(function (response) {
-                     debugger
                      var li = JSON.parse(response.data);
                      this.editForm = li;
                      this.editForm.S_NAME = li.EnginFarmGetResponse.info.s_name;
                      this.editForm.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
+    debugger
                      this.editForm.N_YEAR = li.EnginFarmGetResponse.info.n_year;
-                     this.editForm.N_PACE_STATUS = 30;// li.EnginFarmGetResponse.info.n_pace_status;
+                   //  this.editForm.N_PACE_STATUS = li.EnginFarmGetResponse.info.n_pace_status;
                      this.editForm.S_TOWN = li.EnginFarmGetResponse.info.s_town;
                      this.editForm.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
                      this.editForm.S_LEGAL_PERSON = li.EnginFarmGetResponse.info.s_legal_person;
@@ -605,6 +604,7 @@
                ).then(function (response) {
                    var datas = JSON.parse(response.data);
                    if (datas.EnginFarmUpdateResponse.result == true) {
+                       alert("修改成功！");
                        window.location.href = "/FarmlandWater/Index";
                    }
                });

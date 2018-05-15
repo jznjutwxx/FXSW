@@ -1,17 +1,17 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "农田水利管理页面";
+    ViewBag.Title = "生活污水管理页面";
 }
 @{
     ViewBag.Title = "Index";
 }
 
 <div id="app">
-    <farmlandwater-query v-on:emit-event="getEmitEvent" ref="farmlandwaterQuery"></farmlandwater-query>
+    <sanitarysewage-query v-on:emit-event="getEmitEvent" ref="sanitarysewageQuery"></sanitarysewage-query>
 
     <div style="padding-top: 10px; text-align: center;">
         <el-table v-bind:data="tableData" border v-bind:height="height">
-            <el-table-column type="index" label="序号" v-bind:index="(currentPage-1)*pagesize+1" header-align="center" align="center" width="60"> 
+            <el-table-column type="index" label="序号" v-bind:index="(currentPage-1)*pagesize+1" header-align="center" align="center" width="60">
             </el-table-column>
             <el-table-column prop="n_year" label="年度" width="80;" header-align="center">
             </el-table-column>
@@ -36,7 +36,7 @@
             <el-table-column label="操作" width="260" header-align="center">
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
+                    <el-button size="mini" type="info">文件管理</el-button>
                     <el-button size="mini" type="danger" v-on:click="handleDel(scope.$index, scope.row)">删除</el-button>
                 </template>
             </el-table-column>
@@ -45,15 +45,14 @@
         <el-form v-bind:inline="true" label-position="right" size="small">
             <div style="text-align:right;">
                 <el-form-item>
-                    <el-pagination @@size-change="sizeChange" @@current-change="currentChange"  layout="total, sizes, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-sizes="[10, 20, 30, 40]" v-bind:page-size="pagesize" v-bind:total="total">
+                    <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, sizes, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-sizes="[10, 20, 30, 40]" v-bind:page-size="pagesize" v-bind:total="total">
                 </el-form-item>
             </div>
         </el-form>
     </div>
 </div>
 
-@Html.Partial("~/Views/FarmlandWater/components/query.cshtml")
-
+@Html.Partial("~/Views/SanitarySewage/components/query.cshtml")
 
 <script>
     new Vue({
@@ -68,21 +67,21 @@
             params:[]
         },
         components: {
-            "farmlandwater-query": query
+            "sanitarysewage-query": query
         },
         mounted: function () {
-            this.setSize() 
+            this.setSize()
             this.resize()
-            
+
         },
         methods: {
             getEmitEvent: function (param) {
-                this.setData('/FarmlandWater/GetTabData', {
+                this.setData('/SanitarySewage/GetTabData', {
                     page:this.currentPage, pagesize: this.pagesize, sYear: param.sYear, eYear: param.eYear, status: param.status, town: param.town
                 });
             },
             getDetail: function (id) {
-                window.location.href = '/FarmlandWater/DetailPage?id=' + id;
+                window.location.href = '/SanitarySewage/DetailPage?id=' + id;
             },
             setData: function (url, param) {
                 this.params = param;
@@ -92,6 +91,7 @@
             setTableData: function (url, param) {
                 axios.post(url, param)
                  .then(function (response) {
+                     debugger
                      var li = JSON.parse(response.data);
                      var datas = li.EnginListGetResponse.engin_list;
                      this.tableData = datas;
@@ -101,19 +101,14 @@
                       console.log(error);
                   });
             },
-            openFileManage: function (id) {
-                window.location.href = '/FarmlandWater/FileManage?id=' + id;
-
-            },
             handleEdit(index, row) {
-                debugger
-                window.location.href = "/FarmlandWater/EditPage?id=" + row.s_id;
+                window.location.href = "/SanitarySewage/EditPage?id=" + row.s_id;
             },
             handleDel(index, row) {
             },
             currentChange: function (val) {
                 this.params.page = val;
-                 this.setData('/FarmlandWater/GetTabData', this.params);
+                 this.setData('/SanitarySewage/GetTabData', this.params);
             },
 
             sizeChange: function (pagesize) {
@@ -126,7 +121,7 @@
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight
-                var queryH = this.$refs.farmlandwaterQuery.$el.clientHeight
+                var queryH = this.$refs.sanitarysewageQuery.$el.clientHeight
                 var contentH = docH - queryH - 66
                 this.height = contentH;
             }

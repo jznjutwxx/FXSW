@@ -435,11 +435,11 @@
             imgData: [
                        { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
                        { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
-                       { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" },
-                       { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img2.imgtn.bdimg.com/it/u=302701032,2300144492&fm=27&gp=0.jpg" }
+                       { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" }
             ],
         },
         mounted: function () {
+            debugger
             var t = this.GetId();
             this.GetDetail("/FarmlandWater/GetDetail", { id: t.id });
 
@@ -459,16 +459,17 @@
                 }
                 return theRequest;
             },
+
             getProjectData: function (url, s_id) {
                 axios.post(url, s_id)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      this.detildata = tempData.EnginCoreGetResponse.info;
-                      this.replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
-                      this.capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
-                      this.investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
-                      this.finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
-                      this.imgData = tempData.EnginCoreGetResponse.info.FileUploaderList;
+                      //this.detildata = tempData.EnginCoreGetResponse.info;
+                      //this.replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
+                      //this.capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
+                      //this.investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
+                      //this.finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
+                      //this.imgData = tempData.EnginCoreGetResponse.info.FileUploaderList;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -487,13 +488,12 @@
             GetDetail: function (url, id) {
                 axios.post(url, id)
                  .then(function (response) {
-                     debugger
-                     var li = JSON.parse(response.data);
-                     this.detail = li.EnginFarmGetResponse.info;
-                     this.replyData = li.EnginFarmGetResponse.info.EnginMainFarm;
-                     this.investData = li.EnginFarmGetResponse.info.EnginInvestmentFarm;
-                     this.fundData = li.EnginFarmGetResponse.info.EnginCapitalFarm;
-                     this.finishData = li.EnginFarmGetResponse.info.EnginCompleteFarm;
+                         var li = JSON.parse(response.data);
+                         this.detail = li.EnginFarmGetResponse.info;
+                         this.replyData = li.EnginFarmGetResponse.info.EnginMainFarm;
+                         this.investData = li.EnginFarmGetResponse.info.EnginInvestmentFarm;
+                         this.fundData = li.EnginFarmGetResponse.info.EnginCapitalFarm;
+                         this.finishData = li.EnginFarmGetResponse.info.EnginCompleteFarm;
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -510,10 +510,9 @@
                 evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
                 $a.dispatchEvent(evObj);
             },
+            //返回按钮
             openIndex: function () {
-                if (this.detail.n_type == "小型农田水利") {
-                    window.location = "Index";
-                }
+                window.location.href = "/FarmlandWater/Index";
             },
         }
     })

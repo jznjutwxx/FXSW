@@ -4,30 +4,31 @@
     ViewBag.Title = "工程管理-文件管理";
 }
 
-<div id="app">
+<div id="fileManager">
     <div id="appTop" style="padding-left:20px;">
         <el-form v-bind:inline="true" size="small">
             <el-form-item label="项目编号：">
                 <span style="padding-right:30px;">
-                    {{formData.s_project_no}}
+                    {{num}}
                 </span>
             </el-form-item>
-            <el-form-item label="工程分类：" >
+            <el-form-item label="工程分类：">
                 <span style="padding-right:30px;">
-                    {{formData.n_type}}
+                    {{type}}
                 </span>
             </el-form-item>
             <el-form-item label="工程状态：">
                 <span style="padding-right:30px;">
-                    <el-select class="selCss" v-model="formData.n_pace_status" v-bind:disabled="isFinish">
+                    <el-select class="selCss" v-model="Status" v-bind:disabled="isFinish">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
                 </span>
             </el-form-item>
         </el-form>
-        
+
     </div>
+
     <div id="appFile">
         @*v-bind:value="Status"*@
         <el-collapse accordion v-on:change="changeSel">
@@ -52,15 +53,17 @@
                     </el-table>
                 </div>
                 @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                @*<el-button type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="开工">
@@ -76,23 +79,22 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
-                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工">
@@ -108,23 +110,22 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
-                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工验收">
@@ -142,21 +143,21 @@
                             <template slot-scope="scope">
                                 @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="决算审批">
@@ -174,21 +175,21 @@
                             <template slot-scope="scope">
                                 @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="竣工验收">
@@ -206,21 +207,21 @@
                             <template slot-scope="scope">
                                 @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
-                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
-                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
-                           action="/BackboneRiverway/UpFiles"
+                           action="/FarmlandWater/UpFiles"
                            v-bind:on-preview="handlePreview"
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
-                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                           v-bind:show-file-list="false">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                 </el-upload>
             </el-collapse-item>
         </el-collapse>
@@ -234,9 +235,12 @@
 
 <script>
     new Vue({
-        el: '#app',
+        el: '#fileManager',
         data: {
             s_id: '',
+            num: '',
+            type: '',
+            Status: '',
             StatusOption: [],
             projectFile: [],
             height: '200',
@@ -244,30 +248,6 @@
             isFinish: false,
             isShow: false,
             tableName: '',
-            Status: '',
-            formData: {
-                s_id: '',
-                s_name: '', s_project_no: '', n_year: '',
-                n_draft: '', n_pace_status: '', s_town: '',
-                s_address: '', s_legal_person: '',
-                s_unit_design: '', s_unit_build: '', s_unit_supervise: '',
-                n_reckon_total_amt: '', n_water_area: '',
-                s_remark: '',n_type:'',
-
-                n_length: '', n_land_area: '', n_protect_hard: '',
-                n_protect_ecology: '', n_bridge: '', n_plant_bank: '',
-                n_plant_slope: '', n_plant_depth: '',n_river_count:'',
-
-                n_total_invest: '', n_engin_cost: '', n_independent_cost: '',
-                n_prep_cost: '', n_sight_cost: '', n_empty_area: '',
-                n_build_cost: '',
-
-                n_subsidy_city: '', n_subsidy_district: '', n_subsidy_town: '',
-
-                n_complete_length: '', n_complete_land_area: '', n_complete_protect_hard: '',
-                n_complete_protect_ecology: '', n_complete_bridge: '', n_complete_plant_bank: '',
-                n_complete_plant_slope: '', n_complete_plant_depth: '', n_complete_river_count:'',
-            },
         },
         components: {
 
@@ -276,11 +256,65 @@
             this.init()
         },
         methods: {
+            //submitUpload:function () {
+            //    this.$refs.upload.submit();
+            //},
+            handleRemove: function (file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview: function (file, fileList) {
+                console.log(file);
+            },
+            getFile: function (file, fileList) {
+                console.log(file);
+            },
+            sucess: function (response, file, fileList,data) {
+                if (response == "OK")
+                {
+                    this.saveFiles("/FarmlandWater/SaveOneFile", { s_id: this.s_id, Files: file.name, Type: this.tableName });
+                }
+            },
+            saveFiles: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileManagerReportResponse.result) {
+                          this.$message({
+                              message: '上传成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('上传失败！' + tempData.EnginFileManagerReportResponse.result);
+                      }
+                      this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            deleteFiles: function (id) {
+                axios.post("/FarmlandWater/DeleteFile", { file_ids: id })
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileDelResponse.result) {
+                          this.$message({
+                              message: '删除成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginFileDelResponse.result);
+                      }
+                      this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
             init: function () {
                 this.s_id = this.getRequest().id;
-                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
-                this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
+                this.getStatus("/FarmlandWater/GetDictionary", { type: "工程状态" });
+                this.getProjectData('/FarmlandWater/GetOneProjectData', { s_id: this.s_id });
+                this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: this.s_id, s_type: "" });
             },
             getStatus: function (url, param) {
                 axios.post(url, param)
@@ -297,65 +331,12 @@
                 axios.post(url, s_id)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      var detildata = tempData.EnginCoreGetResponse.info;
-                      var replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
-                      var capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
-                      var investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
-                      var finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
-                      this.num = tempData.EnginCoreGetResponse.info.s_project_no;
-                      this.type = tempData.EnginCoreGetResponse.info.n_type;
-                      //this.Status = detildata.n_pace_status;
-                      this.formData.s_id = tempData.EnginCoreGetResponse.info.s_id;
-                      this.formData.s_name = tempData.EnginCoreGetResponse.info.s_name;
-                      this.formData.s_project_no = tempData.EnginCoreGetResponse.info.s_project_no;
-                      this.formData.n_year = tempData.EnginCoreGetResponse.info.n_year;
-                      this.formData.n_draft = tempData.EnginCoreGetResponse.info.n_draft;
-                      //this.formData.n_pace_status = tempData.EnginCoreGetResponse.info.n_pace_status;
-                      //this.formData.n_pace_status = 1;
-                      this.formData.s_town = tempData.EnginCoreGetResponse.info.s_town;
-                      this.formData.s_address = tempData.EnginCoreGetResponse.info.s_address;
-                      this.formData.s_legal_person = tempData.EnginCoreGetResponse.info.s_legal_person;
-                      this.formData.s_unit_design = tempData.EnginCoreGetResponse.info.s_unit_design;
-                      this.formData.s_unit_build = tempData.EnginCoreGetResponse.info.s_unit_build;
-                      this.formData.s_unit_supervise = tempData.EnginCoreGetResponse.info.s_unit_supervise;
-                      this.formData.n_reckon_total_amt = tempData.EnginCoreGetResponse.info.n_reckon_total_amt;
-                      this.formData.n_water_area = tempData.EnginCoreGetResponse.info.n_water_area;
-                      this.formData.s_remark = tempData.EnginCoreGetResponse.info.s_remark;
-                      this.formData.n_type = tempData.EnginCoreGetResponse.info.n_type;
-
-                      this.formData.n_length = replyData.n_length;
-                      this.formData.n_land_area = replyData.n_land_area;
-                      this.formData.n_protect_hard = replyData.n_protect_hard;
-                      this.formData.n_protect_ecology = replyData.n_protect_ecology;
-                      this.formData.n_bridge = replyData.n_bridge;
-                      this.formData.n_plant_bank = replyData.n_plant_bank;
-                      this.formData.n_plant_slope = replyData.n_plant_slope;
-                      this.formData.n_plant_depth = replyData.n_plant_depth;
-                      this.formData.n_river_count = replyData.n_river_count;
-
-                      this.formData.n_total_invest = capitalData.n_total_invest;
-                      this.formData.n_engin_cost = capitalData.n_engin_cost;
-                      this.formData.n_independent_cost = capitalData.n_independent_cost;
-                      this.formData.n_prep_cost = capitalData.n_prep_cost;
-                      this.formData.n_sight_cost = capitalData.n_sight_cost;
-                      this.formData.n_empty_area = capitalData.n_empty_area;
-                      this.formData.n_build_cost = capitalData.n_build_cost;
-
-                      this.formData.n_subsidy_city = investData.n_subsidy_city;
-                      this.formData.n_subsidy_district = investData.n_subsidy_district;
-                      this.formData.n_subsidy_town = investData.n_subsidy_town;
-
-                      this.formData.n_complete_length = finishData.n_complete_length;
-                      this.formData.n_complete_land_area = finishData.n_complete_land_area;
-                      this.formData.n_complete_protect_hard = finishData.n_complete_protect_hard;
-                      this.formData.n_complete_protect_ecology = finishData.n_complete_protect_ecology;
-                      this.formData.n_complete_bridge = finishData.n_complete_bridge;
-                      this.formData.n_complete_plant_bank = finishData.n_complete_plant_bank;
-                      this.formData.n_complete_plant_slope = finishData.n_complete_plant_slope;
-                      this.formData.n_complete_plant_depth = finishData.n_complete_plant_depth;
-                      this.formData.n_complete_river_count = finishData.n_complete_river_count;
-                      this.StatusToNum(tempData.EnginCoreGetResponse.info.n_pace_status);
-                      if (tempData.EnginCoreGetResponse.info.n_pace_status == '工程完结') {
+                      var datas = tempData.EnginCoreGetResponse.info;
+                      this.num = datas.s_project_no;
+                      this.type = datas.n_type;
+                      //this.Status = datas.n_pace_status;
+                      this.Status = 1;
+                      if (this.Status == "工程完结") {
                           this.isFinish = true;
                       } else {
                           this.isFinish = false;
@@ -367,7 +348,7 @@
             },
             changeSel: function (name) {
                 this.tableName = name;
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: name });
+                this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: this.s_id, s_type: "" });
             },
             getProjectFile: function (url, param) {
                 axios.post(url, param)
@@ -379,73 +360,14 @@
                       console.log(error);
                   });
             },
-
-            //submitUpload:function () {
-            //    this.$refs.upload.submit();
-            //},
-            handleRemove: function (file, fileList) {
-                console.log(file, fileList);
-            },
-            handlePreview: function (file, fileList) {
-                console.log(file);
-            },
-            getFile: function (file, fileList) {
-                console.log(file);
-            },
-            sucess: function (response, file, fileList, data) {
-                if (response == "OK") {
-                    this.saveFiles("/BackboneRiverway/SaveOneFile", { s_id: this.s_id, Files: file.name, Type: this.tableName, });
-                }
-            },
-            saveFiles: function (url, param) {
-                axios.post(url, param)
+            saveStatus: function () {
+                axios.post('/FarmlandWater/SaveProjectStatus', { s_id: this.s_id, Status: this.Status })
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      if (tempData.EnginFileManagerReportResponse.result) {
-                          this.$message({
-                              message: '上传成功！',
-                              type: 'success'
-                          });
-                      } else {
-                          this.$message.error('上传失败！' + tempData.EnginFileManagerReportResponse.result);
-                      }
-                      this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: this.tableName });
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
-            },
-            deleteFiles: function (id) {
-                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
-                    confirmButtonText: '确定',
-                    cancelButtonText: '取消',
-                    type: 'warning'
-                }).then(function () {
-                    axios.post("/BackboneRiverway/DeleteFile", { file_ids: id })
-                  .then(function (response) {
-                      debugger
-                      var tempData = JSON.parse(response.data);
-                      if (tempData.EnginFileDelResponse.result) {
-                          this.$message({
-                              type: 'success',
-                              message: '删除成功!'
-                          });
-                      } else {
-                          this.$message.error('删除失败！' + tempData.EnginFileDelResponse.result);
-                      }
-                      this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: this.tableName });
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-                }.bind(this)).catch(function () {
-                    this.$message({
-                        type: 'info',
-                        message: '已取消删除'
-                    });
-                });
-
-                
             },
             getRequest: function () {
                 var url = window.location.search; //获取url中"?"符后的字串
@@ -472,120 +394,78 @@
             downloadFile2: function (url, name) {
                 window.location.href = '/Uploader/Download?pathid=1';
             },
-            saveStatus: function () {
-                axios.post('/BackboneRiverway/SaveProjectStatus', { param: JSON.stringify(this.formData) })
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      if (tempData.EnginCoreUpdateResponse.result) {
-                          this.$message({
-                              message: '保存成功！',
-                              type: 'success'
-                          });
-                      } else {
-                          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-
             projectFinish: function () {
                 this.isFinish = true;
             },
             openIndex: function () {
-                if (this.formData.n_type == "骨干河道") {
-                    window.location = "Index";
-                }
-                if (this.formData.n_type == "中小河道") {
-                    window.location = "/ZXRiverway/Index";
-                }
-            },
-            StatusToNum: function (status) {
-                switch (status) {
-                    case '工前准备':
-                        this.formData.n_pace_status = 1;
-                        break;
-                    case '开工':
-                        this.formData.n_pace_status = 10;
-                        break;
-                    case '完工':
-                        this.formData.n_pace_status = 20;
-                        break;
-                    case '完工验收':
-                        this.formData.n_pace_status = 30;
-                        break;
-                    case '决算审批':
-                        this.formData.n_pace_status = 40;
-                        break;
-                    case '竣工验收': 
-                        this.formData.n_pace_status = 50;
-                        break;
-                    case '工程完结':
-                        this.formData.n_pace_status = 60;
-                        break;
-                    default:
-                        break;
-                }
+                window.location.href = "/FarmlandWater/Index";
             },
         },
         watch: {
-            //'formData.n_pace_status': function () {
-            //    if (this.formData.n_pace_status == "60") {
-            //        this.isShow = true;
-            //    } else
-            //    {
-            //        this.isShow = false;
-            //    }
-            //}
+            Status: function(){
+                if (this.Status == "60") {
+                    this.isShow = true;
+                } else
+                {
+                    this.isShow = false;
+                }
+            }
         }
     })
 </script>
 
 <style>
-    #app {
-        padding:20px;
-        font-size:14px;
+    #fileManager {
+        padding: 20px;
+        font-size: 14px;
     }
-    #appFile .tableCss th{
-        background-color:#F5F5F5;
+
+    #appFile .tableCss th {
+        background-color: #F5F5F5;
     }
+
     #appTop .selCss {
         width: 120px;
     }
-    #app .titleCss {
-        overflow:hidden;
+
+    #fileManager .titleCss {
+        overflow: hidden;
     }
-    #app .blueTitle {
-        width:7px;
-        height:18px;
-        background-color:#409eff;
-        float:left;
-        margin-top:12px;
+
+    #fileManager .blueTitle {
+        width: 7px;
+        height: 18px;
+        background-color: #409eff;
+        float: left;
+        margin-top: 12px;
     }
-    #app .appTitle {
-        float:left;
-        font-size:14px;
-        font-weight:bold;
-        color:#666666;
-        padding-left:10px;
+
+    #fileManager .appTitle {
+        float: left;
+        font-size: 14px;
+        font-weight: bold;
+        color: #666666;
+        padding-left: 10px;
     }
-    #app .btnUpp {
-        margin:10px 0 10px 0;
+
+    #fileManager .btnUpp {
+        margin: 10px 0 10px 0;
     }
-    #app .btnUp {
+
+    #fileManager .btnUp {
         width: 100px;
         height: 32px;
         float: left;
-        margin:10px 0 10px 0;
-        border:0px;
+        margin: 10px 0 10px 0;
+        border: 0px;
         background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
     }
-            #app .btnUp:focus {
-                background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
-            }
 
-            #app .btnUp:hover {
-                background-image: url(/Images/gcgl/btn_shangchuanwj_active.png);
-            }
+        #fileManager .btnUp:focus {
+            background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
+        }
+
+        #fileManager .btnUp:hover {
+            background-image: url(/Images/gcgl/btn_shangchuanwj_active.png);
+        }
 </style>

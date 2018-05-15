@@ -15,16 +15,9 @@ namespace App.Common
             var account = filterContext.HttpContext.Session["name"];
             if (account == null || appKey == "")
             {
-                if (appKey != "")
-                {
-                    filterContext.HttpContext.Session["name"] = CookieHelper.ReadCookie("unit_name");
-                }
-                else
-                {
-                    filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["OverTimeUrl"] + "'; </script>");
-                    filterContext.Result = new EmptyResult();
-                    return;
-                }
+                filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["OverTimeUrl"] + "'; </script>");
+                filterContext.Result = new EmptyResult();
+                return;
             }
         }
     }

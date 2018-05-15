@@ -2,6 +2,7 @@
 using App.Models;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
@@ -28,6 +29,10 @@ namespace App.Controllers
             return View();
         }
         public ActionResult DetailPage()
+        {
+            return View();
+        }
+        public ActionResult FileManage()
         {
             return View();
         }
@@ -77,7 +82,7 @@ namespace App.Controllers
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", "1");
             paramDictionary.Add("page_size", "20");
-            paramDictionary.Add("s_name", "红");//名称
+         //   paramDictionary.Add("s_name", "红");//名称
 
             //调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
@@ -90,7 +95,7 @@ namespace App.Controllers
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", "1");
             paramDictionary.Add("page_size", "20");
-            paramDictionary.Add("s_name", "网");//名称";
+          //  paramDictionary.Add("s_name", "网");//名称";
 
             //调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
@@ -248,6 +253,82 @@ namespace App.Controllers
             string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);// webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
             return Json(sss);
         }
+        public ActionResult Edit(string param)
+        {
+            T_ENGIN_INFO arr = new T_ENGIN_INFO();
+            arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param); //转成实体对象
+
+            string method = "wavenet.fxsw.engin.farm.update";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            //基本信息
+            paramDictionary.Add("s_id", "898efc79-b631-4530-8b2b-4c7908234a8b"); //id
+
+            #region
+            paramDictionary.Add("s_name", arr.S_NAME);
+            paramDictionary.Add("s_project_no", arr.S_PROJECT_NO);
+            paramDictionary.Add("n_year", arr.N_YEAR);//年度
+            paramDictionary.Add("n_pace_status", arr.N_PACE_STATUS);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收
+            paramDictionary.Add("s_town", arr.S_TOWN);//所属镇
+            paramDictionary.Add("s_address", arr.S_ADDRESS);
+            paramDictionary.Add("s_legal_person", arr.S_LEGAL_PERSON);//项目法人
+            paramDictionary.Add("s_unit_design", arr.S_UNIT_DESIGN);//设计单位
+            paramDictionary.Add("s_unit_build", arr.S_UNIT_BUILD);
+            paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
+            paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
+                                                                              //  paramDictionary.Add("n_water_area", arr.N_YEAR);//新增水面积
+                                                                              //  paramDictionary.Add("n_draft", arr.N_YEAR);//是否有草图 1.有 0.没有
+            paramDictionary.Add("s_remark", arr.S_REMARK);
+
+            //批复工程量
+            paramDictionary.Add("n_ggsl", arr.N_GGSL);//灌区数量
+            paramDictionary.Add("n_ggmj", arr.N_GGMJ);//灌区面积
+            paramDictionary.Add("n_bzzs", arr.N_BZZS);//泵站座数
+            paramDictionary.Add("n_bztt", arr.N_BZTT);//泵站台套
+            paramDictionary.Add("n_dxqd", arr.N_DXQD);//地下渠道
+            paramDictionary.Add("n_dc", arr.N_DC);//渡槽
+            paramDictionary.Add("n_dxh", arr.N_DXH);//倒虹吸
+            paramDictionary.Add("n_cqmq", arr.N_CQMQ);//衬砌明渠
+            paramDictionary.Add("n_xfjdl", arr.N_WCXFJDL);//新翻建道路
+
+            //概算投资
+            paramDictionary.Add("n_total_invest", arr.N_TOTAL_INVEST);//总投资
+            paramDictionary.Add("n_engin_cost", arr.N_ENGIN_COST);//工程直接费
+            paramDictionary.Add("n_independent_cost", arr.N_INDEPENDENT_COST);//独立费用
+            paramDictionary.Add("n_prep_cost", arr.N_PREP_COST);//预备费
+            paramDictionary.Add("n_sight_cost", arr.N_SIGHT_COST);//景观等费用
+            //资金配套组成
+            paramDictionary.Add("n_subsidy_city", arr.N_SUBSIDY_CITY);//市补
+            paramDictionary.Add("n_subsidy_district", arr.N_SUBSIDY_DISTRICT);//区配套
+            paramDictionary.Add("n_subsidy_town", arr.N_SUBSIDY_TOWN);//镇配套
+
+            //完成工程量
+            paramDictionary.Add("n_complete_ggsl", arr.N_WCGGSL);//灌区数量
+            paramDictionary.Add("n_complete_ggmj", arr.N_WCGGMJ);//灌区面积
+            paramDictionary.Add("n_complete_bzzs", arr.N_WCBZZS);//泵站座数
+            paramDictionary.Add("n_complete_bztt", arr.N_WCBZTT);//泵站台套
+            paramDictionary.Add("n_complete_dxqd", arr.N_WCDXQD);//地下渠道
+            paramDictionary.Add("n_complete_dc", arr.N_WCDC);//渡槽
+            paramDictionary.Add("n_complete_dxh", arr.N_WCDXH);//倒虹吸
+            paramDictionary.Add("n_complete_cqmq", arr.N_WCCQMQ);//衬砌明渠
+            paramDictionary.Add("n_complete_xfjdl", arr.N_WCXFJDL);//新翻建道路
+            #endregion
+
+            // paramDictionary.Add("remove_pic_ids", "3156467F238740B59C6650828698B2A2,BA4D7B0736564E05B51F181F9BB6F9B9");//删除的图片ID
+            //paramDictionary.Add("is_delete", "0");//是否删除 1删除
+
+            Dictionary<string, string> fileParams = new Dictionary<string, string>();
+            fileParams.Add("picture_file", @"D:\timg (2).jpg");
+            fileParams.Add("picture_file2", @"D:\Paul .jpg");
+            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
+            fileParams.Add("picture_file4", @"D:\Paul .jpg");
+            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
+            fileParams.Add("picture_file6", @"D:\Paul .jpg");
+            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
+
+            string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
+            // webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
+            return Json(sss);
+        }
         public static string GetSignature(IDictionary<string, string> parameters, string secret)
         {
             // 先将参数以其参数名的字典序升序进行排序
@@ -356,82 +437,113 @@ namespace App.Controllers
 
             return Json(authorization);
         }
-
-        public ActionResult Edit(string param)
+        public JsonResult SaveProjectStatus(string s_id, string Status)
         {
-            T_ENGIN_INFO arr = new T_ENGIN_INFO();
-            arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param); //转成实体对象
+            // 接口
+            string method = "wavenet.fxsw.engin.core.update";
 
-            string method = "wavenet.fxsw.engin.farm.update";
+            // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            //基本信息
-            paramDictionary.Add("s_id", "898efc79-b631-4530-8b2b-4c7908234a8b"); //id
+            paramDictionary.Add("s_id", s_id); //id
+            paramDictionary.Add("n_pace_status", Status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
 
-            #region
-            paramDictionary.Add("s_name", arr.S_NAME);
-            paramDictionary.Add("s_project_no", arr.S_PROJECT_NO);
-            paramDictionary.Add("n_year", arr.N_YEAR);//年度
-            paramDictionary.Add("n_pace_status", arr.N_PACE_STATUS);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收
-            paramDictionary.Add("s_town", arr.S_TOWN);//所属镇
-            paramDictionary.Add("s_address", arr.S_ADDRESS);
-            paramDictionary.Add("s_legal_person", arr.S_LEGAL_PERSON);//项目法人
-            paramDictionary.Add("s_unit_design", arr.S_UNIT_DESIGN);//设计单位
-            paramDictionary.Add("s_unit_build", arr.S_UNIT_BUILD);
-            paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
-            paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
-          //  paramDictionary.Add("n_water_area", arr.N_YEAR);//新增水面积
-          //  paramDictionary.Add("n_draft", arr.N_YEAR);//是否有草图 1.有 0.没有
-            paramDictionary.Add("s_remark", arr.S_REMARK);
+            // 调用接口
+            //string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            string authorization = "";
+            return Json(authorization);
+        }
+        public JsonResult DeleteFile(string file_ids)
+        {
+            // 接口
+            string method = "wavenet.fxsw.engin.file.del";
 
-            //批复工程量
-            paramDictionary.Add("n_ggsl", arr.N_GGSL);//灌区数量
-            paramDictionary.Add("n_ggmj", arr.N_GGMJ);//灌区面积
-            paramDictionary.Add("n_bzzs", arr.N_BZZS);//泵站座数
-            paramDictionary.Add("n_bztt", arr.N_BZTT);//泵站台套
-            paramDictionary.Add("n_dxqd", arr.N_DXQD);//地下渠道
-            paramDictionary.Add("n_dc", arr.N_DC);//渡槽
-            paramDictionary.Add("n_dxh", arr.N_DXH);//倒虹吸
-            paramDictionary.Add("n_cqmq", arr.N_CQMQ);//衬砌明渠
-            paramDictionary.Add("n_xfjdl", arr.N_WCXFJDL);//新翻建道路
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("file_ids", file_ids);
 
-            //概算投资
-            paramDictionary.Add("n_total_invest", arr.N_TOTAL_INVEST);//总投资
-            paramDictionary.Add("n_engin_cost", arr.N_ENGIN_COST);//工程直接费
-            paramDictionary.Add("n_independent_cost", arr.N_INDEPENDENT_COST);//独立费用
-            paramDictionary.Add("n_prep_cost", arr.N_PREP_COST);//预备费
-            paramDictionary.Add("n_sight_cost", arr.N_SIGHT_COST);//景观等费用
-            //资金配套组成
-            paramDictionary.Add("n_subsidy_city", arr.N_SUBSIDY_CITY);//市补
-            paramDictionary.Add("n_subsidy_district", arr.N_SUBSIDY_DISTRICT);//区配套
-            paramDictionary.Add("n_subsidy_town", arr.N_SUBSIDY_TOWN);//镇配套
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
+        public JsonResult SaveOneFile(string s_id, string Files, string Type)
+        {
+            //文件路径
+            string path = Request.ApplicationPath;//Server.MapPath("/upload/");
+            path = Server.MapPath(path += "/upload/" + Files);
+            Type = GetFilesType(Type);
+            Type = Type + "1";
+            // 接口
+            string method = "wavenet.fxsw.engin.file.manager.report";
 
-            //完成工程量
-            paramDictionary.Add("n_complete_ggsl", arr.N_WCGGSL);//灌区数量
-            paramDictionary.Add("n_complete_ggmj", arr.N_WCGGMJ);//灌区面积
-            paramDictionary.Add("n_complete_bzzs", arr.N_WCBZZS);//泵站座数
-            paramDictionary.Add("n_complete_bztt", arr.N_WCBZTT);//泵站台套
-            paramDictionary.Add("n_complete_dxqd", arr.N_WCDXQD);//地下渠道
-            paramDictionary.Add("n_complete_dc", arr.N_WCDC);//渡槽
-            paramDictionary.Add("n_complete_dxh", arr.N_WCDXH);//倒虹吸
-            paramDictionary.Add("n_complete_cqmq", arr.N_WCCQMQ);//衬砌明渠
-            paramDictionary.Add("n_complete_xfjdl", arr.N_WCXFJDL);//新翻建道路
-            #endregion
-
-            // paramDictionary.Add("remove_pic_ids", "3156467F238740B59C6650828698B2A2,BA4D7B0736564E05B51F181F9BB6F9B9");//删除的图片ID
-            //paramDictionary.Add("is_delete", "0");//是否删除 1删除
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_id", s_id);//id
+            paramDictionary.Add("s_person", "小张");//上传人名
 
             Dictionary<string, string> fileParams = new Dictionary<string, string>();
-            fileParams.Add("picture_file", @"D:\timg (2).jpg");
-            fileParams.Add("picture_file2", @"D:\Paul .jpg");
-            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file4", @"D:\Paul .jpg");
-            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file6", @"D:\Paul .jpg");
-            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
+            fileParams.Add(Type, path);
 
-            string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
-            // webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
-            return Json(sss);
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
+            return Json(authorization);
+        }
+        public JsonResult UpFiles()
+        {
+            String TempR = "";
+            string path = Request.ApplicationPath;//Server.MapPath("/upload/");
+            path = Server.MapPath(path += "/upload/");
+            try
+            {
+                if (Request.Files.Count > 0)
+                {
+                    var f = Request.Files[0];
+                    if (!Directory.Exists(path))
+                    {
+                        Directory.CreateDirectory(path);
+                    }
+                    f.SaveAs(path + f.FileName);
+                }
+                TempR = "OK";
+            }
+            catch (Exception ex)
+            {
+                TempR = ex.Message;
+            }
+
+            return Json(TempR);//return Json(new { result = true  });
+        }
+        /// <summary>
+        /// 文件类型名称转换
+        /// </summary>
+        /// <param name="Type"></param>
+        /// <returns></returns>
+        public string GetFilesType(string Type)
+        {
+            switch (Type)
+            {
+                case "工前准备":
+                    Type = "gqzb_file";
+                    break;
+                case "开工":
+                    Type = "kg_file";
+                    break;
+                case "完工":
+                    Type = "wg_file";
+                    break;
+                case "完工验收":
+                    Type = "wgys_file";
+                    break;
+                case "决算审批":
+                    Type = "jssp_file";
+                    break;
+                case "竣工验收":
+                    Type = "jgys_file";
+                    break;
+                default:
+                    Type = "";
+                    break;
+            }
+            return Type;
         }
     }
 }

@@ -170,14 +170,15 @@
     <Compile Include="Controllers\FarmlandWaterController.cs" />
     <Compile Include="Controllers\GcztStatisticsController.cs" />
     <Compile Include="Controllers\GghdGclStatisticsController.cs" />
+    <Compile Include="Controllers\HeavyPollutionReverwayController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HydraulicEngineerController.cs" />
     <Compile Include="Controllers\HydrologyController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
-    <Compile Include="Controllers\NCSHWSController.cs" />
     <Compile Include="Controllers\ProOverViewController.cs" />
     <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
     <Compile Include="Controllers\RiverStatisticssController.cs" />
+    <Compile Include="Controllers\SanitarySewageController.cs" />
     <Compile Include="Controllers\SHWSProjectStatisticsController.cs" />
     <Compile Include="Controllers\SingleStatisticsController.cs" />
     <Compile Include="Controllers\SmallCroplandStatisticsController.cs" />
@@ -192,6 +193,7 @@
     <Compile Include="Models\BackboneRiverwayInfo.cs" />
     <Compile Include="Models\SignInResponse.cs" />
     <Compile Include="Models\T_ENGIN_INFO.cs" />
+    <Compile Include="Models\T_ENGIN_MAIN_SEWAGE.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1236,8 +1238,12 @@
     <Content Include="Views\Login\OverTime.cshtml" />
     <Content Include="Views\ZXRiverway\components\com_table.cshtml" />
     <Content Include="Views\ZXRiverway\components\query.cshtml" />
-    <Content Include="Views\NCSHWS\Index.cshtml" />
-    <Content Include="Views\NCSHWS\components\query.cshtml" />
+    <Content Include="Views\SanitarySewage\Index.cshtml" />
+    <Content Include="Views\SanitarySewage\components\query.cshtml" />
+    <Content Include="Views\HeavyPollutionReverway\Index.cshtml" />
+    <Content Include="Views\SanitarySewage\AddPage.cshtml" />
+    <Content Include="Views\SanitarySewage\EditPage.cshtml" />
+    <Content Include="Views\FarmlandWater\FileManage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

@@ -73,10 +73,10 @@
                 </el-tabs>
                 <!--按天查询区域-->
                 <div id="tiemSelect">
-                    <el-button icon="el-icon-arrow-left" v-on:click="getDateStrByDay(dateCount-1)">上一天</el-button>
-                    <el-date-picker v-model="zdjcdTime" type="date" placeholder="选择日期">
+                    <el-button icon="el-icon-arrow-left" v-on:click="preDay">上一天</el-button>
+                    <el-date-picker v-model="zdjcdTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-on:change="dayChange">
                     </el-date-picker>
-                    <el-button v-on:click="getDateStrByDay(dateCount+1)">下一天<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                    <el-button v-on:click="nextDay">下一天<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                     <el-button type="primary" icon="el-icon-upload2">导出</el-button>
                 </div>
                 <!--图表重点内容提示区域-->
@@ -104,9 +104,8 @@
                 <table id="szqsTable" border="1" cellpadding="0" cellspacing="0"></table>
                 <div id="yearSelect">
                     <el-button icon="el-icon-arrow-left" v-on:click="preYear">上一年</el-button>
-                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份">
+                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" v-on:change="yearChange">
                     </el-date-picker>
-
                     <el-button v-on:click="nextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                     <el-button type="primary" icon="el-icon-upload2">导出</el-button>
                 </div>
@@ -138,7 +137,7 @@
                                     </div>
                                     <el-carousel trigger="click" height="130px" arrow="hover" v-bind:autoplay='false' v-if="isHavePic(qyjl)" style="width:195px;">
                                         <el-carousel-item v-for="item in qyjl.full_paths" v-bind:key="item" v-if="notVideoUrl(item)">
-                                            <img v-bind:src='item' style="width:200px;height:110px;cursor:pointer;margin-top:6px;" title="查看大图" />
+                                            <img v-bind:src='item' style="width:195px;height:110px;cursor:pointer;margin-top:6px;" title="查看大图" />
                                         </el-carousel-item>
                                     </el-carousel>
                                 </el-col>
@@ -160,7 +159,6 @@
                                     </el-row>
                                     <el-row>
                                         <el-col v-bind:span="8">
-
                                             <el-col v-bind:span="12">
                                                 <span>查看视频:</span><img v-on:click="showVideoDialog(qyjl.full_paths)" src="/Images/zhjc/btn_shipin.png" style="margin-left:3px;cursor:pointer;" title="查看视频" />
                                             </el-col>
@@ -343,7 +341,7 @@
             fsfxVectorLayer: null,//风速风向图层
             jcdMarkersLayer: null, //监测点图层
             fxbaselayerurl: "http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
-            leftData: [], //左边筛选后拿到的数据,这个数据要展示在表格中，单击地图上的点后要展示部分属性
+            leftData: [], //左边筛选后拿到的数据,这个数据要展示在下方表格中，单击地图上的点后要展示部分属性
             leftJclx: "",
             infowin: null,
             mapJcdPopTitle: '南沙港北闸',  //单击地图上监测点弹框的title，以及，看运行曲线和水质趋势、取样记录弹窗的title，
@@ -357,7 +355,6 @@
             yearVlue: moment().format('YYYY'), //人工水质趋势
             qyjlStartTime: moment().format('YYYY-MM-DD'),   //人工取样记录
             qyjlEndTime: moment().format('YYYY-MM-DD'),
-            dateCount: 0,
             noticeMsg: "01-04 4时水位最高为2.6m(超警戒)，当日累计流量173m3", //雨水提示信息,
             //图例
             ylLegendShow: true,
@@ -365,7 +362,8 @@
             rgLegendShow: false,
             jcdLegendShow: false,
             //雨量、水位、流量数据
-            yslDatas:[],
+            yslDatas: [],
+            jcdStationName: "",//地图上单击的自动监测点的名字
             zdjcdTableData: [],  //图形右侧表格数据
             /*人工取样点水质趋势弹窗的数据*/
             szqsPopTitle: '水质趋势title',
@@ -375,199 +373,7 @@
             szqsLineOption: null,
             /*人工取样点取样记录弹窗数据*/
             qyjlData: [],   /*后台获取的人工取样点取样记录数据*/
-            //qyjlTableDatas: [{ 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/奉贤飞行视屏.mp4", 现场照片: "http://172.18.1.74/rgqydpic/1.jpg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/金山城市沙滩.mp4", 现场照片: "../Images/zhjc/rgqyd/rgqydpic.jpeg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/金山飞行视频.mp4", 现场照片: "http://172.18.1.74/rgqydpic/2.jpg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/奉贤飞行视屏.mp4", 现场照片: "http://172.18.1.74/rgqydpic/3.jpg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/金山区域用海规划01.mp4", 现场照片: "", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/奉贤飞行视屏.mp4", 现场照片: "http://172.18.1.74/rgqydpic/1.jpg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/金山区域用海规划02", 现场照片: "http://172.18.1.74/rgqydpic/5.jpg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/奉贤飞行视屏.mp4", 现场照片: "", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/浦东飞行视频.mp4", 现场照片: "http://172.18.1.74/rgqydpic/1.png", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //    { 取样时间: "2018-05-04 15:00", 取样单位: "奉贤水务科", 操作人员: "诸葛亮", 风向: "东风", 水色: "黄色", 水温: "99.9℃", 嗅和味: "无臭味", 溶解氧: "5.2mg/L", 透明度: "99cm", 现场视频: "http://172.18.1.74:6108/Source/111.MP4", 现场照片: "../Images/zhjc/rgqyd/rgqydpic.jpeg", 备注: "青春不是年华，而是心境，你向往的未来就在前方" },
-            //],
-            qyjlDialogVisible: false,
-            /*下方表格数据*/
-            indexI: 0,
-            //自动监测点下方表格数据
-            //zdjcdBelowTableData: [{
-            //    index: 1,
-            //    stationname: '奉贤水文站1',
-            //    area: '南桥镇',
-            //    gldw: '上海市水务局',
-            //    yl: '12',
-            //    time: '2018-04-26 8:00',
-            //    status: '正常'
-            //}, {
-            //    index: 2,
-            //    zdmc: '奉贤水文站2',
-            //    ssjz: '南桥镇',
-            //    gldw: '上海市水务局',
-            //    ssyl: '12',
-            //    sbsj: '2018-04-26 8:00',
-            //    sbzt: '正常'
-            //}, {
-            //    index: 3,
-            //    zdmc: '奉贤水文站3',
-            //    ssjz: '南桥镇',
-            //    gldw: '上海市水务局',
-            //    ssyl: '12',
-            //    sbsj: '2018-04-26 8:00',
-            //    sbzt: '设备异常'
-            //}, {
-            //    index: 4,
-            //    zdmc: '奉贤水文站4',
-            //    ssjz: '南桥镇',
-            //    gldw: '上海市水务局',
-            //    ssyl: '12',
-            //    sbsj: '2018-04-26 8:00',
-            //    sbzt: '设备异常'
-            //},
-            //  {
-            //      index: 5,
-            //      zdmc: '奉贤水文站5',
-            //      ssjz: '南桥镇',
-            //      gldw: '上海市水务局',
-            //      ssyl: '12',
-            //      sbsj: '2018-04-26 8:00',
-            //      sbzt: '正常'
-            //  }, {
-            //      index: 6,
-            //      zdmc: '奉贤水文站6',
-            //      ssjz: '南桥镇',
-            //      gldw: '上海市水务局',
-            //      ssyl: '12',
-            //      sbsj: '2018-04-26 8:00',
-            //      sbzt: '设备异常'
-            //  }, {
-            //      index: 7,
-            //      zdmc: '奉贤水文站7',
-            //      ssjz: '南桥镇',
-            //      gldw: '上海市水务局',
-            //      ssyl: '12',
-            //      sbsj: '2018-04-26 8:00',
-            //      sbzt: '设备异常'
-            //  }, {
-            //      index: 8,
-            //      zdmc: '奉贤水文站8',
-            //      ssjz: '南桥镇',
-            //      gldw: '上海市水务局',
-            //      ssyl: '12',
-            //      sbsj: '2018-04-26 8:00',
-            //      sbzt: '设备异常'
-            //  }, {
-            //      index: 9,
-            //      zdmc: '奉贤水文站9',
-            //      ssjz: '南桥镇',
-            //      gldw: '上海市水务局',
-            //      ssyl: '12',
-            //      sbsj: '2018-04-26 8:00',
-            //      sbzt: '正常'
-            //  }],
-            //人工取样点下方表格数据
-            //rgqydBelowTableData: [{
-            //    index: 1,
-            //    dmmc: '断面1',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'III类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: ''
-            //}, {
-            //    index: 2,
-            //    dmmc: '断面2',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'II类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '不达标',
-            //    ck: ''
-            //}, {
-            //    index: 3,
-            //    dmmc: '断面3',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'III类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '不达标',
-            //    ck: ''
-            //},
-            //{
-            //    index: 4,
-            //    dmmc: '断面4',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'IV类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: ''
-            //}, {
-            //    index: 5,
-            //    dmmc: '断面5',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: '劣V类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: ''
-            //}, {
-            //    index: 6,
-            //    dmmc: '断面6',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'III类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '不达标',
-            //    ck: ''
-            //}, {
-            //    index: 7,
-            //    dmmc: '断面7',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'II类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: ''
-            //}, {
-            //    index: 8,
-            //    dmmc: '断面8',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'III类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: ''
-            //},
-            //{
-            //    index: 9,
-            //    dmmc: '断面9',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'IV类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '达标',
-            //    ck: '查看'
-            //}, {
-            //    index: 10,
-            //    dmmc: '断面10',
-            //    ssjz: '南桥镇',
-            //    szjcrw: '任务1',
-            //    sshd: '黄河',
-            //    szcjjg: 'V类',
-            //    sbsj: '2018-04-26 8:00',
-            //    dbqk: '不达标',
-            //    ck: ''
-            //}, ],
+            qyjlDialogVisible: false,       
             //控制自动监测点表格的显示
             zdjcd_yl_table: true,
             zdjcd_sw_table: false,
@@ -589,7 +395,6 @@
         },
         mounted: function () {
             this.initMap();
-            this.resize();
         },
         methods: {
             initMap: function () {
@@ -621,7 +426,7 @@
                 var mousePosition = new SuperMap.Control.MousePosition();
                 mousePosition.prefix = "经度:";
                 mousePosition.separator = "/纬度:";
-                this.map.addControl(mousePosition, new SuperMap.Pixel(10, 500));
+                // this.map.addControl(mousePosition, new SuperMap.Pixel(10, 500));
                 //this.map.addControl(this.drawPolygon);
                 this.baselayer.events.on({ "layerInitialized": this.addLayers });
             },
@@ -663,9 +468,6 @@
                     this.zdjcdLegendShow = true;
                     this.rgLegendShow = false;
                 }
-            },
-            resize: function () {
-                var that = this;
             },
             //initPosition方法没用
             initPosition: function () {
@@ -812,9 +614,7 @@
                                 pointRadius: 0  //圆半径设置为0
                             };
                             vm.fsfxVectorLayer.addFeatures(feature);
-
                         }
-
                     }
                     else if (vm.leftJclx == "rgqyd") {
                         vm.rgqyd_table = true;
@@ -848,82 +648,7 @@
                     //给所有的marker注册单击事件
                     markers[i].events.on({ "click": this.showInfo });
                 }
-                /*------------------------后台真实数据的方法结束-----------------------------------*/
-                /*------------------------测试数据的方法开始-------------------------------------------*/
-                /*** for (var i = 0; i < this.leftData.length; i++) {
-                     var item = this.leftData[i];
-                     var size = new SuperMap.Size(20, 20);
-                     var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
-                     var picUrl = "/Images/zhjc/zdjcd/ico_zhengc.png"; //正常状态
-                     if (this.leftJclx == "zdjcd") { //根据左边table页的值去判断是自动监测点还是人工取样点
-                         this.zdjcd_yl_table = true;
-                         this.rgqyd_table = false;
-                         if (item.站点状态 == "报警") {
-                             picUrl = "/Images/zhjc/zdjcd/ico_baoj.png";
-                         } else if (item.站点状态 == "设备异常") {
-                             picUrl = "/Images/zhjc/zdjcd/ico_sbyc.png";
-                         }
-                         //观测项目为风速风向时显示风速风向
-                         if (this.belowTitle == "风速风向") {
-                             var fsfxPT = new SuperMap.Geometry.Point(item.x, item.y);
-                             var feature = new SuperMap.Feature.Vector(fsfxPT);
-                             var text = "风速风向:" + item.风速 + "(" + item.风向 + ")";
-                             feature.style = {
-                                 fill: true,
-                                 fillColor: "#ffffff",
-                                 strokeColor: "black",
-                                 strokeWidth: 1,
-                                 fillOpacity: 1,
-                                 graphic: true,
-                                 externalGraphic: "../Images/zhjc/img_fxfxbg.png",
-                                 graphicName: "square",
-                                 graphicXOffset: -50,
-                                 graphicYOffset: 2,
-                                 graphicWidth: 140,
-                                 graphicHeight: 26,
-                                 fontWeight: "normal",
-                                 fontSize: 12,
-                                 label: text,
-                                 labelYOffset: -15,
-                                 labelXOffset: 20,
-                                 labelAlign: "cm",
-                                 fontColor: "black",
-                                 pointRadius: 0  //圆半径设置为0
-                             };
-                             vm.fsfxVectorLayer.addFeatures(feature);
-
-                         }
-                     }
-                     else if (this.leftJclx == "rgqyd") {
-                         this.rgqyd_table = true;
-                         this.zdjcd_yl_table = false;
-                         switch (item.水质类型) {
-                             case "二类": picUrl = "/Images/zhjc/rgqyd/ico_erlei.png";
-                                 break;
-                             case "三类": picUrl = "/Images/zhjc/rgqyd/ico_sanlei.png";
-                                 break;
-                             case "四类": picUrl = "/Images/zhjc/rgqyd/ico_silei.png";
-                                 break;
-                             case "五类": picUrl = "/Images/zhjc/rgqyd/ico_wulei.png";
-                                 break;
-                             case "劣五类": picUrl = "/Images/zhjc/rgqyd/ico_liewul.png";
-                                 break;
-                         }
-                     }
-                     debugger
-                     this.differentColourToTable();  //根据表格中的列值不同，渲染不同的颜色
-                     var icon = new SuperMap.Icon(picUrl, size, offset);
-                     //这里定义marker时的坐标是对的
-                     var marker = new SuperMap.Marker(new SuperMap.LonLat(item.x, item.y), icon);
-                     this.jcdMarkersLayer.addMarker(marker);
-                     //把所有的测站都存放到markers中
-                     markers.push(marker);
-                 }
-                 for (var i = 0; i < markers.length; i++) {
-                     //给所有的marker注册单击事件
-                     markers[i].events.on({ "click": this.showInfo });
-                 }***/
-                /*---------------------------------测试数据的方法结束--------------------------------------------*/
+                /*------------------------后台真实数据的方法结束-----------------------------------*/         
             },
             //单击地图上的点展示信息
             showInfo: function (e) {
@@ -969,29 +694,7 @@
                     szqsTableHTML += "<tr><td>水质类别</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td></tr>";
                     szqsTableHTML += "<tr><td>环比变化</td><td>持平</td><td>持平</td><td>持平</td><td>恶化</td><td>持平</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td></tr>";
                 }
-                /***------------------------------后台取数据的方法结束------------------------------------------------------------------------------------------*/
-                /*--------------------------------测试数据方法开始----------------------------------------------------------------------------------*/
-                /* if (nowPtAttr.type == '自动监测点') {
-                     this.mapJcdPopTitle = "自动监测点";
-                     contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'>" + "</span><div><div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + this.mapJcdPopTitle + "</span></div>"
-                     contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>时间</td><td class='secondlist'>" + nowPtAttr.时间 + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + nowPtAttr.所属河道 + "</td></tr><tr><td class='firtlist'>所属街道</td><td class='secondlist'>" + nowPtAttr.所属街道 + "</td></tr><tr><td class='firtlist'>雨量</td><td class='secondlist'>" + nowPtAttr.雨量 + "</td></tr><tr><td class='firtlist'>水位</td><td class='secondlist'>" + nowPtAttr.水位 + "</td></tr><tr><td class='firtlist'>风速</td><td class='secondlist'>" + nowPtAttr.风速 + "</td></tr><tr><td class='firtlist'>风向</td><td class='secondlist'>" + nowPtAttr.风向 + "</td></tr></table>";
-                     contentHTML += "<input type='button' value='' id='showZdjcdYxqx'>" + "</div>";
-                 }
-                 else if (nowPtAttr.type == '人工取样点') {
-                     this.mapJcdPopTitle = "人工取样点";
-                     contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'>" + "</span><div><div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + this.mapJcdPopTitle + "</span></div>"
-                     contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>取样时间</td><td class='secondlist'>" + nowPtAttr.取样时间 + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + nowPtAttr.所属河道 + "</td></tr><tr><td class='firtlist'>取样点地址</td><td class='secondlist'>" + nowPtAttr.取样点地址 + "</td></tr><tr><td class='firtlist'>取样操作员</td><td class='secondlist'>" + nowPtAttr.取样操作员 + "</td></tr><tr><td class='firtlist'>管理单位</td><td class='secondlist'>" + nowPtAttr.管理单位 + "</td></tr><tr><td class='firtlist'>水质类型</td><td class='secondlist'>" + nowPtAttr.水质类型 + "</td></tr></table>";
-                     contentHTML += "<input type='button' value='' id='showRgqydSzqs'><input type='button' value='' id='showRgqydQyjl'>" + "</div>";
-                     //动态拼接水质趋势表格数据
-                     szqsTableHTML = "<tr><td style='width:100px;height:60px;'> <div style='margin-left:45px;font-size:13px;'>采样日期</div><hr style='transform:rotate(31deg);height:1px; border:none;background-color:black;width:117px;position:absolute;left:-9px;top:22px;' /><span style='font-size: 13px;margin-left: -36px'>检测项目</sapn></td>";
-                     szqsTableHTML += "<td>1月</td><td>2月</td><td>3月</td><td>4月</td><td>5月</td><td>6月</td><td>7月</td><td>8月</td><td>9月</td><td>10月</td><td>11月</td><td>12月</td></tr>";
-                     szqsTableHTML += "<tr><td>铁(mg/L)</td><td>1</td><td>2</td><td>3</td><td>4</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>";
-                     szqsTableHTML += "<tr><td>锰(mg/L)</td><td>1</td><td>2</td><td>2</td><td>12</td><td>12</td><td>12</td><td>12</td><td>16</td><td>12</td><td>12</td><td>12</td><td>12</td></tr>";
-                     szqsTableHTML += "<tr><td>氨氮(mg/L)</td><td>20</td><td>20</td><td>20</td><td>16</td><td>17</td><td>11</td><td>1</td><td>19</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>";
-                     szqsTableHTML += "<tr><td>水质类别</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td></tr>";
-                     szqsTableHTML += "<tr><td>环比变化</td><td>持平</td><td>持平</td><td>持平</td><td>恶化</td><td>持平</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td></tr>";
-                 }*/
-                /*------------------------测试数据方法结束----------------------------------------------------------------------------------*/
+                /***------------------------------后台取数据的方法结束------------------------------------------------------------------------------------------*/    
                 //初始化FramedCloud类
                 var framedCloud = new SuperMap.Popup.FramedCloud(
                  "ptInfo", //id
@@ -1031,12 +734,12 @@
                 this.closeInfoWin();
                 debugger;
                 this.szqsDialogVisible = true;
-                this.activeName = 'szqsLine';
+                this.activeName = 'szqsLine';       
                 this.noticeMsg = '铁浓度平均值为5mg/L,同比........';
                 var nowMarkerLonlat = "经纬度坐标";
                 setTimeout(function () {
-                    //初始化图表数据
-                    this.initEchartData(nowMarkerLonlat)
+                    //初始化水质趋势图形数据
+                    this.setSzqsLineData();
                 }.bind(this), 100);
                 setTimeout(function () {
                     $('#szqsTable').html(szqsTableHTML);
@@ -1045,6 +748,9 @@
             showRgqydQyjl: function (nowPt) { //人工取样点取样记录  nowPt--当前站点
                 this.closeInfoWin();
                 var vm = this;
+                vm.qyjlStartTime = moment(vm.qyjlStartTime, "YYYY-MM-DD").subtract(1, 'y').format('YYYY-MM-DD');
+                vm.qyjlEndTime = moment(vm.qyjlStartTime).format('YYYY-MM-DD');
+                debugger;
                 //获取当前点的取样记录   nowPt.id          id为 4647F9509C9E411194D3E13133F146EB，兴园村兴隆708号
                 axios.post('/ZHJC/getRgqyd_qyjlData', { qyid: "4647F9509C9E411194D3E13133F146EB", startTime: '2017-01-01 10:50:00', endTime: '2020-06-10 10:50:00' }).then(function (response) {
                     debugger;
@@ -1131,19 +837,13 @@
             //显示自动检测点的运行曲线
             showZdjcdYxqx: function (nowPtAttr) {
                 this.closeInfoWin();
-                this.getDateStrByDay(0);
                 this.zdjcdDialogVisible = true;
                 this.activeName = "ylBar";
                 setTimeout(function () {
                     //初始化图表数据
+                    this.jcdStationName = nowPtAttr.stationname;
                     this.initEchartData(nowPtAttr.stationname) //站点名字
                 }.bind(this), 100);
-            },
-            preYear: function () {
-                this.yearVlue = moment(this.yearVlue, "YYYY").subtract(1, 'y').format('YYYY')
-            },
-            nextYear: function () {
-                this.yearVlue = moment(this.yearVlue, "YYYY").add(1, 'y').format('YYYY')
             },
             //tab分页上的单击事件
             handleClick: function (tab, event) {
@@ -1152,7 +852,7 @@
                 if (this.activeName == "ylBar") {
                     this.noticeMsg = "雨量图";
                     this.zdjcdTableData = this.yslDatas.yl_diagram;
-                   
+
                 } else if (this.activeName == "swLine") {
                     this.noticeMsg = "水位图";
                     this.zdjcdTableData = this.yslDatas.sw_diagram;
@@ -1161,7 +861,6 @@
                     this.noticeMsg = "流量图";
                     this.zdjcdTableData = this.yslDatas.ll_diagram;
                 }
-                // console.log(tab, event);
             },
             //关闭dialog弹框时的回调
             handleClose: function (done) {
@@ -1171,14 +870,26 @@
             initEchartData: function (stationname) {
                 //this.setData('/ZHJC/getZdjcdChartData', nowMarkerLonlat);  //把当前点的经纬度坐标传过去，请求对应点的数据
                 const vm = this;
-                axios.post('/ZHJC/getZdjcdChartData', { zdName: stationname, startTime: '2018-5-02 00:00:00', endTime: '2018-5-03 00:00:00' }).then(function (response) {
+                var hours = (new Date()).getHours();
+                var minutes = (new Date()).getMinutes();
+                var seconds = (new Date()).getSeconds();
+                var sTime, eTime = vm.getDateStr(0) + (new Date()).toString().slice(15, 24);
+                if (hours > 7) {
+                    debugger;
+                    //今天8点当当前时间
+                    sTime = vm.getDateStr(0) + " 08:00:00";
+
+                }
+                else {
+                    sTime = vm.getDateStr(-1) + " 08:00:00";
+                }
+                axios.post('/ZHJC/getZdjcdChartData', { zdName: stationname, startTime: sTime, endTime: eTime }).then(function (response) {
                     debugger
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
                     vm.setChartDatas(vm.yslDatas);
                 }).bind(this).catch(function (error) {
                     console.log(error);
                 });
-
             },
             setChartDatas: function (yslDatas) {
                 if (yslDatas.sw_diagram && yslDatas.sw_diagram.length) {
@@ -1195,7 +906,7 @@
                     //雨量
                     var ylTime = [], ylValue = [];
                     for (var i = 0; i < yslDatas.yl_diagram.length; i++) {
-                        ylTime.push(yslDatas.yl_diagram[i].time.slice(11,13));
+                        ylTime.push(yslDatas.yl_diagram[i].time.slice(11, 13));
                         ylValue.push(yslDatas.yl_diagram[i].value);
                     }
                     this.setBarData(ylTime, ylValue);
@@ -1476,11 +1187,8 @@
                 }
             },
             //人工取样点水质趋势折线图
-            setSzqsLineData: function (url, param) {
-                debugger;
-                //this.$refs.szqsLine.charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
+            setSzqsLineData: function () {
+                       //this.$refs.szqsLine.charts.showLoading();
                       //this.$refs.szqsLine.charts.hideLoading();
                       this.szqsLineOption = {
                           color: '#50a6ff',
@@ -1596,22 +1304,63 @@
 
                           ]
                       }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
             },
-            getDateStrByDay: function (addDay) {
-                this.dateCount = addDay;
-                var date = new Date();
-                date.setDate(date.getDate() + addDay);
-                var year = date.getFullYear();
-                var month = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : "0" + (date.getMonth() + 1);
-                var day = (date.getDate() > 9) ? date.getDate() : "0" + date.getDate();
-                var dateStr = year + "-" + month + "-" + day;
-                this.zdjcdTime = dateStr;
-                return dateStr;
+            /*----------------------------------获取时间的方法----------------------------------------------------*/
+            preYear: function () {
+                this.yearVlue = moment(this.yearVlue, "YYYY").subtract(1, 'y').format('YYYY')
             },
+            nextYear: function () {
+                this.yearVlue = moment(this.yearVlue, "YYYY").add(1, 'y').format('YYYY')
+            },
+            yearChange:function(){
+
+            },
+            preDay: function () {
+                //上一天
+                var vm = this;
+                debugger;
+                var nowDay = this.zdjcdTime;
+                this.zdjcdTime = moment(this.zdjcdTime, "YYYY-MM-DD").subtract(1, 'days').format('YYYY-MM-DD');
+                var sTime = this.zdjcdTime + " 08:00:00";
+                var eTime = nowDay + " 08:00:00";
+                axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
+                    debugger
+                    vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
+                    vm.setChartDatas(vm.yslDatas);
+                }).bind(this).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            nextDay: function () {
+                var vm = this;
+                //下一天
+                var nowDay = this.zdjcdTime;
+                this.zdjcdTime = moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD');
+                var sTime = nowDay + " 08:00:00";
+                var eTime = this.zdjcdTime + " 08:00:00";
+                axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
+                    debugger
+                    vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
+                    vm.setChartDatas(vm.yslDatas);
+                }).bind(this).catch(function (error) {
+                    console.log(error);
+                });
+            },
+            //在日期里面选择了的时候
+            dayChange: function () {
+                var vm = this;
+                var nowDay = this.zdjcdTime;
+                var nextDay= moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD');
+                var sTime = nowDay + " 08:00:00";
+                var eTime = nextDay + " 08:00:00";
+                axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
+                    debugger
+                    vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
+                    vm.setChartDatas(vm.yslDatas);
+                }).bind(this).catch(function (error) {
+                    console.log(error);
+                });
+             },
             getDateStr: function (addDay) {
                 var date = new Date();
                 //date对象的setDate()方法，参数可以超出常规的1 ~ 31日期范围，也可以为负数，Date对象内部会自动转换为对应的日期。
@@ -1662,35 +1411,7 @@
                     });
                     $.each($('.zdjcdTableDiv tbody .el-table_5_column_35'), function (index, item) {
                         item.children[0].innerHTML = '<a href="http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html">查看详情</a>';
-                    })
-
-                    /*  if (this.zdjcd_fsfx_table) {  //风速风向8列
-                          $.each($('.zdjcdTableDiv tbody .el-table_1_column_8'), function (index, item) {
-                              //tr td:last-child  .zdjcdTableDiv tbody tr td:last-child'
-                              if (item.children[0].innerHTML == '正常') {
-                                  debugger;
-                                  item.children[0].style.color = '#00b42a';
-                              } else if (item.children[0].innerHTML == '设备异常') {
-                                  debugger;
-                                  item.children[0].style.color = '#fd7d2b';
-                              } else if (item.children[0].innerHTML == '报警') {
-                                  item.children[0].style.color = '#ed2727';
-                              }
-                          });
-                      }
-                      else {                   //雨量、流量、水位、水质监测7列
-                          $.each($('.zdjcdTableDiv tbody .el-table_1_column_7'), function (index, item) {
-                              if (item.children[0].innerHTML == '正常') {
-                                  debugger;
-                                  item.children[0].style.color = '#00b42a';
-                              } else if (item.children[0].innerHTML == '设备异常') {
-                                  debugger;
-                                  item.children[0].style.color = '#fd7d2b';
-                              } else if (item.children[0].innerHTML == '报警') {
-                                  item.children[0].style.color = '#ed2727';
-                              }
-                          });
-                      }   */
+                    })              
                 }
                 else if (this.rgqyd_table) {  //人工取样点
                     //II, III,  IV, V,  VI, el-table_2_column_15

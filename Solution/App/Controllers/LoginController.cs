@@ -49,13 +49,13 @@ namespace App.Controllers
                     result = "sucess";
                     username = signInResponse.SignInAuthorizationFXSWRightResponse.unit_name;
                     Session["name"] = signInResponse.SignInAuthorizationFXSWRightResponse.unit_name;
-                    CookieHelper.WriteCookie("app_key", signInResponse.SignInAuthorizationFXSWRightResponse.app_key, 15);
-                    CookieHelper.WriteCookie("app_secret", signInResponse.SignInAuthorizationFXSWRightResponse.app_secret, 15);
-                    CookieHelper.WriteCookie("app_session", signInResponse.SignInAuthorizationFXSWRightResponse.app_session, 15);
-                    CookieHelper.WriteCookie("unit_id", signInResponse.SignInAuthorizationFXSWRightResponse.unit_id, 15);
-                    CookieHelper.WriteCookie("unit_name", signInResponse.SignInAuthorizationFXSWRightResponse.unit_name, 15);
-                    CookieHelper.WriteCookie("token", signInResponse.SignInAuthorizationFXSWRightResponse.token, 15);
-                    CookieHelper.WriteCookie("role", signInResponse.SignInAuthorizationFXSWRightResponse.role, 15);
+                    CookieHelper.WriteCookie("app_key", signInResponse.SignInAuthorizationFXSWRightResponse.app_key, 0);
+                    CookieHelper.WriteCookie("app_secret", signInResponse.SignInAuthorizationFXSWRightResponse.app_secret, 0);
+                    CookieHelper.WriteCookie("app_session", signInResponse.SignInAuthorizationFXSWRightResponse.app_session, 0);
+                    CookieHelper.WriteCookie("unit_id", signInResponse.SignInAuthorizationFXSWRightResponse.unit_id, 0);
+                    CookieHelper.WriteCookie("unit_name", signInResponse.SignInAuthorizationFXSWRightResponse.unit_name, 0);
+                    CookieHelper.WriteCookie("token", signInResponse.SignInAuthorizationFXSWRightResponse.token, 0);
+                    CookieHelper.WriteCookie("role", signInResponse.SignInAuthorizationFXSWRightResponse.role, 0);
                 }
             }
             return Json(new { name=name, result=result });

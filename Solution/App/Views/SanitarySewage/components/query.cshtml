@@ -1,6 +1,6 @@
 ﻿
 <script type="text/x-template" id="query">
-    <div id="appquery">
+    <div>
         <div class="query">
             <el-form v-bind:inline="true" size="small">
                 <el-form-item label="年度:">
@@ -16,7 +16,7 @@
                                     type="year"
                                     placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
                     </el-date-picker>
-                </el-form-item> 
+                </el-form-item>
                 <el-form-item label="工程状态">
                     <el-select v-on:change="changeStatus" v-model="gStatus" class="selCss">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
@@ -45,7 +45,7 @@
             </el-form>
         </div>
         <div class="centerQuery">
-            
+
         </div>
     </div>
 </script>
@@ -71,22 +71,23 @@
                 gTown: '',
                 pickerOptionsS: {
                     disabledDate: function (time) {
-                        if (this.eYear != "") {
-                            return time.getTime() > Date.now() || time.getTime() > new Date(this.eYear);
+                        if (this.endYearValue != "") {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
                         } else {
                             return time.getTime() > Date.now();
                         }
+
                     }.bind(this)
                 },
                 pickerOptionsE: {
                     disabledDate: function (time) {
-                        return time.getTime() < new Date(this.sYear) || time.getTime() > Date.now();
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
                     }.bind(this)
                 },
 
             }
         },
-        mounted: function() {
+        mounted: function () {
             this.init();
         },
         components: {
@@ -94,8 +95,8 @@
         },
         methods: {
             init: function () {
-                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
-                this.getTown("/BackboneRiverway/GetSelect", { Type: "街镇" });
+                this.getStatus("/SanitarySewage/GetSelect", { Type: "工程状态" });
+                this.getTown("/SanitarySewage/GetSelect", { Type: "街镇" });
             },
             getStatus: function (url, param) {
                 axios.post(url, param)
@@ -129,7 +130,7 @@
                 this.$emit('emit-event', this.param)
             },
             addProject: function () {
-                window.location = "/BackboneRiverway/AddProject?id=gg";
+                window.location = "/SanitarySewage/AddProject";
             },
             changeStatus: function (param) {
                 this.gStatus = param;
@@ -143,33 +144,33 @@
 </script>
 
 <style>
-    #appquery .query {
+    .query {
         font-size: 14px;
         padding: 10px 20px 0px 20px;
         border-bottom: 1px solid #dcdcdc;
     }
 
-    #appquery .centerQuery {
+    .centerQuery {
         padding: 10px 20px 10px 20px;
         float: left;
     }
 
-    #appquery .selCss {
+    .selCss {
         width: 120px;
     }
 
-    #appquery .txtInput {
+    .txtInput {
         float: left;
         padding-right: 20px;
     }
 
-    #appquery .btnSel {
+    .btnSel {
         height: 32px;
         padding-left: 20px;
         padding-top: -3px;
     }
 
-    #appquery .btnAdd {
+    .btnAdd {
         width: 73px;
         height: 32px;
         padding-left: 20px;
@@ -177,19 +178,19 @@
         border: 0px;
     }
 
-        #appquery .btnAdd:focus {
+        .btnAdd:focus {
             background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
         }
 
-        #appquery .btnAdd:hover {
+        .btnAdd:hover {
             background-image: url(/Images/gcgl/btn_xinzeng_active.png);
         }
 
-        #appquery .btnAdd:active {
+        .btnAdd:active {
             background-image: url(/Images/gcgl/btn_xinzeng_active.png);
         }
 
-    #appquery .btnDown {
+    .btnDown {
         width: 100px;
         height: 32px;
         padding-left: 20px;
@@ -197,15 +198,15 @@
         border: 0px;
     }
 
-        #appquery .btnDown:focus {
+        .btnDown:focus {
             background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
         }
 
-        #appquery .btnDown:hover {
+        .btnDown:hover {
             background-image: url(/Images/gcgl/btn_mobanxz_active.png);
         }
 
-    #appquery .btnImport {
+    .btnImport {
         width: 100px;
         height: 32px;
         padding-left: 20px;
@@ -213,12 +214,11 @@
         border: 0px;
     }
 
-        #appquery .btnImport:focus {
+        .btnImport:focus {
             background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
         }
 
-        #appquery .btnImport:hover {
+        .btnImport:hover {
             background-image: url(/Images/gcgl/btn_piliangdr_active.png);
         }
 </style>
-

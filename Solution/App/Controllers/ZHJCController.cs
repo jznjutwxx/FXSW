@@ -25,7 +25,7 @@ namespace App.Controllers
         public JsonResult getSZJCdata(string[] zdzt, string twons)
         {
             // 水质监测接口
-            string method = "wavenet.fxsw.station.info.get";        
+            string method = "wavenet.fxsw.station.info.get";
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             foreach (string item in zdzt)
@@ -38,7 +38,7 @@ namespace App.Controllers
                 {
                     paramDictionary.Add("is_abnormality", "1");//设备异常
                 }
-            }     
+            }
             paramDictionary.Add("area", twons);//所属街镇
 
             // 调用接口
@@ -51,7 +51,7 @@ namespace App.Controllers
         /// 自动监测点-其他监测项目接口(雨量、水位、流量、风速风向)
         /// </summary>
         /// <returns></returns>
-        public JsonResult getOtherJCdata(string[] zdzt, string twons,string jcxm)
+        public JsonResult getOtherJCdata(string[] zdzt, string twons, string jcxm)
         {
             string method = "wavenet.fxsw.station.distribution.info.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -72,12 +72,26 @@ namespace App.Controllers
             return Json(authorization);
         }
         /// <summary>
+        /// 自动监测点-雨量、水位、流量曲线图接口
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult getZdjcdChartData(string zdName, string startTime, string endTime)
+        {
+            string method = "wavenet.fxsw.ylsw.diagram.get";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("name", zdName);
+            paramDictionary.Add("time_begin", startTime);
+            paramDictionary.Add("time_end", endTime);
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
+        /// <summary>
         /// 人工取样点数据
         /// </summary>
         /// <param name="jcrw"></param>
         /// <param name="twons"></param>
         /// <returns></returns>
-        public JsonResult getRgqydData(string jcrw,string twons)
+        public JsonResult getRgqydData(string jcrw, string twons)
         {
             string method = "wavenet.fxsw.sampling.point.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -92,7 +106,7 @@ namespace App.Controllers
         /// 人工取样点取样记录数据
         /// </summary>
         /// <returns></returns>
-        public JsonResult getRgqyd_qyjlData(string qyid, string startTime,string endTime)
+        public JsonResult getRgqyd_qyjlData(string qyid, string startTime, string endTime)
         {
             string qyjlmethod = "wavenet.fxsw.sampling.report.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -103,20 +117,6 @@ namespace App.Controllers
             paramDictionary.Add("time_end", endTime);
             string authorization = CookieHelper.GetData(Request, qyjlmethod, paramDictionary);
             return Json(authorization);
-        }
-        /// <summary>
-        /// 自动监测点-雨量、水位、流量曲线图接口
-        /// </summary>
-        /// <returns></returns>
-        public JsonResult getZdjcdChartData(string zdName,string startTime,string endTime)
-        {
-            string method = "wavenet.fxsw.ylsw.diagram.get";
-            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            paramDictionary.Add("name", zdName);
-            paramDictionary.Add("time_begin", startTime);
-            paramDictionary.Add("time_end", endTime);
-            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
-            return Json(authorization);
-        }
+        }    
     }
 }

@@ -495,7 +495,7 @@
         },
         methods: {
             bindGCCTData:function(val){
-                this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO; 
+                this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO;
                 this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;
                 this.gcctinfo.N_YEAR = this.addForm.N_YEAR;
                 this.gcctinfo.N_YEAR = "小型农田水利";
@@ -507,10 +507,6 @@
                 this.gcctinfo.S_UNIT_SUPERVISE = this.addForm.S_UNIT_SUPERVISE;
                 this.gcctinfo.N_RECKON_TOTAL_AMT = this.addForm.N_RECKON_TOTAL_AMT;
                 this.gcctinfo.REMARK = this.addForm.S_REMARK;
-            },
-            showgcctMapEdit: function () {
-                this.bindGCCTData();
-                this.mapEditDialogVisible = true;
             },
             getYear: function (url, type) {
                 axios.post(url, type)

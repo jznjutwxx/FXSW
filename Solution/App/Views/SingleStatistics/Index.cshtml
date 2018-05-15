@@ -1,257 +1,94 @@
 ﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "验证页面";
+}
+@{
     ViewBag.Title = "Index";
 }
-<div id="app">
-    <singlestatistics-query v-on:emit-event="getEmitEvent" ref="singlestatisticsQuery"></singlestatistics-query>
-    <com-bar v-bind:option="barOption" v-bind:style="styles"></com-bar>
-    <com-base-table v-bind:height="height" v-bind:tabledatas="tableData" class="com-base-table" ></com-base-table>
-</div>
 
-@Html.Partial("~/Views/SingleStatistics/components/query.cshtml")
-@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
-@Html.Partial("~/Views/components/tables/com_base_table.cshtml")
+
+    <div id="app" class="form">
+        <el-form ref="form" model="UserForm" rules="this.$store.state.userinfo.CheckRules" label-position="left" label-width="180px">
+            <el-form-item label="真实姓名" prop="truename">
+                <el-input v-model="UserForm.truename"></el-input>
+            </el-form-item>
+            <el-form-item label="年龄" prop="age">
+                <el-input v-model="UserForm.age"></el-input>
+            </el-form-item>
+            <el-form-item label="出生年月">
+                <el-date-picker type="date" placeholder="选择日期"
+                                v-model="UserForm.birthday">
+
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" v-on:click="submitInfo">提交</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+
+<style>
+    .form {
+        margin-top: 20px;
+    }
+</style>
 
 <script>
     new Vue({
         el: '#app',
         data: {
-            styles: {
-                height: '0px',
-                width: '100%'
-            },
-            barOption: null,
-            height: 0,
-            tableData: {
-                tableKey: [],
-                tableData: []
+            UserForm: {
+                truename: '',
+                age: '',
+                birthday: ''
             }
         },
-        components: {
-            'singlestatistics-query': query,
-            'com-base-table': comBaseTable,
-            'com-bar': comBar
-        },
+
         mounted: function () {
-            this.setSize()
-            this.resize()
-            this.init()
+            debugger
+            this.created();
+            this.beforeDestory();
         },
         methods: {
-            getEmitEvent: function (param) {
-                this.setData('/SingleStatistics/GetData', param)
+            created: function () {
+                this.UserForm = this.$store.state.userinfo.UserForm;
             },
-            init: function () {
-                this.setData('/SingleStatistics/GetData', null)
+
+            beforeDestory: function () {
+                this.$store.state.userinfo.UserForm = this.UserForm;
             },
-            setData: function (url, param) {
-                this.setBarData(url, param)
-                this.setTableData(url, param)
+            submitInfo:function() {
+                // 表单验证方法
+                debugger
+                this.$refs.form.validate(function (result) {
+                    if (result) {
+                        alert("验证成功！");
+                        //// 验证通过,调用module里的setUserInfo方法
+                        //this.$store.dispatch("setUserInfo");
+                    } else {
+                        alert("表达验证不合法")
+                    }
+                });
+            },
+            state: {
                 
+                UserForm: { truename: "", age: "", birthday: "" },
+                CheckRules: {
+                    truename: [
+                        { required: true, message: "请输入活动名称", trigger: 'blur' },
+                        { min: 3, max: 10, message: "必须3-5个字符", trigger: 'blur' }
+                    ],
+                    //age: [{
+                    //    validator: (rule, value, callback) => {
+                    //        if (/^\d+$/.test(value) == false) {
+                    //            callback(new Error("年龄只能输入数字"));
+                    //        } else {
+                    //            callback();
+                    //        }
+                    //    }, trigger: 'blur'
+                    //}]
+                },
             },
-            setBarData: function (url, param) {
-                this.$children[1].charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
-                      this.$children[1].charts.hideLoading();
-                      this.barOption = {
-                          title: {
-                              left: 'center',
-                              text: '金汇港北内闸——雨量逐日统计',
-                              textStyle: {
-                                  color: '#666666',
-                                  fontWeight: 'normal',
-                                  fontSize: 16
-                              }
-                          },
-                          legend: {
-                          },
-                          xAxis: {
-                              type: 'category',
-                              data: ['1日', '2日', '3日', '4日', '5日', '6日', '7日', '8日', '9日', '10日', '11日', '12日', '13日', '14日', '15日', '16日', '17日', '18日', '19日', '20日', '21日', '22日', '23日', '24日', '25日', '26日', '27日', '28日', '29日', '30日'],
-                              axisLabel: {
-                                  rotate: 50
-                              },
-                              axisTick: {
-                                  show: false
-                              },
-                              axisLine: {
-                                  show: false
-                              },
-                          },
-                          yAxis: {
-                              type: 'value',
-                              name: '雨量(单位：mm)',
-                              axisLine: {
-                                  show: false
-                              },
-                              axisTick: {
-                                  show: false
-                              },
-                              axisLabel: {
-                                  textStyle: {
-                                      color: '#999'
-                                  }
-                              }
-                          },
-                          series: [
-                              {
-                                  name: '雨量',
-                                  type: 'bar',
-                                  barWidth: '60%',
-                                  data: [220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310, 220, 300]
-                              }
-                          ]
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            setTableData: function (url, param) {
-                axios.post(url)
-                  .then(function (response) {
-                      if (!param) {
-                          this.tableData = {
-                              tableKey: [
-                                  {
-                                      name: '序号',
-                                      type: 'index',
-                                      width: '150',
-                                  }, {
-                                      name: '日期',
-                                      value: 'date',
-                                  }, {
-                                      name: '日累计雨量(mm)',
-                                      value: 'dailyRainfall',
-                                  }, {
-                                      name: '最大小时降雨量(mm)',
-                                      value: 'maximumHourlyRain',
-                                  }, {
-                                      name: '最大小时降雨量时间(mm)',
-                                      value: 'maximumHourlyRainTime',
-                                  }],
-                              tableData: [{
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }, {
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }, {
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }, {
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }, {
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }, {
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              },{
-                                  date: '2018-01-01',
-                                  dailyRainfall: '122',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-01-01 15:00-16:00'
-                              }]
-                          }
-                      } else {
-                          this.tableData = {
-                              tableKey: [
-                                  {
-                                      name: '序号',
-                                      type: 'index',
-                                      width: '150'
-                                  }, {
-                                      name: '日期',
-                                      value: 'date'
-                                  }, {
-                                      name: '日累计雨量(mm)',
-                                      value: 'dailyRainfall'
-                                  }, {
-                                      name: '最大小时降雨量(mm)',
-                                      value: 'maximumHourlyRain'
-                                  }, {
-                                      name: '最大小时降雨量时间(mm)',
-                                      value: 'maximumHourlyRainTime'
-                                  }],
-                              tableData: [{
-                                  date: '2018-04-02',
-                                  dailyRainfall: '88',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-04-02 15:00-16:00'
-                              }, {
-                                  date: '2018-04-02',
-                                  dailyRainfall: '88',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-04-02 15:00-16:00'
-                              }, {
-                                  date: '2018-04-02',
-                                  dailyRainfall: '88',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-04-02 15:00-16:00'
-                              }, {
-                                  date: '2018-04-02',
-                                  dailyRainfall: '88',
-                                  maximumHourlyRain: '22',
-                                  maximumHourlyRainTime: '2018-04-02 15:00-16:00'
-                              }]
-                          }
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-
-            },
-            resize: function () {
-                $(window).resize(function () {
-                    this.setSize()
-                }.bind(this));
-            },
-            setSize: function () {
-                var docH = document.documentElement.clientHeight
-                var queryH = this.$refs.singlestatisticsQuery.$el.clientHeight
-                var contentH = docH - queryH - 40
-                this.styles.height = (contentH / 2) + 'px'
-                this.height = contentH / 2
-            }
         }
-
     });
 </script>
-
-<style>
-    .com-base-table {
-        border-bottom: 1px solid #dcdcdc;
-    }
-        .com-base-table td {
-            border-left: 0.5px solid #dcdcdc;
-            border-bottom: 1px solid #dcdcdc;
-            border-collapse:collapse;
-            text-align: center;
-            font-size: 14px;
-        }
-        .com-base-table th {
-            text-align: center;
-            font-weight: bold;
-            color: #666666;
-            background-color: #f5f5f5;
-            font-size: 14px;
-            border-top: 1px solid #dcdcdc;
-            border-bottom: 1px solid #dcdcdc;
-        }
-
-    </style >
