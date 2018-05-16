@@ -30,7 +30,7 @@
     </div>
     <div id="appFile">
         @*v-bind:value="Status"*@
-        <el-collapse accordion v-on:change="changeSel">
+        <el-collapse accordion v-on:change="changeSel" v-bind:value="Status">
             <el-collapse-item name="工前准备">
                 <template slot="title">
                     <div class="blueTitle"></div>
@@ -273,14 +273,13 @@
 
         },
         mounted: function () {
-            this.init()
+            this.init();
         },
         methods: {
             init: function () {
                 this.s_id = this.getRequest().id;
                 this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
                 this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "" });
             },
             getStatus: function (url, param) {
                 axios.post(url, param)
@@ -304,7 +303,10 @@
                       var finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
                       this.num = tempData.EnginCoreGetResponse.info.s_project_no;
                       this.type = tempData.EnginCoreGetResponse.info.n_type;
-                      //this.Status = detildata.n_pace_status;
+                      this.Status = tempData.EnginCoreGetResponse.info.n_pace_status;
+                      this.tableName = tempData.EnginCoreGetResponse.info.n_pace_status;
+                      this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: this.Status });
+
                       this.formData.s_id = tempData.EnginCoreGetResponse.info.s_id;
                       this.formData.s_name = tempData.EnginCoreGetResponse.info.s_name;
                       this.formData.s_project_no = tempData.EnginCoreGetResponse.info.s_project_no;
@@ -354,7 +356,8 @@
                       this.formData.n_complete_plant_slope = finishData.n_complete_plant_slope;
                       this.formData.n_complete_plant_depth = finishData.n_complete_plant_depth;
                       this.formData.n_complete_river_count = finishData.n_complete_river_count;
-                      this.StatusToNum(tempData.EnginCoreGetResponse.info.n_pace_status);
+                      var ss = tempData.EnginCoreGetResponse.info.n_pace_status;
+                      this.StatusToNum(ss);
                       if (tempData.EnginCoreGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
                       } else {
@@ -502,6 +505,7 @@
                 }
             },
             StatusToNum: function (status) {
+                debugger
                 switch (status) {
                     case '工前准备':
                         this.formData.n_pace_status = 1;

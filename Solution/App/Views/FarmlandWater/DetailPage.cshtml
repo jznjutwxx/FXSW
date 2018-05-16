@@ -442,8 +442,6 @@
             debugger
             var t = this.GetId();
             this.GetDetail("/FarmlandWater/GetDetail", { id: t.id });
-
-            this.getProjectData('/FarmlandWater/GetOneProjectData', { s_id: t.id });
             this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: t.id, s_type: "工程图纸" });
         },
         methods: {
@@ -460,21 +458,6 @@
                 return theRequest;
             },
 
-            getProjectData: function (url, s_id) {
-                axios.post(url, s_id)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      //this.detildata = tempData.EnginCoreGetResponse.info;
-                      //this.replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
-                      //this.capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
-                      //this.investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
-                      //this.finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
-                      //this.imgData = tempData.EnginCoreGetResponse.info.FileUploaderList;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
             getProjectFile: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {

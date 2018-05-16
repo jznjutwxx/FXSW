@@ -37,7 +37,7 @@
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="工程状态：">
                         <el-select v-model="editForm.N_PACE_STATUS" class="selectwidth">
-                            <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
+                            <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                             </el-option>
                         </el-select>
                     </el-form-item>
@@ -411,6 +411,7 @@
             DesignUnitOption: [],
 
             editForm: {
+                S_ID:'',
                 S_NAME: '',
                 S_PROJECT_NO: '',
                 N_YEAR: '',
@@ -553,12 +554,12 @@
                 axios.post(url, id)
                  .then(function (response) {
                      var li = JSON.parse(response.data);
-                     this.editForm = li;
                      this.editForm.S_NAME = li.EnginFarmGetResponse.info.s_name;
                      this.editForm.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
-    debugger
+                     debugger
+                     this.editForm.S_ID = li.EnginFarmGetResponse.info.s_id;
                      this.editForm.N_YEAR = li.EnginFarmGetResponse.info.n_year;
-                   //  this.editForm.N_PACE_STATUS = li.EnginFarmGetResponse.info.n_pace_status;
+                  //   this.editForm.N_PACE_STATUS = li.EnginFarmGetResponse.info.n_pace_status;
                      this.editForm.S_TOWN = li.EnginFarmGetResponse.info.s_town;
                      this.editForm.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
                      this.editForm.S_LEGAL_PERSON = li.EnginFarmGetResponse.info.s_legal_person;
@@ -593,6 +594,8 @@
                      this.editForm.N_WCDXH = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxh;
                      this.editForm.N_WCCQMQ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_cqmq;
                      this.editForm.N_WCXFJDL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_xfjdl;
+
+                     this.StatusToNum(li.EnginFarmGetResponse.info.n_pace_status);
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -608,7 +611,34 @@
                        window.location.href = "/FarmlandWater/Index";
                    }
                });
-            }
+            },
+            StatusToNum: function (status) {
+                switch (status) {
+                    case '工前准备':
+                        this.editForm.N_PACE_STATUS = 1;
+                        break;
+                    case '开工':
+                        this.editForm.N_PACE_STATUS = 10;
+                        break;
+                    case '完工':
+                        this.editForm.N_PACE_STATUS = 20;
+                        break;
+                    case '完工验收':
+                        this.editForm.N_PACE_STATUS = 30;
+                        break;
+                    case '决算审批':
+                        this.editForm.N_PACE_STATUS = 40;
+                        break;
+                    case '竣工验收':
+                        this.editForm.N_PACE_STATUS = 50;
+                        break;
+                    case '工程完结':
+                        this.editForm.N_PACE_STATUS = 60;
+                        break;
+                    default:
+                        break;
+                }
+            },
         }
     });
 </script>

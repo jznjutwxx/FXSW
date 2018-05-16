@@ -4,20 +4,21 @@
     ViewBag.Title = "其他水利工程";
 }
 
-<div id="otherirrigation">
+<div id="app">
     <com-query v-on:emit-event="getEmitEvent" ref="comquery"></com-query>
     <div>
         <el-table v-bind:data="tableData"
                   border
                   stripe
-                  v-bind:height="tableheight">
+                  v-bind:height="tableheight+'px'">
             <el-table-column type="index"
+                             v-bind:index="indexMethod"
                              label="序号"
                              header-align="center"
                              align="center"
                              width="60">
             </el-table-column>
-            <el-table-column prop="year" 
+            <el-table-column prop="n_year"
                              label="年度"
                              header-align="center"
                              align="center"
@@ -25,39 +26,35 @@
             </el-table-column>
             <el-table-column header-align="center"
                              align="left"
-                             label="工程名称"
-                             width="320">
+                             label="工程名称">
                 <template slot-scope="scope">
-                    <el-button type="text" v-on:click="location">{{scope.row.name}}</el-button>
+                    <el-button type="text" v-on:click="location(scope.row.s_id)">{{scope.row.s_name}}</el-button>
                 </template>
             </el-table-column>
-            <el-table-column prop="number"
+            <el-table-column prop="s_project_no"
                              header-align="center"
                              align="center"
-                             width:100
                              label="项目编号">
             </el-table-column>
-            <el-table-column prop="state"
-                             width="100"
+            <el-table-column prop="n_pace_status"
                              header-align="center"
                              align="center"
                              label="工程状态">
             </el-table-column>
-            <el-table-column prop="address"
+            <el-table-column prop="s_town"
                              header-align="center"
                              align="center"
                              label="所属镇"
                              width="100">
             </el-table-column>
-            <el-table-column prop="company"
+            <el-table-column prop="s_unit_design"
                              header-align="center"
-                             label="设计单位"
-                             width:220>
+                             label="设计单位">
             </el-table-column>
-            <el-table-column prop="man"
+            <el-table-column prop="s_legal_person"
                              header-align="center"
                              align="center"
-                             label="项目法人" 
+                             label="项目法人"
                              width="100">
             </el-table-column>
             <el-table-column label="操作"
@@ -71,16 +68,28 @@
                 </template>
             </el-table-column>
         </el-table>
+        <el-form v-bind:inline="true" label-position="right" size="small">
+            <div style="text-align:right">
+                <el-form-item>
+                    <el-pagination v-on:size-change="sizeChange" v-on:current-change="currentChange" layout="total,sizes,prev,pager,next,jumper" v-bind:current-page="currentPage" v-bind:page-sizes="[10,20,30,40]" v-bind:page-size="pagesize" v-bind:total="total">
+                    </el-pagination>
+                </el-form-item>
+            </div>
+        </el-form>
     </div>
 </div>
 
 @Html.Partial("~/Views/HydraulicEngineer/components/com_query.cshtml")
 <script>
     new Vue({
-        el: "#otherirrigation",
+        el: "#app",
         data: {
             tableData: [],
-            tableheight: 0
+            tableheight: 0,
+            total: 0, //默认数据总数
+            pagesize: 10,//每页的数据条数
+            currentPage: 1,//默认开始页面
+            params: {}
         },
         components: {
             "com-query": comquery
@@ -88,79 +97,42 @@
         mounted: function () {
             this.resize();
             this.setSize();
-            this.setTableData('/BackboneRiverway/GetData', null);
+            this.setTableData('/HydraulicEngineer/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.comquery.gState, Status: this.$refs.comquery.gTown })
         },
         methods: {
+            sizeChange: function (pagesize) {
+                this.pagesize = pagesize;
+                this.setTableData('/HydraulicEngineer/GetProjectData', {
+                    Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
+                });
+            },
+            currentChange: function (currentpage) {
+                this.currentPage = currentpage;
+                this.setTableData('/HydraulicEngineer/GetProjectData', {
+                    Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
+                });
+            },
+            indexMethod: function (index) {
+                return (index + 1) + (this.currentPage - 1) * this.pagesize;
+            },
             getEmitEvent: function (param) {
-                //console.log(param)
+                this.params = param;
+                this.setTableData('/HydraulicEngineer/GetProjectData', {
+                    Page: this.currentPage, pageSize: this.pagesize, startYear: param.beginYear, endYear: param.endYear, Status: param.State, Town: param.Town
+                });
             },
             setTableData: function (url, param) {
-                axios.post(url)
+                axios.post(url, param)
                   .then(function (response) {
-                      //模拟数据
-                      this.tableData = [{
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }, {
-                          year: '2018',
-                          name: '金汇港河道整治三期',
-                          number: '110000221',
-                          state: '完工验收',
-                          address: '拓林镇',
-                          company: '北京超图软件有限公司',
-                          man: '田俊'
-                      }];
+                      var tempData = JSON.parse(response.data);
+                      this.tableData = tempData.EnginListGetResponse.engin_list;
+                      this.total = parseInt(tempData.EnginListGetResponse.totalCount);
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
-            location:function(){
+            location: function () {
                 //跳转详细信息页面
 
             },
@@ -168,7 +140,7 @@
                 var docH = document.documentElement.clientHeight;
                 var queryH = this.$refs.comquery.$el.clientHeight;
                 var contentH = docH - queryH - 64;
-                this.tableheight = contentH - 40;
+                this.tableheight = contentH - 20;
             },
             resize: function () {
                 $(window).resize(function () {
@@ -180,6 +152,6 @@
 </script>
 
 <style scoped>
-    
+
 </style>
 

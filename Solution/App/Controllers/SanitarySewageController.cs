@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace App.Controllers
 {
+    [Authentication]
     public class SanitarySewageController : Controller
     {
         // GET: SanitarySewage
@@ -48,7 +49,7 @@ namespace App.Controllers
         }
         public JsonResult GetDetail(string id)
         {
-            string method = "wavenet.fxsw.engin.farm.get";
+            string method = "wavenet.fxsw.engin.sewage.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("s_id", id);
 

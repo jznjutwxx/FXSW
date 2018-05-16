@@ -1,0 +1,194 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "其他水利工程-新增";
+}
+
+<div id="add">
+    <div id="addForm">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="addForm" size="small">
+            <div id="BasicInfo">
+                <el-row>
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">基本信息</div>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程名称:">
+                            <el-input v-model="addForm.S_NAME" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="项目编号:">
+                            <el-input v-model="addForm.S_PROJECT_NO" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8">
+                        <el-form-item label="年度：" class="colCss">
+                            <el-input v-model="addForm.N_YEAR" placeholder="请输入内容"></el-input>
+                            @*<el-date-picker type="year" v-model="addForm.N_YEAR" placeholder="选择年份" value-format="yyyy" v-on:change="changeYear"></el-date-picker>*@
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程分类:">
+                            <span>其他水利工程</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8">
+                        <el-form-item label="工程状态:" class="colCss">
+                            <el-input v-model="addForm.N_PACE_STATUS"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8">
+                        <el-form-item label="所属镇:" class="colCss">
+                            <el-input v-model="addForm.S_TOWN"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row type="flex">
+                    <el-col v-bind:span="16" class="colheight">
+                        <el-form-item label="工程地址:">
+                            <el-input placeholder="请输入内容" v-model="addForm.S_ADDRESS" style="width:127%">
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colheight">
+                        <el-form-item label="项目法人:">
+                            <el-input v-model="addForm.S_LEGAL_PERSON" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="8" class="colheight">
+                        <el-form-item label="设计单位:">
+                            <el-input v-model="addForm.S_UNIT_DESIGN" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colheight">
+                        <el-form-item label="施工单位:">
+                            <el-input v-model="addForm.S_UNIT_BUILD" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colheight">
+                        <el-form-item label="监理单位:">
+                            <el-input v-model="addForm.S_UNIT_SUPERVISE" placeholder="请输入内容"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+
+
+            </div>
+
+        </el-form>
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: "#add",
+        data: {
+            addForm: {
+                S_NAME: '',
+                N_TYPE: '',
+                S_PROJECT_NO: '',
+                N_YEAR: '',
+                N_PACE_STATUS: '',
+                S_TOWN: '',
+                S_ADDRESS: '',
+                S_LEGAL_PERSON: '',
+                S_UNIT_DESIGN: '',
+                S_UNIT_BUILD: '',
+                S_UNIT_SUPERVISE: '',
+                N_RECKON_TOTAL_AMT: '',
+                S_REMARK: '',
+                N_GGSL: '',
+                N_GGMJ: '',
+                N_BZZS: '',
+                N_BZTT: '',
+                N_DXQD: '',
+                N_DC: '',
+                N_DXH: '',
+                N_CQMQ: '',
+                N_XFJDL: '',
+                N_TOTAL_INVEST: '',
+                N_ENGIN_COST: '',
+                N_INDEPENDENT_COST: '',
+                N_PREP_COST: '',
+                N_SIGHT_COST: '',
+                N_SUBSIDY_CITY: '',
+                N_SUBSIDY_DISTRICT: '',
+                N_SUBSIDY_TOWN: '',
+                N_WCGGSL: '',
+                N_WCGGMJ: '',
+                N_WCBZZS: '',
+                N_WCBZTT: '',
+                N_WCDXQD: '',
+                N_WCDC: '',
+                N_WCDXH: '',
+                N_WCCQMQ: '',
+                N_WCXFJDL: '',
+            },
+        },
+        mounted: function () {
+
+        },
+        methods: {
+            changeYear: function (year) {
+                this.addForm.N_YEAR = year;
+            }
+        }
+    });
+</script>
+
+<style scoped>
+    #addForm {
+        padding: 20px;
+        margin-bottom: 60px;
+    }
+
+    #add .el-form-item {
+        width: 100%;
+    }
+
+    #add .el-form-item__content {
+        width: 65%;
+    }
+
+    #add input, select, textarea {
+        max-width: none;
+        color: #333333;
+        font-size: 14px;
+    }
+
+    #add .el-input-group__append {
+        color: #333333;
+        font-size: 14px;
+    }
+
+    #add .el-textarea__inner {
+        color: #333333;
+        font-size: 14px;
+    }
+
+    #add .blueTitle {
+        width: 7px;
+        height: 18px;
+        background-color: #409eff;
+        float: left;
+    }
+
+    #add .appTitle {
+        float: left;
+        font-size: 14px;
+        font-weight: bold;
+        color: #666666;
+        padding-left: 10px;
+    }
+
+    #add .colCss {
+        line-height: 30px;
+    }
+</style>

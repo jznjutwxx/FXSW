@@ -1,37 +1,43 @@
 ﻿<script type="text/x-template" id="query">
-    <div>
+    <div id="appquery">
         <div class="query">
             <el-form v-bind:inline="true" size="small">
                 <el-form-item label="年度：">
-                    <el-date-picker type="year" v-model="beginYear" placeholder="选择年份" value-format="yyyy" style="width:120px"></el-date-picker>
+                    <el-date-picker type="year" v-model="beginYear" placeholder="选择年份" value-format="yyyy" style="width:120px" v-bind:picker-options="pickerOptionsB"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="至">
-                    <el-date-picker type="year" v-model="endYear" placeholder="选择年份" style="width:120px;"></el-date-picker>
+                    <el-date-picker type="year" v-model="endYear" placeholder="选择年份" style="width:120px;" value-format="yyyy" v-bind:picker-options="pickerOptionsE"></el-date-picker>
                 </el-form-item>
                 <el-form-item label="工程状态">
-                    <com-select v-on:change="getState" v-bind:options="getStateOption" v-model="gState" class="dateCss"></com-select>
+                    <el-select v-on:change="changeState" v-model="gState" class="dateCss">
+                        <el-option v-for="item in getStateOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item label="所属镇">
-                    <com-select v-on:change="getTown" v-bind:options="getTownOption" v-model="gTown" class="dateCss"></com-select>
+                    <el-select v-on:change="changeTown" v-model="gTown" class="dateCss">
+                        <el-option v-for="item in getTownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                        </el-option>
+                    </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" v-on:click="search">查询</el-button>
+                    <el-input placeholder="请输入工程名称/项目编号"
+                              prefix-icon="el-icon-search" size="small">
+                    </el-input>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-search" v-on:click="search" class="btnCss">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" class="btnAdd" v-on:click="Add"></el-button>
+                    <el-button type="primary" class="btnDown"></el-button>
+                    <el-button type="primary" class="btnImport"></el-button>
                 </el-form-item>
             </el-form>
-        </div>
-        <div style="height:1px;background-color:#dcdcdc;"></div>
-        <div class="centerQuery">
-            <div class="txtInput">
-                <el-input clearable placeholder="请输入工程名称/项目编号" prefix-icon="el-icon-search" size="small"></el-input>
-            </div>
-            <el-button class="btnAdd"></el-button>
-            <el-button class="btnDown"></el-button>
-            <el-button class="btnImport"></el-button>
         </div>
     </div>
 </script>
 
-@Html.Partial("~/Views/components/forms/com_select.cshtml")
 <script>
     var comquery = {
         template: "#query",
@@ -43,6 +49,22 @@
                 getTownOption: [],
                 gState: '',
                 gTown: '',
+                pickerOptionsB: {
+                    disabledDate: function (time) {
+                        if (this.endYear != "") {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYear).getTime();
+                        } else {
+                            return time.getTime() > Date.now();
+                        }
+                    }
+                },
+                pickerOptionsE: {
+                    disabledDate: function (time) {
+                        if (this.beginYear != "") {
+                            return time.getTime() < new Date(this.beginYear).getTime();
+                        }
+                    }
+                },
                 param: {
                     beginYear: '',
                     endYear: '',
@@ -51,91 +73,51 @@
                 }
             }
         },
-        components: {
-            'com-select': comSelect
-        },
         mounted: function () {
             this.init();
         },
         methods: {
             init: function () {
-                this.getStateOption = [{
-                    value: '1',
-                    label: '全部',
-                }, {
-                    value: '2',
-                    label: '工前准备',
-
-                }, {
-                    value: '3',
-                    label: '开工',
-
-                }, {
-                    value: '4',
-                    label: '完工',
-
-                }, {
-                    value: '5',
-                    label: '完工验收',
-
-                }, {
-                    value: '6',
-                    label: '决算审批',
-
-                }, {
-                    value: '7',
-                    label: '竣工验收',
-
-                }];
-                this.getTownOption = [{
-                    value: '1',
-                    label: '奉贤区',
-                }, {
-                    value: '2',
-                    label: '庄行镇',
-
-                }, {
-                    value: '3',
-                    label: '南桥镇',
-
-                }, {
-                    value: '4',
-                    label: '柘林镇',
-
-                }, {
-                    value: '5',
-                    label: '金汇镇',
-
-                }, {
-                    value: '6',
-                    label: '青村镇',
-
-                }, {
-                    value: '7',
-                    label: '海湾镇',
-
-                }, {
-                    value: '8',
-                    label: '奉城镇',
-
-                }, {
-                    value: '9',
-                    label: '四团镇',
-
-                }];
+                this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
+                this.getTown("/HydraulicEngineer/GetSelect", { Type: "街镇" });
             },
-            getState: function (value) {
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.getStateOption = tempData.DictionaryGetResponse.list;
+                      this.gState = this.getStateOption[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getTown: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.getTownOption = tempData.DictionaryGetResponse.list;
+                      this.gTown = this.getTownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            changeState: function (value) {
                 this.gState = value;
             },
-            getTown: function (value) {
+            changeTown: function (value) {
                 this.gTown = value;
             },
             search: function () {
-                this.param.beginYear = this.beginYear;
-                this.param.endYear = this.endYear;
+                this.param.beginYear = new Date(this.beginYear).getFullYear();
+                this.param.endYear = new Date(this.endYear).getFullYear();
                 this.param.State = this.gState;
                 this.param.Town = this.gTown;
                 this.$emit("emit-event", this.param);
+            },
+            Add: function () {
+
             }
 
         }
@@ -143,76 +125,73 @@
 </script>
 
 <style scoped>
-    .query {
+    #appquery .query {
         font-size: 14px;
-        margin: 10px 0 0 20px;
+        padding: 10px 20px 0px 20px;
+        border-bottom: 1px solid #dcdcdc;
         position:relative;
-        top:4px;
+        top:5px;
     }
 
-    .dateCss {
+    #appquery .dateCss {
         width: 120px;
     }
 
-    .centerQuery {
-        margin: 15px 0 15px 20px;
-        float: left;
+    #appquery .btnCss {
+        height: 32px;
+        padding-left: 20px;
+        margin-left: 35px;
     }
 
-    .txtInput {
-        float: left;
-        margin-right: 20px;
-    }
-
-    .btnAdd {
+    #appquery .btnAdd {
         width: 75px;
         height: 32px;
         float: left;
-        background:url('/Images/gcgl/btn_xinzeng_normal.png') no-repeat;
-        border:none;
+        background: url('/Images/gcgl/btn_xinzeng_normal.png') no-repeat;
+        border: none;
     }
 
-        .btnAdd:focus {
+        #appquery .btnAdd:focus {
             background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
         }
 
-        .btnAdd:hover {
+        #appquery .btnAdd:hover {
             background-image: url(/Images/gcgl/btn_xinzeng_active.png);
         }
 
-        .btnAdd:active {
+        #appquery .btnAdd:active {
             background-image: url(/Images/gcgl/btn_xinzeng_active.png);
         }
 
-    .btnDown {
+    #appquery .btnDown {
         width: 100px;
         height: 32px;
         float: left;
-        border:none;
-        background:url('/Images/gcgl/btn_mobanxz_normal.png') no-repeat;
+        border: none;
+        background: url('/Images/gcgl/btn_mobanxz_normal.png') no-repeat;
     }
 
-        .btnDown:focus {
+        #appquery .btnDown:focus {
             background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
         }
 
-        .btnDown:hover {
+        #appquery .btnDown:hover {
             background-image: url(/Images/gcgl/btn_mobanxz_active.png);
         }
 
-    .btnImport {
+    #appquery .btnImport {
         width: 100px;
         height: 32px;
         float: left;
-        border:none;
-        background:url('/Images/gcgl/btn_piliangdr_normal.png') no-repeat;
+        border: none;
+        background: url('/Images/gcgl/btn_piliangdr_normal.png') no-repeat;
     }
 
-        .btnImport:focus {
+        #appquery .btnImport:focus {
             background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
         }
 
-        .btnImport:hover {
+        #appquery .btnImport:hover {
             background-image: url(/Images/gcgl/btn_piliangdr_active.png);
         }
 </style>

@@ -93,6 +93,11 @@
                                     <el-dropdown-item command="水质监测">水质监测</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
+                            @*<el-select v-model="nowxm" placeholder="请选择">
+                                <el-option v-for="item in zdjcxm"
+                                           v-bind:value="item">
+                                </el-option>
+                            </el-select>*@
                         </div>
                         <div id="zdzt">
                             <div id='zdztTitle'><img src="/Images/zhjc/ico_站点状态.png" /> <span>站点状态</span></div>
@@ -147,6 +152,8 @@
                 checkedTwons: ['庄行镇', '柘林镇', '南桥镇', '青村镇','金汇镇', '奉城镇', '四团镇', '海湾镇','西渡街道','奉浦街道','金海社区','海湾旅游区'],
                 isIndeterminate: false,
                 twons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                zdjcxm: ['雨量', '水位', '流量', '风速风向', '水质监测'],  //自动检测项目
+                nowxm:'雨量',//当前项目
                 jclx: "rgqyd",
                 checkedZdzt: ['正常', '设备异常'],
                 checkedSzjcrw: ["重污染", "黑臭", "清洁水", "进出水", '水功能', '劣五类'],
@@ -408,7 +415,8 @@
         }
 
     #zdgcxm .el-icon--right {
-        /*margin-left:100px;*/
+        float: right;
+       margin: 5px 4px 0 0px;
     }
 
     .el-dropdown-menu {

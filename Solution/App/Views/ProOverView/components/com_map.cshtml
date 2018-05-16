@@ -159,7 +159,7 @@
                                          header-align="center">
                         </el-table-column>
                         <el-table-column prop="s_project_no"
-                                         label="项目编号"
+                                         label="工程编号"
                                          align="right"
                                          header-align="center">
                         </el-table-column>
@@ -230,7 +230,11 @@
                 centerDialogVisible: false,
                 layers: null,
                 markerLayer: null,   //工程点叠加的图层
+                infowin: null,       //弹框信息
                 fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                gcctRestDataUrl: "http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data",
+                vectorLayer: null,      //点线面feature显示的图层
+                vectorDataList: [],     //点线面feature的数据集合
                 filterTitleVal: '28',//筛选后的总的工程数量
                 GGCount: 5,//骨干河道筛选后数量
                 ZXXCount: 6,//中小型河道筛选后数量
@@ -251,7 +255,10 @@
                 currentPage: 1,//默认开始页面
                 stype: '1',//点击的Tabs标签
                 mapDbData: [],
-                mapSpaceData:[],
+                mapSpaceData: [],
+                pointDataArr: [],//组合完属性后的标注点信息集合
+                mapSpaceId: [],
+                markers: [],
             }
         },
         mounted: function () {
@@ -283,10 +290,11 @@
                 });
                 var baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
                 //标注点图层
-                this.markerLayer = new SuperMap.Layer.Markers("标注");
-
-                this.layers = [baselayer];
+                this.markerLayer = new SuperMap.Layer.Markers("工程点");
+                this.vectorLayer = new SuperMap.Layer.Vector("工程草图");
+                this.layers = [baselayer,this.markerLayer,this.vectorLayer];
                 baselayer.events.on({ "layerInitialized": this.addLayers });
+                this.map.events.on({ "zoomend": this.mapIsZoomend });
             },
             //加载图层信息
             addLayers: function () {
@@ -294,9 +302,17 @@
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
                 //this.addMarkerPoints();//加载marker标注点
             },
+            mapIsZoomend: function () {
+                var zom = this.map.getZoom();
+                if (zom >= 3) {
+                    this.markerLayer.clearMarkers();//去掉所有的点
+                    this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                } else {
+                    this.vectorLayer.removeAllFeatures();//去掉草图
+                    this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                }
+            },
             dateChange: function (val) {
-                //var that = this.dateBeginParam;
-                console.log(this.dateBeginParam + "---" + this.dateEndParam);
                 //后台获取数据
                 this.getDataEvent();
             },
@@ -318,6 +334,7 @@
                     stype: this.stype
                 });
             },
+            //条件筛选加载表格中的数据
             getTableData: function (url, param) {
                 axios.post(url, param).then(function (response) {
                      var li = JSON.parse(response.data);
@@ -329,13 +346,14 @@
                      this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
                      this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
                      this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
-                     this.initTab();
-                     this.getMapDBData();
+                     this.initTab();    //根据条件增加或减少Tab标签页
+                     this.getMapDBData();   //获取数据库数据（地图使用）
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
+            //获取数据库数据（地图）
             getMapDBData:function() {
                 axios.post('/ProOverView/GetMapData', {
                     sYear: this.dateBeginParam, eYear: this.dateEndParam,
@@ -344,11 +362,238 @@
                     var li = JSON.parse(response.data);
                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
                     this.mapDbData = datas;
-                    console.log(datas);
+                    var zom = this.map.getZoom();
+                    if (zom >= 8) {
+                        this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                    } else {
+                        this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                    }
                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
+            },
+            //根据条件筛选地图空间数据
+            getFeaturesBySQL: function (paraNum) {
+                var pros = this.checkPros, towns = this.checkTwons.join("','"),
+                    sYear = this.dateBeginParam, eYear = this.dateEndParam;
+                var yearArr = [], statusArr = [];
+                for (i = sYear; i <= eYear; i++) {
+                    //yearArr.push(i+"年度");
+                    yearArr.push(i+"年度");
+                }
+                for (i = 0; i < pros.length; i++) {
+                    switch (pros[i]) {
+                        case '1':
+                            statusArr.push("骨干河道");
+                            break;
+                        case '2':
+                            statusArr.push("中小河道");
+                            break;
+                        case '3':
+                            statusArr.push("小型农田水利");
+                            break;
+                        case '4':
+                            statusArr.push("农村生活污水");
+                            break;
+                        case '5':
+                            statusArr.push("其他水利工程");
+                            break;
+                    }
+                }
+                var years = yearArr.join("','");
+                var status = statusArr.join("','");
+                var querySQL = " S_TOWN in ('" + towns + "') and N_YEAR in ('" + years + "') and N_TYPE in ('" + status + "')";
+                var getFeatureParam, getFeatureBySQLService, getFeatureBySQLParams;
+                getFeatureParam = new SuperMap.REST.FilterParameter({
+                    //name: "gcct_pt@gcct0514",
+                    attributeFilter: querySQL,
+                });
+                getFeatureBySQLParams = new SuperMap.REST.GetFeaturesBySQLParameters({
+                    queryParameter: getFeatureParam,
+                    datasetNames: ["gcct0514:gcct_pt", "gcct0514:gcct_ln", "gcct0514:gcct_pl"],
+                    fromIndex: 0,
+                    toIndex: 500
+                });
+                if (paraNum == 0) {
+                    getFeatureBySQLService = new SuperMap.REST.GetFeaturesBySQLService(this.gcctRestDataUrl, {
+                        eventListeners: {
+                            "processCompleted": this.processCompleted,
+                            "processFailed": this.processFailed
+                        }
+                    });
+                } else {
+                    getFeatureBySQLService = new SuperMap.REST.GetFeaturesBySQLService(this.gcctRestDataUrl, {
+                        eventListeners: {
+                            "processCompleted": this.processCompleted2,
+                            "processFailed": this.processFailed
+                        }
+                    });
+                }
+                
+                getFeatureBySQLService.processAsync(getFeatureBySQLParams);
+            },
+            //渲染图层
+            processCompleted2: function(e){
+                var obj = e.result.features;
+                for (var i = 0; i < obj.length; i++) {
+                    this.vectorLayer.addFeatures(obj[i]);
+                }
+                this.vectorDataList = obj;
+            },
+            //加载数据
+            processCompleted: function (e) {
+                var obj = e.result.features;
+                for (var i = 0; i < obj.length; i++) {
+                    let gcobj = {};
+                    gcobj.id = obj[i].data.S_PROJECT_NO;
+                    gcobj.year = obj[i].data.N_YEAR;
+                    gcobj.type = obj[i].data.N_TYPE;
+                    gcobj.xmfr = obj[i].data.S_LEGAL_PERSON;
+                    gcobj.ssz = obj[i].data.S_TOWN;
+                    gcobj.gcdz = obj[i].data.S_ADDRESS;
+                    gcobj.sjdw = obj[i].data.S_UNIT_DESIGN;
+                    gcobj.sgdw = obj[i].data.S_UNIT_BUILD;
+                    gcobj.jldw = obj[i].data.S_UNIT_SUPERVISE;
+                    gcobj.gszje = obj[i].data.N_RECKON_TOTAL_AMT;
+                    if(obj[i].geometry.id.indexOf("Point") != -1){
+                        gcobj.x = obj[i].geometry.x;
+                        gcobj.y = obj[i].geometry.y;
+                    } else {
+                        gcobj.x = obj[i].geometry.getCentroid().x;
+                        gcobj.y = obj[i].geometry.getCentroid().y;
+                    }
+                    if ($.inArray(obj[i].data.S_PROJECT_NO, this.mapSpaceId) == -1) {
+                        this.mapSpaceData.push(gcobj);
+                        this.mapSpaceId.push(obj[i].data.S_PROJECT_NO);
+                    }
+                }
+                this.getPointDataArr(); //组合数据库数据和地图空间数据
+            },
+            processFailed:function(e) {
+                console.log(e.error.errorMsg);
+            },
+            //组合数据库数据和地图空间数据
+            getPointDataArr: function () {
+                var spData = this.mapSpaceData;
+                var dbData = this.mapDbData;
+                let i=0,j=0;
+                for (; i < spData.length;i++){
+                    let po = {}, k = 0;
+                    breakout:
+                    for (; j < dbData.length; j++) {
+                        k = 0;
+                        if (spData[i].id == dbData[j].s_project_no) {
+                            po = spData[i];
+                            po.status = dbData[j].n_pace_status;
+                            po.name = dbData[j].s_name;
+                            k = 1;
+                            break breakout;
+                        }
+                    }
+                    this.pointDataArr.push(po);
+                }
+                console.log(this.pointDataArr);
+                this.addMarkers();
+            },
+            //添加地图上的标注点
+            addMarkers: function() {
+                this.markerLayer.clearMarkers();
+                var podata = this.pointDataArr;
+                let i = 0;
+                var markers = [];
+                for (; i < podata.length; i++) {
+                    var size = new SuperMap.Size(28, 33);
+                    var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
+                    var picUrl = "";
+                    switch (podata[i].status) {
+                        case '工前准备':
+                            picUrl = "/Images/gczl/btn_gongqianzb.png";
+                            break;
+                        case '开工':
+                            picUrl = "/Images/gczl/btn_kaigong.png";
+                            break;
+                        case '完工':
+                            picUrl = "/Images/gczl/btn_wangong.png";
+                            break;
+                        case '完工验收':
+                            picUrl = "/Images/gczl/btn_wangongys.png";
+                            break;
+                        case '决算审批':
+                            picUrl = "/Images/gczl/btn_juesuansp.png";
+                            break;
+                        case '竣工验收':
+                            picUrl = "/Images/gczl/btn_jungongys.png";
+                            break;
+                        case '工程完结':
+                            picUrl = "/Images/gczl/btn_gongchengwg.png";
+                            break;
+                    }
+                    var icon = new SuperMap.Icon(picUrl, size, offset);
+                    var marker = new SuperMap.Marker(new SuperMap.LonLat(podata[i].x, podata[i].y), icon);
+                    marker.id = podata[i].id;
+                    marker.name = podata[i].name;
+                    marker.year = podata[i].year;
+                    marker.type = podata[i].type;
+                    marker.status = podata[i].status;
+                    marker.xmfr = podata[i].xmfr;
+                    marker.ssz = podata[i].ssz;
+                    marker.gcdz = podata[i].gcdz;
+                    marker.sjdw = podata[i].sjdw;
+                    marker.sgdw = podata[i].sgdw;
+                    marker.jldw = podata[i].jldw;
+                    marker.gszje = podata[i].gszje;
+                    this.markerLayer.addMarker(marker);
+                    markers.push(marker);
+                }
+                this.markers = markers;
+                for (var j = 0; j < markers.length; j++) {
+                    //给所有的marker注册单击事件
+                    markers[j].events.on({ "click": this.showInfoWin });
+                }
+            },
+            showInfoWin:function (e) {
+                this.closeInfoWin();
+                var that = e.object;
+                var contentHTML = "<div  id='ptPop'>";  //地图上点的弹框
+                contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'></span>";
+                contentHTML += "<div>";
+                contentHTML += "<div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + that.name + "</span></div>";
+                contentHTML += "<table cellspacing='0' border='1' cellpadding='0'>";
+                contentHTML += "<tr><td class='firtlist'>项目编号</td><td class='secondlist'>" + that.id + "</td><td class='threelist'>年度</td><td class='secondlist'>" + that.year + "</td></tr>";
+                contentHTML += "<tr><td class='firtlist'>工程分类</td><td class='secondlist'>" + that.type + "</td><td class='threelist'>工程状态</td><td class='secondlist'>" + that.status + "</td></tr>";
+                contentHTML += "<tr><td class='firtlist'>项目法人</td><td class='secondlist'>" + that.xmfr + "</td><td class='threelist'>所属镇</td><td class='secondlist'>" + that.ssz + "</td></tr>";
+                contentHTML += "<tr><td class='firtlist'>工程地址</td><td class='secondlist' colspan='3'>" + that.gcdz + "</td></tr>";
+                contentHTML += "<tr><td class='firtlist'>设计单位</td><td class='secondlist'>" + that.sjdw + "</td><td class='threelist'>设计单位</td><td class='secondlist'>" + that.sgdw + "</td></tr>";
+                contentHTML += "<tr><td class='firtlist'>监理单位</td><td class='secondlist'>" + that.jldw + "</td><td class='threelist'>估算总投资</td><td class='secondlist'>" + that.gszje + "</td></tr>";
+                contentHTML += "</table></div>";
+                contentHTML += "<div style='width:100%;text-align:center;margin-top:5px;'><input type='button' value='' id='showGcDetail'></div></div></div>";
+                //初始化FramedCloud类
+                var framedCloud = new SuperMap.Popup.FramedCloud(
+                     "ptInfo", //id
+                     e.object.lonlat,
+                     null,
+                     contentHTML,
+                     e.object.icon,
+                     true,
+                     null,
+                     true
+                 );
+                this.infowin = framedCloud;
+                this.map.addPopup(framedCloud);
+                $('#showGcDetail').click(function () {
+                    //打开工程详情页面
+                    console.log("打开工程详情");
+                })
+            },
+            closeInfoWin: function () {
+                if (this.infowin) {
+                    try {
+                        this.infowin.hide();
+                        this.infowin.destroy();
+                    }
+                    catch (e) { }
+                }
             },
             initTab: function() {
                 var that = this;
@@ -510,7 +755,7 @@
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
             },
             mapZoomBig: function () {
-                this.map.zoomTo(this.map.getZoom() + 1)
+                this.map.zoomTo(this.map.getZoom() + 1);
             },
             mapZoomSmall: function () {
                 this.map.zoomTo(this.map.getZoom() - 1);
@@ -610,6 +855,107 @@
     .town_col_style{
 
     }
+    /*地图上点位的弹框样式*/
+    #ptInfo, #ptInfo_contentDiv, #ptInfo_GroupDiv {
+        width: 410px !important;
+    }
+
+    #ptInfo_contentDiv{
+        padding-right:0px;
+        padding-bottom:0;
+    }
+
+    #ptInfo_GroupDiv{
+        height: 266px;
+    }
+
+    #ptPop {
+		width: 380px;
+		font-family: 'Microsoft YaHei';
+		line-height: 18px;
+		opacity: 0.8;
+	}
+		
+	#bgColor {
+		position: absolute;
+		top: 0;
+		left: 0;
+		background-color: #2288f1;
+		width: 410px;
+		height: 34px;
+		border-radius: 5px 5px 0 0;
+	}
+		
+	#ptPop table {
+		line-height: 26px;
+		color: rgb(0, 0, 0);
+		font-size: 12px;
+		font-weight: normal;
+		border-color: #dcdcdc;
+		width: 372px;
+		margin: 14px 0 0 18px;
+		height: 160px;
+	}
+		
+	#ptPop table .firtlist {
+		background-color: #f5f5f5;
+		width: 68px;
+		color: #333333;
+		font-size: 12px;
+		font-weight: bold;
+		text-align: right;
+		padding-right: 8px;
+	}
+		
+	#ptPop table .secondlist {
+		font-size: 14px;
+		font-weight: normal;
+		color: #333333;
+		padding-left: 8px;
+	}
+
+    #ptPop table .threelist{
+        background-color: #f5f5f5;
+		width: 74px;
+		color: #333333;
+		font-size: 12px;
+		font-weight: bold;
+		text-align: right;
+		padding-right: 8px;
+    }
+	
+	#ptInfo_close {
+		background: url(/Images/zhjc/btn_close_normal.png) no-repeat;
+		right: 0px !important;
+		top: 9px !important;
+	}
+	
+	#ptInfo_close:hover {
+		background: url(/Images/zhjc/btn_close_active.png) no-repeat;
+		top: 5px !important;
+		right: 4px !important;
+	}
+		
+	#ptPopTitle {
+		height: 34px;
+		width: 406px;
+		line-height: 34px;
+		font-size: 14px;
+		font-family: 'Microsoft YaHei';
+		margin: -3px 1px 1px -4px;
+		color: #ffffff;
+	}
+    #showGcDetail {
+        width: 100px;
+        height: 32px;
+        background: url(/Images/gczl/btn_gongcxq_normal.png);
+        margin: 5px 10px 0 20px;
+        border: none;
+    }
+
+    #showGcDetail:hover {
+        background: url(/Images/gczl/btn_gongcxq_active.png);
+    }
     /*地图上的四个悬浮的图标按钮*/
     .map_Btn{
         position:absolute;
@@ -638,7 +984,7 @@
     /*显示图例信息的div*/
     .tuli_img{
         position:absolute;
-        right:120px;
+        right:55px;
         top:130px;
         z-index:1555;
         width:252px;

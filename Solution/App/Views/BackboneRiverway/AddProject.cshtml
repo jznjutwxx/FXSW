@@ -26,24 +26,36 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="年度:">
-                            <el-input v-model="formData.n_year" size="mini"></el-input>
+                            @*<el-input v-model="formData.n_year" size="mini"></el-input>*@
+                            <el-select v-model="formData.n_year" class="selCss" size="mini">
+                                <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程分类:">
-                            <spna>{{s_type}}</spna>
+                            <span>{{s_type}}</span>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程状态:">
-                            <el-input v-model="formData.n_pace_status" size="mini"></el-input>
+                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
+                            <el-select v-model="formData.n_pace_status" class="selCss" size="mini">
+                                <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="所属镇:">
-                            <el-input v-model="formData.s_town" size="mini"></el-input>
+                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
+                            <el-select v-model="formData.s_town" class="selCss" size="mini">
+                                <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -55,14 +67,22 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            <el-input v-model="formData.s_legal_person" size="mini"></el-input>
+                            @*<el-input v-model="formData.s_legal_person" size="mini"></el-input>*@
+                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
+                                <el-option v-for="item in PersonOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            <el-input v-model="formData.s_unit_design" size="mini"></el-input>
+                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
+                            <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
+                                <el-option v-for="item in UnitOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
+                                </el-option>
+                            </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
@@ -450,6 +470,11 @@
         el: '#add',
         data: {
             s_type: '',
+            YearOption: [],
+            StatusOption: [],
+            TownOption: [],
+            PersonOption: [],
+            UnitOption: [],
             formData: {
                 s_name: '', s_project_no: '', n_year: '',
                 s_gg_or_zxx: '', n_pace_status: '', s_town: '',
@@ -486,8 +511,72 @@
                 this.formData.s_gg_or_zxx = "zxx";
                 this.s_type = "中小河道";
             }
+            this.init();
         },
         methods: {
+            init: function () {
+                this.getYear("/BackboneRiverway/GetSelect", { Type: "年度" });
+                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
+                this.getTown("/BackboneRiverway/GetSelect", { Type: "街镇" });
+                this.getLegalPerson("/BackboneRiverway/GetLegalPerson", null);
+                this.getDesignUnit("/BackboneRiverway/GetDesignUnit", null);
+            },
+            getYear: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.YearOption = tempData.DictionaryGetResponse.list;
+                      this.formData.n_year = this.YearOption[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                      this.formData.n_pace_status = this.StatusOption[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getTown: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.TownOption = tempData.DictionaryGetResponse.list;
+                      this.formData.s_town = this.TownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getLegalPerson: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
+                      //this.formData.s_town = this.TownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getDesignUnit: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
+                      //this.formData.s_town = this.TownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
             getRequest: function () {
                 var url = window.location.search; //获取url中"?"符后的字串
                 var theRequest = new Object();
@@ -503,7 +592,20 @@
                 return theRequest;
             },
             saveData: function () {
-
+                axios.post('/BackboneRiverway/SaveOneData',
+                    { param: JSON.stringify(this.formData) }
+                    ).then(function (response) {
+                        debugger
+                        var TempData = JSON.parse(response.data);
+                        if (datas.EnginFarmReportResponse.result == true) {
+                            if (this.s_type = "骨干河道") {
+                                window.location = "Index";
+                            }
+                            if (this.s_type = "中小河道") {
+                                window.location = "/ZXRiverway/Index";
+                            }
+                        }
+                    });
             },
             submitUpload() {
                 this.$refs.upload.submit();
@@ -576,5 +678,9 @@
     }
     #add .colCss {
         height: 35px;
+    }
+
+    #add .selCss {
+        width:100%;
     }
 </style>

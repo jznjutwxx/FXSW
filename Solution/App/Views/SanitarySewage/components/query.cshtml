@@ -50,7 +50,6 @@
     </div>
 </script>
 
-@Html.Partial("~/Views/components/forms/com_select.cshtml")
 
 <script>
     var query = ({
@@ -89,14 +88,15 @@
         },
         mounted: function () {
             this.init();
+            this.emitEvent();
         },
         components: {
-            'com-select': comSelect
+            
         },
         methods: {
             init: function () {
-                this.getStatus("/SanitarySewage/GetSelect", { Type: "工程状态" });
-                this.getTown("/SanitarySewage/GetSelect", { Type: "街镇" });
+                this.getStatus("/SanitarySewage/GetDictionary", { Type: "工程状态" });
+                this.getTown("/SanitarySewage/GetDictionary", { Type: "街镇" });
             },
             getStatus: function (url, param) {
                 axios.post(url, param)
@@ -130,7 +130,7 @@
                 this.$emit('emit-event', this.param)
             },
             addProject: function () {
-                window.location = "/SanitarySewage/AddProject";
+                window.location = "/SanitarySewage/AddPage";
             },
             changeStatus: function (param) {
                 this.gStatus = param;

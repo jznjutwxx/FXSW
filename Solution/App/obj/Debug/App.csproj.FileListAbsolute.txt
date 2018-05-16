@@ -54,6 +54,6 @@ D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\bin\zh-Hans\Sys
 D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\bin\zh-Hans\System.Web.WebPages.resources.dll
 D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\bin\zh-Hans\System.Web.WebPages.Deployment.resources.dll
 D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\bin\zh-Hans\System.Web.WebPages.Razor.resources.dll
-D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\obj\Debug\App.csprojResolveAssemblyReference.cache
 D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\obj\Debug\App.dll
 D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\obj\Debug\App.pdb
+D:\wavenet\Source\奉贤区水务公共信息平台\Solution\App\obj\Debug\App.csprojResolveAssemblyReference.cache

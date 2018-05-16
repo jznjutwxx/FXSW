@@ -182,6 +182,7 @@
     <Compile Include="Controllers\SHWSProjectStatisticsController.cs" />
     <Compile Include="Controllers\SingleStatisticsController.cs" />
     <Compile Include="Controllers\SmallCroplandStatisticsController.cs" />
+    <Compile Include="Controllers\SZQYJLController.cs" />
     <Compile Include="Controllers\UploaderController.cs" />
     <Compile Include="Controllers\WaterResController.cs" />
     <Compile Include="Controllers\ZHJCController.cs" />
@@ -1244,6 +1245,9 @@
     <Content Include="Views\SanitarySewage\AddPage.cshtml" />
     <Content Include="Views\SanitarySewage\EditPage.cshtml" />
     <Content Include="Views\FarmlandWater\FileManage.cshtml" />
+    <Content Include="Views\SZQYJL\Index.cshtml" />
+    <Content Include="Views\SanitarySewage\DetailPage.cshtml" />
+    <Content Include="Views\HydraulicEngineer\Add.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

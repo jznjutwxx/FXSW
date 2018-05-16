@@ -10,6 +10,7 @@ namespace App.Models
         //工程基本信息
         public string s_id { get; set; }
         public string s_name { get; set; }
+        public string s_gg_or_zxx { get; set; }
         public string s_project_no { get; set; }
         public string n_year { get; set; }
         public string n_pace_status { get; set; }

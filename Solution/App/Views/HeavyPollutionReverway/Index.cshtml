@@ -1,8 +1,503 @@
 ﻿
 @{
-    ViewBag.Title = "Index";
+    ViewBag.Title = "重污染河道水质";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/components/echarts/com_pie.cshtml")
+<div id="app">
+    <header>
+        <el-row id="firstSelect">
+            <el-col v-bind:span="8">
+                <span>所属镇:</span>
+                <el-select v-model="twon" placeholder="请选择">
+                    <el-option v-for="item in twons"
+                               v-bind:key="item.value"
+                               v-bind:label="item.label"
+                               v-bind:value="item.value">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col v-bind:span="8">
+                <span>数据来源:</span>
+                <el-select v-model="origin" placeholder="请选择">
+                    <el-option v-for="item in dataOrigin"
+                               v-bind:key="item.value"
+                               v-bind:label="item.label"
+                               v-bind:value="item.value">
+                    </el-option>
+                </el-select>
+            </el-col>
+        </el-row>
+        <el-row id="secondSelect">
+            <el-col v-bind:span="8">
+                <span>统计类别:</span>
+                <el-radio v-model="radio" label="1">月报</el-radio>
+                <el-radio v-model="radio" label="2">年报</el-radio>
+            </el-col>
+            <el-col v-bind:span="8">
+                <el-button icon="el-icon-arrow-left" v-on:click="preMonth">上一月</el-button>
+                <el-date-picker v-model="monthValue" style="width:120px;"
+                                type="month"
+                                value-format="yyyy-MM"
+                                placeholder="选择月"
+                                key="key-date">
+                </el-date-picker>
+                <el-button v-on:click="nextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+            </el-col>
+            <el-col v-bind:span="8">
+                <el-button type="primary" icon="el-icon-search">查询</el-button>
+                <el-button type="primary" icon="el-icon-upload2">导出</el-button>
+            </el-col>
+        </el-row>
+    </header>
+    <div id="hdChart" v-bind:style="{height:chartheight+'px'}">
+        <div id="hdszbarDiv">
+            <com-bar v-bind:option="barOption" ref="hdszbar">
 
+            </com-bar>
+        </div>
+        <div id="zwrzbqkPieDiV">
+            <div style="margin-left:40%;margin-top:8px;">重污染占比情况</div>
+            <com-pie v-bind:option="pieOption" ref="zwrzbqkPie">
 
+            </com-pie>
+        </div>
+    </div>
+    <div id="hdTable" v-bind:style="{height:chartheight+'px'}">
+        <el-table v-bind:data="hdData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;" v-bind:border='true' v-bind:stripe="true" >
+            <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+            </el-table-column>
+            <el-table-column property="riverwayname" label="河道名称">
+            </el-table-column>
+            <el-table-column property="dmname" label="断面名称">
+            </el-table-column>
+            <el-table-column property="town" label="所属镇">
+            </el-table-column>
+            <el-table-column property="szlb" label="水质类别">
+            </el-table-column>
+            <el-table-column label="重污染情况" style="text-align:center;">
+                <el-table-column prop="sfzwr" label="是/否重污染" width="120">
+                </el-table-column>
+                <el-table-column prop="zwrjcz" label="重污染超标项目(监测值)" width="120">
+                </el-table-column>
+            </el-table-column>
+        </el-table>
+        <el-pagination samll layout="prev, pager, next" v-bind:total="hdData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
+        </el-pagination>
+        <el-pagination   layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize"  v-bind:total="hdData.length">
+        </el-pagination>
+    </div>
+</div>
+<script>
+    new Vue({
+        el: "#app",
+        data: {
+            twons: [{
+                value: '选项1',
+                label: '奉贤区'
+            }, {
+                value: '选项2',
+                label: '庄行镇'
+            }, {
+                value: '选项3',
+                label: '拓林镇'
+            }, {
+                value: '选项4',
+                label: '南桥镇'
+            }, {
+                value: '选项5',
+                label: '青村镇'
+            }, {
+                value: '选项6',
+                label: '金汇镇'
+            }, {
+                value: '选项7',
+                label: '奉城镇'
+            }, {
+                value: '选项8',
+                label: '四团镇'
+            }, {
+                value: '选项9',
+                label: '海湾镇'
+            }],
+            twon: '海湾镇',
+            dataOrigin: [{
+                value: '选项1',
+                label: '全部'
+            }, {
+                value: '选项2',
+                label: '市公布'
+            }, {
+                value: '选项3',
+                label: '区公布'
+            }, {
+                value: '选项4',
+                label: '新增'
+            }],
+            origin: '全部',
+            monthValue: moment().format('YYYY-MM'),
+            radio: '1',
+            chartheight: (document.documentElement.clientHeight - 102) / 2,
+            barOption: null,
+            pieOption: null,
+            currentPage: 1,
+            pagesize: 4,  //每个分页显示的数
+            hdData: [{
+                riverwayname: '河道1',
+                dmname: '断面1',
+                town: '拓林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道2',
+                dmname: '断面2',
+                town: '拓林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道3',
+                dmname: '断面3',
+                town: '拓林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道4',
+                dmname: '断面4',
+                town: '拓林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道5',
+                dmname: '断面5',
+                town: '拓林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }]
+        },
+        components: {
+            "com-bar": comBar,
+            "com-pie": comPie
+        },
+        mounted: function () {
+            const vm = this;
+            $(window).resize(function () {
+                vm.chartheight = (document.documentElement.clientHeight - 102) / 2;
+            });
+            setTimeout(function () {
+                vm.setBarData();
+                vm.setPieData();
+            }, 200);
+        },
+        methods: {
+            preMonth: function () {
+                this.monthValue = moment(this.monthValue, "YYYY-MM").subtract(1, 'M').format('YYYY-MM')
+            },
+            nextMonth: function () {
+                this.monthValue = moment(this.monthValue, "YYYY-MM").add(1, 'M').format('YYYY-MM')
+            },
+            current_change: function (currentPage) {
+                this.currentPage = currentPage;            
+            },
+            indexOrder: function (index) {
+                var startnum = (this.currentPage - 1) * this.pagesize;
+                return index + 1 + startnum;
+            },
+            pagesize_Change: function (val) {
+                //pageszie-每页的数量改变时
+                this.pagesize = val;
+            },
+            setBarData: function () {
+                this.barOption = {
+                    color: '#50a6ff',
+                    label: "河道水质情况",
+                    title: {
+                        left: 'center',
+                        textStyle: {
+                            color: '#666666',
+                            fontWeight: 'normal',
+                            fontSize: 14
+                        }
+                    },
+                    legend: {
+                    },
+                    xAxis: {
+                        type: 'category',
+                        // name: '时间',
+                        nameTextStyle: {
+                            color: '',
+                            padding: 0
+                        },
+                        //II, III,  IV, V,  VI
+                        data: ['II类', 'III类', 'IV类', 'V类', '劣V类'],
+                        axisLabel: {
+                            color: 'black'
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        splitLine: { show: false },//去除网格线
+                    },
+                    yAxis: {
+                        type: 'value',
+                        name: '河道水质情况(单位：%)',
+                       // offset:-20,            
+                        min: 0,  //设置y轴的最小值
+                        nameTextStyle: {
+                            color: 'black',
+                            padding: 10,
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        splitLine: {
+                            show: true,//保留网格线
+                            lineStyle: {
+                                color: '#3d4997'
+                            }
+                        },
+                    },
+                    series: [
+                        {
+                            name: '河道水质情况',
+                            type: 'bar',
+                            barWidth: '40%',
+                            //color:['#c23531','#2f4554', '#61a0a8', '#d48265', '#91c7ae'],
+                            data: [10, 25, 35, 20, 20],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top',
+                                    formatter: '{c} %',
+                                    color: '#ffffff'
+                                }
+                            }
+                        }
+                    ]
+                }
+                this.barOption={
+                    color: '#50a6ff',
+                    title: {
+                        left: 'center',
+                        textStyle: {
+                            color: 'black',
+                            fontWeight: 'normal',
+                            fontSize: 14
+                        }
+                    },
+                    legend: {
+                        data: ['河道水质情况'],
+                        textStyle: {
+                            color: 'black',
+                            fontSize:16,
+                        },
+                    },
+                    xAxis: {
+                        type: 'category',
+                        data: ['II类', 'III类', 'IV类', 'V类', '劣V类'],
+                        axisLabel: {
+                            color: 'black'
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        splitLine: { show: false },//去除网格线
+                        },
+                    yAxis: {
+                        type: 'value',
+                       // name: '河道水质情况',
+                        min: 0,
+                        nameTextStyle: {
+                            color: 'black',
+                            padding: 10
+                        },
+                        axisLine: {
+                            show: false
+                        },
+                        axisTick: {
+                            show: false
+                        },
+                        axisLabel: {
+                            textStyle: {
+                                    color: 'black'
+                            }
+                        },
+                        splitLine: {
+                            show: true,//保留网格线
+                            lineStyle: {
+                                color: '#3d4997'
+                            }
+                        },
+                        },
+                    series: [
+                        {
+                            name: '河道水质情况',
+                            type: 'bar',
+                            barWidth: '60%',
+                            data: [10, 25, 35, 20, 20],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'top',
+                                    formatter: '{c} %',
+                                    color: 'black'
+                                }
+                            }
+                        }
+                    ]
+                }
+            },
+            setPieData: function () {
+                this.pieOption = {
+                    color: ['#ff5050', '#28c5d0'],   //重污染  ff5050 非重污染  28c5d0
+                    tooltip: {
+                        trigger: 'item',
+                        formatter: "{d}%"
+                    },
+                    title: {
+                        text: "总数",
+                        subtext: 200,
+                        left:'center',
+                        textStyle: {
+                            fontSize: 14,
+                            color: 'black',
+                            fontWeight: 'normal',
+                            align: 'center'
+                        },
+                        subtextStyle: {
+                            color: '#4BDFFF',
+                            fontSize: 14,
+                            fontWeight: 'bold'
+                        },
+                        left: '48%',
+                        top: '45%'
+                    },
+                    legend: {
+                        orient: 'horizontal',
+                        //bottom: 10,
+                        left: 10,
+                        selectedMode: false,
+                        data: ['重污染面', '非重污染面'],
+                        width: 240,
+                        textStyle: {
+                            color: 'black'
+                        }
+                    },
+                    series: [
+                        {
+                            name: '访问来源',
+                            type: 'pie',
+                            radius: ['30%', '80%'], //内、外半径
+                            // center: ['45%', '40%'],
+                            center: ['50%', '50%'],
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: 'inner',
+                                    formatter: "{d}%"
+                                }
+                            },
+                            labelLine: {
+                                normal: {
+                                    show: false
+                                }
+                            },
+                            data: [
+                                { value: 80, name: '重污染面' },
+                                { value: 20, name: '非重污染面' },
 
+                            ]
+                        }
+                    ]
+                }
+            },
+
+        },
+    })
+</script>
+<style scoped>
+    html, body, #app {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        margin: 0;
+        padding: 0;
+    }
+    header {
+        font-size: 14px;
+        font-family: 宋体;
+        color: #333333;
+        border-bottom: 1px solid #b9b9b9;
+        height: 100px;
+        width: 100%;
+    }
+
+    #firstSelect .el-select .el-input__inner {
+        width: 150px;
+        height: 30px;
+    }
+
+    #firstSelect, #secondSelect {
+        margin: 20px 15px;
+        min-width:1000px;
+    }
+
+        #secondSelect .el-input__inner {
+            padding: 3px 30px;
+            height: 32px;
+        }
+
+    header .el-button {
+        padding: 8px 16px;
+    }
+
+    #secondSelect .el-input__icon {
+        line-height: 32px;
+    }
+
+    #hdChart {
+        border-bottom: 1px solid #b9b9b9;
+        min-height: 300px;
+    }
+
+    #hdTable {
+        min-height: 300px;
+    }
+
+    #hdChart .charts {
+        width: 100%;
+        height: 90%;
+    }
+
+    #hdszbarDiv {
+        width: 49%;
+        height: 100%;
+        border-right: 1px solid #b9b9b9;
+        float: left;
+    }
+
+    #zwrzbqkPieDiV {
+        width: 49%;
+        height: 100%;
+        float: left;
+    }
+</style>
