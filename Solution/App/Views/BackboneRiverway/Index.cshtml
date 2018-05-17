@@ -60,7 +60,7 @@
                              align="center"
                              width="300">
                 <template slot-scope="scope">
-                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" v-on:click="openEdit(scope.row.s_id)">编辑</el-button>
                     <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
                     <el-button size="mini" type="danger">删除</el-button>
                 </template>
@@ -131,7 +131,9 @@
             },
             openFileManage: function (ID) {
                 window.location = "FileManage?id=" + ID;
-
+            },
+            openEdit: function (ID) {
+                window.location = "EditProject?id=" + ID;
             },
             currentChange: function (val) {
                 this.params.Page = val;

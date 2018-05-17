@@ -1,0 +1,40 @@
+﻿<!--这个组件没有被使用-->
+<script type="text/x-template" id="tableCommon">
+    <div id="tablecommon">
+        <el-table v-bind:data="data.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true" v-for="item in ">
+            <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+            </el-table-column>
+            <el-table-column property="stationname" label="站点名称">
+            </el-table-column>
+            <el-table-column property="area" label="所属街镇">
+            </el-table-column>
+            <el-table-column property="gldw" label="管理单位">
+            </el-table-column>
+            <el-table-column property="yl" label="实时雨量(mm)">
+            </el-table-column>
+            <el-table-column property="time" label="上报时间">
+            </el-table-column>
+            <el-table-column property="status" label="设备状态">
+            </el-table-column>
+        </el-table>
+    </div>
+</script>
+<script>
+    var tableCommon = {
+        template: "#tableCommon",
+        data: function () {
+            return {
+
+            }
+        },
+        components: {
+
+        },
+        methods: {
+
+        },
+        watch: {
+
+        },
+    }
+</script>

@@ -1,0 +1,106 @@
+﻿
+@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "其他水利工程-文件管理";
+}
+
+<div id="app">
+    <div id="appTop" style="padding-left:20px;">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="项目编号：">
+                <span style="padding-right:30px;">
+                    {{fileForm.S_PROJECT_NO}}
+                </span>
+            </el-form-item>
+            <el-form-item label="工程分类：">
+                <span style="padding-right:30px;">
+                    其他水利工程
+                </span>
+            </el-form-item>
+            <el-form-item label="工程状态：">
+                <el-select class="selCss" v-model="fileForm.N_PACE_STATUS">
+                    <el-option v-for="item in statusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value"></el-option>
+                </el-select>
+            </el-form-item>
+        </el-form>
+    </div>
+    <div id="appFile">
+
+    </div>
+</div>
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            fileForm: {
+                S_ID: '',
+                S_NAME: '',
+                S_PROJECT_NO: '',
+                N_YEAR: '',
+                N_TYPE: '',
+                N_PACE_STATUS: '',
+                S_TOWN: '',
+                S_ADDRESS: '',
+                S_LEGAL_PERSON: '',
+                S_UNIT_DESIGN: '',
+                N_RECKON_TOTAL_AMT: '',
+                N_EMPTY_AREA: '',
+                S_REMARK: '',
+                S_CONTENT: '',
+                S_GKPF: '',
+                S_CSPF: '',
+                S_ZJPW: '',
+                N_TOTAL_INVEST: '',
+                N_ENGIN_COST: '',
+                N_INDEPENDENT_COST: '',
+                N_PREP_COST: '',
+                N_SIGHT_COST: '',
+                N_BUILD_COST: '',
+                N_SUBSIDY_CITY: '',
+                N_SUBSIDY_DISTRICT: '',
+                N_SUBSIDY_TOWN: '',
+                S_CompleteContent: '' // 待胡润君添加字段
+            },
+            statusOption: []
+        },
+        mounted: function () {
+            this.init();
+        },
+        methods: {
+            init: function () {
+                var s_id = this.getUrlParam("id");
+                this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
+            },
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.statusOption = tempData.DictionaryGetResponse.list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getUrlParam: function (name) {
+                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
+                var r = window.location.search.substr(1).match(reg);
+                if (r != null)
+                    return unescape(r[2]);
+                return null;
+            },
+
+        }
+    })
+</script>
+
+<style scoped>
+    #app {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+        #app .selCss {
+            width: 120px;
+        }
+</style>

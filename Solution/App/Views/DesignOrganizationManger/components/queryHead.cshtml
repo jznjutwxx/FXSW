@@ -1,0 +1,96 @@
+﻿
+<script type="text/x-template" id="queryHead">
+    <div id="queryhead">
+        <el-input v-bind:placeholder="promptMessage"
+                  prefix-icon="el-icon-search" size="small">
+        </el-input>
+        <el-button type="primary" icon="el-icon-search" class="btnSel">查询</el-button>
+        <el-button type="primary" class="btnAdd"></el-button>
+        <el-button type="primary" class="btnDown"></el-button>
+        <el-button type="primary" class="btnImport"></el-button>
+    </div>
+</script>
+<script>
+    var queryHead = {
+        template: "#queryHead",
+        data: function () {
+            return {
+                promptMessage: "请输入设计单位名称",
+            }
+        },
+        components: {
+
+        },
+        methods: {
+
+        },
+        watch: {
+
+        },
+    }
+</script>
+<style>
+    #queryhead{
+       margin:10px;
+       min-width:700px;
+    }
+    #queryhead .btnSel {
+        padding: 8px 12px;
+        margin-left:15px;
+    }
+
+    #queryhead .el-input--small {
+        width: 220px;
+    }
+
+    #queryhead .btnAdd {
+        width: 73px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        border: 0px;
+    }
+
+        #queryhead .btnAdd:focus {
+            background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        }
+
+        #queryhead .btnAdd:hover {
+            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+        }
+
+        #queryhead .btnAdd:active {
+            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+        }
+    #queryhead .btnDown {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        border: 0px;
+    }
+
+        #queryhead .btnDown:focus {
+            background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        }
+
+        #queryhead .btnDown:hover {
+            background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+        }
+
+    #queryhead .btnImport {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        border: 0px;
+    }
+
+        #queryhead .btnImport:focus {
+            background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        }
+
+        #queryhead .btnImport:hover {
+            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+        }
+</style>

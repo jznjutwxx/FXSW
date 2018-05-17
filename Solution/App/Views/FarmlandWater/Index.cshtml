@@ -9,7 +9,7 @@
 <div id="app">
     <farmlandwater-query v-on:emit-event="getEmitEvent" ref="farmlandwaterQuery"></farmlandwater-query>
 
-    <div style="padding-top: 10px; text-align: center;">
+    <div id="table" style="padding-top: 10px; text-align: center;">
         <el-table v-bind:data="tableData" border v-bind:height="height">
             <el-table-column type="index" label="序号" v-bind:index="(currentPage-1)*pagesize+1" header-align="center" align="center" width="60"> 
             </el-table-column>
@@ -37,7 +37,7 @@
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
-                    <el-button size="mini" type="danger" v-on:click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="handleDel(scope.row.s_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -54,18 +54,58 @@
 
 @Html.Partial("~/Views/FarmlandWater/components/query.cshtml")
 
-
 <script>
     new Vue({
         el: '#app',
         data: {
             height: 0,
             total: 0, //默认数据总数
-            pagesize: 10,//每页的数据条数
+            pagesize: 20,//每页的数据条数
             currentPage: 1,//默认开始页面
             height: 0,
             tableData: [],
-            params:[]
+            params: [],
+            delForm: {
+                S_ID: '',
+                S_NAME: '',
+                S_PROJECT_NO: '',
+                N_YEAR: '',
+                N_PACE_STATUS: '',
+                S_TOWN: '',
+                S_ADDRESS: '',
+                S_LEGAL_PERSON: '',
+                S_UNIT_DESIGN: '',
+                S_UNIT_BUILD: '',
+                S_UNIT_SUPERVISE: '',
+                N_RECKON_TOTAL_AMT: '',
+                S_REMARK: '',
+                N_GGSL: '',
+                N_GGMJ: '',
+                N_BZZS: '',
+                N_BZTT: '',
+                N_DXQD: '',
+                N_DC: '',
+                N_DXH: '',
+                N_CQMQ: '',
+                N_XFJDL: '',
+                N_TOTAL_INVEST: '',
+                N_ENGIN_COST: '',
+                N_INDEPENDENT_COST: '',
+                N_PREP_COST: '',
+                N_SIGHT_COST: '',
+                N_SUBSIDY_CITY: '',
+                N_SUBSIDY_DISTRICT: '',
+                N_SUBSIDY_TOWN: '',
+                N_WCGGSL: '',
+                N_WCGGMJ: '',
+                N_WCBZZS: '',
+                N_WCBZTT: '',
+                N_WCDXQD: '',
+                N_WCDC: '',
+                N_WCDXH: '',
+                N_WCCQMQ: '',
+                N_WCXFJDL: '',
+            }
         },
         components: {
             "farmlandwater-query": query
@@ -105,11 +145,38 @@
                 window.location.href = '/FarmlandWater/FileManage?id=' + id;
 
             },
-            handleEdit(index, row) {
-                debugger
+            handleEdit: function (index, row) {
                 window.location.href = "/FarmlandWater/EditPage?id=" + row.s_id;
             },
-            handleDel(index, row) {
+            handleDel: function (id) {
+                    this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                        confirmButtonText: '确定',
+                        cancelButtonText: '取消',
+                        type: 'warning'
+                    }).then(function () {
+                        this.delForm.S_ID = id;
+                        axios.post("/FarmlandWater/DelData", { id: this.delForm.S_ID })
+                      .then(function (response) {
+                          var tempData = JSON.parse(response.data);
+                          if (tempData.EnginFarmUpdateResponse.result) {
+                              this.$message({
+                                  type: 'success',
+                                  message: '删除成功!'
+                              });
+                          } else {
+                              this.$message.error('删除失败！' + tempData.EnginFarmUpdateResponse.result);
+                          }
+                          this.setData('/FarmlandWater/GetTabData',this.params);
+                      }.bind(this))
+                      .catch(function (error) {
+                          console.log(error);
+                      });
+                    }.bind(this)).catch(function () {
+                        this.$message({
+                            type: 'info',
+                            message: '已取消删除'
+                        });
+                    });
             },
             currentChange: function (val) {
                 this.params.page = val;
@@ -137,5 +204,11 @@
 <style>
     .pagefloat {
         float: left;
+    }
+    #table a{
+        text-decoration:none;
+        font-size:14px;
+        color:#2288f1;
+        cursor:pointer;
     }
 </style>

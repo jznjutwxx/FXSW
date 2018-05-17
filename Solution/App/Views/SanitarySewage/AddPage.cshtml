@@ -1,8 +1,9 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "农田水利新增页面";
+    ViewBag.Title = "生活污水新增页面";
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+
 <div id="add">
     <el-form v-model="addForm" ref="addForm" v-bind:inline="true" label-position="right" label-width="100px" size="small">
         <div id="BasicInfo">
@@ -30,7 +31,7 @@
             <el-row type="flex">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="工程分类:">
-                        小型农田水利
+                        农村生活污水
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
@@ -109,8 +110,8 @@
             <div class="titlecss"> 批复工程量</div>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="灌区数量:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_GGSL">
+                    <el-form-item label="村组数量:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_CZSL">
                             <template slot="append">
                                 个
                             </template>
@@ -118,48 +119,19 @@
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="灌区面积:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_GGMJ">
+                    <el-form-item label="总户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_ZHS">
                             <template slot="append">
-                                亩
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="泵站座数:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_BZZS">
+                    <el-form-item label="就地处理户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_JDCLHS">
                             <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="泵站台套:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_BZTT">
-                            <template slot="append">
-                                台套
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="地下渠道:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_DXQD">
-                            <template slot="append">
-                                公里
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="渡槽:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_DC">
-                            <template slot="append">
-                                座
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
@@ -167,28 +139,39 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="倒虹吸:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_DXH">
+                    <el-form-item label="市政纳管户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_SZNGHS">
                             <template slot="append">
-                                道
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="衬砌明渠:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_CQMQ">
+                    <el-form-item label="就地处理站:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_JDCLZ">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colheight">
+                    <el-form-item label="管网长度:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_GWCD">
                             <template slot="append">
                                 公里
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
+            </el-row>
+            <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="新翻建道路:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_XFJDL">
+                    <el-form-item label="新翻建化粪池:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_XFJHFC">
                             <template slot="append">
-                                平方米
+                               座
                             </template>
                         </el-input>
                     </el-form-item>
@@ -289,8 +272,8 @@
             <div class="titlecss">完成工程量</div>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="灌区数量:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCGGSL">
+                    <el-form-item label="村组数量:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCCZSL">
                             <template slot="append">
                                 个
                             </template>
@@ -298,48 +281,19 @@
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="灌区面积:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCGGMJ">
+                    <el-form-item label="总户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCZHS">
                             <template slot="append">
-                                亩
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="泵站座数:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCBZZS">
+                    <el-form-item label="就地处理户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCJDCLHS">
                             <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="泵站台套:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCBZTT">
-                            <template slot="append">
-                                道
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="地下渠道:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCDXQD">
-                            <template slot="append">
-                                公里
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="渡槽:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCDC">
-                            <template slot="append">
-                                座
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
@@ -347,28 +301,39 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="倒虹吸:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCDXH">
+                    <el-form-item label="市政纳管户数:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCSZNGHS">
                             <template slot="append">
-                                道
+                                户
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="衬砌明渠:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCCQMQ">
+                    <el-form-item label="就地处理站:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCJDCLZ">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colheight">
+                    <el-form-item label="管网长度:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCGWCD">
                             <template slot="append">
                                 公里
                             </template>
                         </el-input>
                     </el-form-item>
                 </el-col>
+            </el-row>
+            <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="新翻建道路:">
-                        <el-input placeholder="请输入内容" v-model="addForm.N_WCXFJDL">
+                    <el-form-item label="新翻建化粪池:">
+                        <el-input placeholder="请输入内容" v-model="addForm.N_WCXFJHFC">
                             <template slot="append">
-                                平方米
+                                座
                             </template>
                         </el-input>
                     </el-form-item>
@@ -446,15 +411,13 @@
                 S_UNIT_SUPERVISE: '',
                 N_RECKON_TOTAL_AMT: '',
                 S_REMARK: '',
-                N_GGSL: '',
-                N_GGMJ: '',
-                N_BZZS: '',
-                N_BZTT: '',
-                N_DXQD: '',
-                N_DC: '',
-                N_DXH: '',
-                N_CQMQ: '',
-                N_XFJDL: '',
+                N_CZSL:'',
+                N_ZHS:'',
+                N_JDCLHS:'',
+                N_SZNGHS:'',
+                N_JDCLZ:'',
+                N_GWCD:'',
+                N_XFJHFC: '',
                 N_TOTAL_INVEST: '',
                 N_ENGIN_COST: '',
                 N_INDEPENDENT_COST: '',
@@ -463,15 +426,13 @@
                 N_SUBSIDY_CITY: '',
                 N_SUBSIDY_DISTRICT: '',
                 N_SUBSIDY_TOWN: '',
-                N_WCGGSL: '',
-                N_WCGGMJ: '',
-                N_WCBZZS: '',
-                N_WCBZTT: '',
-                N_WCDXQD: '',
-                N_WCDC: '',
-                N_WCDXH: '',
-                N_WCCQMQ: '',
-                N_WCXFJDL: '',
+                N_WCCZSL: '',
+                N_WCZHS: '',
+                N_WCJDCLHS: '',
+                N_WCSZNGHS: '',
+                N_WCJDCLZ: '',
+                N_WCGWCD: '',
+                N_WCXFJHFC: '',
             }
         },
         components: {
@@ -494,7 +455,7 @@
             },
         },
         methods: {
-            bindGCCTData:function(val){
+            bindGCCTData: function (val) {
                 this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO;
                 this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;
                 this.gcctinfo.N_YEAR = this.addForm.N_YEAR;
@@ -507,6 +468,10 @@
                 this.gcctinfo.S_UNIT_SUPERVISE = this.addForm.S_UNIT_SUPERVISE;
                 this.gcctinfo.N_RECKON_TOTAL_AMT = this.addForm.N_RECKON_TOTAL_AMT;
                 this.gcctinfo.REMARK = this.addForm.S_REMARK;
+            },
+            showgcctMapEdit: function () {
+                this.bindGCCTData();
+                this.mapEditDialogVisible = true;
             },
             getYear: function (url, type) {
                 axios.post(url, type)
@@ -580,18 +545,18 @@
             },
 
             cancel: function () {
-                window.location.href = "/FarmlandWater/Index";
+                window.location.href = "/SanitarySewage/Index";
             },
 
             save: function () {
-                axios.post('/FarmlandWater/Add',
+                axios.post('/SanitarySewage/Add',
                     { param: JSON.stringify(this.addForm) }
                     ).then(function (response) {
                     debugger
                     var datas = JSON.parse(response.data);
-                    if (datas.EnginFarmReportResponse.result == true) {
+                    if (datas.EnginSewageReportResponse.result == true) {
                         alert("新增成功！");
-                        window.location.href = "/FarmlandWater/Index";
+                        window.location.href = "/SanitarySewage/Index";
                     }
                 });
             },

@@ -62,7 +62,7 @@
                              align="center"
                              width="300">
                 <template slot-scope="scope">
-                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" v-on:click="handleEdit(scope.$index,scope.row)">编辑</el-button>
                     <el-button size="mini" type="info">文件管理</el-button>
                     <el-button size="mini" type="danger">删除</el-button>
                 </template>
@@ -135,6 +135,9 @@
             location: function () {
                 //跳转详细信息页面
 
+            },
+            handleEdit(index, row) {
+                location.href = "/HydraulicEngineer/Edit?id=" + row.s_id;
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight;

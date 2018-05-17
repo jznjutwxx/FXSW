@@ -392,7 +392,7 @@
         </div>
     </el-form>
     <div style="margin-left:47%;margin-top:10px;">
-        <el-button plain v-on:click="openIndex" size="small">返回</el-button>
+        <el-button style="width: 90px;" v-on:click="openIndex" size="small">返回</el-button>
     </div>
 </div>
 
@@ -405,32 +405,33 @@
             investData: {},
             fundData: {},
             finishData: {},
+            s_id:'',
 
             tableData: [],
             height: 0,
             projectFile: [
-               {
-                   "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                   "s_file_name": "名称",
-                   "s_type": "工程图纸",
-                   "s_person": "田俊",
-                   "s_create_time": "2018-03-05 14:21",
-                   "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-               }, {
-                   "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                   "s_file_name": "名称",
-                   "s_type": "工程图纸",
-                   "s_person": "田俊",
-                   "s_create_time": "2018-03-05 14:21",
-                   "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-               }, {
-                   "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                   "s_file_name": "名称",
-                   "s_type": "工程图纸",
-                   "s_person": "田俊",
-                   "s_create_time": "2018-03-05 14:21",
-                   "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-               }
+                {
+                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
+                    "s_file_name": "名称",
+                    "s_type": "工程图纸",
+                    "s_person": "田俊",
+                    "s_create_time": "2018-03-05 14:21",
+                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
+                }, {
+                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
+                    "s_file_name": "名称",
+                    "s_type": "工程图纸",
+                    "s_person": "田俊",
+                    "s_create_time": "2018-03-05 14:21",
+                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
+                }, {
+                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
+                    "s_file_name": "名称",
+                    "s_type": "工程图纸",
+                    "s_person": "田俊",
+                    "s_create_time": "2018-03-05 14:21",
+                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
+                }
             ],
             imgData: [
                        { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
@@ -440,9 +441,9 @@
         },
         mounted: function () {
             debugger
-            var t = this.GetId();
-            this.GetDetail("/FarmlandWater/GetDetail", { id: t.id });
-            this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: t.id, s_type: "工程图纸" });
+            this.s_id = this.GetId().id;
+            this.GetDetail("/FarmlandWater/GetDetail", { id: this.s_id });
+            this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.s_id, s_type: "工程图纸" });
         },
         methods: {
             GetId: function () {
@@ -461,6 +462,7 @@
             getProjectFile: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
+                      debugger
                       var tempData = JSON.parse(response.data);
                       this.projectFile = tempData.EnginFileManagerListGetResponse.file_list;
                   }.bind(this))
@@ -483,7 +485,8 @@
                   });
             },
             handleClick: function (tab, event) {
-                this.getProjectFile('/FarmlandWater/GetProjectFileData', { s_id: s_id, s_type: tab.label });
+                debugger
+                this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.s_id, s_type: tab.label });
             },
             downloadFile: function (url, name) {
                 var $a = document.createElement('a');
@@ -502,9 +505,14 @@
 </script>
 
 <style>
-    .titlecss {
+    #detail {
+        padding: 10px;
+        font-size: 14px;
+        min-width:1000px;
+    }
+     #detail.titlecss {
         float: left;
-        font-size: 16px;
+        font-size: 14px;
         font-weight: bold;
         color: #666666;
         padding-top: 15px;
@@ -519,7 +527,7 @@
         width: 33%;
         padding:5% 0;
     }
-    .appTitle {
+     #detail.appTitle {
         float: left;
         font-size: 14px;
         font-weight: bold;
@@ -527,11 +535,33 @@
         padding-left: 25px;
     }
 
-    .colcss {
+     #detail.colcss {
         height: 40px;
         line-height: 40px;
     }
+     #detail .btnCss {
+        width: 20px;
+        height: 20px;
+        border: 0;
+        background: rgba(255, 255, 255, 0);
+        background-repeat: no-repeat;
+    }
 
+    #detail .btnDownload {
+        background-image: url(/Images/gcgl/btn_download.png);
+    }
+
+        #detail .btnDownload:hover {
+            background: rgba(255, 255, 255, 0);
+            background-repeat: no-repeat;
+            background-image: url(/Images/gcgl/btn_download.png);
+        }
+
+        #detail .btnDownload:focus {
+            background: rgba(255, 255, 255, 0);
+            background-repeat: no-repeat;
+            background-image: url(/Images/gcgl/btn_download.png);
+        }
     input {
         width: 220px !important;
     }

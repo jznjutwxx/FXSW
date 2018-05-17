@@ -80,8 +80,8 @@
                         <el-form-item label="设计单位:">
                             @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
                             <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
-                                <el-option v-for="item in UnitOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
-                                </el-option>
+                                @*<el-option v-for="item in UnitOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
+                                </el-option>*@
                             </el-select>
                         </el-form-item>
                     </el-col>
@@ -420,13 +420,13 @@
                             <el-upload class="upload-demo"
                                        ref="upload"
                                        multiple
-                                       action="/BackboneRiverway/GetFiles"
+                                       action="/BackboneRiverway/UpFiles"
                                        v-bind:on-preview="handlePreview"
-                                       v-bind:on-remove="handleRemove"
-                                       v-bind:file-list="fileList"
                                        v-bind:on-change="getFile"
-                                       v-bind:on-success="sucess"
-                                       v-bind:auto-upload="false">
+                                       v-bind:on-remove="handleRemove"
+                                       v-bind:on-success="upSucess"
+                                       v-bind:on-error="upError"
+                                       v-bind:before-remove="beforeRemove">
                                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
                                 @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                                 <span>（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传）</span>
@@ -446,7 +446,7 @@
                         <el-form-item label="工程图片上传:">
                             <el-upload action="https://jsonplaceholder.typicode.com/posts/"
                                        list-type="picture-card"
-                                       v-bind:on-preview="handlePictureCardPreview"
+                                       v-bind:on-preview="handlePreview"
                                        v-bind:on-remove="handleRemove">
                                 <i class="el-icon-plus"></i>
                             </el-upload>
@@ -497,7 +497,7 @@
                 n_complete_protect_ecology: '', n_complete_bridge: '', n_complete_plant_bank: '',
                 n_complete_plant_slope: '', n_complete_plant_depth: '',
             },
-            fileList: [],
+            fileLists: '',
             dialogImageUrl: '',
             dialogVisible: false
         },
@@ -592,8 +592,17 @@
                 return theRequest;
             },
             saveData: function () {
+                debugger
+                var file = '';
+                if (this.fileLists != '')
+                {
+                    for (var i = 0; i < this.fileLists.length; i++)
+                    {
+                        file = this.fileLists[i].name + ',' + file
+                    }
+                }
                 axios.post('/BackboneRiverway/SaveOneData',
-                    { param: JSON.stringify(this.formData) }
+                    { param: JSON.stringify(this.formData), fileLists: file }
                     ).then(function (response) {
                         debugger
                         var TempData = JSON.parse(response.data);
@@ -607,29 +616,64 @@
                         }
                     });
             },
-            submitUpload() {
-                this.$refs.upload.submit();
+            beforeRemove: function (file, fileList) {
+                debugger
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    alert(ttt)
+                  //  axios.post(url, param)
+                  //.then(function (response) {
+                  //    var tempData = JSON.parse(response.data);
+                  //    if (tempData.EnginFileManagerReportResponse.result) {
+                  //        this.$message({
+                  //            message: '删除成功！',
+                  //            type: 'success'
+                  //        });
+                  //    } else {
+                  //        this.$message.error('删除失败！' + tempData.EnginFileManagerReportResponse.result);
+                  //    }
+                  //}.bind(this))
+                  //.catch(function (error) {
+                  //    console.log(error);
+                  //});
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+                
             },
-            handleRemove(file, fileList) {
+            handleRemove: function (file, fileList) {
+                debugger
                 console.log(file, fileList);
             },
-            handlePreview(file) {
-                console.log(file);
-            },
             getFile: function (file, fileList) {
+                this.fileLists = fileList;
+                //console.log(this.file);
             },
-            sucess: function (response, file, fileList) {
-                debugger
+            handlePreview: function (file) {
+                console.log(file);
+                //this.dialogImageUrl = file.url;
+                //this.dialogVisible = true;
             },
-            handlePictureCardPreview(file) {
-                this.dialogImageUrl = file.url;
-                this.dialogVisible = true;
+            upSucess: function (response, file, fileList) {
+                this.$message({
+                    message: '上传成功！',
+                    type: 'success'
+                });
+            },
+            upError: function (err, file, fileList) {
+                this.$message.error('上传失败！' + err);
             },
             openIndex: function () {
-                if (this.s_type = "骨干河道") {
+                if (this.s_type == "骨干河道") {
                     window.location = "Index";
                 }
-                if (this.s_type = "中小河道") {
+                if (this.s_type == "中小河道") {
                     window.location = "/ZXRiverway/Index";
                 }
             },
@@ -639,6 +683,11 @@
 </script>
 
 <style>
+    #add {
+        font-size: 14px;
+        min-width:900px;
+        overflow-x:hidden;
+    }
     #addForm {
         padding: 20px;
         margin-bottom:60px;

@@ -476,7 +476,7 @@
                 window.location.href = '/Uploader/Download?pathid=1';
             },
             saveStatus: function () {
-                axios.post('/BackboneRiverway/SaveProjectStatus', { param: JSON.stringify(this.formData) })
+                axios.post('/BackboneRiverway/UpdateProjectStatus', { param: JSON.stringify(this.formData) })
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginCoreUpdateResponse.result) {

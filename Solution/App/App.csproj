@@ -165,6 +165,7 @@
     <Compile Include="Common\JsonHelper.cs" />
     <Compile Include="Common\WebUtils.cs" />
     <Compile Include="Controllers\BackboneRiverwayController.cs" />
+    <Compile Include="Controllers\DesignOrganizationMangerController.cs" />
     <Compile Include="Controllers\EngineerSketchController.cs" />
     <Compile Include="Controllers\FacilityStatisticsController.cs" />
     <Compile Include="Controllers\FarmlandWaterController.cs" />
@@ -174,6 +175,7 @@
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\HydraulicEngineerController.cs" />
     <Compile Include="Controllers\HydrologyController.cs" />
+    <Compile Include="Controllers\LegalPersonMangerController.cs" />
     <Compile Include="Controllers\LoginController.cs" />
     <Compile Include="Controllers\ProOverViewController.cs" />
     <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
@@ -1248,10 +1250,19 @@
     <Content Include="Views\SZQYJL\Index.cshtml" />
     <Content Include="Views\SanitarySewage\DetailPage.cshtml" />
     <Content Include="Views\HydraulicEngineer\Add.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\Index.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\components\defaultPage.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\components\queryHead.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\components\tableCommon.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\components\addPage.cshtml" />
+    <Content Include="Views\DesignOrganizationManger\components\editPage.cshtml" />
+    <Content Include="Views\BackboneRiverway\EditProject.cshtml" />
+    <Content Include="Views\HydraulicEngineer\FileManage.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Views\EngineerSketch\components\" />
+    <Folder Include="Views\LegalPersonManger\" />
     <Folder Include="Views\Uploader\" />
   </ItemGroup>
   <ItemGroup>

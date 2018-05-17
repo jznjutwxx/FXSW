@@ -223,9 +223,9 @@
             </el-collapse-item>
         </el-collapse>
     </div>
-    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish">保存</el-button>
+    <div id="appBtn" class="appBtn">
+        <el-button plain v-on:click="openIndex" style="width: 90px;" size="small">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" style="width: 90px;" size="small">保存</el-button>
         <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
     </div>
 </div>
@@ -290,16 +290,11 @@
 
         },
         mounted: function () {
-            this.init()
+            this.ID = this.GetId().id;
+            this.getStatus("/FarmlandWater/GetDictionary", { Type: "工程状态" });
+            this.getDetail('/FarmlandWater/GetDetail', { id: this.ID });
         },
         methods: {
-            init: function () {
-                debugger
-                this.ID = this.GetId().id;
-                this.getStatus("/FarmlandWater/GetDictionary", { Type: "工程状态" });
-                this.getDetail('/FarmlandWater/GetDetail', { id: this.ID });
-                this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.ID, s_type: this.Status });
-            },
             getStatus: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
@@ -320,6 +315,7 @@
                       this.num = li.EnginFarmGetResponse.info.s_project_no;
                       this.type = li.EnginFarmGetResponse.info.n_type;
                       this.Status = li.EnginFarmGetResponse.info.n_pace_status;
+                      this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.ID, s_type: this.Status });
 
                       this.formData.S_ID = li.EnginFarmGetResponse.info.s_id;
                       this.formData.S_NAME = li.EnginFarmGetResponse.info.s_name;
@@ -573,7 +569,15 @@ li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
         color: #666666;
         padding-left: 10px;
     }
-
+    #app .appBtn {
+        width: 100%;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        height: 60px;
+        line-height: 60px;
+    }
     #app .btnUpp {
         margin: 10px 0 10px 0;
     }

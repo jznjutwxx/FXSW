@@ -565,10 +565,10 @@
             investData: [],
             finishData: [],
             imgData: [
-                { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
-                { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
-                { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" },
-                { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img2.imgtn.bdimg.com/it/u=302701032,2300144492&fm=27&gp=0.jpg" }
+                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
+                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
+                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" },
+                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img2.imgtn.bdimg.com/it/u=302701032,2300144492&fm=27&gp=0.jpg" }
             ],
             projectFile: [
                 {
@@ -634,8 +634,8 @@
                 }
                 return theRequest;
             },
-            getProjectData: function (url, s_id) {
-                axios.post(url, s_id)
+            getProjectData: function (url, param) {
+                axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.detildata = tempData.EnginCoreGetResponse.info;
@@ -690,7 +690,7 @@
             handleClick: function (tab, event) {
                 //debugger
                 //console.log(tab, event);
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: s_id, s_type: tab.label });
+                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
                 debugger;

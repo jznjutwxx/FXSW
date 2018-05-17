@@ -1,0 +1,31 @@
+﻿
+@{
+    ViewBag.Title = "设计单位管理";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+@Html.Partial("~/Views/DesignOrganizationManger/components/defaultPage.cshtml")
+<div id="sjdwgl">
+     <default-page>
+
+     </default-page>
+</div>
+<script>
+    new Vue({
+        el: "#sjdwgl",
+        components: {
+            "default-page": defaultPage
+        },
+        data: {
+
+        },
+        mounted: function () {
+
+        },
+        methods: {
+
+        },
+    })
+</script>
+<style scoped>
+
+</style>

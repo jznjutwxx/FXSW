@@ -1,0 +1,208 @@
+﻿
+@Html.Partial("~/Views/DesignOrganizationManger/components/queryHead.cshtml")
+<script type="text/x-template" id="defaultPage">
+    <div id="defaultpage">
+        <query-head>
+
+        </query-head>
+        <el-table v-bind:data="sjdwData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true">
+            <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' @*property="index"*@>
+            </el-table-column>
+            <el-table-column property="sjdwmc" label="设计单位名称">
+            </el-table-column>
+            <el-table-column property="zh" label="账号">
+            </el-table-column>
+            <el-table-column property="glgz" label="关联未完结工程">
+            </el-table-column>
+            <el-table-column property="cz" label="操作">
+                <template slot-scope="scope">
+                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" type="danger">删除</el-button>
+                </template>
+            </el-table-column>
+        </el-table>
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwData.length">
+        </el-pagination>
+    </div>
+</script>
+<script>
+    var defaultPage = {
+        template: "#defaultPage",
+        data: function () {
+            return {
+                sjdwData: [{
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz:"奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "超图",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "网波",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海税务局",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, {
+                    sjdwmc: "上海网波软件股份有限公司",
+                    zh: "wavenet2018",
+                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+
+                }, ],
+                currentPage: 1,
+                pagesize:4,
+            }
+        },
+        components: {
+            "query-head": queryHead,
+        },
+        mounted:function(){
+          
+        },
+        methods: {
+            indexOrder: function (index) {
+                var beginIndex = index + 1 + (this.currentPage - 1) * this.pagesize;
+                return beginIndex;
+            },
+            current_change: function (currentPage) {
+                this.currentPage = currentPage;
+            },
+            pagesize_Change: function (pagesize) {
+                this.pagesize = pagesize;
+            },    
+        },
+        watch: {
+
+        },
+    }
+</script>
+<style>
+
+</style>

@@ -273,7 +273,7 @@ namespace App.Controllers
             return Json(TempR);//return Json(new { result = true  });
         }
 
-        public JsonResult SaveOneData(string param)
+        public JsonResult SaveOneData(string param, string fileLists)
         {
             //转成实体对象
             BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
@@ -334,15 +334,50 @@ namespace App.Controllers
             paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
             paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
             paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
-
+            
             Dictionary<string, string> fileParams = new Dictionary<string, string>();
 
+            //文件类型picture_file1 drawing_file1 sketch_file
+            string[] Files = fileLists.Split(',');
+            //文件路径
+            string path = Request.ApplicationPath;
+            path = Server.MapPath(path += "/upload/");
+            for (int i = 0; i < Files.Length - 1; i++)
+            {
+                fileParams.Add("drawing_file" + (i + 1), path + Files[i]);
+            }
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
             return Json("");
         }
 
+        public JsonResult DeleteFiles(string filename)
+        {
+            String TempR = "";
+            string path = Request.ApplicationPath;//Server.MapPath("/upload/");
+            path = Server.MapPath(path += "/upload/" + filename);
+            try
+            {
+                //if (File.Exists(path))
+                if (Directory.Exists(path))
+                {
+                    //Directory.Delete(path);
+                    //File.Delete(path);
+                    TempR = "OK";
+                }
+                else
+                {
+                    TempR = "目标文件不存在！";
+                }
+            }
+            catch (Exception ex)
+            {
+                TempR = ex.Message;
+            }
+
+            return Json(TempR);//return Json(new { result = true  });
+        }
 
         /// <summary>
         /// 文件类型名称转换

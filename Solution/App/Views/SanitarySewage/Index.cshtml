@@ -9,7 +9,7 @@
 <div id="app">
     <sanitarysewage-query v-on:emit-event="getEmitEvent" ref="sanitarysewageQuery"></sanitarysewage-query>
 
-    <div style="padding-top: 10px; text-align: center;">
+    <div id="table" style="padding-top: 10px; text-align: center;">
         <el-table v-bind:data="tableData" border v-bind:height="height">
             <el-table-column type="index" label="序号" v-bind:index="(currentPage-1)*pagesize+1" header-align="center" align="center" width="60">
             </el-table-column>
@@ -37,7 +37,7 @@
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
                     <el-button size="mini" type="info">文件管理</el-button>
-                    <el-button size="mini" type="danger" v-on:click="handleDel(scope.$index, scope.row)">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="handleDel(scope.row.s_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -64,7 +64,10 @@
             currentPage: 1,//默认开始页面
             height: 0,
             tableData: [],
-            params:[]
+            params:[],
+            delForm: {
+                S_ID:''
+             }
         },
         components: {
             "sanitarysewage-query": query
@@ -76,6 +79,7 @@
         },
         methods: {
             getEmitEvent: function (param) {
+                debugger
                 this.setData('/SanitarySewage/GetTabData', {
                     page:this.currentPage, pagesize: this.pagesize, sYear: param.sYear, eYear: param.eYear, status: param.status, town: param.town
                 });
@@ -104,7 +108,35 @@
             handleEdit(index, row) {
                 window.location.href = "/SanitarySewage/EditPage?id=" + row.s_id;
             },
-            handleDel(index, row) {
+            handleDel: function (id) {
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    this.delForm.S_ID = id;
+                    axios.post("/SanitarySewage/DelData", { id: this.delForm.S_ID })
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginSewageUpdateResponse.result) {
+                          this.$message({
+                              type: 'success',
+                              message: '删除成功!'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginSewageUpdateResponse.result);
+                      }
+                      this.setData('/SanitarySewage/GetTabData', this.params);
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             currentChange: function (val) {
                 this.params.page = val;
@@ -132,5 +164,11 @@
 <style>
     .pagefloat {
         float: left;
+    }
+     #table a{
+        text-decoration:none;
+        font-size:14px;
+        color:#2288f1;
+        cursor:pointer;
     }
 </style>

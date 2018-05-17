@@ -537,7 +537,6 @@
             cancel: function () {
                 window.location.href = "/FarmlandWater/Index";
             },
-            edit: function () { },
             GetId: function () {
                 var url = window.location.search;
                 var theRequest = new Object();
@@ -644,6 +643,9 @@
 </script>
 
 <style>
+    body{
+        overflow-x: hidden;
+    }
     #edit input, textarea {
         max-width: none;
         width: 100%;
@@ -662,17 +664,20 @@
     }
 
     #edit {
-        width: 100%;
+        /*position: relative;*/
+        overflow-y: auto;
         height: 95%;
+        width: 100%;
         padding: 20px;
         font-size: 14px;
+        min-width:1000px;
     }
 
     .titlecss {
-        font-size: 18px;
+        font-size: 14px;
         font-weight: bold;
+        color: #666666;
     }
-
     .rowpadding {
         padding-bottom: 10px;
     }
