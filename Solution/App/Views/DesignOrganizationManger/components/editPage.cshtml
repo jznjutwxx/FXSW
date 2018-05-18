@@ -1,8 +1,192 @@
-﻿
-@{
-    ViewBag.Title = "editPage";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿<script type="text/x-template" id="editPage">
+    <div id="editpage">
+        <el-dialog title="编辑设计单位" v-bind:visible.sync="editDialogVisible" v-bind:before-close="handleClose">
+            <div class="titlebg"></div>
+            <div id="jbxx" style="margin-top:-20px;">
+                <div class="jbxxTitle">基本信息:</div>
+                <span>设计单位名称:</span>
+                <el-input placeholder="请输入设计单位名称" prefix-icon="el-icon-search" size="small" v-model="sjdwmc">
+                </el-input>
+                <span class="distance" style="width:170px;">账号:</span>
+                <el-input placeholder="请输入账号" prefix-icon="el-icon-search" size="small"  v-model="account">
+                </el-input>
+                <span class="distance" style="width:170px;">密码:</span>
+                <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-search" size="small"  v-model="password">
+                </el-input>
+            </div>
+            <div id="gzsx" style="margin-top:10px;">
+                <div class="gzsxTitle">工程筛选:</div>
+                <span>年度:</span>
+                <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份" value-format="yyyy" size="small" style="width:100px;">
+                </el-date-picker>
+                <span class="distance">所属镇:</span>
+                <el-select v-model="town" placeholder="请选择" size="small" style="width:150px;">
+                    <el-option v-for="item in towns"
+                               v-bind:value="item">
+                    </el-option>
+                </el-select>
+                <span class="distance">工程分类:</span>
+                <el-select v-model="nowPrjClass" placeholder="请选择" size="small" style="width:150px;">
+                    <el-option v-for="item in projectsClass"
+                               v-bind:value="item">
+                    </el-option>
+                </el-select>
+                <el-button type="primary" icon="el-icon-search" class="btnSel" plain>查询</el-button>
+            </div>
+            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[]">
 
-<h2>editPage</h2>
+            </el-transfer>
+            <div class="gnDiv">
+                <el-button type="primary" plain class="lastBtn" v-on:click="editDialogVisible=!editDialogVisible">取消</el-button>
+                <el-button type="primary" plain class="lastBtn" v-on:click="saveEditInfo">保存</el-button>
+            </div>
+        </el-dialog>
+    </div>
+</script>
+<script>
+    var editPage = {
+        template: "#editPage",
+        data: function () {
+            return {
+                editDialogVisible: false,
+                yearVlue: moment().format('YYYY'),
+                towns: ['奉贤区', '庄行镇', '拓林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                town: "奉贤区",
+                projectsClass: ['骨干河道', '中小河道', '小型农田水利'],  //工程类别
+                nowPrjClass: "骨干河道",
+                projectsName: ['奉贤农田水利工程(2018061511101)', '奉贤农田水利工程2', '奉贤农田水利工程3', '奉贤农田水利工程4', '奉贤农田水利工程5', '奉贤农田水利工程6', '奉贤农田水利工程7', '奉贤农田水利工程8', '奉贤农田水利工程9', '奉贤农田水利工程10', '奉贤农田水利工程11', '奉贤农田水利工程12', '奉贤农田水利工程13', '奉贤农田水利工程14', '奉贤农田水利工程15', '奉贤农田水利工程16', '奉贤农田水利工程17', '奉贤农田水利工程18', '奉贤农田水利工程19', '奉贤农田水利工程20'],
+                projectsNameData: [],
+                selected: [11, 12], //默认选中的工程的key
+                projectTitiles: ["待选工程", "已选工程"],
+                //编辑时的默认值
+                sjdwmc: "",
+                account: "",
+                password:"",
+            }
+        },
+        components: {
+        },
+        mounted: function () {
+            this.getProjectsNameData();
+        },
+        methods: {
+            handleClose(done) {
+                done();
+               /* this.$confirm('确认关闭？').then(function () {
+                    done();
+                }).catch(function () {
+                });*/
+            },
+            getProjectsNameData: function () {
+                debugger;
+                for (var i = 0; i < this.projectsName.length; i++) {
+                    this.projectsNameData.push({
+                        key: i + 1,
+                        label: this.projectsName[i],
+                        //disabled:i%2==0,
+                    })
+                }
+            },
+            //保存编辑后的信息
+            saveEditInfo: function () {
+                //sjdwmc: "",
+                //account: "",
+                //password:"",
+                // yearVlue: moment().format('YYYY'),
+                // town: "奉贤区",    
+                //nowPrjClass: "骨干河道",
+                //selected
 
+            }
+        }
+    }
+</script>
+<style scoped>
+    .el-dialog {
+        height: 630px;
+        width: 814px;
+    }
+
+    .el-dialog__header {
+        background-color: #2288f1;
+        padding: 6px 20px;
+        font-size: 14px;
+    }
+
+    .titlebg {
+        background-color: white;
+        width: 3px;
+        height: 14px;
+        position: absolute;
+        top: 11px;
+        left: 9px;
+    }
+
+    .el-dialog__headerbtn .el-dialog__close {
+        color: white;
+    }
+
+        .el-dialog__headerbtn .el-dialog__close:hover {
+            color: white;
+            background-color: #6eb1f6;
+        }
+
+    .el-dialog__headerbtn {
+        top: 10px;
+        right: 10px;
+    }
+
+    .el-dialog__title {
+        color: white;
+        font-size: 14px;
+    }
+
+    .el-dialog__body {
+        margin-left: 6px;
+    }
+
+    #jbxx .el-input--small {
+        width: 180px;
+    }
+
+    #editpage {
+        font-size: 14px;
+        font-family: 'Microsoft YaHei';
+        color: #666666;
+    }
+
+        #editpage .jbxxTitle, .gzsxTitle {
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+    .distance {
+        margin-left: 25px;
+    }
+
+    #editpage .btnSel {
+        padding: 8px 12px;
+        margin-left: 15px;
+    }
+
+    #editpage .el-transfer-panel {
+        width: 320px;
+        height: 360px;
+    }
+
+    #editpage .el-transfer-panel__list {
+        height: 320px;
+    }
+
+    #editpage .el-transfer {
+        margin-top: 16px;
+    }
+
+    #addpage .lastBtn {
+        padding: 8px 20px;
+    }
+
+    .gnDiv {
+        margin: 20px 0 0 290px;
+    }
+</style>

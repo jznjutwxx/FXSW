@@ -54,11 +54,11 @@
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="16" class="colheight el-col-16">
                     <el-form-item label="工程地址:">
-                        <el-input placeholder="请输入内容" v-model="addForm.S_ADDRESS" style="width:118.5%;">
+                        <el-input placeholder="请输入内容" v-model="addForm.S_ADDRESS" style="width:116.5%;">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目法人:" style="padding-left: 15px;">
+                    <el-form-item label="项目法人:">
                         <el-select v-model="addForm.S_LEGAL_PERSON" class="selectwidth">
                             <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_name" v-on:change="changeLegalper">
                             </el-option>
@@ -593,33 +593,34 @@
         width: 100%;
         padding: 20px;
         font-size: 14px;
+        min-width:1020px;
     }
 
-    .titlecss {
+    #add.titlecss {
         font-size: 14px;
         font-weight: bold;
         color: #666666;
     }
 
-    .rowpadding {
+    #add.rowpadding {
         padding-bottom: 10px;
     }
 
-    .colheight {
+   #add .colheight {
         height: 40px;
         font-size: 14px;
         color: #333333;
     }
 
-    .el-col-16 {
-        width: 65.5%;
+   #add .el-col-16 {
+        width: 66.6%;
     }
 
-    .selectwidth {
+   #add .selectwidth {
         width: 100%;
     }
 
-    .el-dialog__body {
+   #add .el-dialog__body {
         padding: 15px 20px !important;
     }
 </style>

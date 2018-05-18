@@ -3,11 +3,12 @@ using App.Models;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using System.Web.Script.Serialization;
-using System.IO;
+
 
 namespace App.Controllers
 {
@@ -23,7 +24,10 @@ namespace App.Controllers
         {
             return View();
         }
-
+        public ActionResult EditProject()
+        {
+            return View();
+        }
         public ActionResult LookProject()
         {
             return View();
@@ -59,6 +63,7 @@ namespace App.Controllers
 
             return Json(authorization);
         }
+
         public JsonResult GetLegalPerson()
         { 
             //string page,string pagesize,string name
@@ -73,6 +78,7 @@ namespace App.Controllers
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
         }
+
         public JsonResult GetDesignUnit()
         { 
             //string page,string pagesize,string name
@@ -87,6 +93,7 @@ namespace App.Controllers
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
         }
+
         //public JsonResult GetProjectData(string Page, string Size, string Name, string ProjectID, string startYear, string endYear, string Status, string Town)
         public JsonResult GetProjectData(string Page, string pageSize, string startYear, string endYear, string Status, string Town)
         {
@@ -178,7 +185,8 @@ namespace App.Controllers
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
         }
-        public JsonResult SaveProjectStatus(string param)
+
+        public JsonResult UpdateProjectStatus(string param)
         {
             //转成实体对象
             BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
@@ -272,8 +280,79 @@ namespace App.Controllers
 
             return Json(TempR);//return Json(new { result = true  });
         }
+        
+        public JsonResult UpdateProjectData(string param)
+        {
+            //转成实体对象
+            BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
+            Arr = JsonHelper.JSONToObject<BackboneRiverwayInfo>(param);
 
-        public JsonResult SaveOneData(string param, string fileLists)
+            // 接口
+            string method = "wavenet.fxsw.engin.core.update";
+
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_id", Arr.s_id); //id
+            paramDictionary.Add("s_name", Arr.s_name);
+            paramDictionary.Add("s_project_no", Arr.s_project_no);
+            paramDictionary.Add("n_year", Arr.n_year);//年度
+            paramDictionary.Add("n_pace_status", Arr.n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
+            paramDictionary.Add("s_town", Arr.s_town);//所属镇
+            paramDictionary.Add("s_address", Arr.s_address);//项目法人
+            paramDictionary.Add("s_legal_person", Arr.s_legal_person);
+            paramDictionary.Add("s_unit_design", Arr.s_unit_design);//设计单位
+            paramDictionary.Add("s_unit_build", Arr.s_unit_build);
+            paramDictionary.Add("s_unit_supervise", Arr.s_unit_supervise);
+            paramDictionary.Add("n_reckon_total_amt", Arr.n_reckon_total_amt);//估计总投资
+            paramDictionary.Add("n_water_area", Arr.n_water_area);//新增水面积
+            paramDictionary.Add("n_draft", Arr.n_draft);//是否有草图 1.有 0.没有
+            paramDictionary.Add("s_remark", Arr.s_remark);
+
+            //批复工程量
+            paramDictionary.Add("n_length", Arr.n_length);//长度
+            paramDictionary.Add("n_land_area", Arr.n_land_area);//土方
+            paramDictionary.Add("n_protect_hard", Arr.n_protect_hard);//硬质护岸
+            paramDictionary.Add("n_protect_ecology", Arr.n_protect_ecology);//生态护岸
+            paramDictionary.Add("n_bridge", Arr.n_bridge);//桥梁
+            paramDictionary.Add("n_plant_bank", Arr.n_plant_bank);//岸域绿化
+            paramDictionary.Add("n_plant_slope", Arr.n_plant_slope);//斜坡绿化
+            paramDictionary.Add("n_plant_depth", Arr.n_plant_depth);//水深绿化
+            paramDictionary.Add("n_river_count", Arr.n_river_count);//条段
+            //概算投资
+            paramDictionary.Add("n_total_invest", Arr.n_total_invest);//总投资
+            paramDictionary.Add("n_engin_cost", Arr.n_engin_cost);//工程直接费
+            paramDictionary.Add("n_independent_cost", Arr.n_independent_cost);//独立费用
+            paramDictionary.Add("n_prep_cost", Arr.n_prep_cost);//预备费
+            paramDictionary.Add("n_sight_cost", Arr.n_sight_cost);//景观等费用
+            paramDictionary.Add("n_empty_area", Arr.n_empty_area);//腾地面积
+            paramDictionary.Add("n_build_cost", Arr.n_build_cost);//建设用地费
+            //资金配套组成
+            paramDictionary.Add("n_subsidy_city", Arr.n_subsidy_city);//市补
+            paramDictionary.Add("n_subsidy_district", Arr.n_subsidy_district);//区配套
+            paramDictionary.Add("n_subsidy_town", Arr.n_subsidy_town);//镇配套
+
+            //完成工程量
+            paramDictionary.Add("n_complete_length", Arr.n_complete_length);//长度
+            paramDictionary.Add("n_complete_land_area", Arr.n_complete_land_area);//土方
+            paramDictionary.Add("n_complete_protect_hard", Arr.n_complete_protect_hard);//硬质护岸
+            paramDictionary.Add("n_complete_protect_ecology", Arr.n_complete_protect_ecology);//生态护岸
+            paramDictionary.Add("n_complete_bridge", Arr.n_complete_bridge);//桥梁
+            paramDictionary.Add("n_complete_plant_bank", Arr.n_complete_plant_bank);//岸域绿化
+            paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
+            paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
+            paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
+
+            paramDictionary.Add("remove_pic_ids", "");
+            paramDictionary.Add("is_delete", "0");//是否删除 1删除
+
+            Dictionary<string, string> fileParams = new Dictionary<string, string>();
+
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
+            return Json(authorization);
+        }
+
+        public JsonResult SaveProjectData(string param, string drawingFiles, string pictureFiles)
         {
             //转成实体对象
             BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
@@ -334,22 +413,35 @@ namespace App.Controllers
             paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
             paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
             paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
-            
-            Dictionary<string, string> fileParams = new Dictionary<string, string>();
 
-            //文件类型picture_file1 drawing_file1 sketch_file
-            string[] Files = fileLists.Split(',');
             //文件路径
             string path = Request.ApplicationPath;
             path = Server.MapPath(path += "/upload/");
-            for (int i = 0; i < Files.Length - 1; i++)
+
+            Dictionary<string, string> fileParams = new Dictionary<string, string>();
+            if (!string.IsNullOrEmpty(drawingFiles))
             {
-                fileParams.Add("drawing_file" + (i + 1), path + Files[i]);
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = drawingFiles.Split(',');
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("drawing_file" + (i + 1), path + Files[i]);
+                }
+            }
+            if (!string.IsNullOrEmpty(pictureFiles))
+            {
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = pictureFiles.Split(',');
+
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("picture_file" + (i + 1), path + Files[i]);
+                }
             }
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
-            return Json("");
+            return Json(authorization);
         }
 
         public JsonResult DeleteFiles(string filename)
@@ -359,17 +451,11 @@ namespace App.Controllers
             path = Server.MapPath(path += "/upload/" + filename);
             try
             {
-                //if (File.Exists(path))
-                if (Directory.Exists(path))
+                if (System.IO.File.Exists(path))
                 {
-                    //Directory.Delete(path);
-                    //File.Delete(path);
-                    TempR = "OK";
+                    System.IO.File.Delete(path);
                 }
-                else
-                {
-                    TempR = "目标文件不存在！";
-                }
+                TempR = "OK";
             }
             catch (Exception ex)
             {
@@ -412,5 +498,6 @@ namespace App.Controllers
             }
             return Type;
         }
+
     }
 }

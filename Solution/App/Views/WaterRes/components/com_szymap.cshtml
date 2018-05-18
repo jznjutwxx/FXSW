@@ -2,6 +2,11 @@
 <script type="text/x-template" id="com_szymap">
     <div class="szy_center">
         <div id="mapContainer" v-bind:style="{height:mapheight+'px'}">
+            <div style="position:absolute;top:30px;left:15px;z-index:2000;">
+                <div v-on:click="initMapExtent" style="width:24px;height:24px; background:url(/Images/swsy/btn_dingw.png) no-repeat;cursor:pointer;"></div>
+                <div v-on:click="mapZoomToBig" style="width:24px;height:24px;margin-top:3px;background:url(/Images/swsy/btn_jia.png) no-repeat;cursor:pointer;"></div>
+                <div v-on:click="mapZoomToSmall" style="width:24px;height:24px;margin-top:2px; background:url(/Images/swsy/btn_jian.png) no-repeat;cursor:pointer;"></div>
+            </div>
             <el-row class="a-link-water">
                 <el-col v-bind:span="12" v-bind:offset="12">
                     <a>点击跳转自来水公司网站查看供水详情</a>
@@ -82,7 +87,7 @@
                     controls: [
                         //new SuperMap.Control.ScaleLine(),
                         //new SuperMap.Control.MousePosition(),
-                        new SuperMap.Control.Zoom(),
+                        //new SuperMap.Control.Zoom(),
                         new SuperMap.Control.Navigation({
                             dragPanOptions: {
                                 enableKinetic: true
@@ -109,12 +114,13 @@
             },
             //关闭dialog模态框之前触发
             mapHandleClose: function (done) {
-                this.$confirm('确认关闭？')
-                  .then(function () {
-                      done();
-                  })
-                  .catch(function () {
-                  });
+                done();
+                //this.$confirm('确认关闭？')
+                //  .then(function () {
+                //      done();
+                //  })
+                //  .catch(function () {
+                //  });
             },
             //点击marker标注点触发的事件
             clickMarkerPoint: function (e) {
@@ -147,6 +153,18 @@
                 for (var i = 0 ; i < markers.length ; i++) {
                     markers[i].events.on({ "click": this.clickMarkerPoint });
                 }
+            },
+            initMapExtent: function () {
+                this.map.zoomTo(0);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+            },
+            //放大
+            mapZoomToBig: function () {
+                // this.map.getZoom();
+                this.map.zoomTo(this.map.getZoom() + 1)
+            },
+            mapZoomToSmall: function () {
+                this.map.zoomTo(this.map.getZoom() - 1)
             },
         }
     }

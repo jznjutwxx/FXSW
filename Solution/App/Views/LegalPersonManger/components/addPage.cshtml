@@ -1,11 +1,11 @@
 ﻿<script type="text/x-template" id="addPage">
     <div id="addpage">
-        <el-dialog title="新增设计单位" v-bind:visible.sync="addDialogVisible" v-bind:before-close="handleClose">
+        <el-dialog title="新增法人信息" v-bind:visible.sync="addDialogVisible" v-bind:before-close="handleClose">
             <div class="titlebg"></div>
             <div id="jbxx" style="margin-top:-20px;">
                 <div class="jbxxTitle">基本信息:</div>
-                <span>设计单位名称:</span>
-                <el-input placeholder="请输入设计单位名称" prefix-icon="el-icon-search" size="small" v-model="sjdwmc">
+                <span>法人姓名:</span>
+                <el-input placeholder="请输入法人姓名" prefix-icon="el-icon-search" size="small" v-model="sjdwmc">
                 </el-input>
                 <span class="distance" style="width:170px;">账号:</span>
                 <el-input placeholder="请输入账号" prefix-icon="el-icon-search" size="small" v-model="account">
@@ -33,7 +33,7 @@
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" class="btnSel" plain>查询</el-button>
             </div>
-            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles"    v-bind:left-default-checked="[2, 3,10,15]">
+            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[2, 3,10,15]">
 
             </el-transfer>
             <div class="gnDiv">
@@ -89,7 +89,7 @@
             },
             //保存新增信息
             saveAddInfo: function () {
-
+                this.$mesage("保存成功");
             },
         }
     }
@@ -131,7 +131,7 @@
 
     .el-dialog__title {
         color: white;
-        font-size:14px;
+        font-size: 14px;
     }
 
     .el-dialog__body {

@@ -1,12 +1,12 @@
 ﻿
 @{
-    ViewBag.Title = "设计单位管理";
+    ViewBag.Title = "法人管理";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-@Html.Partial("~/Views/DesignOrganizationManger/components/defaultPage.cshtml")
-@Html.Partial("~/Views/DesignOrganizationManger/components/addPage.cshtml")
-@Html.Partial("~/Views/DesignOrganizationManger/components/editPage.cshtml")
-<div id="sjdwgl">
+@Html.Partial("~/Views/LegalPersonManger/components/defaultPage.cshtml")
+@Html.Partial("~/Views/LegalPersonManger/components/addPage.cshtml")
+@Html.Partial("~/Views/LegalPersonManger/components/editPage.cshtml")
+<div id="frmanger">
     <default-page v-on:defaultpage-event="getDefaultpageDate">
         <!--v-bind:属性名一定要小写-->
     </default-page>
@@ -19,14 +19,14 @@
 </div>
 <script>
     new Vue({
-        el: "#sjdwgl",
+        el: "#frmanger",
         components: {
             "default-page": defaultPage,
             "add-page": addPage,
             "edit-page": editPage,
         },
         data: {
-           
+
         },
         mounted: function () {
 
@@ -40,11 +40,11 @@
                 //account: "",
                 //password:"",
                // yearVlue: moment().format('YYYY'),
-               // town: "奉贤区",    
+               // town: "奉贤区",
                 //nowPrjClass: "骨干河道",
                 /*----------------进入编辑页面默认看到的信息->当前选中编辑的信息-------------------------------*/
                 if (editpage_visible) {
-                    this.$refs.editPage.sjdwmc = nowEditData.sjdwmc;
+                    this.$refs.editPage.frname = nowEditData.frname;
                     this.$refs.editPage.account = nowEditData.zh;
                     this.$refs.editPage.password = nowEditData.mm;
                     this.$refs.editPage.yearVlue = nowEditData.nf;
@@ -64,3 +64,5 @@
         overflow: hidden;
     }
 </style>
+
+

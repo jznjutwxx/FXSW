@@ -5,15 +5,16 @@
             <el-input v-bind:placeholder="promptMessage"
                       prefix-icon="el-icon-search" size="small">
             </el-input>
-            <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryDesignOrganization">查询</el-button>
+            <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryFRinfo">查询</el-button>
             <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
             <el-button type="primary" class="btnDown"></el-button>
             <el-button type="primary" class="btnImport"></el-button>
+            <el-button type="primary" icon="el-icon-upload2" v-on:click="exportExcel">导出</el-button>
         </div>
-        <el-table v-bind:data="sjdwData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true">
+        <el-table v-bind:data="frData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" id="out-table">
             <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号'>
             </el-table-column>
-            <el-table-column property="sjdwmc" label="设计单位名称">
+            <el-table-column property="frname" label="法人姓名">
             </el-table-column>
             <el-table-column property="zh" label="账号">
             </el-table-column>
@@ -22,11 +23,11 @@
             <el-table-column property="cz" label="操作">
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="showEditPage(scope)">编辑</el-button>
-                    <el-button size="mini" type="danger" v-on:click="deletDesignOrganization">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="deletFRinfo">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwData.length">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frData.length">
         </el-pagination>
     </div>
 </script>
@@ -35,10 +36,10 @@
         template: "#defaultPage",
         data: function () {
             return {
-                promptMessage: "请输入设计单位名称",
-                sjdwData: [{
+                promptMessage: "请输入法人姓名",
+                frData: [{
                     id: "0gdhsh44444hhedh",
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: "mima0",
@@ -49,7 +50,7 @@
 
                 }, {
                     id:"1gdhsh44444hhedh",
-                    sjdwmc: "超图",
+                    frname: "詹星星",
                     zh: "supermap123",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm:'mima1',
@@ -58,7 +59,7 @@
                     gzclass: "骨干河道",
                 }, {
                     id:"2gdhsh44444hhedh",
-                    sjdwmc: "网波",
+                    frname: "王星星",
                     zh: "wb111",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima2',
@@ -67,7 +68,7 @@
                     gzclass: "骨干河道",
                 }, {
                     id:"3gdhsh44444hhedh",
-                    sjdwmc: "上海网波",
+                    frname: "王星星",
                     zh: "shwb",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima3',
@@ -76,7 +77,7 @@
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海网波软件",
+                    frname: "王星星",
                     zh: "shwbrj",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima4',
@@ -85,7 +86,7 @@
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海网波软件股份",
+                    frname: "李四",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima5',
@@ -94,7 +95,7 @@
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima6',
@@ -103,7 +104,7 @@
                 gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima7',
@@ -112,7 +113,7 @@
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海税务局",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima8',
@@ -121,31 +122,31 @@
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima9'
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima10'
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima11'
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima12'
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
@@ -155,72 +156,72 @@
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, {
-                    sjdwmc: "上海网波软件股份有限公司",
+                    frname: "王星星",
                     zh: "wavenet2018",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
@@ -236,7 +237,7 @@
 
         },
         mounted: function () {
-           
+
         },
         methods: {
             indexOrder: function (index) {
@@ -255,10 +256,10 @@
                 this.dataToFather();
             },
             showEditPage: function (scope) {
-                debugger;          
+                debugger;
                 var rowInfo = scope.row;//当前行信息
                 var index = scope.$index; //当前行在数据数组中的序号，0开始
-                this.nowEditData = this.sjdwData[index];
+                this.nowEditData = this.frData[index];
                 this.editpage_visible = true;
                 this.addpage_visible = false;
                 this.dataToFather();
@@ -266,12 +267,12 @@
             dataToFather:function(){
                 this.$emit("defaultpage-event", this.addpage_visible, this.editpage_visible, this.nowEditData);
             },
-            //查询设计单位
-            queryDesignOrganization: function () {
-                this.$message("查询设计单位");
+            //查询法人信息
+            queryFRinfo: function () {
+                this.$message("查询法人姓名");
             },
-            //删除设计单位
-            deletDesignOrganization: function () {
+            //删除法人信息
+            deletFRinfo: function () {
                 debugger;
                 var deleteDesOrg = window.confirm("确认删除？");
                 if (deleteDesOrg) {
@@ -280,8 +281,18 @@
                 else {
                     this.$message("取消删除");
                 }
-                
-            }
+            },
+            exportExcel () {
+                debugger;
+                /* generate workbook object from table */
+                var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))
+                /* get binary string as output */
+                var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
+                try {
+                    FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'sheetjs.xlsx')
+                } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
+                return wbout
+            },
         },
         watch: {
 
@@ -289,67 +300,69 @@
     }
 </script>
 <style>
-     #queryhead{
-       margin:10px;
-       min-width:700px;
-    }
-    #queryhead .btnSel {
-        padding: 8px 12px;
-        margin-left:15px;
+    #queryhead {
+        margin: 10px;
+        min-width: 700px;
     }
 
-    #queryhead .el-input--small {
-        width: 220px;
-    }
+        #queryhead .btnSel {
+            padding: 8px 12px;
+            margin-left: 15px;
+        }
 
-    #queryhead .btnAdd {
-        width: 73px;
-        height: 32px;
-        padding-left: 20px;
-        background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
-        border: 0px;
-    }
+        #queryhead .el-input--small {
+            width: 220px;
+        }
 
-        #queryhead .btnAdd:focus {
+        #queryhead .btnAdd {
+            width: 73px;
+            height: 32px;
+            padding-left: 20px;
             background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+            border: 0px;
         }
 
-        #queryhead .btnAdd:hover {
-            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
-        }
+            #queryhead .btnAdd:focus {
+                background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+            }
 
-        #queryhead .btnAdd:active {
-            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
-        }
-    #queryhead .btnDown {
-        width: 100px;
-        height: 32px;
-        padding-left: 20px;
-        background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
-        border: 0px;
-    }
+            #queryhead .btnAdd:hover {
+                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+            }
 
-        #queryhead .btnDown:focus {
+            #queryhead .btnAdd:active {
+                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+            }
+
+        #queryhead .btnDown {
+            width: 100px;
+            height: 32px;
+            padding-left: 20px;
             background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+            border: 0px;
         }
 
-        #queryhead .btnDown:hover {
-            background-image: url(/Images/gcgl/btn_mobanxz_active.png);
-        }
+            #queryhead .btnDown:focus {
+                background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+            }
 
-    #queryhead .btnImport {
-        width: 100px;
-        height: 32px;
-        padding-left: 20px;
-        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
-        border: 0px;
-    }
+            #queryhead .btnDown:hover {
+                background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+            }
 
-        #queryhead .btnImport:focus {
+        #queryhead .btnImport {
+            width: 100px;
+            height: 32px;
+            padding-left: 20px;
             background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+            border: 0px;
         }
 
-        #queryhead .btnImport:hover {
-            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
-        }
+            #queryhead .btnImport:focus {
+                background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+            }
+
+            #queryhead .btnImport:hover {
+                background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+            }
 </style>

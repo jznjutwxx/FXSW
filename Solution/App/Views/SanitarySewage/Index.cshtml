@@ -36,7 +36,7 @@
             <el-table-column label="操作" width="260" header-align="center">
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-                    <el-button size="mini" type="info">文件管理</el-button>
+                    <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
                     <el-button size="mini" type="danger" v-on:click="handleDel(scope.row.s_id)">删除</el-button>
                 </template>
             </el-table-column>
@@ -117,6 +117,7 @@
                     this.delForm.S_ID = id;
                     axios.post("/SanitarySewage/DelData", { id: this.delForm.S_ID })
                   .then(function (response) {
+                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginSewageUpdateResponse.result) {
                           this.$message({
@@ -125,7 +126,7 @@
                           });
                       } else {
                           this.$message.error('删除失败！' + tempData.EnginSewageUpdateResponse.result);
-                      }
+                      } debugger
                       this.setData('/SanitarySewage/GetTabData', this.params);
                   }.bind(this))
                   .catch(function (error) {
@@ -138,6 +139,10 @@
                     });
                 });
             },
+            openFileManage: function (id) {
+                window.location.href = '/SanitarySewage/FileManage?id=' + id;
+            },
+
             currentChange: function (val) {
                 this.params.page = val;
                  this.setData('/SanitarySewage/GetTabData', this.params);

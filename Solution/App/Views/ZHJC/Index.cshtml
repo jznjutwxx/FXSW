@@ -104,7 +104,7 @@
                 <table id="szqsTable" border="1" cellpadding="0" cellspacing="0"></table>
                 <div id="yearSelect">
                     <el-button icon="el-icon-arrow-left" v-on:click="preYear">上一年</el-button>
-                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" v-on:change="yearChange">
+                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" v-on:change="yearChangez">
                     </el-date-picker>
                     <el-button v-on:click="nextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                     <el-button type="primary" icon="el-icon-upload2">导出</el-button>
@@ -349,10 +349,12 @@
             map: null,
             layers: [],
             baselayer: null,
+            riverlayer:null,//河流图层
             vectorLayer: null,
             fsfxVectorLayer: null,//风速风向图层
             jcdMarkersLayer: null, //监测点图层
             fxbaselayerurl: "http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+            riverLayerUrl:"http://222.66.154.70:8090/iserver/services/map-ugcv5-fxst200005032/rest/maps/fxst2000_0503",
             leftData: [], //左边筛选后拿到的数据,这个数据要展示在下方表格中，单击地图上的点后要展示部分属性
             leftJclx: "",
             infowin: null,
@@ -425,10 +427,11 @@
                 });
                 //this.map.size = new SuperMap.Size(1920, 900);
                 this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto", isBaseLayer: true });
+                this.riverlayer = new SuperMap.Layer.TiledDynamicRESTLayer("奉贤河流", this.riverLayerUrl, null, { maxResolution: "auto", isBaseLayer: false });
                 this.vectorLayer = new SuperMap.Layer.Vector("查询高亮图层");
                 this.fsfxVectorLayer = new SuperMap.Layer.Vector("风速风向图层");
                 this.jcdMarkersLayer = new SuperMap.Layer.Markers("监测点图层");
-                this.layers = [this.baselayer, this.vectorLayer, this.fsfxVectorLayer, this.jcdMarkersLayer];
+                this.layers = [this.baselayer, this.riverlayer,this.vectorLayer, this.fsfxVectorLayer, this.jcdMarkersLayer];
                 this.drawPolygon = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Polygon);
                 //图层控制器
                 var layerSwitcher = new SuperMap.Control.LayerSwitcher();

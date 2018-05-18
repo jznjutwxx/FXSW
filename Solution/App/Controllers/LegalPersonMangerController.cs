@@ -14,5 +14,18 @@ namespace App.Controllers
         {
             return View();
         }
+        public ActionResult defaultPage()
+        {
+            //默认页面-查
+            return View();
+        }
+        public ActionResult addPage()
+        {  //增
+            return View();
+        }
+        public ActionResult editPage()
+        {   //修改
+            return View();
+        }
     }
 }

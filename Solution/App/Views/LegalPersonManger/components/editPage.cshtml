@@ -1,11 +1,11 @@
-﻿<script type="text/x-template" id="addPage">
-    <div id="addpage">
-        <el-dialog title="新增设计单位" v-bind:visible.sync="addDialogVisible" v-bind:before-close="handleClose">
+﻿<script type="text/x-template" id="editPage">
+    <div id="editpage">
+        <el-dialog title="编辑法人信息" v-bind:visible.sync="editDialogVisible" v-bind:before-close="handleClose">
             <div class="titlebg"></div>
             <div id="jbxx" style="margin-top:-20px;">
                 <div class="jbxxTitle">基本信息:</div>
-                <span>设计单位名称:</span>
-                <el-input placeholder="请输入设计单位名称" prefix-icon="el-icon-search" size="small" v-model="sjdwmc">
+                <span>法人姓名:</span>
+                <el-input placeholder="请输入法人姓名" prefix-icon="el-icon-search" size="small" v-model="frname">
                 </el-input>
                 <span class="distance" style="width:170px;">账号:</span>
                 <el-input placeholder="请输入账号" prefix-icon="el-icon-search" size="small" v-model="account">
@@ -33,22 +33,22 @@
                 </el-select>
                 <el-button type="primary" icon="el-icon-search" class="btnSel" plain>查询</el-button>
             </div>
-            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles"    v-bind:left-default-checked="[2, 3,10,15]">
+            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[]">
 
             </el-transfer>
             <div class="gnDiv">
-                <el-button type="primary" plain class="lastBtn" v-on:click="addDialogVisible=!addDialogVisible">取消</el-button>
-                <el-button type="primary" plain class="lastBtn" v-on:click="saveAddInfo">保存</el-button>
+                <el-button type="primary" plain class="lastBtn" v-on:click="editDialogVisible=!editDialogVisible">取消</el-button>
+                <el-button type="primary" plain class="lastBtn" v-on:click="saveEditInfo">保存</el-button>
             </div>
         </el-dialog>
     </div>
 </script>
 <script>
-    var addPage = {
-        template: "#addPage",
+    var editPage = {
+        template: "#editPage",
         data: function () {
             return {
-                addDialogVisible: false,
+                editDialogVisible: false,
                 yearVlue: moment().format('YYYY'),
                 towns: ['奉贤区', '庄行镇', '拓林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
                 town: "奉贤区",
@@ -56,11 +56,12 @@
                 nowPrjClass: "骨干河道",
                 projectsName: ['奉贤农田水利工程(2018061511101)', '奉贤农田水利工程2', '奉贤农田水利工程3', '奉贤农田水利工程4', '奉贤农田水利工程5', '奉贤农田水利工程6', '奉贤农田水利工程7', '奉贤农田水利工程8', '奉贤农田水利工程9', '奉贤农田水利工程10', '奉贤农田水利工程11', '奉贤农田水利工程12', '奉贤农田水利工程13', '奉贤农田水利工程14', '奉贤农田水利工程15', '奉贤农田水利工程16', '奉贤农田水利工程17', '奉贤农田水利工程18', '奉贤农田水利工程19', '奉贤农田水利工程20'],
                 projectsNameData: [],
-                selected: [1, 4], //默认选中的工程的key
+                selected: [11, 12], //默认选中的工程的key
                 projectTitiles: ["待选工程", "已选工程"],
-                sjdwmc: "",
+                //编辑时的默认值
+                frname: "",
                 account: "",
-                password: "",
+                password:"",
             }
         },
         components: {
@@ -71,10 +72,9 @@
         methods: {
             handleClose(done) {
                 done();
-               /* this.$confirm('确认关闭？') .then(function(){
-                      done();
+               /* this.$confirm('确认关闭？').then(function () {
+                    done();
                 }).catch(function () {
-
                 });*/
             },
             getProjectsNameData: function () {
@@ -87,10 +87,18 @@
                     })
                 }
             },
-            //保存新增信息
-            saveAddInfo: function () {
+            //保存编辑后的信息
+            saveEditInfo: function () {
+                //sjdwmc: "",
+                //account: "",
+                //password:"",
+                // yearVlue: moment().format('YYYY'),
+                // town: "奉贤区",
+                //nowPrjClass: "骨干河道",
+                //selected
 
-            },
+                this.$mesage("保存成功");
+            }
         }
     }
 </script>
@@ -131,7 +139,7 @@
 
     .el-dialog__title {
         color: white;
-        font-size:14px;
+        font-size: 14px;
     }
 
     .el-dialog__body {
@@ -142,13 +150,13 @@
         width: 180px;
     }
 
-    #addpage {
+    #editpage {
         font-size: 14px;
         font-family: 'Microsoft YaHei';
         color: #666666;
     }
 
-        #addpage .jbxxTitle, .gzsxTitle {
+        #editpage .jbxxTitle, .gzsxTitle {
             font-weight: bold;
             margin-bottom: 5px;
         }
@@ -157,21 +165,21 @@
         margin-left: 25px;
     }
 
-    #addpage .btnSel {
+    #editpage .btnSel {
         padding: 8px 12px;
         margin-left: 15px;
     }
 
-    #addpage .el-transfer-panel {
+    #editpage .el-transfer-panel {
         width: 320px;
         height: 360px;
     }
 
-    #addpage .el-transfer-panel__list {
+    #editpage .el-transfer-panel__list {
         height: 320px;
     }
 
-    #addpage .el-transfer {
+    #editpage .el-transfer {
         margin-top: 16px;
     }
 

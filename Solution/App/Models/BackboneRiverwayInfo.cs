@@ -24,6 +24,7 @@ namespace App.Models
         public string n_water_area { get; set; }
         public string s_remark { get; set; }
         public string n_draft { get; set; }
+        public string remove_pic_ids { get; set; }
 
         //批复工程量
         public string n_length { get; set; }
