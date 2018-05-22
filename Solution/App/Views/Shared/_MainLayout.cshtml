@@ -90,13 +90,21 @@
                         title: '综合监测',
                         icon: 'ico_biaozhi',
                         url: '/ZHJC/Index'
-                    },{
+                    }, {
                         id: '1',
+                        title: '水文统计',
+                        icon: 'ico_biaozhi',
+                        children: [
+                            { id: '41', name: '重污染河道水质', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
+                            { id: '42', name: '水质取样统计', icon: 'ico_gghd', url: '/SZQYJL/Index' }
+                        ]
+                    }, {
+                        id: '2',
                         title: '工程总览',
                         icon: 'ico_biaozhi',
                         url: '/ProOverView/Index'
                     }, {
-                        id: '2',
+                        id: '3',
                         title: '工程管理',
                         icon: 'ico_biaozhi',
                         children: [
@@ -107,7 +115,7 @@
                             { id: '15', name: '其他水利工程', icon: 'ico_gczt', url: '/HydraulicEngineer/Index' }
                         ]
                     }, {
-                        id: '3',
+                        id: '4',
                         title: '工程统计',
                         icon: 'ico_biaozhi',
                         children: [
@@ -118,12 +126,12 @@
                             { id: '25', name: '农村生活污水工程量统计', icon: 'ico_ncshws', url: '/SHWSProjectStatistics/Index' }
                         ]
                     }, {
-                        id: '4',
+                        id: '5',
                         title: '系统设置',
                         icon: 'ico_biaozhi',
                         children: [
-                            { id: '31', name: '设计单位管理', icon: 'ico_sjdwgl', url: '/Home/demo' },
-                            { id: '32', name: '法人管理', icon: 'ico_frgl', url: '/Home/demo' }
+                            { id: '51', name: '设计单位管理', icon: 'ico_sjdwgl', url: '/DesignOrganizationManger/Index' },
+                            { id: '52', name: '法人管理', icon: 'ico_frgl', url: '/LegalPersonManger/Index' }
                         ]
                     }]
                     this.handleSelect(this.menus[0].id,null)

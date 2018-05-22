@@ -62,14 +62,14 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="16" class="colCss">
                         <el-form-item label="工程地址:">
-                            <el-input v-model="formData.s_address" size="mini" style="width:127%;"></el-input>
+                            <el-input v-model="formData.s_legal_person" size="mini" style="width:127%;"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
                             @*<el-input v-model="formData.s_legal_person" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
-                                <el-option v-for="item in PersonOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
+                            <el-select v-model="formData.s_address" class="selCss" size="mini">
+                                <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -614,10 +614,10 @@
                 axios.post('/BackboneRiverway/SaveProjectData',
                     { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
                   .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var TempR = tempData.EnginCoreReportResponse.result;
-                      debugger
-                      if (TempR) {
+                      //var tempData = JSON.parse(response.data);
+                      var tempData = eval('(' + response.data + ')');
+                      var tempR = tempData.EnginCoreReportResponse.result;
+                      if (tempR) {
                           if (this.s_type == "骨干河道") {
                               window.location = "Index";
                           }
@@ -672,9 +672,9 @@
                 //console.log(this.file);
             },
             handlePreview: function (file) {
-                console.log(file);
-                //this.dialogImageUrl = file.url;
-                //this.dialogVisible = true;
+                //console.log(file);
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
             },
             upSucess: function (response, file, fileList) {
                 this.$message({
@@ -705,7 +705,7 @@
         overflow-x:hidden;
     }
     #addForm {
-        padding: 20px;
+        padding: 10px 20px 10px 20px;
         margin-bottom:60px;
     }
     #add .el-form-item {

@@ -7,6 +7,7 @@ using System.Web.Mvc;
 
 namespace App.Controllers
 {
+    [Authentication]
     public class ZXRiverwayController : Controller
     {
         // GET: ZXRiverway

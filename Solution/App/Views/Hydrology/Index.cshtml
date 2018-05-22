@@ -11,7 +11,8 @@
 <div id="app">
     <el-row v-bind:gutter="15" class="row_bg">
         <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
-            <com-swsyleft ref="swsyleft" v-on:gethd-event="showHDnum" v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
+            <div class="titlediv hdgkdiv" v-on:click="showHDnum">河道概况</div>
+            <com-swsyleft ref="swsyleft" @*v-on:gethd-event="showHDnum"*@ v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
         </el-col>
         <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
             <div class="bigBox">
@@ -142,8 +143,9 @@
                 </el-dialog>
             </div>
         </el-col>
-        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
-            <com-swsyright v-on:getcztj-event="showZCnum">
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" style="padding-left:12px;">
+            <div class="titlediv cztj" v-on:click="showZCnum">测站统计</div>
+            <com-swsyright @*v-on:getcztj-event="showZCnum"*@>
 
             </com-swsyright>
         </el-col>
@@ -159,7 +161,7 @@
             "com_line": comLine,
         },
         data: {
-            mapheight: document.documentElement.clientHeight - 32,
+            mapheight: document.documentElement.clientHeight - 32.5,
             mapTitle: "河道概况",
             lefttwon: '奉贤区',
             activeName: 'ylBar', //设置默认激活哪一个tab页
@@ -172,6 +174,7 @@
             czNumCoverLayer: null,//各个镇的测站总数量图层
             representativeMarkersLayer: null,//一镇一站标记图层,测站代表图层
             jtczLayer: null,   //具体测站图层
+            czNameCoverLayr: null,//测站名字图层
             dxvectorLayer: null,  //点选
             szdblVectorLayer: null,   //水质达标率高亮图层
             controlSzdbltlShow: false,  //控制水质达标率图例的显示
@@ -194,7 +197,7 @@
             llLiNEOption: null,
             noticeMsg: "01-04 4时水位最高为2.6m(超警戒)，当日累计流量173m3", //雨水提示信息
             cwybTime: "4月17号", //地图潮位预报的title
-            cwybDate:"",
+            cwybDate: "",
             cwybDatas: [
                 {
                     "s_site_name": "",
@@ -221,7 +224,7 @@
             debugger;
             this.getCWYBdata();
             $(window).resize(function () {
-                that.mapheight = document.body.clientHeight - 32;
+                that.mapheight = document.body.clientHeight - 32.5;
             });
         },
         watch: {
@@ -235,7 +238,7 @@
                 //this.map = new SuperMap.Map("mapContainer", { allOverlays: true });
                 this.map = new SuperMap.Map("mapContainer", {
                     allOverlays: true, controls: [
-                    //new SuperMap.Control.ScaleLine(),
+                    new SuperMap.Control.ScaleLine({ isImperialUnits: false }),
                    // new SuperMap.Control.Zoom(),
                     //new SuperMap.Control.LayerSwitcher(),
                     new SuperMap.Control.Navigation({ //添加导航控件到map
@@ -251,8 +254,9 @@
                 this.czNumCoverLayer = new SuperMap.Layer.Vector("各个镇的测站总数量图层");
                 this.representativeMarkersLayer = new SuperMap.Layer.Markers("一镇一站图层");
                 this.jtczLayer = new SuperMap.Layer.Markers("具体测站图层");
+                this.czNameCoverLayr = new SuperMap.Layer.Vector("具体测站名字");
                 this.dxvectorLayer = new SuperMap.Layer.Vector("点选图层");
-                this.layers = [this.baselayer, this.szdblVectorLayer, this.hdNumCoverLayer, this.representativeMarkersLayer, this.czNumCoverLayer, this.dxvectorLayer];
+                this.layers = [this.baselayer, this.szdblVectorLayer, this.representativeMarkersLayer, this.czNumCoverLayer, this.dxvectorLayer, this.hdNumCoverLayer];
                 //图层控制器
                 var layerSwitcher = new SuperMap.Control.LayerSwitcher();
                 //图层控制器中图层的显示顺序
@@ -260,6 +264,35 @@
                 var mousePosition = new SuperMap.Control.MousePosition();
                 mousePosition.prefix = "经度:";
                 mousePosition.separator = "/纬度:";
+                /*  var callbacks = {
+                        over:    //this.overtest(),
+                        function (currentFeature) {
+                            debugger;
+                            alert("鼠标经过");
+                        },
+                        out: function (currentFeature) {
+                        },
+                        click: function (currentFeature) {
+                            this.overtest();
+                            debugger;
+                            alert("click");
+                        },
+                        clickout: function (lastFeature) {
+                        },
+                        rightclick: function (currentFeature) {
+                        },
+                        dblclick: function (currentFeature) {
+                        }
+                    };
+                    debugger;
+                    var selectFeature = new SuperMap.Control.SelectFeature(this.hdNumCoverLayer, {
+                        // onSelect: this.onFeatureSelected,
+                        callbacks: callbacks,
+                        //hover: false,
+                        repeat: true
+                    });
+                    this.map.addControl(selectFeature);
+                    selectFeature.activate();*/
                 //点查询
                 this.drawPoint = new SuperMap.Control.DrawFeature(this.dxvectorLayer, SuperMap.Handler.Point);
                 this.map.addControl(this.drawPoint);
@@ -271,24 +304,66 @@
                 //一镇一站图层单击时
                 this.representativeMarkersLayer.events.on({ "mouseover": this.activePoint });
                 this.representativeMarkersLayer.events.on({ "mouseout": this.deactivePoint });
-                this.baselayer.events.on({ 'move': this.selectTwon });
-                //this.hdNumCoverLayer.events.on({ 'mouseover': this.activePoint });
-                //this.hdNumCoverLayer.events.on({ 'mouseover': this.deactivePoint });
+                //this.baselayer.events.on({ 'move': this.selectTwon });
+                //this.hdNumCoverLayer.events.on({ 'mouseover': this.test });
+                //this.hdNumCoverLayer.events.on({ 'mouseover': this.test });
+            },
+            overtest: function () {
+                alert("jj");
+            },
+            test: function () {
+                debugger;
+                alert("ok");
+            },
+            onFeatureSelected: function (currentFeature) {
+                alert(1);
             },
             addLayers: function () {
                 var that = this;
-                //setTimeout(function () {
+                debugger;
                 that.map.addLayers(that.layers);
-                that.map.zoomTo(2);
+                if (window.screen.width <= 1024) {
+                    this.map.zoomTo(0);
+                }
+                else if (1024 < window.screen.width && window.screen.width <= 1280) {
+                    this.map.zoomTo(1);
+                }
+                else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                    this.map.zoomTo(1);
+                }
+                else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                    this.map.zoomTo(1);
+                }
+                else {
+                    this.map.zoomTo(2);
+                }
                 that.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
-                //鼠标在地图上移动
-                // that.map.events.on({ "mouseover": this.selectTwon });
+                //setTimeout(function () {
+                //    $(".smControlScaleLineTop").html().replace(/公里/, "km");
+                //},200)
+
+                //鼠标在地图上经过
+                //that.map.events.on({ "mouseover": this.selectTwon });
                 //}, 100)
                 //默认显示河道数量,父页面调用
                 this.showHDnum();
             },
             initMapExtent: function () {
-                this.map.zoomTo(2);
+                if (window.screen.width <= 1024) {
+                    this.map.zoomTo(0);
+                }
+                else if (1024 < window.screen.width && window.screen.width <= 1280) {
+                    this.map.zoomTo(1);
+                }
+                else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                    this.map.zoomTo(1);
+                }
+                else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                    this.map.zoomTo(1);
+                }
+                else {
+                    this.map.zoomTo(2);
+                }
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
                 this.lefttwon = '奉贤区';
                 this.dxvectorLayer.removeAllFeatures();
@@ -371,6 +446,7 @@
                             }
                         }
                         this.map.addLayer(this.jtczLayer);
+                        this.map.addLayer(this.czNameCoverLayr);
                     } else {
                         //当缩放级别小于等于3时，不显示具体测站图层,显示representativeMarkersLayer和czNumCoverLayer
                         for (var i = 0; i < allLayers.length; i++) {
@@ -379,6 +455,7 @@
                             }
                             if (allLayers[i].name == "具体测站图层") {
                                 this.map.removeLayer(this.jtczLayer);
+                                this.map.removeLayer(this.czNameCoverLayr);
                             }
                             if (allLayers[i].name != "各个镇的测站总数量图层") {
                                 this.map.addLayer(this.czNumCoverLayer);
@@ -439,9 +516,12 @@
                         this.dxvectorLayer.addFeatures(feature);
                     }
                     debugger;
-                    if (feature.attributes.NAME) {
+                    if (feature.attributes && feature.attributes.NAME) {
                         this.lefttwon = feature.attributes.NAME;
                         console.log(feature);
+                    }
+                    else {
+                        this.lefttwon = "奉贤区";
                     }
                 }
 
@@ -470,6 +550,7 @@
                 this.dxvectorLayer.removeAllFeatures();
                 this.representativeMarkersLayer.clearMarkers();
                 this.jtczLayer.clearMarkers();
+                this.czNameCoverLayr.removeAllFeatures();
                 this.czNumCoverLayer.removeAllFeatures();
                 for (var i = 0; i < this.swAllInfo.length; i++) {
                     var pt = new SuperMap.Geometry.Point(this.swAllInfo[i].x, this.swAllInfo[i].y);
@@ -490,6 +571,7 @@
                     }
                     hdFeature.style = hdNumStyle;
                     this.hdNumCoverLayer.addFeatures(hdFeature);
+
                 }
             },
             showZCnum: function () {
@@ -497,7 +579,7 @@
                 //一镇一站，缩小到一定程度时，8个镇固定显示某一个测站
                 this.controlSzdbltlShow = false;
                 this.isCZnumModel = true;  //是否测站统计模块
-                this.mapTitle = "测站统计"
+                this.mapTitle = "测站统计";
                 this.hdNumCoverLayer.removeAllFeatures(); //清除河道数量图层
                 this.szdblVectorLayer.removeAllFeatures();
                 this.dxvectorLayer.removeAllFeatures();
@@ -531,34 +613,53 @@
                     that.representativeMarkersLayer.addMarker(new SuperMap.Marker(new SuperMap.LonLat(item.x, item.y), dbicon));
                 });
                 //街镇详细测站情况
-                var jzxxczqk = [{ x: 121.38372, y: 30.98031, twon: "庄行镇", zctype: "雨量站" },
-                                   { x: 121.38039, y: 30.9556, twon: "庄行镇", zctype: "水文站" },
-                                   { x: 121.37469, y: 30.90437, twon: "庄行镇", zctype: "水质站" },
-                                   { x: 121.40939, y: 30.89665, twon: "庄行镇", zctype: "水位站" },
-                                   { x: 121.44504, y: 30.99077, twon: "南桥镇", zctype: "雨量站" },
-                                   { x: 121.47832, y: 30.967, twon: "南桥镇", zctype: "水文站" },
-                                   { x: 121.44219, y: 30.9228, twon: "南桥镇", zctype: "水质站" },
-                                   { x: 121.48307, y: 30.90378, twon: "南桥镇", zctype: "水位站" },
-                                   { x: 121.39656, y: 30.84769, twon: "柘林镇", zctype: "雨量站" },
-                                   { x: 121.48497, y: 30.83485, twon: "柘林镇", zctype: "水文站" },
-                                   { x: 121.46073, y: 30.80823, twon: "柘林镇", zctype: "水质站" },
-                                   { x: 121.5154, y: 30.98982, twon: "金汇镇", zctype: "雨量站" },
-                                   { x: 121.51540, y: 30.96273, twon: "金汇镇", zctype: "雨量站" },
-                                   { x: 121.60619, y: 30.97984, twon: "金汇镇", zctype: "雨量站" },
-                                   { x: 121.57529, y: 30.94181, twon: "青村镇", zctype: "雨量站" },
-                                   { x: 121.52253, y: 30.91186, twon: "青村镇", zctype: "雨量站" },
-                                   { x: 121.56626, y: 30.88524, twon: "青村镇", zctype: "雨量站" },
-                                   { x: 121.52395, y: 30.83723, twon: "海湾镇", zctype: "雨量站" },
-                                   { x: 121.55247, y: 30.83913, twon: "海湾镇", zctype: "雨量站" },
-                                   { x: 121.58242, y: 30.86052, twon: "海湾镇", zctype: "雨量站" },
-                                   { x: 121.64137, y: 30.97556, twon: "奉城镇", zctype: "雨量站" },
-                                   { x: 121.62283, y: 30.92755, twon: "奉城镇", zctype: "雨量站" },
-                                   { x: 121.66513, y: 30.89237, twon: "奉城镇", zctype: "雨量站" },
-                                   { x: 121.69936, y: 30.96843, twon: "四团镇", zctype: "雨量站" },
-                                   { x: 121.70554, y: 30.94181, twon: "四团镇", zctype: "雨量站" },
-                                   { x: 121.7312, y: 30.91139, twon: "四团镇", zctype: "雨量站" }];
+                var jzxxczqk = [{ x: 121.38372, y: 30.98031, twon: "庄行镇", zctype: "雨量站", czname: "庄行雨量站1" },
+                                   { x: 121.38039, y: 30.9556, twon: "庄行镇", zctype: "水文站", czname: "庄行水文站1" },
+                                   { x: 121.37469, y: 30.90437, twon: "庄行镇", zctype: "水质站", czname: "庄行水质站" },
+                                   { x: 121.40939, y: 30.89665, twon: "庄行镇", zctype: "水位站", czname: "庄行水位站" },
+                                   { x: 121.44504, y: 30.99077, twon: "南桥镇", zctype: "雨量站", czname: "雨量站" },
+                                   { x: 121.47832, y: 30.967, twon: "南桥镇", zctype: "水文站", czname: "水位站" },
+                                   { x: 121.44219, y: 30.9228, twon: "南桥镇", zctype: "水质站", czname: "水质站" },
+                                   { x: 121.48307, y: 30.90378, twon: "南桥镇", zctype: "水位站", czname: "水位站" },
+                                   { x: 121.39656, y: 30.84769, twon: "柘林镇", zctype: "雨量站", czname: "雨量站" },
+                                   { x: 121.48497, y: 30.83485, twon: "柘林镇", zctype: "水文站", czname: "水文站" },
+                                   { x: 121.46073, y: 30.80823, twon: "柘林镇", zctype: "水质站", czname: "水质站" },
+                                   { x: 121.5154, y: 30.98982, twon: "金汇镇", zctype: "雨量站", czname: "雨量站1" },
+                                   { x: 121.51540, y: 30.96273, twon: "金汇镇", zctype: "雨量站", czname: "雨量站2" },
+                                   { x: 121.60619, y: 30.97984, twon: "金汇镇", zctype: "雨量站", czname: "雨量站3" },
+                                   { x: 121.57529, y: 30.94181, twon: "青村镇", zctype: "雨量站", czname: "雨量站" },
+                                   { x: 121.52253, y: 30.91186, twon: "青村镇", zctype: "雨量站", czname: "雨量站2" },
+                                   { x: 121.56626, y: 30.88524, twon: "青村镇", zctype: "雨量站", czname: "雨量站3" },
+                                   { x: 121.52395, y: 30.83723, twon: "海湾镇", zctype: "雨量站", czname: "雨量站" },
+                                   { x: 121.55247, y: 30.83913, twon: "海湾镇", zctype: "雨量站", czname: "雨量站2" },
+                                   { x: 121.58242, y: 30.86052, twon: "海湾镇", zctype: "雨量站", czname: "雨量站3" },
+                                   { x: 121.64137, y: 30.97556, twon: "奉城镇", zctype: "雨量站", czname: "雨量站1" },
+                                   { x: 121.62283, y: 30.92755, twon: "奉城镇", zctype: "雨量站", czname: "雨量站2" },
+                                   { x: 121.66513, y: 30.89237, twon: "奉城镇", zctype: "雨量站", czname: "雨量站3" },
+                                   { x: 121.69936, y: 30.96843, twon: "四团镇", zctype: "雨量站", czname: "雨量站1" },
+                                   { x: 121.70554, y: 30.94181, twon: "四团镇", zctype: "雨量站", czname: "雨量站2" },
+                                   { x: 121.7312, y: 30.91139, twon: "四团镇", zctype: "雨量站", czname: "雨量站3" }];
                 var markers = [];//存储所有具体测站的marke
                 $.each(jzxxczqk, function (index, item) {
+                    //显示测站名字
+                    var pt = new SuperMap.Geometry.Point(item.x, item.y);
+                    var czNameFeature = new SuperMap.Feature.Vector(pt, null);
+                    var czNameStyle = {
+                        strokeColor: "white",
+                        fillColor: "#FF00FF",
+                        strokeWidth: 2,
+                        fillOpacity: 0.4,
+                        fontWeight: "normal",
+                        fontSize: 14,
+                        label: item.czname.toString(),
+                        labelYOffset: -10,
+                        labelXOffset: 0,
+                        labelAlign: "cm",
+                        fontColor: "white",
+                        pointRadius: 0 //圆半径设置为0
+                    }
+                    czNameFeature.style = czNameStyle;
+                    that.czNameCoverLayr.addFeatures(czNameFeature);
                     var size = new SuperMap.Size(40, 40);
                     var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
                     var picUrl = "/Images/swsy/水位站.png";
@@ -577,7 +678,6 @@
                     that.jtczLayer.addMarker(czmarker);
                     //把所有的测站都存放到markers中
                     markers.push(czmarker);
-
                 });
                 this.mapIsZoomend();
                 for (var i = 0; i < markers.length; i++) {
@@ -589,13 +689,14 @@
             showSZDBL: function () {
                 this.controlSzdbltlShow = true;
                 this.isCZnumModel = false;
-                this.mapTitle = "水质达标率（12月）"
+                this.mapTitle = "水质达标率（12月）";
                 this.hdNumCoverLayer.removeAllFeatures();
                 this.representativeMarkersLayer.clearMarkers();
                 this.czNumCoverLayer.removeAllFeatures();
                 this.szdblVectorLayer.removeAllFeatures();
                 this.dxvectorLayer.removeAllFeatures();
                 this.jtczLayer.clearMarkers();
+                this.czNameCoverLayr.removeAllFeatures();
                 this.queryBySql();
                 var that = this;
                 $.each(that.swAllInfo, function (index, item) {
@@ -1000,8 +1101,9 @@
             getCWYBdata: function () {
                 var vm = this;
                 axios.post('/Hydrology/getCWYB', { date: '2018-06-02' }).then(function (result) {  //vm.cwybDate
+                    debugger;
                     var datas = JSON.parse(result.data).TidePredictionGetResponse.tide_prediction_list;
-                    var jsondata = {
+                    /*var jsondata = {
                         TidePredictionGetResponse: {
                             tide_prediction_list: [{
                                 "s_site_name": "金汇港南闸（外）站",
@@ -1019,20 +1121,20 @@
                                 "t_tide_time": "2018-06-02 00:00:00"
                             }]
                         }
-                    };
+                    };*/
                     vm.cwybDatas = datas;
                 });
             },
             getNowDay: function () {
                 var date = new Date;
                 var year = date.getFullYear();
-                var month = date.getMonth()+1;
+                var month = date.getMonth() + 1;
                 var day = date.getDate();
-                var month2= (date.getMonth()+1) >9 ? (date.getMonth()+1):("0"+(date.getMonth()+1));
+                var month2 = (date.getMonth() + 1) > 9 ? (date.getMonth() + 1) : ("0" + (date.getMonth() + 1));
                 var day2 = date.getDate() > 9 ? date.getDate() : "0" + date.getDate();
                 this.cwybTime = month + '月' + day + '日';
-                this.cwybDate= year + "-" + month2 + "-" + day2;
-               
+                this.cwybDate = year + "-" + month2 + "-" + day2;
+
             }
         }
     })
@@ -1090,11 +1192,11 @@
 
     #szdbltl {
         position: absolute;
-        left: 35px;
+        left: 10px;
         z-index: 1500;
         width: 176px;
         height: 95px;
-        bottom: 16px;
+        bottom: 40px;
         background-color: #051266;
     }
 
@@ -1158,15 +1260,15 @@
     /**潮位预报*/
     #cwyb {
         position: absolute;
-        right: 20px;
+        right: 1px;
         z-index: 1500;
-        height: 180px;
-        bottom: 0px;
+        height: 150px;
+        bottom: 16px;
         background-color: #051266;
         color: white;
-        font-size: 14px;
+        font-size: 13px;
         font-family: 'Microsoft YaHei';
-        width: 280px;
+        width: 250px;
     }
 
         #cwyb .el-row {
@@ -1175,17 +1277,17 @@
     /**潮位预报下面的潮位分割线*/
     #cwfg {
         background-color: #2844a3;
-        width: 270px;
+        width: 245px; /**270px;*/
         height: 4px;
     }
 
     #notcwyb {
-        position: absolute;
-        right: 50px;
-        z-index: 1500;
-        bottom: 40px;
-        color: white;
-        font-size: 14px;
+       position: absolute;
+    right: 30px;
+    z-index: 1500;
+    bottom: 30px;
+    color: white;
+    font-size: 14px;
     }
 
     div.smMapViewport {
@@ -1254,5 +1356,12 @@
         color: white;
         font-size: 14px;
         font-family: 微软雅黑;
+    }
+
+    .smControlScaleLineTop {
+        border: 2px solid white;
+        border-top: none;
+        text-align: center;
+        width: 100px !important;
     }
 </style>

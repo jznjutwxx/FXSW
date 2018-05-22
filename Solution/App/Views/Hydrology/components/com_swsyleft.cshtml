@@ -1,50 +1,47 @@
 ﻿
 <script type="text/x-template" id="com-swsyleft">
     <div id="leftContent" v-bind:style="{height:leftheight+'px'}">
-        <div class="titlediv hdgkdiv" v-on:click="getFatherHD">河道概况</div>
-        <div class="topdiv">
-            <el-row type="flex" justify="end" class="xzqhrow">
-                <el-col v-bind:span="24" class="xzqh" >{{lefttwon}}</el-col>
-            </el-row>
+        @*<div class="titlediv hdgkdiv" v-on:click="getFatherHD" style="position:absolute;color:white;">河道概况</div>*@
+        <div class="topdiv">       
             <el-row class="topleft">
                 <el-col v-bind:span="24" class="col">
                     <div class="divcss">河道总数(条)：</div>
                     <div class="text-gra">4598</div>
+                    <div class="xzqh">{{lefttwon}}</div>
                 </el-col>
-                <el-col v-bind:span="24" class="col">
+                <el-col v-bind:span="24" class="col" style="margin-top: 2px !important;height:30px;">
                     <div class="divcss">重污染河道(条)：</div>
                     <div class="text-gra">115</div>
                 </el-col>
 
-                <el-col v-bind:span="8">
-                    <div class="colcss">合格:</div>
-                    <div class="colcss"> 220条</div>
+                <el-col v-bind:span="8" style="margin-top: 2px !important;height:30px;">
+                    <div class="colcss" style="margin-left:10px;">合格:</div>
+                    <div class="colcss numcss"> 220条</div>
                 </el-col>
-                <el-col v-bind:span="8">
+                <el-col v-bind:span="8" style="margin-top: 2px !important;height:30px;">
                     <div class="colcss">不合格:</div>
-                    <div class="colcss"> 112条</div>
+                    <div class="colcss numcss"> 112条</div>
                 </el-col>
-                <el-col v-bind:span="8">
+                <el-col v-bind:span="8" style="margin-top: 2px !important;height:30px;">
                     <div class="colcss">合格率:</div>
-                    <div class="colcss"> 62.7%</div>
+                    <div class="colcss numcss"> 62.7%</div>
                 </el-col>
             </el-row>
         </div>
-
-        <div class="piediv">
+        <div class="piediv" id="interval">@*interval：块与块的上下间距*@
             <div class="titlediv szybdiv">水质月报(12月)</div>
             <com-pie v-bind:option="pieOption" class="piecss"></com-pie>
             <div class="centerdiv">
                 <div>根据有机物污染综合评价</div>
                 <div class="paddingcss">A值法(各断面均值)</div>
-                <div class="paddingcss">同比：5.2%</div>
-                <div class="paddingcss">环比：2.2%</div>
+                <div class="paddingcss">同比：5.2%<span style="margin-left:5px;"><img src="/Images/szysy/ico_zengz.png"></span></div>
+                <div class="paddingcss">环比：2.2%<span style="margin-left:5px;"><img src="/Images/szysy/ico_xiaj.png"></span></div>
             </div>
         </div>
 
         <div class="bardiv">
             <div class="titlediv szdiv" v-on:click="getFaterSzdbl">清洁水行动水质达标率(12月)</div>
-            <com-bar v-bind:option="barOption" class="barcss"></com-bar>
+            <com-bar v-bind:option="barOption" ref="bar" class="barcss"></com-bar>
         </div>
     </div>
 </script>
@@ -77,18 +74,21 @@
         },
         mounted: function () {
             const that = this;
+
+            $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             $(window).resize(function () {
                 that.leftheight = document.body.clientHeight - 32;
+                $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             });
             this.init();
         },
 
         methods: {
             //获取地图河道信息
-            getFatherHD: function () {
-                this.$emit('gethd-event');
+            //getFatherHD: function () {
+            //    this.$emit('gethd-event');
                     
-            },
+            //},
             getFaterSzdbl:function(){
                 this.$emit('getszdbl-event')
             },
@@ -124,13 +124,13 @@
                                 fontSize: 14,
                                 fontWeight: 'bold'
                             },
-                            left: '36%',
-                            top: '33%'
+                            left: '35%',
+                            top: '31%'
                         },
                         legend: {
                             orient: 'horizontal',
-                            bottom: 10,
-                            left: 8,
+                            bottom: 0,
+                            left: 2,
                             selectedMode: false,
                             data: ['Ⅱ类', 'Ⅲ类', 'Ⅳ类', 'Ⅴ类', '劣Ⅴ类'],
                             width: 240,
@@ -142,7 +142,7 @@
                             {
                                 name: '访问来源',
                                 type: 'pie',
-                                radius: ['40%', '75%'],
+                                radius: ['40%', '70%'],
                                 center: ['45%', '40%'],
                                 label: {
                                     normal: {
@@ -172,10 +172,10 @@
                   });
             },
             setBarData: function (url, param) {
-                this.$children[3].charts.showLoading();
+                this.$refs.bar.charts.showLoading();
                 axios.post(url)
                   .then(function (response) {
-                      this.$children[3].charts.hideLoading();
+                      this.$refs.bar.charts.hideLoading();
                       this.barOption = {
                           color: '#50a6ff',
                           title: {
@@ -192,7 +192,9 @@
                               type: 'category',
                               data: ['庄行', '拓林', '南桥', '青村', '金汇', '奉城', '四团', '海湾'],
                               axisLabel: {
-                                  color: '#ffffff'
+                                  color: '#ffffff',
+                                  interval: 0,//横轴信息全部显示  
+                                  rotate: 30,//-30度角倾斜显示  
                               },
                               axisTick: {
                                   show: false
@@ -233,7 +235,7 @@
                                   name: '达标率',
                                   type: 'bar',
                                   barWidth: '60%',
-                                  data: [100, 95, 100, 100, 100, 100, 100, 100],
+                                  data: [100, 95, 100, 93, 100, 86, 91, 100],
                                   label: {
                                       normal: {
                                           show: true,
@@ -270,13 +272,22 @@
         width: 100%;
         overflow: hidden;
         /*min-width: 315px;*/
-        min-height: 650px;
+        min-height: 610px;
+        position:relative;
     }
+
     .xzqhrow {
         padding: 10px 40px 0 0;
     }
     .xzqh {
-        width:64px;height:22px;color:white; text-align:center; background-color:#0056ce;
+        width:64px;
+        height:22px;
+        line-height:22px;
+        color:white; 
+        margin: -4px 0 0 44px;
+        text-align:center; 
+        float:left; 
+        background-color:#0056ce;
     }
     .titlediv {
         position: absolute;
@@ -285,7 +296,7 @@
         z-index: 1246;
         background-color: #051266;
         width: 100px;
-        height: 30px;
+        height: 20px;
         color: #22eff8;
         font-size:16px;
         font-family: "微软雅黑";
@@ -306,6 +317,7 @@
         height: 20%;
         position: relative;
         border: 1px solid #0146b2;
+        width:99%;
     }
 
     .piediv {
@@ -313,13 +325,15 @@
         margin-top: 16px;
         position: relative;
         border: 1px solid #0146b2;
+          width:99%;
     }
 
-    .bardiv {
+    #leftContent .bardiv {
         height:40%;
-        margin-top: 16px;
-        position: relative;
+        position:absolute;
+        bottom:0px;
         border: 1px solid #0146b2;
+        width:99%;
     }
 
     .topleft {
@@ -335,18 +349,20 @@
     .col {
         height: 30px;
         margin-left: 10px;
-        margin-top: 5px !important;
+        margin-top: 10px !important;
         line-height: 30px;
     }
 
-    .colcss {
-        margin-top: 16px;
+   #leftContent .colcss {
         color: #ffffff;
         font-size: 14px;
         font-family: 'microsoft yahei';
         float: left;
     }
-
+    #leftContent .numcss{
+         font-size:16px !important;
+         line-height:20px;
+     }
     .labelcss {
         color: #08e5f5 !important;
         font-size: 16px !important;
@@ -361,7 +377,7 @@
         font-family: Arial;
         color: #ffffff;
         line-height: 21px;
-        margin-left: 20px !important;
+        margin-left: 5px !important;
         background: linear-gradient(#ffffff, #05d2ff);
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -374,18 +390,18 @@
 
     .piecss {
         height: 95%;
-        width: 60% !important;
+        width: 55% !important;
         float: left;
     }
 
     .centerdiv {
-        width: 38%;
+        width: 42%;
         height: 80%;
         float: left;
         color: #ffffff;
         font-size:14px;
         font-family:'Microsoft YaHei';
-        margin-top:50px;
+        margin-top:30px;
     }
 
     .barcss {

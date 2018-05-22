@@ -39,7 +39,8 @@
         <div id="mapTitle">
             {{mapTitle}}
         </div>
-        <el-dialog title="详情" v-bind:visible.sync="centerDialogVisible" v-bind:before-close="mapHandleClose" center> @**@
+        <el-dialog title="详情" v-bind:visible.sync="centerDialogVisible" v-bind:before-close="mapHandleClose" center>
+            @**@
             @*<span>这是一段信息</span>*@
         </el-dialog>
     </div>
@@ -55,7 +56,8 @@
                 centerDialogVisible: false,
                 layers: null,
                 markerLayer: null,   //具体测站图层
-                fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                //fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
+                fxbaselayerurl: "http://172.18.1.25:8090/iserver/services/map-ugcv5-fxjztiled/rest/maps/fxjz_tiled",
                 markerPointData: [
                      { x: 121.37811, y: 30.93234, twon: "庄行镇", statId: "fx-10012", type: 1 },
                      { x: 121.45077, y: 30.95084, twon: "南桥镇", statId: "fx-10013", type: 0 },
@@ -105,7 +107,7 @@
             //加载图层信息
             addLayers: function () {
                 this.map.addLayers(this.layers);
-                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 1);
                 this.addMarkerPoints();//加载marker标注点
             },
             //显示详情弹框
@@ -173,40 +175,54 @@
     #com_szymap {
         display: none;
     }
+
     #mapContainer {
         width: 100%;
         border: 1px solid #0146b2;
         overflow: hidden;
         min-width: 400px;
-        min-height: 645px;
+        min-height: 610px;
         background-color: #051266;
     }
-    #mapContainer .a-link-water{
-        top: 10px;
-        margin-bottom: 20px;
-        font-family: "微软雅黑";
-        font-size: 12px;
-        color: #1ED6E4;
-    }
-    #mapContainer #show_map {
-        width: 100%;
-        height: 70%;
-        min-width: 300px;
-        min-height: 400px;
-        border: 0px;
-        background-color: #051266;
-    }
-    #mapContainer .map_buttom_content {
-        font-family: "微软雅黑";
-        font-size: 13px;
-        color: #ffffff;
-    }
+
+        #mapContainer .a-link-water {
+            top: 10px;
+            margin-bottom: 20px;
+            font-family: "微软雅黑";
+            font-size: 12px;
+            color: #1ED6E4;
+        }
+
+        #mapContainer #show_map {
+            width: 100%;
+            height: 95%;
+            min-width: 300px;
+            min-height: 400px;
+            border: 0px;
+            background-color: #051266;
+        }
+
+        #mapContainer .map_buttom_content {
+            position: absolute;
+            width: 100%;
+            height: 130px;
+            left: 1px;
+            bottom: 1px;
+            font-family: "微软雅黑";
+            font-size: 13px;
+            color: #ffffff;
+            z-index: 2048;
+            background-color: #051266;
+        }
+
     .map_buttom_content .el-row {
         margin-top: 7px;
     }
-    .map_buttom_content .el-row:first-child {
-        margin-top: 25px;
-    }
+
+        .map_buttom_content .el-row:first-child {
+            margin-top: 25px;
+        }
+
     #mapTitle {
         position: absolute;
         top: -10px;
@@ -260,5 +276,4 @@
     .el-tabs__item {
         color: white;
     }
-
 </style>

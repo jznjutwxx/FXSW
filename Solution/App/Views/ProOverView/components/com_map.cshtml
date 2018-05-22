@@ -487,6 +487,7 @@
                             po = spData[i];
                             po.status = dbData[j].n_pace_status;
                             po.name = dbData[j].s_name;
+                            po.sid = dbData[j].s_id;
                             k = 1;
                             break breakout;
                         }
@@ -531,6 +532,7 @@
                     }
                     var icon = new SuperMap.Icon(picUrl, size, offset);
                     var marker = new SuperMap.Marker(new SuperMap.LonLat(podata[i].x, podata[i].y), icon);
+                    marker.sid = podata[i].sid;
                     marker.id = podata[i].id;
                     marker.name = podata[i].name;
                     marker.year = podata[i].year;
@@ -582,8 +584,17 @@
                 this.infowin = framedCloud;
                 this.map.addPopup(framedCloud);
                 $('#showGcDetail').click(function () {
-                    //打开工程详情页面
-                    console.log("打开工程详情");
+                    if (that.type == '骨干河道' || that.type == '中小河道') {
+                        window.open("/BackboneRiverway/LookProject?id=" + that.sid + "&flag=false");
+                    } else if (that.type == '其它水利工程') {
+                        window.open("/HydraulicEngineer/Detail?id=" + that.sid + "&flag=false");
+                    } else if (that.type == '小型农田水利') {
+                        window.open("/FarmlandWater/DetailPage?id=" + that.sid + "&flag=false");
+                    } else if (that.type == '农村生活污水') {
+                        window.open("/SanitarySewage/DetailPage?id=" + that.sid + "&flag=false");
+                    } else {
+                        console.log(that.type);
+                    }
                 })
             },
             closeInfoWin: function () {

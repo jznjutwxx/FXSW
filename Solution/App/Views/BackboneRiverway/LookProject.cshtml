@@ -538,12 +538,14 @@
         </div>
     </div>
 
-    <div style="margin-left:47%;">
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
         <el-button plain v-on:click="openIndex">返回</el-button>
     </div>
 </div>
+
 @*@Html.Partial("~/Views/BackboneRiverway/components/com_table.cshtml")*@
 @Html.Partial("~/Views/components/gcctMap/com_gcctView.cshtml")
+
 <script>
     new Vue({
         el: "#app",
@@ -557,33 +559,16 @@
             finishData: [],
             imgData: [
                 //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img2.imgtn.bdimg.com/it/u=302701032,2300144492&fm=27&gp=0.jpg" }
             ],
             projectFile: [
-                {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }, {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }, {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }
+                //{
+                //    "s_id": "D102247D6F2145258A2D3748E0E9306E",
+                //    "s_file_name": "名称",
+                //    "s_type": "工程图纸",
+                //    "s_person": "田俊",
+                //    "s_create_time": "2018-03-05 14:21",
+                //    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
+                //},
             ],
             height: '0px',
             gcctmapheight:document.documentElement.clientHeight - 200,
@@ -606,7 +591,7 @@
             this.setSize();
             this.reSize();
             this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
-            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "工程图纸" });
+            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "图纸" });
         },
         computed: {
         },
@@ -681,6 +666,9 @@
             handleClick: function (tab, event) {
                 //debugger
                 //console.log(tab, event);
+                if (tab.label == "工程图纸") {
+                    tab.label = "图纸";
+                }
                 this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
@@ -782,6 +770,7 @@
     }
     #appFiles {
         padding: 20px 0;
+        margin-bottom:50px;
     }
 
         #appFiles th {

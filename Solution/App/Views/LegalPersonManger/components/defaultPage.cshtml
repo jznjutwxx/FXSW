@@ -9,24 +9,26 @@
             <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
             <el-button type="primary" class="btnDown"></el-button>
             <el-button type="primary" class="btnImport"></el-button>
-            <el-button type="primary" icon="el-icon-upload2" v-on:click="exportExcel">导出</el-button>
+            <el-button type="primary" icon="el-icon-upload2" v-on:click="exportExcel" size="small"  plain>导出</el-button>
         </div>
-        <el-table v-bind:data="frData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" id="out-table">
-            <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号'>
-            </el-table-column>
-            <el-table-column property="frname" label="法人姓名">
-            </el-table-column>
-            <el-table-column property="zh" label="账号">
-            </el-table-column>
-            <el-table-column property="glgz" label="关联未完结工程">
-            </el-table-column>
-            <el-table-column property="cz" label="操作">
-                <template slot-scope="scope">
-                    <el-button size="mini" v-on:click="showEditPage(scope)">编辑</el-button>
-                    <el-button size="mini" type="danger" v-on:click="deletFRinfo">删除</el-button>
-                </template>
-            </el-table-column>
-        </el-table>
+        <div id="out-table">
+            <el-table v-bind:data="frData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号'>
+                </el-table-column>
+                <el-table-column property="frname" label="法人姓名">
+                </el-table-column>
+                <el-table-column property="zh" label="账号">
+                </el-table-column>
+                <el-table-column property="glgz" label="关联未完结工程">
+                </el-table-column>
+                <el-table-column property="cz" label="操作">
+                    <template slot-scope="scope">
+                        <el-button size="mini" v-on:click="showEditPage(scope)">编辑</el-button>
+                        <el-button size="mini" type="danger" v-on:click="deletFRinfo">删除</el-button>
+                    </template>
+                </el-table-column>
+            </el-table>
+        </div>
         <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frData.length">
         </el-pagination>
     </div>
@@ -45,20 +47,20 @@
                     mm: "mima0",
                     nf: "2017",
                     town: "拓林",
-                    gzclass:"骨干河道",
+                    gzclass: "骨干河道",
 
 
                 }, {
-                    id:"1gdhsh44444hhedh",
+                    id: "1gdhsh44444hhedh",
                     frname: "詹星星",
                     zh: "supermap123",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm:'mima1',
+                    mm: 'mima1',
                     nf: "2018",
                     town: "海湾",
                     gzclass: "骨干河道",
                 }, {
-                    id:"2gdhsh44444hhedh",
+                    id: "2gdhsh44444hhedh",
                     frname: "王星星",
                     zh: "wb111",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
@@ -67,7 +69,7 @@
                     town: "庄行",
                     gzclass: "骨干河道",
                 }, {
-                    id:"3gdhsh44444hhedh",
+                    id: "3gdhsh44444hhedh",
                     frname: "王星星",
                     zh: "shwb",
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
@@ -101,7 +103,7 @@
                     mm: 'mima6',
                     nf: "2015",
                     town: "拓林",
-                gzclass: "骨干河道",
+                    gzclass: "骨干河道",
 
                 }, {
                     frname: "王星星",
@@ -230,7 +232,7 @@
                 pagesize: 14,
                 addpage_visible: false,
                 editpage_visible: false,
-                nowEditData:null,//当前编辑的数据
+                nowEditData: null,//当前编辑的数据
             }
         },
         components: {
@@ -264,7 +266,7 @@
                 this.addpage_visible = false;
                 this.dataToFather();
             },
-            dataToFather:function(){
+            dataToFather: function () {
                 this.$emit("defaultpage-event", this.addpage_visible, this.editpage_visible, this.nowEditData);
             },
             //查询法人信息
@@ -290,8 +292,12 @@
                 var wbout = XLSX.write(wb, { bookType: 'xlsx', bookSST: true, type: 'array' })
                 try {
                     FileSaver.saveAs(new Blob([wbout], { type: 'application/octet-stream' }), 'sheetjs.xlsx')
-                } catch (e) { if (typeof console !== 'undefined') console.log(e, wbout) }
-                return wbout
+                }
+                catch (e) {
+                    if (typeof console !== 'undefined')
+                        console.log(e, wbout);
+                }
+                return wbout;
             },
         },
         watch: {

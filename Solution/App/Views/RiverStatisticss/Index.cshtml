@@ -1,7 +1,7 @@
 ﻿@{
-    ViewBag.Title = "河道统计";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "设施子系统-河道统计";
 }
-
 <div id="app">
     <div class="center">
         <com-bar v-bind:option="barOption" v-bind:style='styles'></com-bar>
@@ -15,6 +15,7 @@
                 <el-radio label="6">清洁水</el-radio>
                 <el-radio label="7">水功能</el-radio>
             </el-radio-group>
+
         </div>
     </div>
     <com-base-table v-bind:height="height" v-bind:tabledatas="tableData" class="com-base-table"></com-base-table>
@@ -23,9 +24,9 @@
 @Html.Partial("~/Views/components/echarts/com_bar.cshtml")
 @Html.Partial("~/Views/components/tables/com_base_table.cshtml")
 
-
 <script>
     new Vue({
+
         el: '#app',
         data: {
             styles: {
@@ -39,8 +40,9 @@
                 tableKey: [],
                 tableData: []
             },
+
             choose: '1',
-            charTitle: '河道总数统计图',
+            charTitle: '雨量站统计图',
         },
         components: {
             'com-bar': comBar,
@@ -52,7 +54,7 @@
             this.init()
         },
         methods: {
-          
+
             init: function () {
                 this.setData('/RiverStatisticss/GetData', null)
             },
@@ -155,10 +157,10 @@
                                        type: 'index',
                                        width: '50',
                                    }, {
-                                       name: '统计类别',
-                                       value: 'EngineeringQuantity',
+                                       name: '设施类型',
+                                       value: 'FacilityType',
                                    }, {
-                                       name: '全区（条）',
+                                       name: '全区',
                                        value: 'WholeAreaCompleted',
                                    }, {
                                        name: '庄行镇',
@@ -187,7 +189,7 @@
                                    }
                               ],
                               tableData: [{
-                                  EngineeringQuantity: '河道总数',
+                                  FacilityType: '雨量站',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -198,7 +200,7 @@
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
                               }, {
-                                  EngineeringQuantity: '市、区级河道',
+                                  FacilityType: '水位站',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -209,7 +211,7 @@
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
                               }, {
-                                  EngineeringQuantity: '镇级河道',
+                                  FacilityType: '水文站',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -220,7 +222,7 @@
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
                               }, {
-                                  EngineeringQuantity: '村级河道',
+                                  FacilityType: '水质站',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -231,7 +233,7 @@
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
                               }, {
-                                  EngineeringQuantity: '重污染',
+                                  FacilityType: '水表',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -242,7 +244,7 @@
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
                               }, {
-                                  EngineeringQuantity: '清洁水',
+                                  FacilityType: '管网',
                                   WholeAreaCompleted: '4598',
                                   ZhuangHangTown: '298',
                                   NanQiaoTown: '290',
@@ -252,18 +254,7 @@
                                   HaiWanTown: '290',
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
-                              }, {
-                                  EngineeringQuantity: '水功能',
-                                  WholeAreaCompleted: '4598',
-                                  ZhuangHangTown: '298',
-                                  NanQiaoTown: '290',
-                                  ZhelinTown: '290',
-                                  JinhuiTown: '290',
-                                  QingCunTown: '290',
-                                  HaiWanTown: '290',
-                                  FengChengTown: '290',
-                                  SiTuanTown: '290'
-                              },
+                              }
                               ]
                           }
                       } else {
@@ -318,6 +309,10 @@
             changeChecked: function (param) {
                 //this.choose = param;
             },
+
+            MoreEvent: function () {
+                this.more = this.param;
+            },
             resize: function () {
                 $(window).resize(function () {
                     this.setSize()
@@ -325,7 +320,6 @@
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight
-                //var queryH = this.$refs.GghdGclStatisticsQuery.$el.clientHeight
                 var contentH = docH - 40
                 this.styles.height = (contentH / 2) + 'px'
                 this.height = contentH / 2

@@ -34,11 +34,11 @@
                               prefix-icon="el-icon-search" size="small">
                     </el-input>
                 </el-form-item>
-                <el-form-item style="padding-left:50px;">
+                <el-form-item style="padding-left:20px;">
                     <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent" class="btnSel">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" class="btnAdd"></el-button>
+                    <el-button type="primary" class="btnAdd" v-on:click="addProject"></el-button>
                     <el-button type="primary" class="btnDown"></el-button>
                     <el-button type="primary" class="btnImport"></el-button>
                 </el-form-item>
@@ -71,16 +71,17 @@
                 gTown: '',
                 pickerOptionsS: {
                     disabledDate: function (time) {
-                        if (this.eYear != "") {
-                            return time.getTime() > Date.now() || time.getTime() > new Date(this.eYear);
+                        if (this.endYearValue != "" && this.endYearValue != null && this.endYearValue != undefined) {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
                         } else {
                             return time.getTime() > Date.now();
+                            //return time.getTime() > Date.now() - 8.64e6
                         }
                     }.bind(this)
                 },
                 pickerOptionsE: {
                     disabledDate: function (time) {
-                        return time.getTime() < new Date(this.sYear) || time.getTime() > Date.now();
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
                     }.bind(this)
                 },
 
@@ -122,13 +123,23 @@
                   });
             },
             emitEvent: function () {
-                this.param.startYear = new Date(this.startYearValue).getFullYear();
-                this.param.endYear = new Date(this.endYearValue).getFullYear();
+                var sYear = new Date(this.startYearValue).getFullYear();
+                var eYear = new Date(this.endYearValue).getFullYear();
+                if (sYear == '1970') {
+                    sYear = '';
+                }
+                if (eYear == '1970') {
+                    eYear = '';
+                }
+                this.param.startYear = sYear;
+                this.param.endYear = eYear;
                 this.param.Status = this.gStatus;
                 this.param.Town = this.gTown;
                 this.$emit('emit-event', this.param)
-                },
-            
+            },
+            addProject: function () {
+                window.location = "/BackboneRiverway/AddProject?id=zxx";
+            },
             changeStatus: function (param) {
                 this.gStatus = param;
             },

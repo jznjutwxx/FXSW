@@ -51,7 +51,7 @@
                     eYear: moment().format("YYYY"),
                     pickerOptionsS: {
                         disabledDate: function (time) {
-                            if (this.eYear != "") {
+                            if (this.eYear != "" && this.eYear != null && this.eYear != undefined) {
                                 return time.getTime() > Date.now() || time.getTime() > new Date(this.eYear);
                             } else {
                                 return time.getTime() > Date.now();

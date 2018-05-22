@@ -6,6 +6,10 @@
 @Html.Partial("~/Views/LegalPersonManger/components/defaultPage.cshtml")
 @Html.Partial("~/Views/LegalPersonManger/components/addPage.cshtml")
 @Html.Partial("~/Views/LegalPersonManger/components/editPage.cshtml")
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/1.3.3/FileSaver.min.js"></script>
+<script src="http://oss.sheetjs.com/js-xlsx/xlsx.full.min.js"></script>
+<script src="~/Scripts/ExportExcel/FileSaver.js-master/src/FileSaver.js"></script>
+<script src="~/Scripts/ExportExcel/js-xlsx-master/dist/xlsx.full.min.js"></script>
 <div id="frmanger">
     <default-page v-on:defaultpage-event="getDefaultpageDate">
         <!--v-bind:属性名一定要小写-->

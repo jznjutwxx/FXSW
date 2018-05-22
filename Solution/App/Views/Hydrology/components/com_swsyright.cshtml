@@ -1,8 +1,6 @@
 ﻿<script type="text/x-template"  id="com-swsyright">
     <div id="rightContent" v-bind:style="{height:rightheight+'px'}">
-        <div class="titlediv cztj" v-on:click="getFaterZctj">测站统计</div>
-
-        <div class="topdiv">
+        <div class="topdiv2">
             <el-row class="topleft">
                 <el-col v-bind:span="24" class="col">
                     <span class="divcss swzcss">水文站总数(座)：</span>
@@ -16,51 +14,51 @@
                 </el-col>
                 <el-col v-bind:span="7">
                     <div class="cztjname">雨量站</div>
-                    <div class="col cztjnum">14</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
                 </el-col>
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水位站.png"></div>
                 </el-col>
                 <el-col v-bind:span="7">
                     <div class="cztjname">水位站</div>
-                    <div class="col cztjnum">142</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
                 </el-col>
             </el-row>
             <el-row type="flex" class="topicon" justify="center" align="middle">
                 <el-col v-bind:span="2"> </el-col>
                 <el-col v-bind:span="4">
-                    <div style="float:left;"><img src="/Images/swsy/水质站.png"></div>
-                </el-col>
-                <el-col v-bind:span="7">
-                    <div class="cztjname">水质站</div>
-                    <div class="col cztjnum">14</div>
-                </el-col>
-                <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水文站.png"></div>
                 </el-col>
                 <el-col v-bind:span="7">
                     <div class="cztjname">水文站</div>
-                    <div class="col cztjnum">142</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
+                </el-col>
+                <el-col v-bind:span="4">
+                    <div style="float:left;"><img src="/Images/swsy/水质站.png"></div>
+                </el-col>
+                <el-col v-bind:span="7">
+                    <div class="cztjname">水质站</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
                 </el-col>
             </el-row>
         </div>
 
-        <div class="bardiv" style="height: 35%;">
-            <div class="titlediv">雨量统计</div>
+        <div class="bardiv2" id="interval2">@*interval2：块与块的上下间距*@
+            <div class="titlediv" style="width: 70px !important;left: 22px !important;">雨量统计</div>
             <com-bar v-bind:option="barOption" class="barcss"></com-bar>
         </div>
 
         <div class="tablediv">
-            <div class="titlediv">实时报警信息</div>
-            <div class="tablecss">
-                <el-row class="titlecss">
+            <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
+            <div class="tablecss" >
+                <el-row class="headercss titlecss" style="">
                     <el-col v-bind:span="3">序号</el-col>
                     <el-col v-bind:span="8">站点名称</el-col>
                     <el-col v-bind:span="8">报警类型</el-col>
                     <el-col v-bind:span="5">报警信息</el-col>
                 </el-row>
                 <el-row class="titlecss" v-for="todo in tableList">
-                    <el-col v-bind:span="3">{{todo.id}}</el-col>
+                    <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
                     <el-col v-bind:span="8">{{todo.text}}</el-col>
                     <el-col v-bind:span="8">{{todo.type}}</el-col>
                     <el-col v-bind:span="5">{{todo.imformation}}</el-col>
@@ -98,8 +96,10 @@
         },
         mounted: function () {
             const that = this;
+            $("#interval2").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             $(window).resize(function () {
                 that.rightheight = document.body.clientHeight - 32;
+                $("#interval2").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             });
             this.setSize();
             this.resize();
@@ -107,9 +107,9 @@
         },
 
         methods: {
-            getFaterZctj: function () {
-                this.$emit('getcztj-event')
-            },
+            //getFaterZctj: function () {
+            //    this.$emit('getcztj-event')
+            //},
             init: function () {
                 this.setData('/Hydrology/GetData', null);
             },
@@ -130,20 +130,29 @@
                         },
                         grid: {
                             top: '2%',
-                            left: '4%',
-                            right: '4%',
+                            left: '2%',
+                            right: '8%',
                             bottom: '5%',
                         },
                         xAxis: {
-                            name: '(mm)',
+                            name: 'mm',
                             nameLocation: 'end',
+                            nameGap: '1',
                             type: 'value',
-                            boundaryGap: [0, 0.01],
+                            nameTextStyle: {
+                                color: '#ffffff'
+                            },
                             splitLine: { show: false },//去除网格线
                             axisTick: { show: false },
                             axisLabel: {
                                 color: '#ffffff'
                             },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#3d4997',
+                                    //  width:1,//这里是为了突出显示加上的  
+                                }
+                            }
                         },
                         yAxis: {
                             type: 'category',
@@ -152,12 +161,18 @@
                             axisLabel: {
                                 color: '#ffffff'
                             },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#3d4997',
+                                    //  width:1,//这里是为了突出显示加上的  
+                                }
+                            }
                         },
                         series: [
                             {
                                 name: '',
                                 type: 'bar',
-                                data: [200, 145, 155, 134, 200, 125],
+                                data: [126, 175, 115, 174, 113, 165],
                                 label: {
                                     normal: {
                                         show: true,
@@ -194,12 +209,12 @@
     #rightContent {
         width: 100%;
         overflow: hidden;
-        min-width: 315px;
-        min-height: 650px;
+        min-width: 280px;
+        min-height: 610px;
+        position:relative;
     }
-
-    .topleft {
-        height: 50px !important;
+    .topleft{
+        height: 35px !important;
     }
     .cztj{
         left: 35px !important;
@@ -207,13 +222,13 @@
     }
 
     .topicon {
-        height: 50px;
+        height: 43px;
     }
 
-    .col {
+    #rightContent .col {
         height: 30px;
         margin-left: 10px;
-        margin-top: 16px;
+        margin-top:  0px !important;
         line-height: 30px;
         text-align: center;
         width: 95%;
@@ -251,7 +266,7 @@
         font-family: Arial !important;
         margin-top: -10px;
         margin-left: 0 !important;
-        text-align: left;
+        text-align: left !important;
     }
 
     .barcss {
@@ -261,8 +276,9 @@
 
     .tablediv {
         height: 40%;
-        margin-top: 16px;
-        position: relative;
+        width:99%;
+       bottom:0;
+        position: absolute;
         border: 1px solid #0146b2;
     }
 
@@ -272,25 +288,40 @@
         margin-top: 10px;
         overflow: auto;
     }
-
+    .headercss{
+        background-color:#2d3a8d;margin-top: 14px;text-align:center !important;
+    }
     .titlecss {
-        text-align: center;
+        text-align: left;
         color: #ffffff;
         float: left;
-        font-size: 14px;
+        font-size: 12px;
         font-family: 'Microsoft YaHei';
-        height: 45px;
+        height: 30px;
         padding-top: 8px;
         width: 100%;
+        line-height: 15px;
     }
 
     .tabcss {
         color: #ffffff;
         float: left;
-        font-size: 14px;
+        font-size: 12px;
         font-family: 'Microsoft YaHei';
         text-align: left;
         height: 45px;
         padding-top: 8px;
+    }
+    .topdiv2 {
+        height: 20%;
+        position: relative;
+        border: 1px solid #0146b2;
+        width: 99%;
+    }
+     .bardiv2{
+        height:35%;
+        position: relative;
+        border: 1px solid #0146b2;
+        width:99%;
     }
 </style>

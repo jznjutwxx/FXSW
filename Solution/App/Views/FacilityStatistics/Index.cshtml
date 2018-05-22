@@ -13,6 +13,9 @@
                 <el-radio label="4">水质站</el-radio>
                 <el-radio label="5">水表</el-radio>
                 <el-radio label="6">管网</el-radio>
+                <el-radio label="7">阀门</el-radio>
+                <el-radio label="8">水厂</el-radio>
+                <el-radio label="9">套闸</el-radio>
             </el-radio-group>
          
           
@@ -63,31 +66,37 @@
                 this.setTableData(url, param)
             },
             setBarData: function (url, param) {
-                //this.$children[1].charts.showLoading();
+              //  this.$children[1].charts.showLoading();
                 axios.post(url)
                   .then(function (response) {
-                      //this.$children[1].charts.hideLoading();
+                    //  this.$children[1].charts.hideLoading();
                       switch (this.choose) {
                           case '1':
-                              this.charTitle = "河道总数统计图";
+                              this.charTitle = "雨量站统计图";
                               break;
                           case '2':
-                              this.charTitle = "市、区级河道统计图";
+                              this.charTitle = "水位站统计图";
                               break;
                           case '3':
-                              this.charTitle = "镇级河道统计图";
+                              this.charTitle = "水文站统计图";
                               break;
                           case '4':
-                              this.charTitle = "村级河道统计图";
+                              this.charTitle = "水质站统计图";
                               break;
                           case '5':
-                              this.charTitle = "重污染统计图";
+                              this.charTitle = "水表统计图";
                               break;
                           case '6':
-                              this.charTitle = "清洁水统计图";
+                              this.charTitle = "管网统计图";
                               break;
                           case '7':
-                              this.charTitle = "水功能统计图";
+                              this.charTitle = "阀门统计图";
+                              break;
+                          case '8':
+                              this.charTitle = "水厂统计图";
+                              break;
+                          case '9':
+                              this.charTitle = "套闸统计图";
                               break;
                           default:
                               break;
@@ -254,7 +263,41 @@
                                   HaiWanTown: '290',
                                   FengChengTown: '290',
                                   SiTuanTown: '290'
+                              }, {
+                                  FacilityType: '阀门',
+                                  WholeAreaCompleted: '4598',
+                                  ZhuangHangTown: '298',
+                                  NanQiaoTown: '290',
+                                  ZhelinTown: '290',
+                                  JinhuiTown: '290',
+                                  QingCunTown: '290',
+                                  HaiWanTown: '290',
+                                  FengChengTown: '290',
+                                  SiTuanTown: '290'
+                              }, {
+                                  FacilityType: '水厂',
+                                  WholeAreaCompleted: '4238',
+                                  ZhuangHangTown: '298',
+                                  NanQiaoTown: '190',
+                                  ZhelinTown: '290',
+                                  JinhuiTown: '290',
+                                  QingCunTown: '260',
+                                  HaiWanTown: '290',
+                                  FengChengTown: '290',
+                                  SiTuanTown: '260'
+                              }, {
+                                  FacilityType: '套闸',
+                                  WholeAreaCompleted: '4238',
+                                  ZhuangHangTown: '298',
+                                  NanQiaoTown: '190',
+                                  ZhelinTown: '290',
+                                  JinhuiTown: '290',
+                                  QingCunTown: '260',
+                                  HaiWanTown: '290',
+                                  FengChengTown: '290',
+                                  SiTuanTown: '260'
                               }
+                              
                               ]
                           }
                       } else {

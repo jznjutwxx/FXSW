@@ -62,7 +62,7 @@
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="openEdit(scope.row.s_id)">编辑</el-button>
                     <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
-                    <el-button size="mini" type="danger">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="DeleteData(scope.row.s_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -93,11 +93,12 @@
         },
         components: {
             "com-query": query,
-        },//
+        },
         mounted: function () {
             this.setSize()
             this.resize()
-            this.setTableData('/BackboneRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.smallQuery.Town, Status: this.$refs.smallQuery.Town })
+            this.setTableData('/BackboneRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '1', Town: '四团镇' });
+            //this.$refs.smallQuery.gStatus   this.$refs.smallQuery.gTown
         },
         methods: {
             //indexMethod(index) {
@@ -106,11 +107,12 @@
             indexMethod: function(index) {
                 return (index + 1) + (this.currentPage - 1) * this.pagesize;
             },
-            openLook: function (ID) {
-                window.location = "LookProject?id=" + ID;
+            openLook: function (id) {
+                window.location = "LookProject?id=" + id;
                 //window.open('LookProject?id=' + ID);
             },
             getEmitEvent: function (param) {
+                debugger
                 this.setTableData('/BackboneRiverway/GetProjectData', {
                     Page: this.currentPage, pageSize: this.pagesize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town
                 });
@@ -129,11 +131,42 @@
                   });
 
             },
-            openFileManage: function (ID) {
-                window.location = "FileManage?id=" + ID;
+            openFileManage: function (id) {
+                window.location = "FileManage?id=" + id;
             },
-            openEdit: function (ID) {
-                window.location = "EditProject?id=" + ID;
+            openEdit: function (id) {
+                window.location = "EditProject?id=" + id;
+            },
+            DeleteData: function (id) {
+                this.$confirm('是否确认删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    axios.post("/BackboneRiverway/DeleteProjectData", { s_id: id })
+                  .then(function (response) {
+                      debugger
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginCoreUpdateResponse.result) {
+                          this.$message({
+                              type: 'success',
+                              message: '删除成功!'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginCoreUpdateResponse.result);
+                      }
+                      debugger
+                      this.setTableData('/BackboneRiverway/GetProjectData', this.params)
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
             },
             currentChange: function (val) {
                 this.params.Page = val;

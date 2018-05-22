@@ -1,3 +1,597 @@
-﻿
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "工程管理-文件管理";
+}
+
+<div id="app">
+    <div id="appTop" style="padding-left:20px;">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="项目编号：">
+                <span style="padding-right:30px;">
+                    {{formData.S_PROJECT_NO}}
+                </span>
+            </el-form-item>
+            <el-form-item label="工程分类：">
+                <span style="padding-right:30px;">
+                    小型农田水利
+                </span>
+            </el-form-item>
+            <el-form-item label="工程状态：">
+                <span style="padding-right:30px;">
+                    <el-select class="selCss" v-model="kkkk" v-bind:disabled="isFinish">
+                        <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        </el-option>
+                    </el-select>
+                </span>
+            </el-form-item>
+        </el-form>
+
+    </div>
+    <div id="appFile">
+        <el-collapse accordion v-on:change="changeSel" v-bind:value="Status">
+            <el-collapse-item name="工前准备">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">工前准备</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="开工">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">开工</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="完工">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">完工</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="完工验收">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">完工验收</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="决算审批">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">决算审批</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+            <el-collapse-item name="竣工验收">
+                <template slot="title">
+                    <div class="blueTitle"></div>
+                    <div class="appTitle">竣工验收</div>
+                </template>
+                <div>
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
+                                <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
+                                <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </div>
+                <el-upload class="upload-demo"
+                           ref="upload"
+                           action="/SanitarySewage/UpFiles"
+                           v-bind:on-preview="handlePreview"
+                           v-bind:on-remove="handleRemove"
+                           v-bind:on-change="getFile"
+                           v-bind:on-success="sucess"
+                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                    <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                </el-upload>
+            </el-collapse-item>
+        </el-collapse>
+    </div>
+    <div id="appBtn" class="appBtn">
+        <el-button plain v-on:click="openIndex" style="width: 90px;" size="small">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" style="width: 90px;" size="small">保存</el-button>
+        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
+    </div>
+</div>
 
 
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            ID: '',
+            StatusOption: [],
+            projectFile: [],
+            height: '200',
+            tableData: [],
+            isFinish: false,
+            isShow: false,
+            tableName: '',
+            Status: '',
+            formData: {
+                S_ID: '',
+                S_NAME: '',
+                N_TYPE: '',
+                S_PROJECT_NO: '',
+                N_YEAR: '',
+                N_PACE_STATUS: '',
+                S_TOWN: '',
+                S_ADDRESS: '',
+                S_LEGAL_PERSON: '',
+                S_UNIT_DESIGN: '',
+                S_UNIT_BUILD: '',
+                S_UNIT_SUPERVISE: '',
+                N_RECKON_TOTAL_AMT: '',
+                S_REMARK: '',
+                N_CZSL: '',
+                N_ZHS: '',
+                N_JDCLHS: '',
+                N_SZNGHS: '',
+                N_JDCLZ: '',
+                N_GWCD: '',
+                N_XFJHFC: '',
+                N_TOTAL_INVEST: '',
+                N_ENGIN_COST: '',
+                N_INDEPENDENT_COST: '',
+                N_PREP_COST: '',
+                N_SIGHT_COST: '',
+                N_SUBSIDY_CITY: '',
+                N_SUBSIDY_DISTRICT: '',
+                N_SUBSIDY_TOWN: '',
+                N_WCCZSL: '',
+                N_WCZHS: '',
+                N_WCJDCLHS: '',
+                N_WCSZNGHS: '',
+                N_WCJDCLZ: '',
+                N_WCGWCD: '',
+                N_WCXFJHFC: '',
+            },
+            kkkk:0
+        },
+        components: {
+
+        },
+        mounted: function () {
+            this.ID = this.GetId().id;
+            this.getStatus("/FarmlandWater/GetDictionary", { Type: "工程状态" });
+            this.getDetail('/SanitarySewage/GetDetail', { id: this.ID });
+        },
+        methods: {
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getDetail: function (url, id) {
+                axios.post(url, id)
+                  .then(function (response) {
+                      debugger
+                      var tempData = JSON.parse(response.data);
+                      var li = JSON.parse(response.data);
+
+                      this.num = li.EnginSewageGetResponse.info.s_project_no;
+                      this.type = li.EnginSewageGetResponse.info.n_type;
+                      this.Status = li.EnginSewageGetResponse.info.n_pace_status;
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.Status });
+
+                      this.formData.S_ID = li.EnginSewageGetResponse.info.s_id;
+                      this.formData.S_NAME = li.EnginSewageGetResponse.info.s_name;
+                      this.formData.S_PROJECT_NO = li.EnginSewageGetResponse.info.s_project_no;
+                      this.formData.N_YEAR = li.EnginSewageGetResponse.info.n_year;
+                      this.formData.S_TOWN = li.EnginSewageGetResponse.info.s_town;
+                      this.formData.S_ADDRESS = li.EnginSewageGetResponse.info.s_address;
+                      this.formData.S_LEGAL_PERSON = li.EnginSewageGetResponse.info.s_legal_person;
+                      this.formData.S_UNIT_DESIGN = li.EnginSewageGetResponse.info.s_unit_design;
+                      this.formData.S_UNIT_BUILD = li.EnginSewageGetResponse.info.s_unit_build;
+                      this.formData.S_UNIT_SUPERVISE = li.EnginSewageGetResponse.info.s_unit_supervise;
+                      this.formData.N_RECKON_TOTAL_AMT = li.EnginSewageGetResponse.info.n_reckon_total_amt;
+                      this.formData.S_REMARK = li.EnginSewageGetResponse.info.s_remark;
+
+                      this.formData.N_CZSL = li.EnginSewageGetResponse.info.EnginMainSewage.n_czsl;
+                      this.formData.N_ZHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_zhs;
+                      this.formData.N_JDCLHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclhs;
+                      this.formData.N_SZNGHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_sznghs;
+                      this.formData.N_JDCLZ = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclz;
+                      this.formData.N_GWCD = li.EnginSewageGetResponse.info.EnginMainSewage.n_gwcd;
+                      this.formData.N_XFJHFC = li.EnginSewageGetResponse.info.EnginMainSewage.n_xfjhfc;
+
+                      this.formData.N_TOTAL_INVEST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_total_invest;
+                      this.formData.S_UNIT_DESIGN = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_engin_cost;
+                      this.formData.N_INDEPENDENT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_independent_cost;
+                      this.formData.N_PREP_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_prep_cost;
+                      this.formData.N_SIGHT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_sight_cost;
+
+                      this.formData.N_SUBSIDY_CITY = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_city;
+                      this.formData.N_SUBSIDY_DISTRICT = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_district;
+                      this.formData.N_SUBSIDY_TOWN = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_town;
+
+                      this.formData.N_WCCZSL = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_czsl;
+                      this.formData.N_WCZHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_zhs;
+                      this.formData.N_WCJDCLHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclhs;
+                      this.formData.N_WCSZNGHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_sznghs;
+                      this.formData.N_WCJDCLZ = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclz;
+                      this.formData.N_WCGWCD = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
+                      this.formData.N_WCXFJHFC = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
+
+                      this.kkkk = this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
+                      //this.formData.N_PACE_STATUS = this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
+                      //
+                      debugger
+                      if (li.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
+                          this.isFinish = true;
+                      } else {
+                          this.isFinish = false;
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            changeSel: function (name) {
+                this.tableName = name;
+                this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: name });
+            },
+            getProjectFile: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.projectFile = tempData.EnginFileManagerListGetResponse.file_list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            handleRemove: function (file, fileList) {
+                console.log(file, fileList);
+            },
+            handlePreview: function (file, fileList) {
+                console.log(file);
+            },
+            getFile: function (file, fileList) {
+                console.log(file);
+            },
+            sucess: function (response, file, fileList, data) {
+                if (response == "OK") {
+                    this.saveFiles("/SanitarySewage/SaveOneFile", { id: this.ID, Files: file.name, Type: this.tableName });
+                }
+            },
+            saveFiles: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileManagerReportResponse.result) {
+                          this.$message({
+                              message: '上传成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('上传失败！' + tempData.EnginFileManagerReportResponse.result);
+                      }
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.tableName });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            deleteFiles: function (id) {
+                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    axios.post("/SanitarySewage/DeleteFile", { file_ids: id })
+                  .then(function (response) {
+                      debugger
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFileDelResponse.result) {
+                          this.$message({
+                              type: 'success',
+                              message: '删除成功!'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginFileDelResponse.result);
+                      }
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.tableName });
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+
+
+            },
+            GetId: function () {
+                var url = window.location.search;
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for (var i = 0; i < strs.length; i++) {
+                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+                    }
+                }
+                return theRequest;
+            },
+            downloadFile: function (url, name) {
+                var $a = document.createElement('a');
+                $a.setAttribute("href", url);
+                $a.setAttribute("download", name);
+                var evObj = document.createEvent('MouseEvents');
+                evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+                $a.dispatchEvent(evObj);
+            },
+            downloadFile2: function (url, name) {
+                window.location.href = '/Uploader/Download?pathid=1';
+            },
+            saveStatus: function () {
+                this.formData.N_PACE_STATUS = this.kkkk;
+                axios.post('/SanitarySewage/SaveProjectStatus', { param: JSON.stringify(this.formData) })
+                  .then(function (response) {
+                      debugger
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginFarmUpdateResponse.result) {
+                          this.$message({
+                              message: '保存成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+
+            projectFinish: function () {
+                this.isFinish = true;
+            },
+            openIndex: function () {
+                    window.location = "Index";
+            },
+            StatusToNum: function (status) {
+                var result = 0;
+                switch (status) {
+                    case '工前准备':
+                        result = 1;
+                        break;
+                    case '开工':
+                        result = 10;
+                        break;
+                    case '完工':
+                        result = 20;
+                        break;
+                    case '完工验收':
+                        result = 30;
+                        break;
+                    case '决算审批':
+                        result = 40;
+                        break;
+                    case '竣工验收':
+                        result = 50;
+                        break;
+                    case '工程完结':
+                        result = 60;
+                        break;
+                    default:
+                        result='请选择';
+                }
+                return result;
+            },
+        },
+        watch: {
+
+        }
+    })
+</script>
+
+<style>
+    #app {
+        padding: 20px;
+        font-size: 14px;
+    }
+
+    #appFile .tableCss th {
+        background-color: #F5F5F5;
+    }
+
+    #appTop .selCss {
+        width: 120px;
+    }
+
+    #app .titleCss {
+        overflow: hidden;
+    }
+
+    #app .blueTitle {
+        width: 7px;
+        height: 18px;
+        background-color: #409eff;
+        float: left;
+        margin-top: 12px;
+    }
+
+    #app .appTitle {
+        float: left;
+        font-size: 14px;
+        font-weight: bold;
+        color: #666666;
+        padding-left: 10px;
+    }
+
+    #app .appBtn {
+        width: 100%;
+        text-align: center;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        height: 60px;
+        line-height: 60px;
+    }
+
+    #app .btnUpp {
+        margin: 10px 0 10px 0;
+    }
+
+    #app .btnUp {
+        width: 100px;
+        height: 32px;
+        float: left;
+        margin: 10px 0 10px 0;
+        border: 0px;
+        background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
+    }
+
+        #app .btnUp:focus {
+            background-image: url(/Images/gcgl/btn_shangchuanwj_normal.png);
+        }
+
+        #app .btnUp:hover {
+            background-image: url(/Images/gcgl/btn_shangchuanwj_active.png);
+        }
+</style>

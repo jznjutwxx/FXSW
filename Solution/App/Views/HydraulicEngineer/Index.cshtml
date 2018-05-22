@@ -89,7 +89,7 @@
             total: 0, //默认数据总数
             pagesize: 10,//每页的数据条数
             currentPage: 1,//默认开始页面
-            params: {}
+            params: []
         },
         components: {
             "com-query": comquery
@@ -97,7 +97,7 @@
         mounted: function () {
             this.resize();
             this.setSize();
-            this.setTableData('/HydraulicEngineer/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.comquery.gState, Status: this.$refs.comquery.gTown })
+            this.setTableData('/HydraulicEngineer/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.comquery.gState, Town: this.$refs.comquery.gTown })
         },
         methods: {
             sizeChange: function (pagesize) {

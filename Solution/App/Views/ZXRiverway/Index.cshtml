@@ -14,6 +14,7 @@
                   style="width: 100%"
                   class="tableCss">
             <el-table-column type="index"
+                             v-bind:index="indexMethod"
                              label="序号"
                              header-align="center"
                              align="center"
@@ -50,6 +51,7 @@
                              header-align="center"
                              label="设计单位">
             </el-table-column>
+            @*s_legal_person*@
             <el-table-column prop="s_legal_person"
                              header-align="center"
                              label="项目法人" width="100">
@@ -59,9 +61,9 @@
                              align="center"
                              width="300">
                 <template slot-scope="scope">
-                    <el-button size="mini">编辑</el-button>
+                    <el-button size="mini" v-on:click="openEdit(scope.row.s_id)">编辑</el-button>
                     <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
-                    <el-button size="mini" type="danger">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="DeleteData(scope.row.s_id)">删除</el-button>
                     @*<el-button size="mini" class="btnCss btnEdit"></el-button>
                         <el-button size="mini" class="btnCss btnFile"></el-button>
                         <el-button size="mini" class="btnCss btnDel"></el-button>*@
@@ -101,7 +103,8 @@
         mounted: function () {
             this.setSize()
             this.resize()
-            this.setTableData('/ZXRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.smallQuery.Town, Status: this.$refs.smallQuery.Town })
+            this.setTableData('/ZXRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '1', Town: '四团镇' });
+            //this.$refs.smallQuery.gStatus   this.$refs.smallQuery.gTown
         },
         methods: {
             openLook: function (ID) {
@@ -132,11 +135,48 @@
                 window.location = "/BackboneRiverway/FileManage?id=" + ID;
 
             },
+            openEdit: function (ID) {
+                window.location = "/BackboneRiverway/EditProject?id=" + ID;
+            },
+
+            DeleteData: function (id) {
+                this.$confirm('是否确认删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    axios.post("/BackboneRiverway/DeleteProjectData", { s_id: id })
+                  .then(function (response) {
+                      debugger
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginCoreUpdateResponse.result) {
+                          this.$message({
+                              type: 'success',
+                              message: '删除成功!'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + tempData.EnginCoreUpdateResponse.result);
+                      }
+                      debugger
+                      this.setTableData('/ZXRiverway/GetProjectData', this.params)
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除'
+                    });
+                });
+            },
+            indexMethod: function (index) {
+                return (index + 1) + (this.currentPage - 1) * this.pagesize;
+            },
             currentChange: function (val) {
                 this.params.Page = val;
                 this.setTableData('/ZXRiverway/GetProjectData', this.params)
             },
-
             sizeChange: function (pagesize) {
                 this.currentPage = pagesize;
             },
