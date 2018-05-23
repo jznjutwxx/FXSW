@@ -4,26 +4,33 @@
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="add">
-    <el-form v-model="addForm" ref="addForm" v-bind:inline="true" label-position="right" label-width="100px" size="small">
+    <el-form :model="addForm" ref="addForm" v-bind:inline="true" label-position="right" label-width="100px" size="small" v-bind:rules="rules">
         <div id="BasicInfo">
-            <div class="titlecss">基本信息</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">基本信息</div>
+            </el-row>
             <el-row type="flex">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程名称:" style="width:100%;">
+                    <el-form-item label="工程名称:" style="width:100%;" prop="S_NAME">
                         <el-input placeholder="请输入内容" v-model="addForm.S_NAME">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目编号:">
+                    <el-form-item label="工程编号:" prop="S_PROJECT_NO">
                         <el-input placeholder="请输入内容" v-model="addForm.S_PROJECT_NO">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="年度:">
-                        <el-select v-model="addForm.N_YEAR" class="selectwidth">
+                    <el-form-item label="年度:" prop="N_YEAR">
+                        @*<el-select v-model="addForm.N_YEAR" class="selectwidth">
                             <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeYear">
                             </el-option>
-                        </el-select>
+                        </el-select>*@
+                        <el-date-picker v-model="addForm.N_YEAR"
+                                        type="year"
+                                        placeholder="选择年份" class="selectwidth">
+                        </el-date-picker>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -52,12 +59,12 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="16" class="colheight el-col-16">
-                    <el-form-item label="工程地址:">
+                    <el-form-item label="工程地址:" prop="S_ADDRESS">
                         <el-input placeholder="请输入内容" v-model="addForm.S_ADDRESS" style="width:127%;">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目法人:">
+                    <el-form-item label="项目法人:" prop="S_LEGAL_PERSON">
                         <el-select v-model="addForm.S_LEGAL_PERSON" class="selectwidth">
                             <el-option v-for="item in LegalPerOption" v-bind:label="item.s_name" v-bind:value="item.s_name" v-bind:key="item.s_id" v-on:change="changeLegalper">
                             </el-option>
@@ -68,17 +75,17 @@
 
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="监理单位:">
+                    <el-form-item label="监理单位:" prop="S_UNIT_SUPERVISE">
                         <el-input placeholder="请输入内容" v-model="addForm.S_UNIT_SUPERVISE">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="施工单位:">
+                    <el-form-item label="施工单位:" prop="S_UNIT_BUILD">
                         <el-input placeholder="请输入内容" v-model="addForm.S_UNIT_BUILD">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="设计单位:">
+                    <el-form-item label="设计单位:" prop="S_UNIT_DESIGN">
                         <el-select v-model="addForm.S_UNIT_DESIGN" class="selectwidth">
                             <el-option v-for="item in DesignUnitOption" v-bind:label="item.s_name" v-bind:value="item.s_name" v-on:change="changeDesignUnit">
                                 @*v-bind:key="item.s_id"*@
@@ -89,7 +96,7 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="估算总投资:">
+                    <el-form-item label="估算总投资:" prop="N_RECKON_TOTAL_AMT">
                         <el-input placeholder="请输入内容" v-model="addForm.N_RECKON_TOTAL_AMT">
 
                     </el-form-item>
@@ -103,10 +110,13 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-        </div>
+</div>
 
         <div id="ProjectInfo">
-            <div class="titlecss"> 批复工程量</div>
+            <el-row  type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss"> 批复工程量</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区数量:">
@@ -197,7 +207,10 @@
         </div>
 
         <div id="InvestInfo">
-            <div class="titlecss">概算投资</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">概算投资</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="总投资:">
@@ -250,7 +263,10 @@
         </div>
 
         <div id="fundForm">
-            <div class="titlecss">资金配套组成</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">资金配套组成</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="市补:">
@@ -286,7 +302,10 @@
         </div>
 
         <div id="finishInfo">
-            <div class="titlecss">完成工程量</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">完成工程量</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="灌区数量:">
@@ -376,28 +395,67 @@
             </el-row>
         </div>
 
-        <div id="addInfo">
-            <div class="titlecss">补充信息</div>
-            <div>
-                <span>工程图纸上传:</span>
-                <el-button type="primary" size="small">点击上传 </el-button>
-                <span> （支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传）</span>
-            </div>
-            <div style="padding-top:20px;">
-                <span>工程位置草图:</span>
-                <el-button type="text" v-on:click="showgcctMapEdit">工程位置草图</el-button>
-            </div>
-            <el-dialog title="工程位置草图编辑" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
-                <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
-            </el-dialog>
-            <div style="padding-top:20px;">
-                <span>工程图片上传:</span>
-            </div>
+        <div id="addInfo" style="margin-bottom:60px;">
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">补充信息</div>
+            </el-row>
+
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程图纸上传:">
+                        <el-upload class="upload-demo"
+                                   ref="upload"
+                                   multiple
+                                   action="/FarmlandWater/UpFiles"
+                                   v-bind:on-preview="handlePreview"
+                                   v-bind:on-change="getDrawing"
+                                   v-bind:on-remove="handleRemove"
+                                   v-bind:on-success="upSucess"
+                                   v-bind:on-error="upError"
+                                   v-bind:before-remove="beforeRemove"
+                                   v-bind:before-upload="beforeAvatarUpload">
+                            <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                            @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
+                            <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
+                        </el-upload>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程位置草图:">
+                        <el-button type="text">工程位置草图</el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程图片上传:">
+                        <span class="el-upload__tip">支持png、jpg、jpeg、gif格式的图片上传；文件大小应在10M以内</span>
+                        <el-upload action="/FarmlandWater/UpFiles"
+                                   list-type="picture-card"
+                                   v-bind:on-preview="handlePreview"
+                                   v-bind:on-remove="handleRemove"
+                                   v-bind:on-change="getPicture"
+                                   v-bind:on-success="upSucess"
+                                   v-bind:on-error="upError"
+                                   v-bind:before-remove="beforeRemove"
+                                   v-bind:before-upload="beforeImagesUpload"
+                                   accept="image/png, image/jpg, image/jpeg, image/gif">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-dialog v-bind:visible.sync="dialogVisible">
+                            <img style="width:100%" v-bind:src="dialogImageUrl" alt="">
+                        </el-dialog>
+                    </el-form-item>
+                </el-col>
+            </el-row>
         </div>
 
-        <div style="text-align:center;">
+        <div style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
             <el-button style="width: 90px;" v-on:click="cancel" size="small"> 取消</el-button>
-            <el-button type="primary" v-on:click="save" style="width: 90px;" size="small">保存</el-button>
+            <el-button type="primary" v-on:click="save('addForm')" style="width: 90px;" size="small">保存</el-button>
         </div>
     </el-form>
 </div>
@@ -406,79 +464,124 @@
 <script>
     new Vue({
         el: '#add',
-        data: {
-            gcctinfo: {
-                S_PROJECT_NO: "",
+        data: function () {
+            var checkNum = function (rule, value, callback) {
+                //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
+                var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
+                if (value === '') {
+                    callback(new Error('不能为空'));
+                }
+                if (!reNum.test(value)) {
+                    callback(new Error('请输入正确的数字值（支持8位整数，2位小数）'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                gcctinfo: {
+                    S_PROJECT_NO: "",
+                    N_PACE_STATUS: "",
+                    N_YEAR: "",
+                    N_TYPE: "",
+                    S_LEGAL_PERSON: "",
+                    S_TOWN: "",
+                    S_ADDRESS: "",
+                    S_UNIT_DESIGN: "",
+                    S_UNIT_BUILD: "",
+                    S_UNIT_SUPERVISE: "",
+                    N_RECKON_TOTAL_AMT: "",
+                    REMARK: ""
+                },
+                drawingFiles: '',
+                pictureFiles: '',
+                dialogImageUrl: '',
+                dialogVisible: false,
+                YearOption: [],
+                staticsOptions: [],
                 N_PACE_STATUS: "",
-                N_YEAR: "",
-                N_TYPE: "",
-                S_LEGAL_PERSON: "",
+                xzqhOptions: [],
                 S_TOWN: "",
-                S_ADDRESS: "",
+                LegalPerOption: [],
+                S_LEGAL_PERSON: "",
+                DesignUnitOption: [],
                 S_UNIT_DESIGN: "",
-                S_UNIT_BUILD: "",
-                S_UNIT_SUPERVISE: "",
-                N_RECKON_TOTAL_AMT: "",
-                REMARK:""
-            },
-            YearOption: [],
-            staticsOptions: [],
-            N_PACE_STATUS: "",
-            xzqhOptions: [],
-            S_TOWN: "",
-            LegalPerOption: [],
-            S_LEGAL_PERSON: "",
-            DesignUnitOption: [],
-            S_UNIT_DESIGN: "",
-            mapEditDialogVisible: false,
-            gccteditmapheight: document.documentElement.clientHeight - 200,
-            addForm: {
-                S_NAME: '',
-                N_TYPE: '',
-                S_PROJECT_NO: '',
-                N_YEAR: '',
-                N_PACE_STATUS: '',
-                S_TOWN: '',
-                S_ADDRESS: '',
-                S_LEGAL_PERSON: '',
-                S_UNIT_DESIGN: '',
-                S_UNIT_BUILD: '',
-                S_UNIT_SUPERVISE: '',
-                N_RECKON_TOTAL_AMT: '',
-                S_REMARK: '',
-                N_GGSL: '',
-                N_GGMJ: '',
-                N_BZZS: '',
-                N_BZTT: '',
-                N_DXQD: '',
-                N_DC: '',
-                N_DXH: '',
-                N_CQMQ: '',
-                N_XFJDL: '',
-                N_TOTAL_INVEST: '',
-                N_ENGIN_COST: '',
-                N_INDEPENDENT_COST: '',
-                N_PREP_COST: '',
-                N_SIGHT_COST: '',
-                N_SUBSIDY_CITY: '',
-                N_SUBSIDY_DISTRICT: '',
-                N_SUBSIDY_TOWN: '',
-                N_WCGGSL: '',
-                N_WCGGMJ: '',
-                N_WCBZZS: '',
-                N_WCBZTT: '',
-                N_WCDXQD: '',
-                N_WCDC: '',
-                N_WCDXH: '',
-                N_WCCQMQ: '',
-                N_WCXFJDL: '',
+                mapEditDialogVisible: false,
+                gccteditmapheight: document.documentElement.clientHeight - 200,
+                addForm: {
+                    S_NAME: '',
+                    N_TYPE: '',
+                    S_PROJECT_NO: '',
+                    N_YEAR: moment().format('YYYY'),
+                    N_PACE_STATUS: '',
+                    S_TOWN: '',
+                    S_ADDRESS: '',
+                    S_LEGAL_PERSON: '',
+                    S_UNIT_DESIGN: '',
+                    S_UNIT_BUILD: '',
+                    S_UNIT_SUPERVISE: '',
+                    N_RECKON_TOTAL_AMT: '',
+                    S_REMARK: '',
+                    N_GGSL: '',
+                    N_GGMJ: '',
+                    N_BZZS: '',
+                    N_BZTT: '',
+                    N_DXQD: '',
+                    N_DC: '',
+                    N_DXH: '',
+                    N_CQMQ: '',
+                    N_XFJDL: '',
+                    N_TOTAL_INVEST: '',
+                    N_ENGIN_COST: '',
+                    N_INDEPENDENT_COST: '',
+                    N_PREP_COST: '',
+                    N_SIGHT_COST: '',
+                    N_SUBSIDY_CITY: '',
+                    N_SUBSIDY_DISTRICT: '',
+                    N_SUBSIDY_TOWN: '',
+                    N_WCGGSL: '',
+                    N_WCGGMJ: '',
+                    N_WCBZZS: '',
+                    N_WCBZTT: '',
+                    N_WCDXQD: '',
+                    N_WCDC: '',
+                    N_WCDXH: '',
+                    N_WCCQMQ: '',
+                    N_WCXFJDL: '',
+                },
+                rules: {
+                    S_NAME: [
+                        { required: true, message: '请输入工程名称', trigger: 'blur' }
+                    ],
+                    S_PROJECT_NO: [
+                        { required: true, message: '请输入项目编号', trigger: 'blur' }
+                    ],
+                    S_ADDRESS: [
+                        { required: true, message: '请输入工程地址', trigger: 'blur' }
+                    ],
+                    S_LEGAL_PERSON: [
+                        { required: true, message: '请选择项目法人', trigger: 'blur' }
+                    ],
+                    S_UNIT_BUILD: [
+                        { required: true, message: '请输入施工单位', trigger: 'blur' }
+                    ],
+                    S_UNIT_SUPERVISE: [
+                        { required: true, message: '请输入监理单位', trigger: 'blur' }
+                    ],
+                    N_RECKON_TOTAL_AMT: [
+                        { required: true, message: '请输入估算总投资', trigger: 'blur' },
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    N_YEAR: [
+                        { required: true, message: '请选择年份', trigger: 'blur' }
+                    ],
+                },
             }
         },
         components: {
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
-            this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
+            //this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
             this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
             this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
             this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
@@ -498,7 +601,7 @@
                 this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO; 
                 this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;
                 this.gcctinfo.N_YEAR = this.addForm.N_YEAR;
-                this.gcctinfo.N_YEAR = "小型农田水利";
+                this.gcctinfo.N_TYPE = "小型农田水利";
                 this.gcctinfo.S_LEGAL_PERSON = this.addForm.S_LEGAL_PERSON;
                 this.gcctinfo.S_TOWN = this.addForm.S_TOWN;
                 this.gcctinfo.S_ADDRESS = this.addForm.S_ADDRESS;
@@ -582,22 +685,151 @@
             changeDesignUnit: function (param) {
                 this.S_UNIT_DESIGN = param;
             },
-
             cancel: function () {
                 window.location.href = "/FarmlandWater/Index";
             },
-
-            save: function () {
-                axios.post('/FarmlandWater/Add',
-                    { param: JSON.stringify(this.addForm) }
-                    ).then(function (response) {
-                    debugger
-                    var datas = JSON.parse(response.data);
-                    if (datas.EnginFarmReportResponse.result == true) {
-                        alert("新增成功！");
-                        window.location.href = "/FarmlandWater/Index";
+            save: function (formName) {
+                this.addForm.N_YEAR = new Date(this.addForm.N_YEAR).getFullYear();
+                this.$refs[formName].validate(function (valid) {
+                    if (valid) {
+                        var drawing = '';
+                        var picture = '';
+                        if (this.drawingFiles != '')
+                        {
+                            for (var i = 0; i < this.drawingFiles.length; i++)
+                            {
+                                drawing = this.drawingFiles[i].name + ',' + drawing
+                            }
+                        }
+                        if (this.pictureFiles != '') {
+                            for (var i = 0; i < this.pictureFiles.length; i++) {
+                                picture = this.pictureFiles[i].name + ',' + picture
+                            }
+                        }
+                        axios.post('/FarmlandWater/Add',
+                            { param: JSON.stringify(this.addForm), drawingFiles: drawing, pictureFiles: picture })
+                          .then(function (response) {
+                              var datas = JSON.parse(response.data);
+                              var tempR = datas.EnginFarmReportResponse.result;
+                              if (tempR) {
+                                  window.location.href = "/FarmlandWater/Index";
+                              } else {
+                                  this.$message.error('保存失败！' + TempR);
+                              }
+                          }.bind(this))
+                          .catch(function (error) {
+                              console.log(error);
+                          });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
                     }
+                }.bind(this));
+
+                //axios.post('/FarmlandWater/Add',
+                //    { param: JSON.stringify(this.addForm) }
+                //    ).then(function (response) {
+                //    debugger
+                //    var datas = JSON.parse(response.data);
+                //    if (datas.EnginFarmReportResponse.result == true) {
+                //        alert("新增成功！");
+                //        window.location.href = "/FarmlandWater/Index";
+                //    }
+                //});
+            },
+            beforeAvatarUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                if (fileType == 'exe') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+            },
+            beforeImagesUpload: function (file) {
+                debugger
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                //image/png, image/jpg, image/jpeg, image/gif
+                if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+            },
+            beforeRemove: function (file, fileList) {
+                if (file.status == 'ready') {
+                    return;
+                }
+                return this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    axios.post('/FarmlandWater/DeleteFilesLocal', { filename: file.name })
+                  .then(function (response) {
+                      if (response.data == "OK") {
+                          this.$message({
+                              message: '删除成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('删除失败！' + response.data);
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除！'
+                    });
                 });
+
+            },
+            handleRemove: function (file, fileList) {
+                console.log(file, fileList);
+            },
+            getDrawing: function (file, fileList) {
+                this.drawingFiles = fileList;
+                //console.log(this.file);
+            },
+            getPicture: function (file, fileList) {
+                this.pictureFiles = fileList;
+                //console.log(this.file);
+            },
+            handlePreview: function (file) {
+                //console.log(file);
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            upSucess: function (response, file, fileList) {
+                this.$message({
+                    message: '上传成功！',
+                    type: 'success'
+                });
+            },
+            upError: function (err, file, fileList) {
+                this.$message.error('上传失败！' + err);
             },
         }
     });
@@ -606,7 +838,6 @@
 <style scoped>
     #add input, textarea {
         max-width: none;
-        width: 100%;
     }
 
     #add .el-form-item {
@@ -630,8 +861,15 @@
         font-size: 14px;
         min-width:900px;
     }
-
+    
+    #add .blueTitle {
+        width: 7px;
+        height: 18px;
+        background-color: #409eff;
+        float: left;
+    }
     .titlecss {
+        float: left;
         font-size: 14px;
         font-weight: bold;
         color: #666666;
@@ -642,7 +880,7 @@
     }
 
     .colheight {
-        height: 40px;
+        height: 50px;
         font-size: 14px;
         color: #333333;
     }
@@ -654,7 +892,9 @@
     .selectwidth {
         width: 100%;
     }
-
+    #yearWidth{
+        width: 100%;
+    }
     .el-dialog__body {
         padding: 15px 20px !important;
     }

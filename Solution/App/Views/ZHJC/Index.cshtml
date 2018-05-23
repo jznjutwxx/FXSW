@@ -189,146 +189,136 @@
         <!--自动监测点(雨量)表格 7-7-->
         <div v-show="zdjcd_yl_table" class="zdjcdTableDiv">
             <el-table ref="zdjcdTable" v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"   header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称">
+                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇">
+                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位">
+                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="yl" label="实时雨量(mm)">
+                <el-table-column property="yl" label="实时雨量(mm)"  header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间">
+                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态">
+                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-            </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper"  v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--自动监测点(水位)表格 14 -7-->
         <div v-show="zdjcd_sw_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称">
+                <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇">
+                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位">
+                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="sw" label="水位(m)">
+                <el-table-column property="sw" label="水位(m)"  header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间">
+                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态">
+                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-            </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--自动监测点(流量)表格 21-7-->
         <div v-show="zdjcd_ll_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称">
+                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇">
+                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位">
+                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="ll" label="流量(m³)">
+                <el-table-column property="ll" label="流量(m³)"  header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间">
+                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态">
+                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-            </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--自动监测点(风速风向)表格 29-8-->
         <div v-show="zdjcd_fsfx_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称">
+                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇">
+                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位">
+                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="result" label="风速(m/s)">
+                <el-table-column property="result" label="风速(m/s)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="result2" label="风向(°)">
+                <el-table-column property="result2" label="风向(°)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间">
+                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态">
+                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-            </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--自动监测点(水质监测)表格 36 -7-->
         <div v-show="zdjcd_szjc_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称">
+                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇">
+                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="暂无" label="所属河道">
+                <el-table-column property="暂无" label="所属河道"  header-align="center" align="left">
                     <!--暂无数据-->
                 </el-table-column>
-                <el-table-column property="time" label="时间">
+                <el-table-column property="time" label="时间"  header-align="center" align="center">
                 </el-table-column>
-                <el-table-column label="监测信息 ">
+                <el-table-column label="监测信息"  header-align="center" align="center">
                     <!--跳转到别的系统-->
                 </el-table-column>
-                <el-table-column property="status" label="设备状态">
+                <el-table-column property="status" label="设备状态" header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-            </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--人工取样点表格内容-->
         <div v-show="rgqyd_table" id="rgqydTableDiv">
             <el-table ref="rgqydTable" v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号'>
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
 
                 </el-table-column>
-                <el-table-column property="s_name" label="断面名称" width="400">
+                <el-table-column property="s_name" label="断面名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="s_town" label="所属街镇">
+                <el-table-column property="s_town" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="s_task" label="水质监测任务">
+                <el-table-column property="s_task" label="水质监测任务" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="sshd" label="所属河道">
+                <el-table-column property="sshd" label="所属河道" header-align="center" align="left">
                     <!--暂无数据-->
                 </el-table-column>
-                <el-table-column property="n_last_quality" label="水质抽检结果">
+                <el-table-column property="n_last_quality" label="水质抽检结果" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="t_last_sampling_time" label="上报时间">
+                <el-table-column property="t_last_sampling_time" label="上报时间"  header-align="center" align="center">
                     <!--暂无数据，用的是取样时间-->
                 </el-table-column>
-                <el-table-column property="dbqk" label="达标情况">
+                <el-table-column property="dbqk" label="达标情况"  header-align="center" align="center">
                     <!--暂无数据-->
                 </el-table-column>
-                <el-table-column property="ck" label="查看">
+                <el-table-column property="ck" label="查看"  header-align="center" align="center">
             </el-table>
             @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize"> </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
@@ -396,9 +386,9 @@
             zdjcd_szjc_table: false,
             rgqyd_table: false,//控制人工取样点表格的显示
             belowTitle: '',
-            controlBelowContentShow: false,
-            showBelowBtn: true,
-            hideBelowBtn: false,
+            controlBelowContentShow: true,
+            showBelowBtn: false,
+            hideBelowBtn: true,
             currentPage: 1,
             pagesize: 4,  //每个分页显示的数
         },
@@ -408,9 +398,29 @@
             "com_line": comLine,
         },
         mounted: function () {
+            this.afreshBelowContent();
             this.initMap();
+            const vm = this;
+            $(window).resize(function () {
+                vm.afreshBelowContent();
+            })
         },
         methods: {
+            afreshBelowContent: function () {
+                debugger;
+                if (window.screen.height <= 900) {
+                    $("#belowContent").css("height", "200px");
+                    $(".el-table__body-wrapper").css("height", "89px");
+                    $(".el-table__body-wrapper").css("overflow-y", "auto");
+                    $("#hideBelowContent").css("bottom", "200px")
+                }
+                else {
+                    $("#belowContent").css("height", "303px");
+                    $(".el-table__body-wrapper").css("height", "100%");
+                    $(".el-table__body-wrapper").css("overflow", "hidden");
+                    $("#hideBelowContent").css("bottom", "303px")
+                }
+            },
             initMap: function () {
                 debugger;
                 this.map = new SuperMap.Map("mapContainer", {
@@ -450,7 +460,26 @@
                 //this.map.size = new SuperMap.Size(1920,900);
                 this.map.addLayers(this.layers);
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
-                this.map.zoomTo(0);
+                    if (window.screen.width <= 1024 && window.screen.height<=1366) {
+                        this.map.zoomTo(0);
+                        $("#belowContent").css("height", "200px");
+                        $(".el-table").css("font-size", "12px");
+                        //this.pagesize = 2;                    
+                    }
+                    else if (1024 < window.screen.width && window.screen.width <= 1280) {
+                        this.map.zoomTo(1);
+     
+                    }
+                    else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                        this.map.zoomTo(1);
+                    }
+                    else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                        this.map.zoomTo(1);
+
+                    }
+                    else {
+                        this.map.zoomTo(2);
+                    }             
             },
             initMapExtent: function () {
                 this.map.zoomTo(0);
@@ -496,6 +525,23 @@
             },
             //取得需要展示的坐标点数据
             getLeftData: function (leftData, bleowTableTitle, jclx) {
+                if (window.screen.width <= 1024) {
+                 
+                }
+                else if (1024 < window.screen.width && window.screen.width <= 1280) {
+
+
+                }
+                else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                 
+                }
+                else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                  
+
+                }
+                else {
+                   
+                }
                 debugger;
                 this.leftData = leftData;  //筛选后的数据
                 console.log(this.leftData);
@@ -1763,7 +1809,7 @@
         }
     /**下方表格样式*/
     #belowContent {
-        height: 310px;
+        height: 303px;
         width: 100%;
         border-top: #cccccc 1px solid;
         background-color: white;
@@ -1784,7 +1830,7 @@
 
     #hideBelowContent {
         position: absolute;
-        bottom: 310px;
+        bottom: 303px;
         left: 50%;
         background: url(/Images/zhjc/btn_down.png);
         z-index: 1300;
@@ -1803,7 +1849,7 @@
         color: white;
     }
 
-    .zdjcdTableDiv th, .zdjcdTableDiv td, #rgqydTableDiv th, #rgqydTableDiv td {
+    /*.zdjcdTableDiv th, .zdjcdTableDiv td, #rgqydTableDiv th, #rgqydTableDiv td {
         text-align: center;
-    }
+    }*/
 </style>

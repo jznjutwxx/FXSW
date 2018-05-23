@@ -1,0 +1,116 @@
+﻿
+<script type="text/x-template" id="swsy-bar">
+    <div class="charts" ref="combar"></div>
+</script>
+
+
+<script>
+    var swsyBar = {
+        template: '#swsy-bar',
+        props: {
+            option: {
+                type: Object,
+                default: function () {
+                    return {
+                        color: [],
+                        title: {},
+                        legend: {},
+                        dataZoom:[],
+                        xAxis: {},
+                        yAxis:{},
+                        series: [],
+                        grid:{}
+                    }
+                }
+            }
+        },
+        watch: {
+            option: function (val, oldVal) {
+                this.updateCharts(val)
+                this.charts.resize();
+            }
+        },
+        data: function () {
+            return {
+                options: {
+                    color: [],
+                    title: {
+                        text: ''
+                    },
+                    legend: {
+                        data: []
+                    },
+                    dataZoom: [
+					              {
+					                  yAxisIndex: 0,
+					                  show: false,
+					                  type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+					                  startValue: 0,      // 从头开始。
+					                  endValue: 2         // 一次性展示3个。
+					              }
+                    ],
+                    color: ['#50a6ff'],
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    grid: {
+                        left: '3%',
+                        right: '4%',
+                        bottom: '3%',
+                        containLabel: true
+                    },
+                    xAxis: [
+                        {
+                            type: 'category',
+                            data: [],
+                            axisTick: {
+                                alignWithLabel: true
+                            }
+                        }
+                    ],
+                    yAxis: [{
+                        type: 'value'
+                    }],
+                    series: []
+                }
+            }
+        },
+        mounted: function () {
+            this.drawcharts()
+        },
+        methods: {
+            drawcharts: function () {
+                this.charts = echarts.init(this.$refs.combar)
+                this.charts.setOption(this.options);
+                $(window).resize(function () {
+                    setTimeout(function () {
+                        this.charts.resize();
+                    }.bind(this), 100);
+                }.bind(this));
+            },
+            updateCharts: function (option) {
+                this.options.color = option.color
+                this.options.title = option.title
+                this.options.legend = option.legend
+                this.options.dataZoom = option.dataZoom
+                this.options.xAxis = option.xAxis
+                if (option.grid != undefined) {
+                    this.options.grid = option.grid
+                }
+                this.options.yAxis = option.yAxis
+                this.options.series = option.series
+                this.charts.setOption(this.options)
+            }
+        }
+    };
+</script>
+
+<style scoped>
+    #app .charts {
+        width: 100%;
+        padding: 15px 0px 0px 0px;
+    }
+</style>

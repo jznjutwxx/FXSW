@@ -1,0 +1,208 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@ViewBag.Title</title>
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/es6")
+    @Scripts.Render("~/bundles/vue")
+    @Scripts.Render("~/bundles/element")
+    @Scripts.Render("~/bundles/echarts")
+    @Scripts.Render("~/bundles/utils")
+</head>
+<body>
+    @RenderBody()
+    <div id="main"></div>
+    <script type="text/x-template" id="mainpage">
+        <el-container>
+            <el-header>
+                <div class="logo"></div>
+                <ul class="nav" >
+                    <li v-bind:key="menu.id" v-for="menu in menus">
+                        <a  v-on:mouseover="mouseover(menu,$event)" 
+                            v-on:mouseout="mouseout(menu,$event)" 
+                            v-on:click="open(menu)" 
+                            v-bind:style="{backgroundImage: activeIndex===menu.id?
+                           'url(../../Images/main/head/'+menu.icon.replace(/normal/g, 'active')+')':
+                            'url(../../Images/main/head/'+menu.icon+')'}"></a>
+                    </li>
+                </ul>
+            </el-header>
+            <el-container>
+                <iframe ref="mainFrame" src="" width="100%" v-bind:height="frameHeight" frameborder="0" scrolling="auto" id="google_ads_frame2" name="google_ads_frame2" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" allowfullscreen="true"></iframe>
+            </el-container>
+            <el-footer style="height:30px;">
+                <span>版权所有：奉贤水务局</span>
+                <span>技术支持：超图软件</span>
+            </el-footer>
+        </el-container>
+    </script>
+
+    <script>
+        new Vue({
+            el: '#main',
+            template: '#mainpage',
+            data: {
+                activeIndex: '',
+                menus: [],
+                frameHeight: (document.documentElement.clientHeight - 109) + 'px'
+            },
+            mounted: function () {
+                this.resize()
+                this.getMenus()
+            },
+            methods: {
+                resize: function () {
+                    $(window).resize(function () {
+                        this.setSize()
+                    }.bind(this));
+                },
+                setSize: function () {
+                    var docH = document.documentElement.clientHeight
+                    this.frameHeight = (docH - 109) + 'px'
+                },
+                mouseover: function (menu, event) {
+                    if (menu.url !== "") {
+                        if (this.activeIndex !== menu.id) {
+                            event.currentTarget.style.backgroundImage = event.currentTarget.style.backgroundImage.replace(/normal/g, "active")
+                        }
+                    } else {
+                        event.currentTarget.style.cursor = "no-drop"
+                    }
+                },
+                mouseout: function (menu, event) {
+                    if (menu.url !== "") {
+                        if (this.activeIndex !== menu.id) {
+                            event.currentTarget.style.backgroundImage = event.currentTarget.style.backgroundImage.replace(/active/g, "normal")
+                        }
+                    } else {
+                        event.currentTarget.style.cursor = "no-drop"
+                    }
+                },
+                open: function (menu) {
+                    if (menu.url !== "") {
+                        if (menu.title === "登录") {
+                            window.open(menu.url);
+                        } else {
+                            this.changeMenu(menu.url)
+                            this.activeIndex = menu.id
+                        }
+                    }
+                },
+                changeMenu: function (url) {
+                    this.$refs.mainFrame.src = url
+                },
+                getMenus: function () {
+                    this.menus = [{
+                        id: '1',
+                        title: '水文',
+                        icon: 'btn_shuiw_normal.png',
+                        url: '/WaterRes/Index'
+                    }, {
+                        id: '2',
+                        title: '水资源',
+                        icon: 'btn_shuizy_normal.png',
+                        url: '/WaterRes/Index'
+                    }, {
+                        id: '3',
+                        title: '排水',
+                        icon: 'btn_pais_normal.png',
+                        url: ''
+                    }, {
+                        id: '4',
+                        title: '防汛',
+                        icon: 'btn_fangx_normal.png',
+                        url: ''
+                    }, {
+                        id: '5',
+                        title: '登录',
+                        icon: 'btn_admin_normal.png',
+                        url: '/Login/Index'
+                    }]
+                    this.changeMenu(this.menus[0].url)
+                    this.activeIndex = this.menus[0].id
+                },
+                login: function (command) {
+                    if (command == 'logout') {
+                        axios.post('/Login/Logout', null)
+                         .then(function (response) {
+                             if (response.data.result == 'sucess') {
+                                 window.location = "/Login/Index"
+                                 this.loading = false
+                             }
+                         }.bind(this))
+                         .catch(function (error) { })
+                    }
+                }
+            }
+        });
+    </script>
+
+    <style>
+        .el-container {
+            height: 100%;
+            border: 0px solid #eee;
+        }
+
+        .el-header {
+            background-color: #051367;
+            background-position: right;
+            background-repeat: no-repeat;
+            color: #333;
+            height: 79px !important;
+            text-align: right;
+            font-size: 12px;
+            padding: 0px;
+            border-bottom:1px solid #0056ce;
+        }
+
+            .el-header .logo {
+                height: 78px;
+                width: 100%;
+                max-width: 895px;
+                display: inline-block;
+                float: left;
+                background-image: url('../../Images/main/head/img_header.png');
+                background-repeat: no-repeat;
+            }
+
+            .el-header .nav {
+                margin:0;
+                padding:0;
+                float: right;
+                margin-right:20px;
+            }
+            .el-header .nav li{
+                cursor:pointer;
+                height:100%;
+                width:76px;
+                float: left;
+                list-style-type:none;
+            }
+            .el-header .nav li a{
+                display: block;
+                padding-top:0px;
+                height:78px;
+                line-height: 78px;
+                color: #ffffff;
+                text-align:center;
+            }
+
+        .el-footer {
+            background-color: #0056CE;
+            font-size: 12px;
+            color: #eee;
+            height: 30px;
+            text-align: center;
+            line-height: 30px;
+            padding: 0px;
+        }
+
+            .el-footer span {
+                margin-left: 20px;
+            }
+    </style>
+</body>
+</html>

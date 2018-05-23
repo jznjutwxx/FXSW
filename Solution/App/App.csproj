@@ -159,6 +159,7 @@
     <Compile Include="App_Start\FilterConfig.cs" />
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Common\APCookie.cs" />
+    <Compile Include="Common\ProjectAuthenticationAttribute.cs" />
     <Compile Include="Common\AuthenticationAttribute.cs" />
     <Compile Include="Common\AuthorizationParams.cs" />
     <Compile Include="Common\AuthorizationUtils.cs" />
@@ -174,11 +175,12 @@
     <Compile Include="Controllers\GcztStatisticsController.cs" />
     <Compile Include="Controllers\GghdGclStatisticsController.cs" />
     <Compile Include="Controllers\HeavyPollutionReverwayController.cs" />
-    <Compile Include="Controllers\HomeController.cs" />
+    <Compile Include="Controllers\Home\HomeController.cs" />
     <Compile Include="Controllers\HydraulicEngineerController.cs" />
     <Compile Include="Controllers\HydrologyController.cs" />
     <Compile Include="Controllers\LegalPersonMangerController.cs" />
-    <Compile Include="Controllers\LoginController.cs" />
+    <Compile Include="Controllers\Login\LoginController.cs" />
+    <Compile Include="Controllers\Main\MainController.cs" />
     <Compile Include="Controllers\ProOverViewController.cs" />
     <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
     <Compile Include="Controllers\RiverStatisticssController.cs" />
@@ -202,6 +204,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="Content\animate.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\element-ui.css" />
@@ -294,6 +297,37 @@
     <Content Include="Images\login\img_gongchengxt_login.png" />
     <Content Include="Images\login\img_login.png" />
     <Content Include="Images\login\img_login_x.png" />
+    <Content Include="Images\main\btn_fxzxt_active.png" />
+    <Content Include="Images\main\btn_fxzxt_normal.png" />
+    <Content Include="Images\main\btn_gczxt_active.png" />
+    <Content Include="Images\main\btn_gczxt_normal.png" />
+    <Content Include="Images\main\btn_htzxt_active.png" />
+    <Content Include="Images\main\btn_htzxt_normal.png" />
+    <Content Include="Images\main\btn_hzzxt_active.png" />
+    <Content Include="Images\main\btn_hzzxt_normal.png" />
+    <Content Include="Images\main\btn_pszxt_active.png" />
+    <Content Include="Images\main\btn_pszxt_lock.png" />
+    <Content Include="Images\main\btn_pszxt_normal.png" />
+    <Content Include="Images\main\btn_sszxt_active.png" />
+    <Content Include="Images\main\btn_sszxt_normal.png" />
+    <Content Include="Images\main\btn_swzxt_active.png" />
+    <Content Include="Images\main\btn_swzxt_normal.png" />
+    <Content Include="Images\main\btn_szyzxt_active.png" />
+    <Content Include="Images\main\btn_szyzxt_normal.png" />
+    <Content Include="Images\main\head\btn_admin_active.png" />
+    <Content Include="Images\main\head\btn_admin_normal.png" />
+    <Content Include="Images\main\head\btn_fangx_active.png" />
+    <Content Include="Images\main\head\btn_fangx_normal.png" />
+    <Content Include="Images\main\head\btn_pais_active.png" />
+    <Content Include="Images\main\head\btn_pais_normal.png" />
+    <Content Include="Images\main\head\btn_shuiw_active.png" />
+    <Content Include="Images\main\head\btn_shuiw_normal.png" />
+    <Content Include="Images\main\head\btn_shuizy_active.png" />
+    <Content Include="Images\main\head\btn_shuizy_normal.png" />
+    <Content Include="Images\main\head\img_header.png" />
+    <Content Include="Images\main\img_bg.png" />
+    <Content Include="Images\main\img_bg_x.png" />
+    <Content Include="Images\sw_main\img_header_sw.png" />
     <Content Include="Images\zhjc\img_fxfxbg.png" />
     <Content Include="Images\zhjc\legend\btn_initMapExtent.png" />
     <Content Include="Images\zhjc\legend\btn_showLegend.png" />
@@ -347,6 +381,7 @@
     <Content Include="Images\zhjc\rgqyd\btn_sanlei.png" />
     <Content Include="Images\zhjc\rgqyd\btn_silei.png" />
     <Content Include="Images\zhjc\rgqyd\btn_wulei.png" />
+    <Content Include="Images\zhjc\rgqyd\ico_szjcrw.png" />
     <Content Include="Images\zhjc\rgqyd\img_暂无图片.png" />
     <Content Include="Images\zhjc\zdjcd\btn_zhengc.png" />
     <Content Include="Images\zhjc\rgqyd\rgqydpic.jpeg" />
@@ -1265,9 +1300,24 @@
     <Content Include="Views\LegalPersonManger\components\addPage.cshtml" />
     <Content Include="Views\LegalPersonManger\components\editPage.cshtml" />
     <Content Include="Views\SanitarySewage\FileManage.cshtml" />
+    <Content Include="Views\Main\Index.cshtml" />
+    <Content Include="Views\Shared\_ProjectLayout.cshtml" />
+    <Content Include="Views\Main\Project.cshtml" />
+    <Content Include="Views\Shared\_HomeLayout .cshtml" />
+    <Content Include="Views\Main\Hydrology.cshtml" />
+    <Content Include="Views\Shared\_HydrologyLayout.cshtml" />
+    <Content Include="Views\Login\ProjectOutside.cshtml" />
+    <Content Include="Views\Hydrology\components\com_bar.cshtml" />
+    <Content Include="Views\Login\ProjectOverTime.cshtml" />
+    <Content Include="Views\Main\ProjectOutside.cshtml" />
+    <Content Include="Views\Shared\_ProjectOutsideLayout.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
+    <Folder Include="Controllers\Common\" />
+    <Folder Include="Controllers\Hydrology\" />
+    <Folder Include="Controllers\ProjectOutside\" />
+    <Folder Include="Controllers\Project\" />
     <Folder Include="Views\EngineerSketch\components\" />
     <Folder Include="Views\Uploader\" />
   </ItemGroup>

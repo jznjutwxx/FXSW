@@ -21,7 +21,7 @@
                 <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true" style="margin-left:65px;">
                     全选
                 </el-checkbox>
-                <div style="margin: 15px 0;"></div>
+                <div style="margin: 15px 0;" class="fgdiv"></div>
                 <el-checkbox-group v-model="checkedTwons" v-on:change="handleCheckedTwonsChange">
                     <el-row>
                         <el-col v-bind:span="11">
@@ -165,13 +165,43 @@
 
         },
         mounted: function () {
+            this.afreshSize();
             this.getJCdate();
-
+            const vm = this;
+            $(window).resize(function () {
+                vm.afreshSize();
+            })
         },
         updated: function () {
 
         },
         methods: {
+            afreshSize:function(){
+                if (window.screen.height < 900) {
+                    $("#leftcontent").css("height", "320px");
+                    $("#jzSelect .el-row").css("margin-bottom", "0px");
+                    $("#jzSelect > img").css("margin", "0px 0 0 -29px");
+                    $("#jzSelect .fgdiv ").css("margin", "0px");
+                    $("#jzSelect").css("height", "138px");
+                    $("#rgqyd .el-checkbox").css("margin", "3px 0");
+                    $("#zdgcxmTitle").css("margin-bottom", "3px");
+                    $("#zdztTitle").css("margin", "5px 0 10px");
+                    $("#zdzt .el-checkbox").css("margin-top", "-6px");
+                    $("#jcdSelect").css("height", "150px");
+                }
+                else {
+                    $("#leftcontent").css("height", "411px");
+                    $("#jzSelect .el-row").css("margin-bottom", "3px");
+                    $("#jzSelect > img").css("margin", "15px 0 0 -29px;");
+                    $("#jzSelect .fgdiv ").css("margin", "15px 0");
+                    $("#jzSelect").css("height", "190px");
+                    $("#rgqyd .el-checkbox").css("margin", "10px 0;");
+                    $("#zdgcxmTitle").css("margin-bottom", "10px");
+                    $("#zdztTitle").css("margin", " 20px 0 10px");
+                    $("#zdzt .el-checkbox").css("margin", "0 0 10px 0;");
+                    $("#jcdSelect").css("height", "247px");
+                }
+            },
             hideLeft: function () {
                 $("#hideLeft").hide();
                 $("#jcdSelect").hide();
@@ -276,7 +306,7 @@
 
     #leftcontent {
         width: 240px;
-        height: 420px;
+        height: 411px;
         border-right: #cccccc 1px solid;
         border-bottom: #cccccc 1px solid;
         position: absolute;

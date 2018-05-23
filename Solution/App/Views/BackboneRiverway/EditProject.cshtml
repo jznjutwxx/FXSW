@@ -439,10 +439,13 @@
                 <el-row>
                     <el-col v-bind:span="24">
                         <el-form-item label="工程位置草图:">
-                            <el-button type="text" v-on:click="showMapDialog">工程位置草图</el-button>
+                            <el-button type="text" v-on:click="showgcctMapEdit">工程位置草图</el-button>
                         </el-form-item>
                     </el-col>
                 </el-row>
+                <el-dialog title="工程位置草图编辑" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
+                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                </el-dialog>
                 <el-row>
                     <el-col v-bind:span="24">
                         <el-form-item label="工程图片上传:">
@@ -472,10 +475,25 @@
     </div>
 </div>
 
+@Html.Partial("~/Views/components/gcctMap/com_gcctEdit.cshtml")
 <script>
     new Vue({
         el: '#edit',
         data: {
+            gcctinfo: {
+                S_PROJECT_NO: "",
+                N_PACE_STATUS: "",
+                N_YEAR: "",
+                N_TYPE: "",
+                S_LEGAL_PERSON: "",
+                S_TOWN: "",
+                S_ADDRESS: "",
+                S_UNIT_DESIGN: "",
+                S_UNIT_BUILD: "",
+                S_UNIT_SUPERVISE: "",
+                N_RECKON_TOTAL_AMT: "",
+                REMARK: ""
+            },
             YearOption: [],
             StatusOption: [],
             TownOption: [],
@@ -512,7 +530,11 @@
             filesData: [],
             dialogImageUrl: '',
             dialogVisible: false,
-            mapDialogVisible: false,
+            mapEditDialogVisible: false,
+            gccteditmapheight: document.documentElement.clientHeight - 200,
+        },
+        components: {
+            "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
             if (this.getRequest().id == "gg") {
@@ -522,8 +544,34 @@
                 this.formData.n_type = "中小河道";
             }
             this.init();
+            $(window).resize(function () {
+                this.gccteditmapheight = document.documentElement.clientHeight - 200;
+            });
+        },
+        watch: {
+            gccteditmapheight: function (val) {
+                this.gccteditmapheight = val;
+            },
         },
         methods: {
+            bindGCCTData: function (val) {
+                this.gcctinfo.S_PROJECT_NO = this.formData.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.formData.n_pace_status;
+                this.gcctinfo.N_YEAR = this.formData.n_year;
+                this.gcctinfo.N_YEAR = this.formData.n_type;
+                this.gcctinfo.S_LEGAL_PERSON = this.formData.s_legal_person;
+                this.gcctinfo.S_TOWN = this.formData.s_town;
+                this.gcctinfo.S_ADDRESS = this.formData.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.formData.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.formData.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.formData.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.formData.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.formData.s_remark;
+            },
+            showgcctMapEdit: function () {
+                this.bindGCCTData();
+                this.mapEditDialogVisible = true;
+            },
             init: function () {
                 var s_id = this.getRequest().id;
                 this.getYear("/BackboneRiverway/GetSelect", { Type: "年度" });
@@ -812,11 +860,7 @@
                 }
             },
         },
-        showMapDialog: function () {
-            this.mapDialogVisible = true;
-        },
         
-
     });
 </script>
 

@@ -126,6 +126,8 @@
                             },
                             left: '35%',
                             top: '31%'
+                            //left: '29%',
+                            //top: '26%'
                         },
                         legend: {
                             orient: 'horizontal',
@@ -142,8 +144,10 @@
                             {
                                 name: '访问来源',
                                 type: 'pie',
-                                radius: ['40%', '70%'],
+                                radius: ['40%', '78%'],
                                 center: ['45%', '40%'],
+                                //radius: ['40%', '78%'],
+                                //center: ['40%', '35%'],
                                 label: {
                                     normal: {
                                         show: true,
@@ -271,11 +275,22 @@
     #leftContent {
         width: 100%;
         overflow: hidden;
-        /*min-width: 315px;*/
+        min-width: 288px;
         min-height: 610px;
         position:relative;
+        margin-left:8px;
     }
-
+    @@media screen and (min-width: 1025px) {
+       #leftContent .col {
+            height: 45px !important;
+        }
+        #leftContent .centerdiv{
+            margin-top:50px !important;
+        }
+     #leftContent .xzqh{
+         margin-left: 118px !important;
+     }
+  }
     .xzqhrow {
         padding: 10px 40px 0 0;
     }
@@ -346,7 +361,7 @@
         border: 1px solid yellow;
     }
 
-    .col {
+   #leftContent .col {
         height: 30px;
         margin-left: 10px;
         margin-top: 10px !important;

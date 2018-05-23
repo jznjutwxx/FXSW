@@ -4,6 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@ViewBag.Title</title>
+    <link href="~/Content/animate.css" rel="stylesheet" />
     @Styles.Render("~/Content/css")
     @Scripts.Render("~/bundles/jquery")
     @Scripts.Render("~/bundles/es6")
@@ -19,33 +20,24 @@
         <el-container>
             <el-header>
                 <div class="logo"></div>
-                <el-menu v-bind:default-active="activeIndex" class="top-menu" mode="horizontal" v-on:select="handleSelect" background-color="transparent" text-color="#fff" active-text-color="#fff">
-                    <el-menu-item v-bind:index="menu.id" v-bind:key="menu.id" v-for="menu in menus"><span>{{menu.title}}</span></el-menu-item>
-                </el-menu>
-                <el-dropdown v-on:command="handleCommand">
-                    <span class="el-dropdown-link"  >
-                        @ViewBag.UserName<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="logout">退 出</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
             </el-header>
             <el-container>
-                <el-aside  ref="aside" width="auto"  v-show="isShow">
-                    <el-menu v-bind:default-openeds="['1']" v-bind:default-active="activeTreeIndex" v-for="item in menuTree" v-bind:key="item.id" background-color="#003e93" text-color="#fff" active-text-color="#409eff">
-                        <el-submenu index="1">
-                            <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.title}}
-                            </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child.url)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
-                        </el-submenu>
-                    </el-menu>
-                </el-aside>
+                <div v-bind:style="{ width: '100%', height: height }">
+                    <div class="container" ref="container" v-bind:style="{ marginTop :maginTop }">
+                        <el-row>
+                            <el-col v-bind:span="8" v-bind:key="menu.id" v-for="menu in menus" >
+                             <div class="select-item" v-on:mouseover="mouseover(menu,$event)" 
+                                  v-on:mouseout="mouseout(menu,$event)" 
+                                  v-on:click="open(menu)" 
+                                  v-bind:style="{backgroundImage: menu.hasRole?
+                                  'url(../../Images/main/'+menu.icon+')':
+                                  'url(../../Images/main/'+menu.icon.replace(/normal/g, 'lock')+')'}">
 
-                <el-main>
-                    <iframe ref="mainFrame" src="" width="100%" v-bind:height="frameHeight" frameborder="0" scrolling="auto" id="google_ads_frame2" name="google_ads_frame2" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" allowfullscreen="true"></iframe>
-                </el-main>
+                             </div>
+                            </el-col>
+                        </el-row>
+                    </div>
+                </div>
             </el-container>
             <el-footer style="height:30px;">
                 <span>版权所有：奉贤水务局</span>
@@ -59,16 +51,14 @@
             el: '#main',
             template: '#mainpage',
             data: {
-                isShow:true,
-                activeIndex: '1',
-                activeTreeIndex:'1',
-                menuTree: [],
-                menus:[],
-                frameHeight: (document.documentElement.clientHeight - 112) + 'px'
+                height: (document.documentElement.clientHeight - 109) + 'px',
+                maginTop: '0',
+                menus: []
             },
             mounted: function () {
-                this.resize()
                 this.getMenus()
+                this.resize()
+                this.setSize()
             },
             methods: {
                 resize: function () {
@@ -78,185 +68,126 @@
                 },
                 setSize: function () {
                     var docH = document.documentElement.clientHeight
-                    this.frameHeight = (docH - 112) + 'px'
+                    this.height = (docH - 109) + 'px'
+                    var num = Math.ceil(this.menus.length / 3)
+                    this.maginTop = ((docH - 109) - (num * 174) - 15) / 2 + 'px'
                 },
-                changeMenu: function (url) {
-                    this.$refs.mainFrame.src = url
-                    setTimeout(function () { this.$refs.aside.$el.style.overflowY = 'auto' }.bind(this), 1000)
+                mouseover: function (menu,event) {
+                    if (menu.hasRole) {
+                        event.currentTarget.style.backgroundImage = event.currentTarget.style.backgroundImage.replace(/normal/g, "active")
+                    } else {
+                        event.currentTarget.style.cursor = "no-drop"
+                    }
+                },
+                mouseout: function (menu, event) {
+                    if (menu.hasRole) {
+                        event.currentTarget.style.backgroundImage = event.currentTarget.style.backgroundImage.replace(/active/g, "normal")
+                    } else {
+                        event.currentTarget.style.cursor = "no-drop"
+                    }
+                },
+                open: function (menu) {
+                    if (menu.hasRole) {
+                        window.open(menu.url);
+                    }
                 },
                 getMenus: function () {
                     this.menus = [{
-                        id: '0',
-                        title: '综合监测',
-                        icon: 'ico_biaozhi',
-                        url: '/ZHJC/Index'
-                    }, {
                         id: '1',
-                        title: '水文统计',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '41', name: '重污染河道水质', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
-                            { id: '42', name: '水质取样统计', icon: 'ico_gghd', url: '/SZQYJL/Index' }
-                        ]
+                        title: '水文',
+                        icon: 'btn_swzxt_normal.png',
+                        url: '/Main/Hydrology',
+                        hasRole:true
                     }, {
                         id: '2',
-                        title: '工程总览',
-                        icon: 'ico_biaozhi',
-                        url: '/ProOverView/Index'
+                        title: '水资源',
+                        icon: 'btn_szyzxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: true
                     }, {
                         id: '3',
-                        title: '工程管理',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '11', name: '骨干河道', icon: 'ico_gghd', url: '/BackboneRiverway/Index' },
-                            { id: '12', name: '中小河道', icon: 'ico_zxhd', url: '/ZXRiverway/Index' },
-                            { id: '13', name: '小型农田水利', icon: 'ico_xxntsl', url: '/FarmlandWater/Index' },
-                            { id: '14', name: '农村生活污水', icon: 'ico_ncshws', url: '/SanitarySewage/Index' },
-                            { id: '15', name: '其他水利工程', icon: 'ico_gczt', url: '/HydraulicEngineer/Index' }
-                        ]
+                        title: '河闸',
+                        icon: 'btn_hzzxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: true
                     }, {
                         id: '4',
-                        title: '工程统计',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '21', name: '工程状态统计', icon: 'ico_gczt', url: '/GcztStatistics/Index' },
-                            { id: '22', name: '骨干河道工程量统计', icon: 'ico_gghd', url: '/GghdGclStatistics/Index' },
-                            { id: '23', name: '中小河道工程量统计', icon: 'ico_zxhd', url: '/ZXHDStatistics/Index' },
-                            { id: '24', name: '小型农田水利工程量统计', icon: 'ico_xxntsl', url: '/SmallCroplandStatistics/Index' },
-                            { id: '25', name: '农村生活污水工程量统计', icon: 'ico_ncshws', url: '/SHWSProjectStatistics/Index' }
-                        ]
+                        title: '排水',
+                        icon: 'btn_pszxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: false
                     }, {
                         id: '5',
-                        title: '系统设置',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '51', name: '设计单位管理', icon: 'ico_sjdwgl', url: '/DesignOrganizationManger/Index' },
-                            { id: '52', name: '法人管理', icon: 'ico_frgl', url: '/LegalPersonManger/Index' }
-                        ]
+                        title: '防汛',
+                        icon: 'btn_fxzxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: true
+                    }, {
+                        id: '6',
+                        title: '海塘',
+                        icon: 'btn_htzxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: true
+                    }, {
+                        id: '7',
+                        title: '工程',
+                        icon: 'btn_gczxt_normal.png',
+                        url: '/Main/Project',
+                        hasRole: true
+                    }, {
+                        id: '8',
+                        title: '设施',
+                        icon: 'btn_sszxt_normal.png',
+                        url: '/WaterRes/Index',
+                        hasRole: true
                     }]
-                    this.handleSelect(this.menus[0].id,null)
                 },
-                handleSelect: function (key, keyPath) {
-                    var tempMenu = []
-                    for (var i = 0; i < this.menus.length; i++) {      
-                        if (this.menus[i].id == key) {
-                            tempMenu.push(this.menus[i])
-                        }
-                    }
-                    this.setMenu(tempMenu)
-                },
-                setMenu: function (menus) {
-                    this.menuTree = menus
-                    if (this.menuTree[0].url == "" || this.menuTree[0].url == undefined) {
-                        this.isShow = true
-                    } else {
-                        this.isShow = false
-                    }
-                    this.$refs.aside.$el.style.overflowY = 'hidden'
-                    this.activeIndex = this.menus[0].id
-                    this.activeTreeIndex = this.menuTree[0].children === undefined ? this.menuTree[0].id : this.menuTree[0].children[0].id
-                    this.changeMenu(this.menuTree[0].children === undefined ? this.menuTree[0].url : this.menuTree[0].children[0].url)
-                },
-                handleCommand: function (command) {
-                    if (command == 'logout') {
-                        axios.post('/Login/Logout', null)
-                         .then(function (response) {
-                             if (response.data.result == 'sucess') {
-                                 window.location = "/Login/Index"
-                                 this.loading = false
-                             }
-                         }.bind(this))
-                         .catch(function (error) {})
-                    }
-                }
             }
         });
     </script>
 
     <style>
         .el-container {
-            height: 100%; 
+            height: 100%;
             border: 0px solid #eee;
+            background: #051367;
         }
+
         .el-header {
-            background-color: #004fbc;
-            background-image: url('../../Images/gc_main/img_header_right_gczxt.png');
-            background-position:right;
-            background-repeat:no-repeat;
+            background-color: #051367;
+            background-position: right;
+            background-repeat: no-repeat;
             color: #333;
-            height: 78px !important;
-            line-height: 78px;
+            height: 79px !important;
             text-align: right;
             font-size: 12px;
             padding: 0px;
+            border-bottom:1px solid #0056ce;
         }
         .el-header .logo {
-            height:78px;
-            width: 100%;
-            max-width:895px;
-            display: inline-block;
-            float: left;
-            background-image: url('../../Images/gc_main/img_header_gczxt.png');
-            background-repeat: no-repeat;
+                height: 78px;
+                width: 100%;
+                max-width: 895px;
+                display: inline-block;
+                float: left;
+                background-image: url('../../Images/main/head/img_header.png');
+                background-repeat: no-repeat;
+            }
+        .el-container .container {
+            margin:0 auto;
+            width:878px;
         }
-        .el-header .el-menu {
-            display: inline-block;
-            height:78px;
-            position: absolute;
-            right: 150px;
+        .el-container .container .el-col{
+            margin-bottom:7px;
         }
-
-        .el-header .el-menu .el-menu-item{
-            margin-top:8px;
+        .el-container .container .select-item {
+             width:286px;
+             height:174px;
+             background:rgba(255,255,255,0.3);  
+             /*background-image: url('../../Images/main/btn_fxzxt_normal.png');*/
+             background-repeat:no-repeat;
+             cursor:pointer;
         }
-         .el-header .el-menu .el-menu-item:hover,.el-header .el-menu .el-menu-item:focus,.el-header .el-menu .el-menu-item:active{
-             background-color:transparent !important;
-         }
-
-         .el-header .el-menu .el-menu-item span{
-            font-size:16px;
-        }
-
-        .el-header .el-dropdown{
-            display:inline;
-            font-size: 16px;
-            color: white;
-            margin: 0 30px 0 0px;
-            cursor: pointer;
-        }
-
-
-        .el-aside {
-            min-width:200px;
-            border-right: solid 1px #003e93;
-            overflow-x: auto;
-        }
-
-        .el-aside .el-menu {
-            border: 0px;
-            height: 100%;
-        }
-
-        .el-aside .el-menu .el-submenu div{
-            padding-right:10px !important;
-            background-color:#003276 !important;
-        }
-
-        .el-aside .el-menu .el-menu-item{
-            padding-left:25px !important;
-        }
-
-        .el-aside .el-menu .icon-title {
-            width:14px;
-            height:14px;
-            display: inline-block;
-            padding-right:10px;
-            background-repeat:no-repeat;
-        }
-        .el-main {
-            padding: 0px;
-        }
-
         .el-footer {
             background-color: #0056CE;
             font-size: 12px;
@@ -266,9 +197,10 @@
             line-height: 30px;
             padding: 0px;
         }
-        .el-footer span{
-            margin-left:20px;
-        }
+
+            .el-footer span {
+                margin-left: 20px;
+            }
     </style>
 </body>
 </html>

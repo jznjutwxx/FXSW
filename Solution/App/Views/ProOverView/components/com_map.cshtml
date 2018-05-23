@@ -136,16 +136,15 @@
         <div class="proTable">
             <el-tabs v-model="editableTabsValue2" type="card" v-on:tab-click="clickTabsPane">
                 <el-tab-pane v-for="(item, index) in editableTabs2"
-                             :key="item.name"
-                             :label="item.title"
-                             :name="item.name"
-                             :value="item.content"
+                             v-bind:key="item.name"
+                             v-bind:label="item.title"
+                             v-bind:name="item.name"
+                             v-bind:value="item.content"
                              >
                     <el-table v-bind:data="tableData"
                               stripe
                               border
                               size="small"
-                              height="202"
                               v-bind:key="index"
                               style="width: 100%">
                         <el-table-column type="index"
@@ -230,6 +229,7 @@
                 centerDialogVisible: false,
                 layers: null,
                 markerLayer: null,   //工程点叠加的图层
+                gcctSelect: null,    //工程草图feature选择控件
                 infowin: null,       //弹框信息
                 fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
                 gcctRestDataUrl: "http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data",
@@ -261,11 +261,13 @@
                 markers: [],
             }
         },
-        mounted: function () {
+        mounted: function () { 
             this.getDataEvent();//请求数据
             this.initMap();
+            this.afreshBelowContent();
             const that = this;
             $(window).resize(function () {
+                that.afreshBelowContent();
                 that.contentheight = document.body.clientHeight;
             });
         },
@@ -275,6 +277,21 @@
             },
         },
         methods: {
+            afreshBelowContent: function () {
+                debugger;
+                if (window.screen.height <= 900) {
+                    $(".proTable").css("height", "180px");
+                    $(".el-table--border").css("height", "118px");
+                    $(".el-table__body-wrapper").css({"height": "70px","overflow-y":"auto"});
+                    $(".hideDown").css("bottom", "180px");
+                }
+                else {
+                    $(".proTable").css("height", "270px");
+                    $(".el-table--border").css("height", "208px");
+                    $(".el-table__body-wrapper").css({ "height": "160px", "overflow-y": "hidden" });
+                    $(".hideDown").css("bottom", "270px");
+                }
+            },
             initMap: function() {
                 this.map = new SuperMap.Map("showMap", {
                     controls: [
@@ -494,7 +511,7 @@
                     }
                     this.pointDataArr.push(po);
                 }
-                console.log(this.pointDataArr);
+                //console.log(this.pointDataArr);
                 this.addMarkers();
             },
             //添加地图上的标注点
@@ -814,7 +831,6 @@
         position: absolute;
         z-index: 1355;
         left: 49%;
-        bottom: 270px;
         width: 32px;
         text-align: center;
         height: 22px;
@@ -830,16 +846,16 @@
         display: none;
     }
     .proTable{
-        overflow: auto;
+        overflow: hidden;
         z-index:1254;
         position:absolute;
         bottom:0px;
         left:0px;
         width:100%;
-        height:270px;
         background-color: #ffffff;
         /*border:1px solid #0026ff;*/
     }
+
     .filter_title{
         font-size:14px;
         padding:8px 0 8px 16px;

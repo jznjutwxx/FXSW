@@ -6,26 +6,33 @@
 
 
 <div id="edit">
-    <el-form v-model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small">
+    <el-form :model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small" ref="editForm" >
         <div id="BasicInfo">
-            <div class="titlecss">基本信息</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">基本信息</div>{{editForm.N_YEAR}}
+            </el-row>
             <el-row type="flex">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程名称：" style="width:100%;">
+                    <el-form-item label="工程名称：" style="width:100%;" prop="S_NAME">
                         <el-input v-model="editForm.S_NAME">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目编号：">
+                    <el-form-item label="项目编号：" prop="S_PROJECT_NO">
                         <el-input v-model="editForm.S_PROJECT_NO">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="年度：">
-                        <el-select v-model="editForm.N_YEAR" class="selectwidth">
+                        @*<el-select v-model="editForm.N_YEAR" class="selectwidth">
                             <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeYear">
                             </el-option>
-                        </el-select>
+                        </el-select>*@
+                        <el-date-picker v-model="editForm.N_YEAR"
+                                        type="year"
+                                        placeholder="选择年份" style="width:90%;">
+                        </el-date-picker>
                     </el-form-item>
                 </el-col>
             </el-row>
@@ -54,12 +61,12 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="16" class="colheight el-col-16">
-                    <el-form-item label="工程地址：">
+                    <el-form-item label="工程地址：" prop="S_ADDRESS">
                         <el-input v-model="editForm.S_ADDRESS" style="width:116.5%;">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目法人：">
+                    <el-form-item label="项目法人：" prop="S_LEGAL_PERSON">
                         <el-select v-model="editForm.S_LEGAL_PERSON" class="selectwidth">
                             <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_name" v-on:change="changeLegalper">
                             </el-option>
@@ -70,17 +77,17 @@
 
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="监理单位：">
+                    <el-form-item label="监理单位：" prop="S_UNIT_SUPERVISE">
                         <el-input v-model="editForm.S_UNIT_SUPERVISE">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="施工单位：">
+                    <el-form-item label="施工单位：" prop="S_UNIT_BUILD">
                         <el-input v-model="editForm.S_UNIT_BUILD">
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="设计单位：">
+                    <el-form-item label="设计单位：" prop="S_UNIT_DESIGN">
                         <el-select v-model="editForm.S_UNIT_DESIGN" class="selectwidth">
                             <el-option v-for="item in DesignUnitOption" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeDesignUnit">
                                 @*v-bind:key="item.s_id"*@
@@ -91,7 +98,7 @@
             </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="估算总投资：">
+                    <el-form-item label="估算总投资：" prop="N_RECKON_TOTAL_AMT">
                         <el-input v-model="editForm.N_RECKON_TOTAL_AMT">
                             <span>万元</span>
                     </el-form-item>
@@ -108,7 +115,10 @@
         </div>
 
         <div id="ProjectInfo">
-            <div class="titlecss"> 批复工程量</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss"> 批复工程量</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="村组数量:">
@@ -181,7 +191,10 @@
         </div>
 
         <div id="InvestInfo">
-            <div class="titlecss">概算投资</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">概算投资</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="总投资：">
@@ -234,7 +247,10 @@
         </div>
 
         <div id="fundForm">
-            <div class="titlecss">资金配套组成</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">资金配套组成</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="市补:">
@@ -267,7 +283,10 @@
         </div>
 
         <div id="finishInfo">
-            <div class="titlecss"> 完成工程量</div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">完成工程量</div>
+            </el-row>
             <el-row type="flex" class="rowpadding">
                 <el-col v-bind:span="8" class="colheight">
                     <el-form-item label="村组数量:">
@@ -341,26 +360,64 @@
 
 
         <div id="editInfo">
-            <div class="titlecss">补充信息</div>
-            <div>
-                <span>工程图纸上传：</span>
-                <el-button type="primary" size="small">点击上传 </el-button>
-                <span> （支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传）</span>
-            </div>
-            <div style="padding-top:20px;">
-                <span>工程位置草图：</span>
-                <el-button type="text">工程位置草图</el-button>
-            </div>
-            <el-dialog title="工程位置草图编辑" width="70%">
-            </el-dialog>
-            <div style="padding-top:20px;">
-                <span>工程图片上传：</span>
-            </div>
+            <el-row type="flex">
+                <div class="blueTitle"></div>
+                <div class="titlecss">补充信息</div>
+            </el-row>
+
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程图纸上传:">
+                        <el-upload class="upload-demo"
+                                   ref="upload"
+                                   multiple
+                                   action="/FarmlandWater/UpFiles"
+                                   v-bind:on-preview="handlePreview"
+                                   v-bind:on-change="getDrawing"
+                                   v-bind:on-remove="handleRemove"
+                                   v-bind:on-success="upSucess"
+                                   v-bind:on-error="upError"
+                                   v-bind:before-remove="beforeRemove"
+                                   v-bind:file-list="drawingFiles" v-bind:disabled="isFinish">
+                            <el-button slot="trigger" size="small" type="primary" v-bind:disabled="isFinish">选取文件</el-button>
+                            @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
+                            <span>（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传）</span>
+                        </el-upload>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程位置草图:">
+                        <el-button type="text">工程位置草图</el-button>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row>
+                <el-col v-bind:span="24">
+                    <el-form-item label="工程图片上传:">
+                        <el-upload action="/FarmlandWater/UpFiles"
+                                   list-type="picture-card"
+                                   v-bind:on-preview="handlePreview"
+                                   v-bind:on-remove="handleRemove"
+                                   v-bind:on-change="getPicture"
+                                   v-bind:on-success="upSucess2"
+                                   v-bind:on-error="upError"
+                                   v-bind:before-remove="beforeRemove"
+                                   v-bind:file-list="pictureFiles" v-bind:disabled="isFinish">
+                            <i class="el-icon-plus"></i>
+                        </el-upload>
+                        <el-dialog v-bind:visible.sync="dialogVisible" v-bind:disabled="isFinish">
+                            <img style="width:100%" v-bind:src="dialogImageUrl" alt="">
+                        </el-dialog>
+                    </el-form-item>
+                </el-col>
+            </el-row>
         </div>
 
-        <div style="text-align:center;">
+        <div  style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
             <el-button style="width: 90px;" v-on:click="cancel" size="small"> 取消</el-button>
-            <el-button type="primary" v-on:click="edit" style="width: 90px;" size="small">保存</el-button>
+            <el-button type="primary" v-on:click="edit('editForm')" style="width: 90px;" size="small">保存</el-button>
         </div>
     </el-form>
 </div>
@@ -368,57 +425,79 @@
 <script>
     new Vue({
         el: '#edit',
-        data: {
-            YearOption: [],
-            staticsOptions: [],
-            xzqhOptions: [],
-            LegalPerOption: [],
-            DesignUnitOption: [],
-
-            editForm: {
-                S_ID:'',
-                S_NAME: '',
-                N_TYPE: '',
-                S_PROJECT_NO: '',
-                N_YEAR: '',
-                N_PACE_STATUS: '',
-                S_TOWN: '',
-                S_ADDRESS: '',
-                S_LEGAL_PERSON: '',
-                S_UNIT_DESIGN: '',
-                S_UNIT_BUILD: '',
-                S_UNIT_SUPERVISE: '',
-                N_RECKON_TOTAL_AMT: '',
-                S_REMARK: '',
-                N_CZSL: '',
-                N_ZHS: '',
-                N_JDCLHS: '',
-                N_SZNGHS: '',
-                N_JDCLZ: '',
-                N_GWCD: '',
-                N_XFJHFC: '',
-                N_TOTAL_INVEST: '',
-                N_ENGIN_COST: '',
-                N_INDEPENDENT_COST: '',
-                N_PREP_COST: '',
-                N_SIGHT_COST: '',
-                N_SUBSIDY_CITY: '',
-                N_SUBSIDY_DISTRICT: '',
-                N_SUBSIDY_TOWN: '',
-                N_WCCZSL: '',
-                N_WCZHS: '',
-                N_WCJDCLHS: '',
-                N_WCSZNGHS: '',
-                N_WCJDCLZ: '',
-                N_WCGWCD: '',
-                N_WCXFJHFC: '',
+        data: function () {
+            var checkNum = function (rule, value, callback) {
+                //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
+                var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
+                if (value === '') {
+                    callback(new Error('不能为空'));
+                }
+                if (!reNum.test(value)) {
+                    callback(new Error('请输入正确的数字值（支持8位整数，2位小数）'));
+                } else {
+                    callback();
+                }
+            };
+            return {
+                YearOption: [],
+                staticsOptions: [],
+                xzqhOptions: [],
+                LegalPerOption: [],
+                DesignUnitOption: [],
+                drawingFiles: [],
+                pictureFiles: [],
+                drawingFilesAdd: [],
+                pictureFilesAdd: [],
+                filesData: [],
+                dialogImageUrl: '',
+                dialogVisible: false,
+                isFinish: false,
+                editForm: {
+                    S_ID: '',
+                    S_NAME: '',
+                    N_TYPE: '',
+                    S_PROJECT_NO: '',
+                    N_YEAR: moment().format('YYYY'),
+                    N_PACE_STATUS: '',
+                    S_TOWN: '',
+                    S_ADDRESS: '',
+                    S_LEGAL_PERSON: '',
+                    S_UNIT_DESIGN: '',
+                    S_UNIT_BUILD: '',
+                    S_UNIT_SUPERVISE: '',
+                    N_RECKON_TOTAL_AMT: '',
+                    S_REMARK: '',
+                    N_CZSL: '',
+                    N_ZHS: '',
+                    N_JDCLHS: '',
+                    N_SZNGHS: '',
+                    N_JDCLZ: '',
+                    N_GWCD: '',
+                    N_XFJHFC: '',
+                    N_TOTAL_INVEST: '',
+                    N_ENGIN_COST: '',
+                    N_INDEPENDENT_COST: '',
+                    N_PREP_COST: '',
+                    N_SIGHT_COST: '',
+                    N_SUBSIDY_CITY: '',
+                    N_SUBSIDY_DISTRICT: '',
+                    N_SUBSIDY_TOWN: '',
+                    N_WCCZSL: '',
+                    N_WCZHS: '',
+                    N_WCJDCLHS: '',
+                    N_WCSZNGHS: '',
+                    N_WCJDCLZ: '',
+                    N_WCGWCD: '',
+                    N_WCXFJHFC: '',
+                    REMOVE_PIC_IDS: '',
+                }
             }
         },
         mounted: function () {
             var t = this.GetId();
             this.GetDetail("/SanitarySewage/GetDetail", { id: t.id });
 
-            this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
+            //this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
             this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
             this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
             this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
@@ -499,7 +578,6 @@
             cancel: function () {
                 window.location.href = "/SanitarySewage/Index";
             },
-            edit: function () { },
             GetId: function () {
                 var url = window.location.search;
                 var theRequest = new Object();
@@ -554,23 +632,131 @@
                      this.editForm.N_WCJDCLZ = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclz;
                      this.editForm.N_WCGWCD = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
                      this.editForm.N_WCXFJHFC = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
-
+                     if (li.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
+                         this.isFinish = true;
+                     } else {
+                         this.isFinish = false;
+                     }
+                     var files = li.EnginSewageGetResponse.info.FileUploaderList;
+                     for (var i = 0; i < files.length; i++) {
+                         var temp = { name: files[i].s_file_name, url: files[i].s_path, uid: files[i].s_id }
+                         if (files[i].s_type == '图纸') {
+                             this.drawingFiles.push(temp);
+                         }
+                         if (files[i].s_type == '图片') {
+                             this.pictureFiles.push(temp);
+                         }
+                     }
                      this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
-            edit: function () {
-                axios.post('/SanitarySewage/Edit',{ param: JSON.stringify(this.editForm) }
-               ).then(function (response) {
-                   debugger
-                   var datas = JSON.parse(response.data);
-                   if (datas.EnginSewageUpdateResponse.result == true) {
-                       alert("修改成功！");
-                       window.location.href = "/SanitarySewage/Index";
-                   }
-               });
+            edit: function (formName) {
+                this.editForm.N_YEAR = new Date(this.editForm.N_YEAR).getFullYear();
+                this.$refs[formName].validate(function (valid) {
+                    if (valid) {
+                        var drawing = '';
+                        var picture = '';
+                        if (this.drawingFilesAdd != '') {
+                            for (var i = 0; i < this.drawingFilesAdd.length; i++) {
+                                drawing = this.drawingFilesAdd[i].name + ',' + drawing
+                            }
+                        }
+                        if (this.pictureFilesAdd != '') {
+                            for (var i = 0; i < this.pictureFilesAdd.length; i++) {
+                                picture = this.pictureFilesAdd[i].name + ',' + picture
+                            }
+                        }
+                        axios.post('/SanitarySewage/Edit', { param: JSON.stringify(this.editForm), drawingFiles: drawing, pictureFiles: picture })
+                          .then(function (response) {
+                              var datas = JSON.parse(response.data);
+                              var tempR = datas.EnginSewageUpdateResponse.result;
+                              if (tempR) {
+                                  
+                                  window.location.href = "/SanitarySewage/Index";
+                              } else {
+                                  this.$message.error('保存失败！' + TempR);
+                              }
+                          }.bind(this))
+                          .catch(function (error) {
+                              console.log(error);
+                          });
+                    } else {
+                        console.log('error submit!!');
+                        return false;
+                    }
+                }.bind(this));
+               // axios.post('/SanitarySewage/Edit',{ param: JSON.stringify(this.editForm) }
+               //).then(function (response) {
+               //    debugger
+               //    var datas = JSON.parse(response.data);
+               //    if (datas.EnginSewageUpdateResponse.result == true) {
+               //        alert("修改成功！");
+               //        window.location.href = "/SanitarySewage/Index";
+               //    }
+               //});
+            },
+
+            beforeRemove: function (file, fileList) {
+                return this.$confirm('是否确定删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                }).then(function () {
+                    if (this.editForm.REMOVE_PIC_IDS == "") {
+                        this.editForm.REMOVE_PIC_IDS = file.uid;
+                    } else {
+                        this.editForm.REMOVE_PIC_IDS += "," + file.uid
+                    }
+                    this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                    });
+                }.bind(this)).catch(function () {
+                    this.$message({
+                        type: 'info',
+                        message: '已取消删除！'
+                    });
+                });
+            },
+            handleRemove: function (file, fileList) {
+                console.log(file, fileList);
+            },
+            getDrawing: function (file, fileList) {
+                this.drawingFiles = fileList;
+                //this.drawingFilesAdd = fileList.slice(0 - (fileList.length - this.drawingFilesL))
+                //console.log(this.file);
+            },
+            getPicture: function (file, fileList) {
+                this.pictureFiles = fileList;
+                //console.log(this.file);
+            },
+            handlePreview: function (file) {
+                //console.log(file);
+                this.dialogImageUrl = file.url;
+                this.dialogVisible = true;
+            },
+            upSucess: function (response, file, fileList) {
+                debugger
+                var temp = { name: file.name, url: file.url }
+                this.drawingFilesAdd.push(temp)
+                this.$message({
+                    message: '上传成功！',
+                    type: 'success'
+                });
+            },
+            upSucess2: function (response, file, fileList) {
+                var temp = { name: file.name, url: file.url }
+                this.pictureFilesAdd.push(temp)
+                this.$message({
+                    message: '上传成功！',
+                    type: 'success'
+                });
+            },
+            upError: function (err, file, fileList) {
+                this.$message.error('上传失败！' + err);
             },
             StatusToNum: function (status) {
                 switch (status) {

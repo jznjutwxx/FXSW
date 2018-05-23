@@ -11,11 +11,12 @@ using System.Web.Mvc;
 
 namespace App.Controllers
 {
+
+    [Authentication]
     public class FarmlandWaterController : Controller
     {
         //
         // GET: /FarmlandWater/
-        [Authentication]
         public ActionResult Index()
         {
             return View();
@@ -115,7 +116,7 @@ namespace App.Controllers
         public const string LOGIN_TOKEN = "login_token";
         public const string MAC = "mac";
 
-        public ActionResult Add(string param)
+        public ActionResult Add(string param, string drawingFiles, string pictureFiles)
         {
             T_ENGIN_INFO arr = new T_ENGIN_INFO();
             arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param); //转成实体对象
@@ -184,65 +185,31 @@ namespace App.Controllers
             paramDictionary.Add("n_complete_cqmq", arr.N_WCCQMQ);//衬砌明渠
             paramDictionary.Add("n_complete_xfjdl", arr.N_WCXFJDL);//新翻建道路
 
+            #endregion
+            //文件路径
+            string path = Request.ApplicationPath;
+            path = Server.MapPath(path += "/upload/");
 
             Dictionary<string, string> fileParams = new Dictionary<string, string>();
-            //FileItem item = new FileItem(FileItemType.FileInfo, @"D:\Paul .jpg");
-            //FileItem item2 = new FileItem(FileItemType.FileInfo, @"D:\timg (1).jpg");
-            //FileItem item3 = new FileItem(FileItemType.FileInfo, @"D:\timg (2).jpg");
-            //FileItem item4 = new FileItem(FileItemType.FileInfo, @"D:\timg (1).jpg");
-            //FileItem item5 = new FileItem(FileItemType.FileInfo, @"D:\Paul .jpg");
-            //FileItem item6 = new FileItem(FileItemType.FileInfo, @"D:\timg (2).jpg");
-            //FileItem item7 = new FileItem(FileItemType.FileInfo, @"D:\Paul .jpg");
-            //FileItem item8 = new FileItem(FileItemType.FileInfo, @"D:\timg (1).jpg");
-            //FileItem item9 = new FileItem(FileItemType.FileInfo, @"D:\timg (2).jpg");
-            fileParams.Add("picture_file", @"D:\timg (2).jpg");
-            fileParams.Add("picture_file2", @"D:\Paul .jpg");
-            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file4", @"D:\Paul .jpg");
-            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file6", @"D:\Paul .jpg");
-            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
+            if (!string.IsNullOrEmpty(drawingFiles))
+            {
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = drawingFiles.Split(',');
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("drawing_file" + (i + 1), path + Files[i]);
+                }
+            }
+            if (!string.IsNullOrEmpty(pictureFiles))
+            {
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = pictureFiles.Split(',');
 
-            //if (item != null)
-            //{
-            //    fileParams["picture_file"] = item;
-            //}
-
-            //if (item2 != null)
-            //{
-            //    fileParams["picture_file2"] = item2;
-            //}
-
-            //if (item3 != null)
-            //{
-            //    fileParams["picture_file3"] = item3;
-            //}
-
-            //if (item4 != null)
-            //{
-            //    fileParams["picture_file4"] = item4;
-            //}
-
-            //if (item5 != null)
-            //{
-            //    fileParams["picture_file5"] = item5;
-            //}
-
-            //if (item6 != null)
-            //{
-            //    fileParams["picture_file6"] = item6;
-            //}
-
-            ////if (item7 != null)
-            ////{
-            ////    fileParams["drawing_file"] = item7;
-            ////}
-
-            //if (item8 != null)
-            //{
-            //    fileParams["sketch_file"] = item8;
-            //}
-            #endregion
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("picture_file" + (i + 1), path + Files[i]);
+                }
+            }
 
             // paramDictionary.Add(SIGN, GetSignature(paramDictionary, "77A8799C9E43"));
 
@@ -253,7 +220,7 @@ namespace App.Controllers
             string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);// webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
             return Json(sss);
         }
-        public ActionResult Edit(string param)
+        public ActionResult Edit(string param, string drawingFiles, string pictureFiles)
         {
             T_ENGIN_INFO arr = new T_ENGIN_INFO();
             arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param); //转成实体对象
@@ -311,17 +278,33 @@ namespace App.Controllers
             paramDictionary.Add("n_complete_xfjdl", arr.N_WCXFJDL);//新翻建道路
             #endregion
 
-            // paramDictionary.Add("remove_pic_ids", "3156467F238740B59C6650828698B2A2,BA4D7B0736564E05B51F181F9BB6F9B9");//删除的图片ID
+            paramDictionary.Add("remove_pic_ids", arr.REMOVE_PIC_IDS);//删除的图片ID
             //paramDictionary.Add("is_delete", "0");//是否删除 1删除
 
+            //文件路径
+            string path = Request.ApplicationPath;
+            path = Server.MapPath(path += "/upload/");
+
             Dictionary<string, string> fileParams = new Dictionary<string, string>();
-            fileParams.Add("picture_file", @"D:\timg (2).jpg");
-            fileParams.Add("picture_file2", @"D:\Paul .jpg");
-            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file4", @"D:\Paul .jpg");
-            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file6", @"D:\Paul .jpg");
-            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
+            if (!string.IsNullOrEmpty(drawingFiles))
+            {
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = drawingFiles.Split(',');
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("drawing_file" + (i + 1), path + Files[i]);
+                }
+            }
+            if (!string.IsNullOrEmpty(pictureFiles))
+            {
+                //文件类型picture_file1 drawing_file1 sketch_file
+                string[] Files = pictureFiles.Split(',');
+
+                for (int i = 0; i < Files.Length - 1; i++)
+                {
+                    fileParams.Add("picture_file" + (i + 1), path + Files[i]);
+                }
+            }
 
             string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
             // webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
@@ -452,7 +435,7 @@ namespace App.Controllers
 
             return result.ToString().ToUpper();
         }
-
+        
         public JsonResult GetProjectFileData(string id, string s_type)
         {
             // 接口
@@ -594,6 +577,27 @@ namespace App.Controllers
                         Directory.CreateDirectory(path);
                     }
                     f.SaveAs(path + f.FileName);
+                }
+                TempR = "OK";
+            }
+            catch (Exception ex)
+            {
+                TempR = ex.Message;
+            }
+
+            return Json(TempR);//return Json(new { result = true  });
+        }
+
+        public JsonResult DeleteFilesLocal(string filename)
+        {
+            String TempR = "";
+            string path = Request.ApplicationPath;//Server.MapPath("/upload/");
+            path = Server.MapPath(path += "/upload/" + filename);
+            try
+            {
+                if (System.IO.File.Exists(path))
+                {
+                    System.IO.File.Delete(path);
                 }
                 TempR = "OK";
             }

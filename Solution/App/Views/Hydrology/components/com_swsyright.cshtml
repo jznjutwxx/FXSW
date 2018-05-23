@@ -1,4 +1,4 @@
-﻿<script type="text/x-template"  id="com-swsyright">
+﻿<script type="text/x-template" id="com-swsyright">
     <div id="rightContent" v-bind:style="{height:rightheight+'px'}">
         <div class="topdiv2">
             <el-row class="topleft">
@@ -12,14 +12,14 @@
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/雨量站.png"></div>
                 </el-col>
-                <el-col v-bind:span="7">
+                <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">雨量站</div>
                     <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
                 </el-col>
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水位站.png"></div>
                 </el-col>
-                <el-col v-bind:span="7">
+                <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水位站</div>
                     <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
                 </el-col>
@@ -29,14 +29,14 @@
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水文站.png"></div>
                 </el-col>
-                <el-col v-bind:span="7">
+                <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水文站</div>
                     <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
                 </el-col>
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水质站.png"></div>
                 </el-col>
-                <el-col v-bind:span="7">
+                <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水质站</div>
                     <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
                 </el-col>
@@ -44,31 +44,31 @@
         </div>
 
         <div class="bardiv2" id="interval2">@*interval2：块与块的上下间距*@
-            <div class="titlediv" style="width: 70px !important;left: 22px !important;">雨量统计</div>
-            <com-bar v-bind:option="barOption" class="barcss"></com-bar>
-        </div>
+        <div class="titlediv" style="width: 70px !important;left: 22px !important;">雨量统计</div>
+        <div id="barCharts" class="barcss"></div>
+    </div>
 
-        <div class="tablediv">
-            <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
-            <div class="tablecss" >
-                <el-row class="headercss titlecss" style="">
-                    <el-col v-bind:span="3">序号</el-col>
-                    <el-col v-bind:span="8">站点名称</el-col>
-                    <el-col v-bind:span="8">报警类型</el-col>
-                    <el-col v-bind:span="5">报警信息</el-col>
-                </el-row>
-                <el-row class="titlecss" v-for="todo in tableList">
-                    <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
-                    <el-col v-bind:span="8">{{todo.text}}</el-col>
-                    <el-col v-bind:span="8">{{todo.type}}</el-col>
-                    <el-col v-bind:span="5">{{todo.imformation}}</el-col>
-                </el-row>
-            </div>
+    <div class="tablediv">
+        <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
+        <div class="tablecss">
+            <el-row class="headercss titlecss" style="">
+                <el-col v-bind:span="3">序号</el-col>
+                <el-col v-bind:span="8">站点名称</el-col>
+                <el-col v-bind:span="7">报警类型</el-col>
+                <el-col v-bind:span="6">报警信息</el-col>
+            </el-row>
+            <el-row class="titlecss" v-for="todo in tableList">
+                <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
+                <el-col v-bind:span="8">{{todo.text}}</el-col>
+                <el-col v-bind:span="7">{{todo.type}}</el-col>
+                <el-col v-bind:span="6">{{todo.imformation}}</el-col>
+            </el-row>
         </div>
     </div>
+</div>
 </script>
 
-@Html.Partial("~/Views/components/echarts/com_bar.cshtml")
+@Html.Partial("~/Views/Hydrology/components/com_bar.cshtml")
 
 <script>
     var comSwsyright = {
@@ -77,17 +77,24 @@
             return {
                 rightheight: document.documentElement.clientHeight - 32,
                 barOption: null,
+                datas: ['齐贤1', '金汇2', '中港闸内3', '金汇港南闸内4', '南竹港出海闸5', '南竹港出海闸外6', '齐贤7', '金汇8', ],
+                
                 tableList: [
       { id: 1, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
       { id: 2, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
       { id: 3, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
        { id: 4, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
-      { id: 5, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" }
+      { id: 5, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
+      { id: 6, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
+      { id: 7, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
+      { id: 8, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
+       { id: 9, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
+      { id: 10, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" }
+
                 ]
             }
         },
         components: {
-            "com-bar": comBar
         },
         watch: {
             rightheight: function (val) {
@@ -107,20 +114,18 @@
         },
 
         methods: {
-            //getFaterZctj: function () {
-            //    this.$emit('getcztj-event')
-            //},
             init: function () {
                 this.setData('/Hydrology/GetData', null);
             },
             setData: function (url, param) {
                 this.setBarData(url, param);
             },
+            
             setBarData: function (url, param) {
-                this.$children[3].charts.showLoading();
+                // 基于准备好的dom，初始化echarts实例
+                var barChart = echarts.init(document.getElementById('barCharts'));
                 axios.post(url).then(function (response) {
-                    this.$children[3].charts.hideLoading();
-                    this.barOption = {
+                    var barOption = {
                         color: '#38C9E2',
                         tooltip: {
                             trigger: 'axis',
@@ -128,11 +133,20 @@
                                 type: 'shadow'
                             }
                         },
+                        dataZoom: [
+					              {
+					                  yAxisIndex: 0,
+					                  show: false,
+					                  type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+					                  startValue: 0,      // 从头开始。
+					                  endValue: 4         // 一次性展示5个。
+					              }
+                        ],
                         grid: {
                             top: '2%',
-                            left: '2%',
-                            right: '8%',
-                            bottom: '5%',
+                            left: '20%',
+                            right: '3%',
+                            bottom: '7%',
                         },
                         xAxis: {
                             name: 'mm',
@@ -140,31 +154,29 @@
                             nameGap: '1',
                             type: 'value',
                             nameTextStyle: {
-                                color: '#ffffff'
+                                color: '#fff'
                             },
                             splitLine: { show: false },//去除网格线
                             axisTick: { show: false },
                             axisLabel: {
-                                color: '#ffffff'
+                                color: '#fff'
                             },
                             axisLine: {
                                 lineStyle: {
                                     color: '#3d4997',
-                                    //  width:1,//这里是为了突出显示加上的  
                                 }
                             }
                         },
                         yAxis: {
                             type: 'category',
-                            data: ['齐贤', '金汇', '中港闸内', '金汇港南闸内', '南竹港出海闸', '南竹港出海闸外'],
+                            data: this.datas,
                             axisTick: { show: false },
                             axisLabel: {
-                                color: '#ffffff'
+                                color: '#fff'
                             },
                             axisLine: {
                                 lineStyle: {
                                     color: '#3d4997',
-                                    //  width:1,//这里是为了突出显示加上的  
                                 }
                             }
                         },
@@ -182,8 +194,22 @@
                                     }
                                 }
                             }
-                        ]
+                        ],
                     }
+                    barChart.setOption(barOption);
+
+                    setInterval(function () {
+                        debugger
+                        var len = this.datas.length;
+                        if (barOption.dataZoom[0].endValue == len - 1) {// 每次向后滚动一个，最后一个从头开始。
+                            barOption.dataZoom[0].endValue = 4;
+                            barOption.dataZoom[0].startValue = 0;
+                        } else {
+                            barOption.dataZoom[0].endValue = barOption.dataZoom[0].endValue + 1;
+                            barOption.dataZoom[0].startValue =barOption.dataZoom[0].startValue + 1;
+                        }
+                         barChart.setOption(barOption);
+                    }.bind(this), 2000)
                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -191,14 +217,13 @@
             },
 
             resize: function () {
-                $(window).resize(function () {
+                $(window).resize(function () { 
                     this.setSize()
                 }.bind(this));
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight;
                 var contentH = docH - 30;
-                // this.styles.height = (contentH / 3) + 'px';
                 this.height = contentH / 3;
             }
         }
@@ -211,14 +236,27 @@
         overflow: hidden;
         min-width: 280px;
         min-height: 610px;
-        position:relative;
+        position: relative;
     }
-    .topleft{
+
+    @@media screen and (min-width: 1025px) {
+        .rightopicon {
+            margin-left: -10px;
+            margin-top: 5px;
+        }
+
+        .topicon {
+            height: 55px !important;
+        }
+    }
+
+    .topleft {
         height: 35px !important;
     }
-    .cztj{
+
+    .cztj {
         left: 35px !important;
-        width:70px !important;
+        width: 70px !important;
     }
 
     .topicon {
@@ -228,7 +266,7 @@
     #rightContent .col {
         height: 30px;
         margin-left: 10px;
-        margin-top:  0px !important;
+        margin-top: 0px !important;
         line-height: 30px;
         text-align: center;
         width: 95%;
@@ -276,8 +314,8 @@
 
     .tablediv {
         height: 40%;
-        width:99%;
-       bottom:0;
+        width: 99%;
+        bottom: 0;
         position: absolute;
         border: 1px solid #0146b2;
     }
@@ -288,14 +326,18 @@
         margin-top: 10px;
         overflow: auto;
     }
-    .headercss{
-        background-color:#2d3a8d;margin-top: 14px;text-align:center !important;
+
+    .headercss {
+        background-color: #2d3a8d;
+        margin-top: 14px;
+        text-align: center !important;
     }
+
     .titlecss {
         text-align: left;
         color: #ffffff;
         float: left;
-        font-size: 12px;
+        font-size: 14px;
         font-family: 'Microsoft YaHei';
         height: 30px;
         padding-top: 8px;
@@ -312,16 +354,18 @@
         height: 45px;
         padding-top: 8px;
     }
+
     .topdiv2 {
         height: 20%;
         position: relative;
         border: 1px solid #0146b2;
         width: 99%;
     }
-     .bardiv2{
-        height:35%;
+
+    .bardiv2 {
+        height: 35%;
         position: relative;
         border: 1px solid #0146b2;
-        width:99%;
+        width: 99%;
     }
 </style>

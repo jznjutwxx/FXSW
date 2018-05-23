@@ -80,7 +80,9 @@
         },
         methods: {
             open: function () {
-                window.open('/EngineerSketch/Index', 'newwindow', 'height=750,width=900,top=180,left=500,toolbar=no,menubar=no,scrollbars=no, Resizable=no,location=no, status=no');
+                window.open('/EngineerSketch/Index', 'newwindow',
+                    'height=750,width=900,top=180,left=500,toolbar=no,menubar=no,scrollbars=no, Resizable=no,location=no, status=no'
+                );
             },
             close: function () {
                 window.close();
@@ -163,6 +165,27 @@
             addLayer: function () {
                 this.map.addLayers([this.layer, this.layer_gcct, this.vectorLayer]);
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+                this.getFeaturesBySQL();
+            },
+            getFeaturesBySQL: function () {
+                var queryParam, getFeaturesBySQLParam, getFeaturesBySQLService;
+                queryParam = new SuperMap.REST.FilterParameter({
+                    attributeFilter: "S_PROJECT_NO='110000221'"
+                });
+                getFeaturesBySQLParam = new SuperMap.REST.GetFeaturesBySQLParameters({
+                    queryParameter:queryParam,
+                    datasetNames:["gcct0514:gcct_pt", "gcct0514:gcct_ln", "gcct0514:gcct_pl"]
+                });
+                getFeaturesBySQLService = new SuperMap.REST.GetFeaturesBySQLService(this.url4, {
+                    eventListeners:{
+                        "processCompleted":this.sqlCompleted,
+                        "processFailed":this.processFailed
+                    }
+                });
+                getFeaturesBySQLService.processAsync(getFeaturesBySQLParam);        
+            },
+            sqlCompleted:function(QueryEventArgs){
+                console.log(QueryEventArgs);
             },
             //编辑要素完成
             editFeatureCompleted: function (event) {
@@ -214,18 +237,25 @@
             addPointCompleted: function (drawGeometryArgs) {
                 this.drawPoint.deactivate();
                 var geometry = drawGeometryArgs.feature.geometry,
-                feature = new SuperMap.Feature.Vector();
+                    feature = new SuperMap.Feature.Vector();
                 feature.geometry = geometry;
                 feature.style = this.ptstyle;
                 this.vectorLayer.addFeatures(feature);
 
                 geometry.id = "300000";
                 var editFeatureParameter, editFeatureService,
-                features = {
-                    fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON", "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE", "N_RECKON_TOTAL_AMT", "REMARK"],
-                    fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR, this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo.S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo.S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK],
-                    geometry: geometry
-                };
+                    features = {
+                        fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
+                            "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
+                            "N_RECKON_TOTAL_AMT", "REMARK"
+                        ],
+                        fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
+                            this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
+                            .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                        ],
+                        geometry: geometry
+                    };
                 editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
                     features: [features],
                     editType: SuperMap.REST.EditType.ADD,
@@ -241,7 +271,7 @@
             },
             addPTFeaturesProcessCompleted: function (editFeaturesEventArgs) {
                 var addResultIds = editFeaturesEventArgs.result.IDs,
-                resourceInfo = editFeaturesEventArgs.result.resourceInfo;
+                    resourceInfo = editFeaturesEventArgs.result.resourceInfo;
                 if (addResultIds === null && resourceInfo === null) return;
                 if ((addResultIds && addResultIds.length > 0) || (resourceInfo && resourceInfo.succeed)) {
                     this.$message({
@@ -269,8 +299,15 @@
                 geometry.id = "200000";
                 var editFeatureParameter, editFeatureService,
                     features = {
-                        fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON", "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE", "N_RECKON_TOTAL_AMT", "REMARK"],
-                        fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR, this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo.S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo.S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK],
+                        fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
+                            "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
+                            "N_RECKON_TOTAL_AMT", "REMARK"
+                        ],
+                        fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
+                            this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
+                            .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                        ],
                         geometry: geometry
                     };
                 editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
@@ -315,8 +352,15 @@
                 geometry.id = "100000";
                 var editFeatureParameter, editFeatureService,
                     features = {
-                        fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON", "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE", "N_RECKON_TOTAL_AMT", "REMARK"],
-                        fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR, this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo.S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo.S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK],
+                        fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
+                            "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
+                            "N_RECKON_TOTAL_AMT", "REMARK"
+                        ],
+                        fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
+                            this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
+                            .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                        ],
                         geometry: geometry
                     };
                 editFeatureParameter = new SuperMap.REST.EditFeaturesParameters({
@@ -612,9 +656,10 @@
     };
 </script>
 <style scoped>
-    ::-webkit-scrollbar{
-        display:none;
+    ::-webkit-scrollbar {
+        display: none;
     }
+
     #com-gcctmapEdit {
         display: none;
     }

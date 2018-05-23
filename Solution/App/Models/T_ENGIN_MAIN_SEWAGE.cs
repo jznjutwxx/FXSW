@@ -22,6 +22,7 @@ namespace App.Models
         public string S_UNIT_SUPERVISE { get; set; }
         public string N_RECKON_TOTAL_AMT { get; set; }
         public string S_REMARK { get; set; }
+        public string REMOVE_PIC_IDS { get; set; }
         //批复工程量
         public string N_CZSL { get; set; }
         public string N_ZHS { get; set; }
