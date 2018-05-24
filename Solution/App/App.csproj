@@ -198,6 +198,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\BackboneRiverwayInfo.cs" />
+    <Compile Include="Models\OtherRiverwayInfo.cs" />
     <Compile Include="Models\SignInResponse.cs" />
     <Compile Include="Models\T_ENGIN_INFO.cs" />
     <Compile Include="Models\T_ENGIN_MAIN_SEWAGE.cs" />
@@ -263,17 +264,7 @@
     <Content Include="Images\gczl\ico_jiezhen.png" />
     <Content Include="Images\gczl\ico_niandu.png" />
     <Content Include="Images\gczl\img_tuli.png" />
-    <Content Include="Images\gc_main\btn_admin_active.png" />
-    <Content Include="Images\gc_main\btn_admin_normal.png" />
-    <Content Include="Images\gc_main\btn_gcgl_active.png" />
-    <Content Include="Images\gc_main\btn_gcgl_normal.png" />
-    <Content Include="Images\gc_main\btn_gczl_active.png" />
-    <Content Include="Images\gc_main\btn_gczl_normal.png" />
     <Content Include="Images\gc_main\btn_shousuo.png" />
-    <Content Include="Images\gc_main\btn_tjfx_active.png" />
-    <Content Include="Images\gc_main\btn_tjfx_normal.png" />
-    <Content Include="Images\gc_main\btn_xtsz_active.png" />
-    <Content Include="Images\gc_main\btn_xtsz_normal.png" />
     <Content Include="Images\gc_main\ico_biaozhi.png" />
     <Content Include="Images\gc_main\ico_zxhd_active.png" />
     <Content Include="Images\gc_main\ico_zxhd.png" />
@@ -289,7 +280,6 @@
     <Content Include="Images\gc_main\ico_sjdwgl_active.png" />
     <Content Include="Images\gc_main\ico_gghd.png" />
     <Content Include="Images\gc_main\ico_gghd_active.png" />
-    <Content Include="Images\gc_main\img_header_gczxt.png" />
     <Content Include="Images\gc_main\img_header_right_gczxt.png" />
     <Content Include="Images\gc_main\img_header_x.png" />
     <Content Include="Images\login\btn_login.png" />
@@ -298,22 +288,32 @@
     <Content Include="Images\login\img_login.png" />
     <Content Include="Images\login\img_login_x.png" />
     <Content Include="Images\main\btn_fxzxt_active.png" />
+    <Content Include="Images\main\btn_fxzxt_lock.png" />
     <Content Include="Images\main\btn_fxzxt_normal.png" />
     <Content Include="Images\main\btn_gczxt_active.png" />
+    <Content Include="Images\main\btn_gczxt_lock.png" />
     <Content Include="Images\main\btn_gczxt_normal.png" />
     <Content Include="Images\main\btn_htzxt_active.png" />
+    <Content Include="Images\main\btn_htzxt_lock.png" />
     <Content Include="Images\main\btn_htzxt_normal.png" />
     <Content Include="Images\main\btn_hzzxt_active.png" />
+    <Content Include="Images\main\btn_hzzxt_lock.png" />
     <Content Include="Images\main\btn_hzzxt_normal.png" />
     <Content Include="Images\main\btn_pszxt_active.png" />
     <Content Include="Images\main\btn_pszxt_lock.png" />
     <Content Include="Images\main\btn_pszxt_normal.png" />
     <Content Include="Images\main\btn_sszxt_active.png" />
+    <Content Include="Images\main\btn_sszxt_lock.png" />
     <Content Include="Images\main\btn_sszxt_normal.png" />
     <Content Include="Images\main\btn_swzxt_active.png" />
+    <Content Include="Images\main\btn_swzxt_lock.png" />
     <Content Include="Images\main\btn_swzxt_normal.png" />
     <Content Include="Images\main\btn_szyzxt_active.png" />
+    <Content Include="Images\main\btn_szyzxt_lock.png" />
     <Content Include="Images\main\btn_szyzxt_normal.png" />
+    <Content Include="Images\main\btn_xmzxt_active.png" />
+    <Content Include="Images\main\btn_xmzxt_lock.png" />
+    <Content Include="Images\main\btn_xmzxt_normal.png" />
     <Content Include="Images\main\head\btn_admin_active.png" />
     <Content Include="Images\main\head\btn_admin_normal.png" />
     <Content Include="Images\main\head\btn_fangx_active.png" />
@@ -325,9 +325,10 @@
     <Content Include="Images\main\head\btn_shuizy_active.png" />
     <Content Include="Images\main\head\btn_shuizy_normal.png" />
     <Content Include="Images\main\head\img_header.png" />
-    <Content Include="Images\main\img_bg.png" />
-    <Content Include="Images\main\img_bg_x.png" />
+    <Content Include="Images\main\head\img_header_zonghe.png" />
     <Content Include="Images\sw_main\img_header_sw.png" />
+    <Content Include="Images\gc_main\img_header_xm.png" />
+    <Content Include="Images\main\img_bg_x.png" />
     <Content Include="Images\zhjc\img_fxfxbg.png" />
     <Content Include="Images\zhjc\legend\btn_initMapExtent.png" />
     <Content Include="Images\zhjc\legend\btn_showLegend.png" />
@@ -1311,6 +1312,7 @@
     <Content Include="Views\Login\ProjectOverTime.cshtml" />
     <Content Include="Views\Main\ProjectOutside.cshtml" />
     <Content Include="Views\Shared\_ProjectOutsideLayout.cshtml" />
+    <Content Include="Views\components\gcctMap\com_gcctAdd.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

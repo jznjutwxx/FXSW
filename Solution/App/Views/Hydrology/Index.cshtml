@@ -168,13 +168,14 @@
             hdInfo: null,
             map: null,
             drawPoint: null,
+            selectFeature: null,
             layers: [],
             baselayer: null,
-            hdNumCoverLayer: null,//河道数量图层
+            hdNumCoverLayer: null,//河道数量图层 和 水质达标率数值图层
             czNumCoverLayer: null,//各个镇的测站总数量图层
             representativeMarkersLayer: null,//一镇一站标记图层,测站代表图层
             jtczLayer: null,   //具体测站图层
-            czNameCoverLayr: null,//测站名字图层
+            czNameCoverLayer: null,//测站名字图层
             dxvectorLayer: null,  //点选
             szdblVectorLayer: null,   //水质达标率高亮图层
             controlSzdbltlShow: false,  //控制水质达标率图例的显示
@@ -250,11 +251,11 @@
                 });
                 this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
                 this.szdblVectorLayer = new SuperMap.Layer.Vector("水质达标率高亮图层");
-                this.hdNumCoverLayer = new SuperMap.Layer.Vector("河道数量图层");
+                this.hdNumCoverLayer = new SuperMap.Layer.Vector("河道数量图层、水质达标率数值图层");
                 this.czNumCoverLayer = new SuperMap.Layer.Vector("各个镇的测站总数量图层");
                 this.representativeMarkersLayer = new SuperMap.Layer.Markers("一镇一站图层");
                 this.jtczLayer = new SuperMap.Layer.Markers("具体测站图层");
-                this.czNameCoverLayr = new SuperMap.Layer.Vector("具体测站名字");
+                this.czNameCoverLayer = new SuperMap.Layer.Vector("具体测站名字");
                 this.dxvectorLayer = new SuperMap.Layer.Vector("点选图层");
                 this.layers = [this.baselayer, this.szdblVectorLayer, this.representativeMarkersLayer, this.czNumCoverLayer, this.dxvectorLayer, this.hdNumCoverLayer];
                 //图层控制器
@@ -264,35 +265,6 @@
                 var mousePosition = new SuperMap.Control.MousePosition();
                 mousePosition.prefix = "经度:";
                 mousePosition.separator = "/纬度:";
-                /*  var callbacks = {
-                        over:    //this.overtest(),
-                        function (currentFeature) {
-                            debugger;
-                            alert("鼠标经过");
-                        },
-                        out: function (currentFeature) {
-                        },
-                        click: function (currentFeature) {
-                            this.overtest();
-                            debugger;
-                            alert("click");
-                        },
-                        clickout: function (lastFeature) {
-                        },
-                        rightclick: function (currentFeature) {
-                        },
-                        dblclick: function (currentFeature) {
-                        }
-                    };
-                    debugger;
-                    var selectFeature = new SuperMap.Control.SelectFeature(this.hdNumCoverLayer, {
-                        // onSelect: this.onFeatureSelected,
-                        callbacks: callbacks,
-                        //hover: false,
-                        repeat: true
-                    });
-                    this.map.addControl(selectFeature);
-                    selectFeature.activate();*/
                 //点查询
                 this.drawPoint = new SuperMap.Control.DrawFeature(this.dxvectorLayer, SuperMap.Handler.Point);
                 this.map.addControl(this.drawPoint);
@@ -304,19 +276,40 @@
                 //一镇一站图层单击时
                 this.representativeMarkersLayer.events.on({ "mouseover": this.activePoint });
                 this.representativeMarkersLayer.events.on({ "mouseout": this.deactivePoint });
-                //this.baselayer.events.on({ 'move': this.selectTwon });
-                //this.hdNumCoverLayer.events.on({ 'mouseover': this.test });
-                //this.hdNumCoverLayer.events.on({ 'mouseover': this.test });
             },
-            overtest: function () {
-                alert("jj");
-            },
-            test: function () {
+            activeSelectTown: function () {
+                const vm = this;
+                if (vm.selectFeature) {
+                    vm.selectFeature.deactivate();
+                    vm.map.removeControl(vm.selectFeature);
+                }
+                var callbacks = {
+                    over: function (currentFeature) {
+                        vm.drawPoint.activate();
+                    },
+                    out: function (currentFeature) {
+                        // vm.drawPoint.deactivate();
+                    },
+                    click: function (currentFeature) {
+                        //vm.drawPoint.activate();  //鼠标双击选择
+                        //alert(1);
+                    },
+                    clickout: function (lastFeature) {
+
+                    },
+                    rightclick: function (currentFeature) {
+                    },
+                    dblclick: function (currentFeature) {
+                    }
+                };
                 debugger;
-                alert("ok");
-            },
-            onFeatureSelected: function (currentFeature) {
-                alert(1);
+                vm.selectFeature = new SuperMap.Control.SelectFeature(this.hdNumCoverLayer, {
+                    callbacks: callbacks,
+                    repeat: true,
+                    allowSelectTheSameFeature: true,
+                });
+                vm.map.addControl(vm.selectFeature);
+                vm.selectFeature.activate();
             },
             addLayers: function () {
                 var that = this;
@@ -324,7 +317,7 @@
                 that.map.addLayers(that.layers);
                 if (window.screen.width <= 1024) {
                     this.map.zoomTo(0);
-                    $("#cwyb").css("font-size","12px");
+                    $("#cwyb").css("font-size", "12px");
                     $("#cwyb").css("width", "220px");
                     $("#cwyb").css("bottom", "16px");
                     $("#cwfg").css("width", "220px");
@@ -350,13 +343,12 @@
                     this.map.zoomTo(2);
                 }
                 that.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
+                /*----鼠标在地图上经过,触发点选-------*/
+                that.map.events.on({ "mouseover": this.selectTwon });
+               // that.activeSelectTown();
                 //setTimeout(function () {
                 //    $(".smControlScaleLineTop").html().replace(/公里/, "km");
                 //},200)
-
-                /*----鼠标在地图上经过,触发点选-------*/
-                //that.map.events.on({ "mouseover": this.selectTwon });
-                //}, 100)
                 //默认显示河道数量,父页面调用
                 this.showHDnum();
             },
@@ -398,15 +390,16 @@
             },
             //在地图上移动时触发
             selectTwon: function (e) {
+                debugger;
                 //console.log(e.clientX + "" + e.clientY);
                 //var lonlat = this.map.getLonLatFromPixel(new SuperMap.Pixel(e.clientX, e.clientY));
                 //var extent = this.map.getExtent();
-                if (this.mapTitle != '测站统计') {
-                    debugger;
+                //if (this.mapTitle != '测站统计') {
+                //    debugger;
                     this.drawPoint.activate();
-                } else {
-                    this.drawPoint.deactivate();
-                }
+                //} else {
+                //    this.drawPoint.deactivate();
+                //}
             },
             //在marke上单击时触发
             showPop: function (e) {
@@ -442,35 +435,96 @@
             },
             mapIsZoomend: function (e) {
                 var zom = this.map.getZoom();
-                var allLayers = this.map.layers
+                var allLayers = this.map.layers;
                 if (this.isCZnumModel) {
                     if (zom > 2) {
                         //当缩放级别大于3时，不显示representativeMarkersLayer和czNumCoverLayer，显示具体测站图层
-                        for (var i = 0; i < allLayers.length; i++) {
-                            if (allLayers[i].name == "一镇一站图层") {
+                        /*for (var i = 0; i < this.map.layers.length; i++) {
+                            var layername = this.map.layers[i].name;
+                            if (layername == "一镇一站图层") {
                                 this.map.removeLayer(this.representativeMarkersLayer);
                             }
-                            if (allLayers[i].name != "具体测站图层") {
-                                this.map.addLayer(this.jtczLayer);
+                        }
+                        for (var i = 0; i < this.map.layers.length; i++) {
+                            var layername = this.map.layers[i].name;
+                            if (layername != "具体测站图层" && this.jtczLayer) {
+                                debugger;
+                                this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
+                                this.map.addLayer(this.czNameCoverLayer);
+
+                            }
+                        }
+                        for (var i = 0; i < this.map.layers.length; i++) {
+                            var layername = this.map.layers[i].name;
+                            if (layername == "各个镇的测站总数量图层") {
+                                this.map.removeLayer(this.czNumCoverLayer);
+                            }
+                        }*/
+                       /* Array.prototype.in_array = function (str) {
+                            for (i = 0; i < this.length; i++) {
+                                if (this[i] == str) {
+                                    return true;
+                                }
+                            }
+                            return false;
+                        }
+                        var layersname = [];
+                        for (var i = 0; i < this.map.layers.length; i++) {
+                            layersname.push(this.map.layers[i].name);
+                        }
+                        if (layersname.in_array("一镇一站图层")) {
+                            debugger;
+                            this.map.removeLayer(this.representativeMarkersLayer);
+                           
+                        }
+                        var layersname = [];
+                        for (var i = 0; i < this.map.layers.length; i++) {
+                            layersname.push(this.map.layers[i].name);
+                        }
+                        if (layersname.in_array("各个镇的测站总数量图层")) {
+                            this.map.removeLayer(this.czNumCoverLayer);
+                        }
+                        var layersname = [];
+                        for (var i = 0; i < this.map.layers.length; i++) {
+                            layersname.push(this.map.layers[i].name);
+                        }
+                        if (!layersname.in_array("具体测站图层")) {
+                            this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
+                            //this.map.addLayer(this.czNameCoverLayer);
+                        }*/
+                        var jtcz = false;
+                        for (var i = 0; i < allLayers.length; i++) {
+                            var layername = allLayers[i].name;
+                            if (allLayers[i].name == "一镇一站图层" ) {
+                                this.map.removeLayer(this.representativeMarkersLayer);
+                            }
+                            if (allLayers[i].name != "具体测站图层"  && !jtcz) {
+                                debugger;
+                                this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
+                                this.map.addLayer(this.czNameCoverLayer);
+                                jtcz = true;
                             }
                             if (allLayers[i].name == "各个镇的测站总数量图层") {
                                 this.map.removeLayer(this.czNumCoverLayer);
                             }
                         }
-                        this.map.addLayer(this.jtczLayer);
-                        this.map.addLayer(this.czNameCoverLayr);
+                        //this.map.addLayer(this.jtczLayer);
+                        //this.map.addLayer(this.czNameCoverLayer);
                     } else {
-                        //当缩放级别小于等于3时，不显示具体测站图层,显示representativeMarkersLayer和czNumCoverLayer
+                        var yzyz = false,ggz=false;
+                        //当缩放级别小于3时，不显示具体测站图层,显示representativeMarkersLayer和czNumCoverLayer
                         for (var i = 0; i < allLayers.length; i++) {
-                            if (allLayers[i].name != "一镇一站图层") {
+                            if (allLayers[i].name != "一镇一站图层" && !yzyz) {
                                 this.map.addLayer(this.representativeMarkersLayer);
+                                yzyz = true;
                             }
                             if (allLayers[i].name == "具体测站图层") {
                                 this.map.removeLayer(this.jtczLayer);
-                                this.map.removeLayer(this.czNameCoverLayr);
+                                this.map.removeLayer(this.czNameCoverLayer);
                             }
-                            if (allLayers[i].name != "各个镇的测站总数量图层") {
+                            if (allLayers[i].name != "各个镇的测站总数量图层" && !ggz) {
                                 this.map.addLayer(this.czNumCoverLayer);
+                                ggz = true;
                             }
                         }
                     }
@@ -536,7 +590,7 @@
                         this.lefttwon = "奉贤区";
                     }
                 }
-
+                //this.selectFeature.deactivate();
             },
             dxFailed: function (e) {
             },
@@ -552,6 +606,7 @@
                   });
             },
             showHDnum: function () {
+                this.drawPoint.deactivate();
                 //this.map.zoomTo(2);
                 //this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
                 this.controlSzdbltlShow = false;
@@ -562,7 +617,7 @@
                 this.dxvectorLayer.removeAllFeatures();
                 this.representativeMarkersLayer.clearMarkers();
                 this.jtczLayer.clearMarkers();
-                this.czNameCoverLayr.removeAllFeatures();
+                this.czNameCoverLayer.removeAllFeatures();
                 this.czNumCoverLayer.removeAllFeatures();
                 for (var i = 0; i < this.swAllInfo.length; i++) {
                     var pt = new SuperMap.Geometry.Point(this.swAllInfo[i].x, this.swAllInfo[i].y);
@@ -575,6 +630,7 @@
                         fontWeight: "bold",
                         fontSize: 14,
                         label: this.swAllInfo[i].hdnum.toString(),
+                        labelSelect: true,  //如果设为true，标签可以选用SelectFeature或者similar控件，默认为false。
                         labelYOffset: 10,
                         labelXOffset: 20,
                         labelAlign: "cm",
@@ -583,10 +639,10 @@
                     }
                     hdFeature.style = hdNumStyle;
                     this.hdNumCoverLayer.addFeatures(hdFeature);
-
                 }
             },
             showZCnum: function () {
+                this.drawPoint.deactivate();
                 //右侧取到测站数据
                 //一镇一站，缩小到一定程度时，8个镇固定显示某一个测站
                 this.controlSzdbltlShow = false;
@@ -609,6 +665,7 @@
                         fontWeight: "bold",
                         fontSize: 14,
                         label: item.cznum.toString(),
+                        labelSelect: true,
                         labelYOffset: 10,
                         labelXOffset: 20,
                         labelAlign: "cm",
@@ -671,7 +728,7 @@
                         pointRadius: 0 //圆半径设置为0
                     }
                     czNameFeature.style = czNameStyle;
-                    that.czNameCoverLayr.addFeatures(czNameFeature);
+                    that.czNameCoverLayer.addFeatures(czNameFeature);
                     var size = new SuperMap.Size(40, 40);
                     var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
                     var picUrl = "/Images/swsy/水位站.png";
@@ -696,9 +753,9 @@
                     //给所有的marker注册单击事件
                     markers[i].events.on({ "click": this.showPop });
                 }
-
             },
             showSZDBL: function () {
+                this.drawPoint.deactivate();
                 this.controlSzdbltlShow = true;
                 this.isCZnumModel = false;
                 this.mapTitle = "水质达标率（12月）";
@@ -708,7 +765,7 @@
                 this.szdblVectorLayer.removeAllFeatures();
                 this.dxvectorLayer.removeAllFeatures();
                 this.jtczLayer.clearMarkers();
-                this.czNameCoverLayr.removeAllFeatures();
+                this.czNameCoverLayer.removeAllFeatures();
                 this.queryBySql();
                 var that = this;
                 $.each(that.swAllInfo, function (index, item) {
@@ -725,6 +782,7 @@
                         fontWeight: "bold",
                         fontSize: 14,
                         label: item.percent.toString(),
+                        labelSelect: true,
                         labelYOffset: 10,
                         labelXOffset: 20,
                         fontColor: "#eceb2c",
@@ -829,7 +887,6 @@
             },
             //雨量图
             setBarData: function (url, param) {
-
                 try {
                     console.log(this.$refs.ylbar);
                     ;
@@ -1294,12 +1351,12 @@
     }
 
     #notcwyb {
-       position: absolute;
-    right: 30px;
-    z-index: 1500;
-    bottom: 30px;
-    color: white;
-    font-size: 14px;
+        position: absolute;
+        right: 30px;
+        z-index: 1500;
+        bottom: 30px;
+        color: white;
+        font-size: 14px;
     }
 
     div.smMapViewport {

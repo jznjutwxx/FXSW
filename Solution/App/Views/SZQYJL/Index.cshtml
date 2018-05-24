@@ -6,7 +6,7 @@
 <div id="app">
     <header>
         <el-row style="margin:10px 0px 10px 24px; min-width:1000px;">
-            <el-col v-bind:span="8">
+            <el-col v-bind:span="7">
                 <span>所属镇:</span>
                 <el-select v-model="town" placeholder="请选择">
                     <el-option v-for="item in towns"
@@ -26,7 +26,7 @@
             </el-col>
         </el-row>
         <el-row style="margin:15px 0 0 10px;min-width:1000px;">
-            <el-col v-bind:span="8">
+            <el-col v-bind:span="7">
                 <span>河道等级:</span>
                 <el-select v-model="level" placeholder="请选择">
                     <el-option v-for="item in levels"
@@ -50,31 +50,31 @@
             </el-col>
         </el-row>
     </header>
-    <el-table v-bind:data="qyjlData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;" v-bind:border='true' stripe v-on:cell-click="lookThisQyjl">
-        <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+    <el-table v-bind:data="qyjlData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;" v-bind:border='true' stripe v-on:cell-click="lookThisQyjl"  v-bind:height="tableHeight">
+        <el-table-column type="index" v-bind:index="indexOrder" width="80" label='序号' property="index"  header-align="center" align="center">
         </el-table-column>
-        <el-table-column property="s_river_name" label="河道名称">
+        <el-table-column property="s_river_name" label="河道名称"  header-align="center" align="left">
         </el-table-column>
-        <el-table-column property="s_sampling_address" label="断面名称">
+        <el-table-column property="s_sampling_address" label="断面名称"  header-align="center" align="left">
         </el-table-column>
-        <el-table-column property="s_lx" label="流向">
+        <el-table-column property="s_lx" label="流向"  header-align="center" align="center">
             <!--接口无该字段-->
         </el-table-column>
-        <el-table-column property="n_monitor_ss" label="水色">
+        <el-table-column property="n_monitor_ss" label="水色"  header-align="center" align="center">
             <!--接口无该字段-->
         </el-table-column>
-        <el-table-column property="n_monitor_sw" label="水温(℃)">
+        <el-table-column property="n_monitor_sw" label="水温(℃)"  header-align="center" align="right">
         </el-table-column>
-        <el-table-column property="s_xhw" label="嗅和味">
+        <el-table-column property="s_xhw" label="嗅和味"  header-align="center" align="left">
             <!--接口无该字段-->
         </el-table-column>
-        <el-table-column property="n_monitor_rjy" label="溶解氧(mg/l)">
+        <el-table-column property="n_monitor_rjy" label="溶解氧(mg/l)"  header-align="center" align="right">
         </el-table-column>
-        <el-table-column property="n_monitor_tmd" label="透明度(cm)">
+        <el-table-column property="n_monitor_tmd" label="透明度(cm)"  header-align="center" align="right">
         </el-table-column>
-        <el-table-column property="n_monitor_dw" label="氧化还原电位(mv))">
+        <el-table-column property="n_monitor_dw" label="氧化还原电位(mv))"  header-align="center" align="right">
         </el-table-column>
-        <el-table-column property="t_report_time" label="取样时间">
+        <el-table-column property="t_report_time" label="取样时间"  header-align="center" align="center">
         </el-table-column>
     </el-table>
     <el-pagination v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" layout="total, sizes, prev, pager, next, jumper" v-bind:total="qyjlData.length">
@@ -152,8 +152,8 @@
                 value: '庄行镇',
                 label: '庄行镇'
             }, {
-                value: '拓林镇',
-                label: '拓林镇'
+                value: '柘林镇',
+                label: '柘林镇'
             }, {
                 value: '南桥镇',
                 label: '南桥镇'
@@ -173,7 +173,7 @@
                 value: '海湾镇',
                 label: '海湾镇'
             }],
-            town: '拓林镇',
+            town: '柘林镇',
             tasks: ["全部", "重污染", "黑臭", "清洁水", "进出水", '水功能', '劣五类'],
             task: '全部',
             levels: ['全部', '市、区级', '镇级', '村级'],
@@ -186,12 +186,17 @@
             nowDmName: "",//当前断面名字
             qyjlStartTime: moment().format('YYYY-MM-DD'),
             qyjlEndTime: moment().format('YYYY-MM-DD'),
+            tableHeight: document.documentElement.clientHeight - 112-32,
         },
         components: {
 
         },
         mounted: function () {
             this.getQyjlData();
+            const vm = this;
+            $(window).resize(function () {
+                vm.tableHeight = document.documentElement.clientHeight - 112 - 32;
+            });
         },
         methods: {
             preMonth: function () {
@@ -351,4 +356,10 @@
         #qyjlSelect .el-date-editor.el-input, .el-date-editor.el-input__inner{
             width:200px;
         }
+            .el-table--border{
+        margin-bottom:4px;
+    }
+    .el-pagination{
+        float:right
+    }
 </style>

@@ -9,12 +9,12 @@
     <div id="appBasic">
         <div id="leftBasic">
             <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="detildata" class="basicForm">
-                <el-row>
+                <el-row class="el-row">
                     <el-col v-bind:span="24">
                         <div class="blueTitle"></div><div class="appTitle">基本信息</div>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row class="el-row" type="flex">
                     <el-col v-bind:span="12" class="colCss">
                         <el-form-item label="工程名称:">
                             <el-input v-model="detildata.s_name" size="mini" v-bind:disabled="true"></el-input>
@@ -26,7 +26,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row class="el-row">
                     <el-col v-bind:span="12" class="colCss">
                         <el-form-item label="工程分类:">
                             <el-input v-model="detildata.n_type" size="mini" v-bind:disabled="true"></el-input>
@@ -38,7 +38,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-row>
+                <el-row class="el-row">
                     <el-col v-bind:span="12" class="colCss">
                         <el-form-item label="年度:">
                             <el-input v-model="detildata.n_year" size="mini" v-bind:disabled="true"></el-input>
@@ -50,6 +50,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
+
                 <el-row class="el-row">
                     <el-col v-bind:span="12" class="colCss">
                         <el-form-item label="工程地址:">
@@ -81,7 +82,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="12" class="colCss">
                         <el-form-item label="腾地面积:">
-                            <el-input v-model="detildata.n_empty_area" size="mini" v-bind:disabled="true">
+                            <el-input v-model="detildata.n_water_area" size="mini" v-bind:disabled="true">
                                 <template slot="append">
                                     亩
                                 </template>
@@ -94,16 +95,17 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <div>
-                    <el-dialog title="工程位置草图详情" v-bind:visible.sync="mapDialogVisible" width="70%" top="6vh">
-                        <com-gcctmapview v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap"></com-gcctmapview>
-                    </el-dialog>
-                </div>
+
+                <el-dialog title="工程草图详情" v-bind:visible.sync="mapDialogVisible" width="70%" top="6vh">
+                    <com-gcctmapview v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap" v-bind:gcctinfo=this.gcctinfo></com-gcctmapview>
+                </el-dialog>
+
                 <el-row class="el-row ">
                     <el-col v-bind:span="24" style="height:90px;">
                         <el-form-item label="备注:">
                             <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" v-model="detildata.s_remark" style="width:127%;padding-top:10px;" disabled resize="none">
                             </el-input>
+                            @*<el-input v-model="detildata.name" size="mini" v-bind:disabled="true" style="width:802px;"></el-input> n_draft*@
                         </el-form-item>
                     </el-col>
                 </el-row>
@@ -119,63 +121,67 @@
             </template>
         </div>
     </div>
-    <div id="ProjectInfo" style="padding-top:10px;height:100px">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="projectData" class="basicForm">
-            <el-row>
+
+    <div id="appReply" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="replyData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="blueTitle"></div>
-                    <div class="appTitle">批复工程内容</div>
+                    <div class="blueTitle"></div><div class="appTitle">批复工程内容</div>
                 </el-col>
             </el-row>
             <el-row>
-                <el-col v-bind:span="24" class="colCss">
+                <el-col v-bind:span="24">
                     <el-form-item label="批复工程内容:">
-                        <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" v-model="projectData.S_CONTENT" disabled style="width:136%;padding-top:10px;" resize="none">
+                        <el-input type="textarea" v-bind:rows="3" v-model="replyData.s_content" disabled style="width:136%;padding-top:10px;" resize="none">
                         </el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
+
         </el-form>
     </div>
-    <div id="ReplayNumber" style="padding-top:10px;">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="replayData" class="basicForm">
-            <el-row>
+    <div id="appReplyNum" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="replyData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="blueTitle"></div>
-                    <div class="appTitle">批复文号</div>
+                    <div class="blueTitle"></div><div class="appTitle">批复文号</div>
                 </el-col>
             </el-row>
-            <el-row>
+            <el-row class="el-row">
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="工可批复:">
-                        <el-input v-model="replayData.S_GKPF" placeholder="请输入内容" size="mini" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.s_gkpf" size="mini" v-bind:disabled="true">
+                        </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="初设批复:">
-                        <el-input v-model="replayData.S_CSPF" size="mini" v-bind:disabled="true"> </el-input>
+                        <el-input v-model="replyData.s_cspf" size="mini" v-bind:disabled="true">
+                        </el-input>
                     </el-form-item>
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="资金批文:">
-                        <el-input v-model="replayData.S_ZJPW" size="mini" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.s_zjpw" size="mini" v-bind:disabled="true">
+                        </el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
+
         </el-form>
     </div>
-    <div id="ForeCost" style="padding-top:10px;">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" size="mini" v-model="investData" class="basicForm">
-            <el-row>
+
+    <div id="appInvest" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="investData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="blueTitle"></div>
-                    <div class="appTitle">概算投资</div>
+                    <div class="blueTitle"></div><div class="appTitle">概算投资</div>
                 </el-col>
             </el-row>
-            <el-row>
+            <el-row class="el-row">
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="总投资:">
-                        <el-input v-model="investData.N_TOTAL_INVEST" placeholder="请输入内容" disabled>
+                        <el-input v-model="investData.n_total_invest" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -184,7 +190,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="工程直接费:">
-                        <el-input v-model="investData.N_ENGIN_COST" disabled>
+                        <el-input v-model="investData.n_engin_cost" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -193,7 +199,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="独立费用:">
-                        <el-input v-model="investData.N_INDEPENDENT_COST" disabled>
+                        <el-input v-model="investData.n_independent_cost" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -201,10 +207,10 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row>
+            <el-row class="el-row">
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="预备费:">
-                        <el-input v-model="investData.N_PREP_COST" placeholder="请输入内容" disabled>
+                        <el-input v-model="investData.n_prep_cost" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -213,7 +219,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="景观等费用:">
-                        <el-input v-model="investData.N_SIGHT_COST" disabled>
+                        <el-input v-model="investData.n_sight_cost" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -222,7 +228,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="建设用地费:">
-                        <el-input v-model="investData.N_BUILD_COST" disabled>
+                        <el-input v-model="investData.n_build_cost" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -234,18 +240,17 @@
         </el-form>
     </div>
 
-    <div id="CapitalMatch" style="padding-top:10px;">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="capitalData" class="basicForm" size="mini">
-            <el-row>
+    <div id="appCapital" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="capitalData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="blueTitle"></div>
-                    <div class="appTitle">资金配套组成</div>
+                    <div class="blueTitle"></div><div class="appTitle">资金配套组成</div>
                 </el-col>
             </el-row>
-            <el-row>
+            <el-row class="el-row">
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="市补:">
-                        <el-input v-model="capitalData.N_SUBSIDY_CITY" placeholder="请输入内容" disabled>
+                        <el-input v-model="capitalData.n_subsidy_city" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -254,7 +259,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="区配套:">
-                        <el-input v-model="capitalData.N_SUBSIDY_DISTRICT" disabled>
+                        <el-input v-model="capitalData.n_subsidy_district" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -263,7 +268,7 @@
                 </el-col>
                 <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="镇配套:">
-                        <el-input v-model="capitalData.N_SUBSIDY_TOWN" disabled>
+                        <el-input v-model="capitalData.n_subsidy_town" size="mini" v-bind:disabled="true">
                             <template slot="append">
                                 万元
                             </template>
@@ -271,22 +276,20 @@
                     </el-form-item>
                 </el-col>
             </el-row>
-
         </el-form>
     </div>
-    <div id="ProjectComplete" style="padding-top:10px;">
+
+    <div id="appFinish" style="padding-top:10px;">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="finishData" class="basicForm">
-            <el-row>
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="blueTitle"></div>
-                    <div class="appTitle">完成工程内容</div>
+                    <div class="blueTitle"></div><div class="appTitle">完成工程内容</div>
                 </el-col>
             </el-row>
             <el-row>
-                <el-col v-bind:span="24" class="colCss">
+                <el-col v-bind:span="24">
                     <el-form-item label="完成工程内容:">
-                        @*等胡润君添加该字段*@
-                        <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" disabled v-model="finishData.S_CompleteContent" style="width:136%;padding-top:10px;" resize="none">
+                        <el-input type="textarea" v-bind:rows="3" disabled v-model="finishData.s_complete_content" style="width:136%;padding-top:10px;" resize="none">
                         </el-input>
                     </el-form-item>
                 </el-col>
@@ -399,56 +402,44 @@
         </div>
     </div>
 
-    <div style="margin-left:47%;">
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
         <el-button plain v-on:click="openIndex">返回</el-button>
     </div>
 </div>
-@*@Html.Partial("~/Views/BackboneRiverway/components/com_table.cshtml")*@
+
 @Html.Partial("~/Views/components/gcctMap/com_gcctView.cshtml")
+
 <script>
     new Vue({
         el: "#app",
         data: {
+            gcctinfo: {
+                S_PROJECT_NO: "",
+                N_PACE_STATUS: "",
+                N_YEAR: "",
+                N_TYPE: "",
+                S_LEGAL_PERSON: "",
+                S_TOWN: "",
+                S_ADDRESS: "",
+                S_UNIT_DESIGN: "",
+                S_UNIT_BUILD: "",
+                S_UNIT_SUPERVISE: "",
+                N_RECKON_TOTAL_AMT: "",
+                REMARK: ""
+            },
             s_id: '',
             labelPosition: 'right',
-            detildata: {},
-            projectData: {},
-            replayData: {},
-            investData: {},
-            capitalData: {},
-            finishData: {},
+            detildata: [],
+            replyData: [],
+            capitalData: [],
+            investData: [],
+            finishData: [],
             imgData: [
                 //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" },
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img2.imgtn.bdimg.com/it/u=302701032,2300144492&fm=27&gp=0.jpg" }
             ],
-            projectFile: [
-                {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }, {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }, {
-                    "s_id": "D102247D6F2145258A2D3748E0E9306E",
-                    "s_file_name": "名称",
-                    "s_type": "工程图纸",
-                    "s_person": "田俊",
-                    "s_create_time": "2018-03-05 14:21",
-                    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
-                }
-            ],
+            projectFile: [],
             height: '0px',
-            gcctmapheight: document.documentElement.clientHeight - 200,
+            gcctmapheight:document.documentElement.clientHeight - 200,
             tableData: [],
             mapDialogVisible: false,
             gcctxqMap: null,
@@ -467,21 +458,21 @@
             this.s_id = this.getRequest().id;
             this.setSize();
             this.reSize();
-            this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
-            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "工程图纸" });
+            this.getProjectData('/HydraulicEngineer/GetOneProjectData', { s_id: this.s_id });
+            this.getProjectFile('/HydraulicEngineer/GetProjectFileData', { s_id: this.s_id, s_type: "图纸" });
         },
         computed: {
         },
         methods: {
-            getRequest: function () {
+            getRequest: function(){
                 var url = window.location.search; //获取url中"?"符后的字串
                 var theRequest = new Object();
                 if (url.indexOf("?") != -1) {
                     var str = url.substr(1);
                     strs = str.split("&");
-                    for (var i = 0; i < strs.length; i++) {
+                    for(var i = 0; i < strs.length; i ++) {
 
-                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+                        theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
 
                     }
                 }
@@ -491,12 +482,13 @@
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      this.detildata = tempData.EnginCoreGetResponse.info;
-                      this.replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
-                      this.capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
-                      this.investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
-                      this.finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
-                      this.imgData = tempData.EnginCoreGetResponse.info.FileUploaderList;
+
+                      this.detildata = tempData.EnginOtherGetResponse.info;
+                      this.replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
+                      this.capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
+                      this.investData = tempData.EnginOtherGetResponse.info.EnginInvestmentOther;
+                      this.finishData = tempData.EnginOtherGetResponse.info.EnginCompleteOther;
+                      this.imgData = tempData.EnginOtherGetResponse.info.FileUploaderList;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -512,38 +504,16 @@
                       console.log(error);
                   });
             },
-            //initMap: function () {
-            //    this.gcctxqMap = new SuperMap.Map("gcctmap", { allOverlays: true });
-            //    this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.baseurl, {
-            //        transparent: true,
-            //        cacheEnabled: true
-            //    }, {
-            //        maxResolution: 'auto'
-            //    });
-            //    this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.gccturl, {
-            //        transparent: true,
-            //        cacheEnabled: false
-            //    }, null);
-            //    this.layers = [this.baselayer, this.layer_gcct];
-            //    this.baselayer.events.on({
-            //        'layerInitialized': this.addLayer
-            //    });
-            //},
-            //addLayer: function () {
-            //    this.gcctxqMap.addLayers(this.layers);
-            //    this.gcctxqMap.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
-            //},
             showMapDialog: function () {
                 this.mapDialogVisible = true;
-                //setTimeout(function () {
-                //    this.$refs.gcctmap.innerHTML = "";
-                //    this.initMap();
-                //}.bind(this), 100);
             },
             handleClick: function (tab, event) {
                 //debugger
                 //console.log(tab, event);
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
+                if (tab.label == "工程图纸") {
+                    tab.label = "图纸";
+                }
+                this.getProjectFile('/HydraulicEngineer/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
                 debugger;
@@ -560,7 +530,7 @@
                     vm.setSize()
                 }.bind(this));
             },
-            downloadFile: function (url, name) {
+            downloadFile: function (url,name) {
                 var $a = document.createElement('a');
                 $a.setAttribute("href", url);
                 $a.setAttribute("download", name);
@@ -569,12 +539,7 @@
                 $a.dispatchEvent(evObj);
             },
             openIndex: function () {
-                if (this.detildata.n_type == "骨干河道") {
-                    window.location = "Index";
-                }
-                if (this.detildata.n_type == "中小河道") {
-                    window.location = "/ZXRiverway/Index";
-                }
+                window.location = "/HydraulicEngineer/Index";
             },
 
         },
@@ -590,28 +555,33 @@
     #app {
         padding: 20px;
         font-size: 14px;
-        min-width:900px;
+        min-width: 900px;
     }
 
-    #app .el-form-item {
-        width:100%;
-    }
-    #app .el-form-item__content{ 
-        width:65%; 
-    }
-    #app input, select, textarea {
-        max-width: none;
-        color:#333333;
-        font-size:14px;
-    }
+        #app .el-form-item {
+            width: 100%;
+        }
+
+        #app .el-form-item__content {
+            width: 65%;
+        }
+
+        #app input, select, textarea {
+            max-width: none;
+            color: #333333;
+            font-size: 14px;
+        }
+
         #app .el-input-group__append {
-            color:#333333;
-            font-size:14px;
+            color: #333333;
+            font-size: 14px;
         }
+
         #app .el-textarea__inner {
-            color:#333333;
-            font-size:14px;
+            color: #333333;
+            font-size: 14px;
         }
+
     #appBasic {
         overflow: hidden;
     }
@@ -624,25 +594,28 @@
     #rightBasic {
         float: left;
         width: 33%;
-        padding:5% 0;
+        padding: 5% 0;
     }
-    #rightBasic .el-carousel__item h3 {
-        color: #475669;
-        font-size: 14px;
-        opacity: 0.75;
-        line-height: 200px;
-        margin: 0;
-    }
-  
-    #rightBasic .el-carousel__item:nth-child(2n) {
-        background-color: #99a9bf;
-    }
-  
-    #rightBasic .el-carousel__item:nth-child(2n+1) {
-        background-color: #d3dce6;
-    }
+
+        #rightBasic .el-carousel__item h3 {
+            color: #475669;
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 200px;
+            margin: 0;
+        }
+
+        #rightBasic .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        #rightBasic .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
     #appFiles {
         padding: 20px 0;
+        margin-bottom: 50px;
     }
 
         #appFiles th {
@@ -695,7 +668,8 @@
     #app .el-dialog__title {
         font-family: 微软雅黑;
     }
-    #app .el-dialog__body{
-        padding:16px 20px !important;
+
+    #app .el-dialog__body {
+        padding: 16px 20px !important;
     }
 </style>

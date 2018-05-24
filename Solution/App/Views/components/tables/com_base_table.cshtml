@@ -10,6 +10,8 @@
                              v-bind:key="key"
                              v-bind:type="item.type?item.type:''"
                              v-bind:width="item.width?item.width:''"
+                             v-bind:header-align="item.headerAlign?item.headerAlign:'left'"
+                             v-bind:align="item.align?item.align:'left'"
                              v-bind:prop="item.value"
                              v-bind:label="item.name">
             </el-table-column>

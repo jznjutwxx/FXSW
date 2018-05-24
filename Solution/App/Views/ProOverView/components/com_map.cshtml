@@ -280,14 +280,15 @@
             afreshBelowContent: function () {
                 debugger;
                 if (window.screen.height <= 900) {
-                    $(".proTable").css("height", "180px");
-                    $(".el-table--border").css("height", "118px");
-                    $(".el-table__body-wrapper").css({"height": "70px","overflow-y":"auto"});
-                    $(".hideDown").css("bottom", "180px");
+                    $(".proTable").css("height","180px");
+                    $(".el-table--fit").css("height", "118px");
+                    $(".el-table__body-wrapper").css("height","70px");
+                    $(".el-table__body-wrapper").css( "overflow-y","auto" );
+                    $(".hideDown").css("bottom","180px");
                 }
                 else {
-                    $(".proTable").css("height", "270px");
-                    $(".el-table--border").css("height", "208px");
+                    $(".proTable").css("height","270px");
+                    $(".el-table--border").css("height","208px");
                     $(".el-table__body-wrapper").css({ "height": "160px", "overflow-y": "hidden" });
                     $(".hideDown").css("bottom", "270px");
                 }
@@ -852,6 +853,7 @@
         bottom:0px;
         left:0px;
         width:100%;
+        height:270px;
         background-color: #ffffff;
         /*border:1px solid #0026ff;*/
     }
@@ -1072,4 +1074,11 @@
     .font-size-14{
         font-size:14px;
     }
+     .el-table__body-wrapper{
+      overflow-y: auto !important;
+      height: 160px ;/*!important;*/
+    }
+     .el-table--border{
+         height:208px;
+     }
 </style>

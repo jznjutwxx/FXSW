@@ -6,14 +6,14 @@
                 <el-date-picker v-model="startYearValue"
                                 type="year"
                                 value-format="yyyy"
-                                placeholder="选择年份" style="width: 100px;">
+                                placeholder="选择年份" style="width: 100px;" v-bind:picker-options="pickerOptionsS">
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="至">
                 <el-date-picker v-model="endYearValue"
                                 type="year"
                                 value-format="yyyy"
-                                placeholder="选择年份" style="width: 100px;">
+                                placeholder="选择年份" style="width: 100px;" v-bind:picker-options="pickerOptionsE">
                 </el-date-picker>
             </el-form-item>
 
@@ -61,8 +61,25 @@
                 xzqhOptions: [],
                 staticVal: "",
                 xzqhVal: "",
-                startYearValue: moment().add(-8, "y").format("YYYY"),
-                endYearValue: moment().add(1, "y").format("YYYY"),
+                //startYearValue: moment().add(-8, "y").format("YYYY"),
+                //endYearValue: moment().add(1, "y").format("YYYY"),
+                startYearValue: moment().format('YYYY'),
+                endYearValue: moment().format('YYYY'),
+                pickerOptionsS: {
+                    disabledDate: function (time) {
+                        if (this.endYearValue != "" && this.endYearValue != null && this.endYearValue != undefined) {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
+                        } else {
+                            return time.getTime() > Date.now();
+                            //return time.getTime() > Date.now() - 8.64e6
+                        }
+                    }.bind(this)
+                },
+                pickerOptionsE: {
+                    disabledDate: function (time) {
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
+                    }.bind(this)
+                },
             }
         },
         components: {
@@ -137,7 +154,7 @@
 
     .addbtn {
         border: 0;
-        width: 75px;
+        width: 73px;
         height: 32px;
         background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
         background-repeat: round;

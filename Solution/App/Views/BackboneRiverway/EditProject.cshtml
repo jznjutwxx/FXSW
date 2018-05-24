@@ -443,7 +443,7 @@
                         </el-form-item>
                     </el-col>
                 </el-row>
-                <el-dialog title="工程位置草图编辑" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
+                <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
                     <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
                 </el-dialog>
                 <el-row>
@@ -554,7 +554,7 @@
             },
         },
         methods: {
-            bindGCCTData: function (val) {
+            bindGCCTData: function () {
                 this.gcctinfo.S_PROJECT_NO = this.formData.s_project_no;
                 this.gcctinfo.N_PACE_STATUS = this.formData.n_pace_status;
                 this.gcctinfo.N_YEAR = this.formData.n_year;
@@ -912,5 +912,8 @@
 
     #edit .selCss {
         width:100%;
+    }
+    #appFiles .el-dialog__body{
+        padding:10px 5px;
     }
 </style>

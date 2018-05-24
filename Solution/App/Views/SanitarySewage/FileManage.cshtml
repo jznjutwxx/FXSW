@@ -1,4 +1,5 @@
-﻿@{
+﻿
+@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程管理-文件管理";
 }
@@ -6,19 +7,19 @@
 <div id="app">
     <div id="appTop" style="padding-left:20px;">
         <el-form v-bind:inline="true" size="small">
-            <el-form-item label="项目编号：">
+            <el-form-item label="工程编号：">
                 <span style="padding-right:30px;">
                     {{formData.S_PROJECT_NO}}
                 </span>
             </el-form-item>
             <el-form-item label="工程分类：">
                 <span style="padding-right:30px;">
-                    小型农田水利
+                    {{formData.N_TYPE}}
                 </span>
             </el-form-item>
             <el-form-item label="工程状态：">
                 <span style="padding-right:30px;">
-                    <el-select class="selCss" v-model="kkkk" v-bind:disabled="isFinish">
+                    <el-select class="selCss" v-model="formData.N_PACE_STATUS" v-bind:disabled="isFinish">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
@@ -28,6 +29,7 @@
 
     </div>
     <div id="appFile">
+        @*v-bind:value="Status"*@
         <el-collapse accordion v-on:change="changeSel" v-bind:value="Status">
             <el-collapse-item name="工前准备">
                 <template slot="title">
@@ -57,8 +59,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="开工">
@@ -82,6 +87,7 @@
                     </el-table>
                 </div>
                 @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/SanitarySewage/UpFiles"
@@ -89,8 +95,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工">
@@ -114,6 +123,7 @@
                     </el-table>
                 </div>
                 @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/SanitarySewage/UpFiles"
@@ -121,8 +131,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工验收">
@@ -146,6 +159,7 @@
                     </el-table>
                 </div>
                 @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/SanitarySewage/UpFiles"
@@ -153,8 +167,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="决算审批">
@@ -178,6 +195,7 @@
                     </el-table>
                 </div>
                 @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/SanitarySewage/UpFiles"
@@ -185,8 +203,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="竣工验收">
@@ -209,6 +230,8 @@
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
+
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/SanitarySewage/UpFiles"
@@ -216,25 +239,27 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
         </el-collapse>
     </div>
-    <div id="appBtn" class="appBtn">
-        <el-button plain v-on:click="openIndex" style="width: 90px;" size="small">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" style="width: 90px;" size="small">保存</el-button>
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
+        <el-button plain v-on:click="openIndex">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish">保存</el-button>
         <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
     </div>
 </div>
-
 
 <script>
     new Vue({
         el: '#app',
         data: {
-            ID: '',
+            s_id: '',
             StatusOption: [],
             projectFile: [],
             height: '200',
@@ -281,42 +306,45 @@
                 N_WCGWCD: '',
                 N_WCXFJHFC: '',
             },
-            kkkk:0
         },
         components: {
 
         },
         mounted: function () {
-            this.ID = this.GetId().id;
-            this.getStatus("/FarmlandWater/GetDictionary", { Type: "工程状态" });
-            this.getDetail('/SanitarySewage/GetDetail', { id: this.ID });
+            this.init();
         },
         methods: {
+            init: function () {
+                this.s_id = this.getRequest().id;
+                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
+                this.getProjectData('/SanitarySewage/GetDetail', { id: this.s_id });
+            },
             getStatus: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
                       this.StatusOption = tempData.DictionaryGetResponse.list;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
-            getDetail: function (url, id) {
-                axios.post(url, id)
+            getProjectData: function (url, s_id) {
+                axios.post(url, s_id)
                   .then(function (response) {
-                      debugger
-                      var tempData = JSON.parse(response.data);
                       var li = JSON.parse(response.data);
-
+                      debugger
                       this.num = li.EnginSewageGetResponse.info.s_project_no;
                       this.type = li.EnginSewageGetResponse.info.n_type;
                       this.Status = li.EnginSewageGetResponse.info.n_pace_status;
-                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.Status });
+                      this.tableName = li.EnginSewageGetResponse.info.n_pace_status;
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: this.Status });
 
                       this.formData.S_ID = li.EnginSewageGetResponse.info.s_id;
                       this.formData.S_NAME = li.EnginSewageGetResponse.info.s_name;
                       this.formData.S_PROJECT_NO = li.EnginSewageGetResponse.info.s_project_no;
+                      this.formData.N_TYPE = li.EnginSewageGetResponse.info.n_type;
                       this.formData.N_YEAR = li.EnginSewageGetResponse.info.n_year;
                       this.formData.S_TOWN = li.EnginSewageGetResponse.info.s_town;
                       this.formData.S_ADDRESS = li.EnginSewageGetResponse.info.s_address;
@@ -353,15 +381,13 @@
                       this.formData.N_WCGWCD = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
                       this.formData.N_WCXFJHFC = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
 
-                      this.kkkk = this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
-                      //this.formData.N_PACE_STATUS = this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
-                      //
-                      debugger
                       if (li.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
                       } else {
                           this.isFinish = false;
                       }
+                      var ss = li.EnginSewageGetResponse.info.n_pace_status;
+                      this.StatusToNum(ss);
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -369,7 +395,7 @@
             },
             changeSel: function (name) {
                 this.tableName = name;
-                this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: name });
+                this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: name });
             },
             getProjectFile: function (url, param) {
                 axios.post(url, param)
@@ -380,6 +406,29 @@
                   .catch(function (error) {
                       console.log(error);
                   });
+            },
+
+            //submitUpload:function () {
+            //    this.$refs.upload.submit();
+            //},
+
+            beforeAvatarUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                if (fileType == 'exe') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
             },
             handleRemove: function (file, fileList) {
                 console.log(file, fileList);
@@ -392,7 +441,7 @@
             },
             sucess: function (response, file, fileList, data) {
                 if (response == "OK") {
-                    this.saveFiles("/SanitarySewage/SaveOneFile", { id: this.ID, Files: file.name, Type: this.tableName });
+                    this.saveFiles("/SanitarySewage/SaveOneFile", { id: this.s_id, Files: file.name, Type: this.tableName, });
                 }
             },
             saveFiles: function (url, param) {
@@ -407,7 +456,7 @@
                       } else {
                           this.$message.error('上传失败！' + tempData.EnginFileManagerReportResponse.result);
                       }
-                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.tableName });
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: this.tableName });
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -431,7 +480,7 @@
                       } else {
                           this.$message.error('删除失败！' + tempData.EnginFileDelResponse.result);
                       }
-                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.ID, s_type: this.tableName });
+                      this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: this.tableName });
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -445,14 +494,16 @@
 
 
             },
-            GetId: function () {
-                var url = window.location.search;
+            getRequest: function () {
+                var url = window.location.search; //获取url中"?"符后的字串
                 var theRequest = new Object();
                 if (url.indexOf("?") != -1) {
                     var str = url.substr(1);
                     strs = str.split("&");
                     for (var i = 0; i < strs.length; i++) {
+
                         theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+
                     }
                 }
                 return theRequest;
@@ -469,18 +520,16 @@
                 window.location.href = '/Uploader/Download?pathid=1';
             },
             saveStatus: function () {
-                this.formData.N_PACE_STATUS = this.kkkk;
                 axios.post('/SanitarySewage/SaveProjectStatus', { param: JSON.stringify(this.formData) })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
-                      if (tempData.EnginFarmUpdateResponse.result) {
+                      if (tempData.EnginSewageUpdateResponse.result) {
                           this.$message({
                               message: '保存成功！',
                               type: 'success'
                           });
                       } else {
-                          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
+                          this.$message.error('保存失败！' + tempData.EnginSewageUpdateResponse.result);
                       }
                   }.bind(this))
                   .catch(function (error) {
@@ -492,40 +541,46 @@
                 this.isFinish = true;
             },
             openIndex: function () {
-                    window.location = "Index";
+                window.location = "Index";
             },
             StatusToNum: function (status) {
-                var result = 0;
+                debugger
                 switch (status) {
                     case '工前准备':
-                        result = 1;
+                        this.formData.N_PACE_STATUS = 1;
                         break;
                     case '开工':
-                        result = 10;
+                        this.formData.N_PACE_STATUS = 10;
                         break;
                     case '完工':
-                        result = 20;
+                        this.formData.N_PACE_STATUS = 20;
                         break;
                     case '完工验收':
-                        result = 30;
+                        this.formData.N_PACE_STATUS = 30;
                         break;
                     case '决算审批':
-                        result = 40;
+                        this.formData.N_PACE_STATUS = 40;
                         break;
                     case '竣工验收':
-                        result = 50;
+                        this.formData.N_PACE_STATUS = 50;
                         break;
                     case '工程完结':
-                        result = 60;
+                        this.formData.N_PACE_STATUS = 60;
                         break;
                     default:
-                        result='请选择';
+                        break;
                 }
-                return result;
             },
         },
         watch: {
-
+            //'formData.n_pace_status': function () {
+            //    if (this.formData.n_pace_status == "60") {
+            //        this.isShow = true;
+            //    } else
+            //    {
+            //        this.isShow = false;
+            //    }
+            //}
         }
     })
 </script>
@@ -535,7 +590,10 @@
         padding: 20px;
         font-size: 14px;
     }
-
+    
+    #appFile {
+        margin-bottom:60px;
+    }
     #appFile .tableCss th {
         background-color: #F5F5F5;
     }
@@ -562,16 +620,6 @@
         font-weight: bold;
         color: #666666;
         padding-left: 10px;
-    }
-
-    #app .appBtn {
-        width: 100%;
-        text-align: center;
-        position: fixed;
-        bottom: 0;
-        left: 0;
-        height: 60px;
-        line-height: 60px;
     }
 
     #app .btnUpp {

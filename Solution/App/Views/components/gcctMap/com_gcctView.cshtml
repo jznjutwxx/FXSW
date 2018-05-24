@@ -7,6 +7,7 @@
 <script>
     var comgcctmapView = {
         template: "#com-gcctmapView",
+        props: ["gcctinfo"],
         data: function () {
             return {
                 gcctxqMap: null,
@@ -24,24 +25,76 @@
         },
         methods: {
             initMap: function () {
-                this.gcctxqMap = new SuperMap.Map("tp_mapview", { allOverlays: true });
+                //this.gcctxqMap = new SuperMap.Map("tp_mapview", { allOverlays: true });
+                this.gcctxqMap = new SuperMap.Map("tp_mapview", {
+                    controls: [ //初始化Map类,添加控件到map
+                        new SuperMap.Control.Navigation({
+                            dragPanOptions: { //传给 DragPan 控件的属性
+                                enableKinetic: true //设置使用拖拽动画，默认为false
+                            },
+                            documentDrag: true, //允许拖拽地图，使地图能够平移到视图窗口外。默认为false
+                            handleRightClicks: true, //是否响应右键点击，默认为false
+                            zoomBoxKeyMask: 4, //同时按下Alt时绘制缩放框，默认为SuperMap.Handler.MOD_SHIFT,默认值为1
+                            pinchZoomOptions: { //传给 PinchZoom 控件的属性
+                                autoActivate: false //将该类添加到地图上时，自动激活该控件，默认为true
+                            }
+                        })
+                    ],
+                    allOverlays: true
+                });
                 this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.baseurl, {
                     transparent: true,
                     cacheEnabled: true
                 }, {
                     maxResolution: 'auto'
                 });
+                this.baselayer.events.on({
+                    'layerInitialized': this.setLayer
+                });
+            },
+            setLayer: function () {
+                var layerStatus_PL = new SuperMap.REST.LayerStatus({
+                    layerName: "gcct_pl@gcct0514",
+                    isVisible: true,
+                    displayFilter: "S_PROJECT_NO='" + this.gcctinfo.S_PROJECT_NO + "'"
+                });
+                var layerStatus_LN = new SuperMap.REST.LayerStatus({
+                    layerName: "gcct_ln@gcct0514",
+                    isVisible: true,
+                    displayFilter: "S_PROJECT_NO='" + this.gcctinfo.S_PROJECT_NO + "'"
+                });
+                var layerStatus_PT = new SuperMap.REST.LayerStatus({
+                    layerName: "gcct_pt@gcct0514",
+                    isVisible: true,
+                    displayFilter: "S_PROJECT_NO='" + this.gcctinfo.S_PROJECT_NO + "'"
+                });
+                var setLayerStatusParameters = new SuperMap.REST.SetLayerStatusParameters({
+                    layerStatusList: [layerStatus_PL, layerStatus_LN, layerStatus_PT]
+                });
+                var setLayerStatusService = new SuperMap.REST.SetLayerStatusService(this.gccturl, {
+                    eventListeners: {
+                        "processCompleted": this.setLayerCompleted,
+                        "processFailed": this.processFailed
+                    }
+                });
+                setLayerStatusService.processAsync(setLayerStatusParameters);
+            },
+            setLayerCompleted: function (e) {
+                var tempLayerID = e.result.newResourceID;
                 this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.gccturl, {
                     transparent: true,
-                    cacheEnabled: false
-                }, null);
-                this.layers = [this.baselayer, this.layer_gcct];
-                this.baselayer.events.on({
+                    cacheEnabled: false,
+                    redirect: true,
+                    layersID: tempLayerID
+                }, {
+                    bufferImgCount: 0
+                });
+                this.layer_gcct.events.on({
                     'layerInitialized': this.addLayer
                 });
             },
             addLayer: function () {
-                this.gcctxqMap.addLayers(this.layers);
+                this.gcctxqMap.addLayers([this.baselayer, this.layer_gcct]);
                 this.gcctxqMap.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
             },
         }
@@ -49,9 +102,9 @@
 </script>
 
 <style scoped>
-    #tp_mapview{
-        width:100%;
-        height:100%;
-        border:none !important;
+    #tp_mapview {
+        width: 100%;
+        height: 100%;
+        border: none !important;
     }
 </style>

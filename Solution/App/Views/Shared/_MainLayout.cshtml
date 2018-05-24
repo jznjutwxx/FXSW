@@ -94,52 +94,52 @@
                 getMenus: function () {
                     this.menus = [{
                         id: '1',
-                        title: '水文',
+                        name: '水文',
                         icon: 'btn_swzxt_normal.png',
                         url: '/Main/Hydrology',
                         hasRole:true
                     }, {
                         id: '2',
-                        title: '水资源',
+                        name: '水资源',
                         icon: 'btn_szyzxt_normal.png',
                         url: '/WaterRes/Index',
-                        hasRole: true
+                        hasRole: false
                     }, {
                         id: '3',
-                        title: '河闸',
+                        name: '河闸',
                         icon: 'btn_hzzxt_normal.png',
                         url: '/WaterRes/Index',
-                        hasRole: true
+                        hasRole: false
                     }, {
                         id: '4',
-                        title: '排水',
+                        name: '排水',
                         icon: 'btn_pszxt_normal.png',
                         url: '/WaterRes/Index',
                         hasRole: false
                     }, {
                         id: '5',
-                        title: '防汛',
+                        name: '防汛',
                         icon: 'btn_fxzxt_normal.png',
                         url: '/WaterRes/Index',
-                        hasRole: true
+                        hasRole: false
                     }, {
                         id: '6',
-                        title: '海塘',
+                        name: '海塘',
                         icon: 'btn_htzxt_normal.png',
                         url: '/WaterRes/Index',
-                        hasRole: true
+                        hasRole: false
                     }, {
                         id: '7',
-                        title: '工程',
-                        icon: 'btn_gczxt_normal.png',
+                        name: '工程',
+                        icon: 'btn_xmzxt_normal.png',
                         url: '/Main/Project',
                         hasRole: true
                     }, {
                         id: '8',
-                        title: '设施',
+                        name: '设施',
                         icon: 'btn_sszxt_normal.png',
                         url: '/WaterRes/Index',
-                        hasRole: true
+                        hasRole: false
                     }]
                 },
             }
@@ -150,11 +150,13 @@
         .el-container {
             height: 100%;
             border: 0px solid #eee;
-            background: #051367;
+            background: #36498b;
+            background-image: url('../../Images/main/img_bg_x.png');
+            background-repeat:repeat-x;
         }
 
         .el-header {
-            background-color: #051367;
+            background-color: #121f76;
             background-position: right;
             background-repeat: no-repeat;
             color: #333;
@@ -162,7 +164,7 @@
             text-align: right;
             font-size: 12px;
             padding: 0px;
-            border-bottom:1px solid #0056ce;
+            border-bottom:1px solid #006aff;
         }
         .el-header .logo {
                 height: 78px;
@@ -170,7 +172,7 @@
                 max-width: 895px;
                 display: inline-block;
                 float: left;
-                background-image: url('../../Images/main/head/img_header.png');
+                background-image: url('../../Images/main/head/img_header_zonghe.png');
                 background-repeat: no-repeat;
             }
         .el-container .container {
@@ -184,7 +186,6 @@
              width:286px;
              height:174px;
              background:rgba(255,255,255,0.3);  
-             /*background-image: url('../../Images/main/btn_fxzxt_normal.png');*/
              background-repeat:no-repeat;
              cursor:pointer;
         }

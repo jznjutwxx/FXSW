@@ -156,36 +156,57 @@
                                         name: '序号',
                                         type: 'index',
                                         width: '60',
+                                        headerAlign: 'center',
+                                        align: 'center'
                                     }, {
                                         name: '工程量',
                                         value: 'gcl',
+                                        headerAlign: 'center',
                                     }, {
                                         name: this.tabTitle,
                                         value: 'alllent',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '庄行镇',
                                         value: 'zh',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '南桥镇',
                                         value: 'nq',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '拓林镇',
                                         value: 'tl',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '金汇镇',
                                         value: 'jh',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '青村镇',
                                         value: 'qc',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '海湾镇',
                                         value: 'hw',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '奉城镇',
                                         value: 'fc',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }, {
                                         name: '四团镇',
                                         value: 'st',
+                                        headerAlign: 'center',
+                                        align: 'right'
                                     }],
                                 tableData: datas
                             }
@@ -263,5 +284,21 @@
         .centerradio .el-radio + .el-radio {
             margin-left: 0px !important;
             padding-top: 16px;
+        }
+    @@media all and (max-height:632px) {
+        .centerradio {
+            padding-top: 10px;
+        }
+    }
+
+    @@media all and (min-height:632px) and (max-height:700px) {
+        .centerradio {
+            padding-top: 20px;
+        }
+    }
+
+    @@media all and (min-height:700px) and (max-height:900px) {
+        .centerradio {
+            padding-top: 80px;
         }
 </style>

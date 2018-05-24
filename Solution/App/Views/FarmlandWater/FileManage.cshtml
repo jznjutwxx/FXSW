@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item label="工程状态：">
                 <span style="padding-right:30px;">
-                    <el-select class="selCss" v-model="kkkk" v-bind:disabled="isFinish">
+                    <el-select class="selCss" v-model="formData.N_PACE_STATUS" v-bind:disabled="isFinish">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
@@ -58,8 +58,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="开工">
@@ -90,8 +93,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工">
@@ -122,8 +128,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工验收">
@@ -154,8 +163,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="决算审批">
@@ -186,8 +198,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="竣工验收">
@@ -217,13 +232,16 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
         </el-collapse>
     </div>
-    <div id="appBtn" class="appBtn">
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
         <el-button plain v-on:click="openIndex" style="width: 90px;" size="small">取消</el-button>
         <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" style="width: 90px;" size="small">保存</el-button>
         <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
@@ -247,6 +265,7 @@
                 S_ID: '',
                 S_NAME: '',
                 S_PROJECT_NO: '',
+                N_TYPE: '',
                 N_YEAR: '',
                 N_PACE_STATUS: 0,
                 S_TOWN: '',
@@ -309,17 +328,18 @@
                 axios.post(url, id)
                   .then(function (response) {
                       debugger
-                      var tempData = JSON.parse(response.data);
                       var li = JSON.parse(response.data);
                   
                       this.num = li.EnginFarmGetResponse.info.s_project_no;
                       this.type = li.EnginFarmGetResponse.info.n_type;
                       this.Status = li.EnginFarmGetResponse.info.n_pace_status;
+                      this.tableName = li.EnginFarmGetResponse.info.n_pace_status;
                       this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.ID, s_type: this.Status });
 
                       this.formData.S_ID = li.EnginFarmGetResponse.info.s_id;
                       this.formData.S_NAME = li.EnginFarmGetResponse.info.s_name;
                       this.formData.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
+                      this.formData.N_TYPE = li.EnginFarmGetResponse.info.n_type;
                       this.formData.N_YEAR = li.EnginFarmGetResponse.info.n_year;
                       this.formData.S_TOWN = li.EnginFarmGetResponse.info.s_town;
                       this.formData.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
@@ -342,13 +362,11 @@
 
                       this.formData.N_TOTAL_INVEST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_total_invest;
                       this.formData.S_UNIT_DESIGN = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_engin_cost;
-                      this.formData.N_INDEPENDENT_COST =
-li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_independent_cost;
+                      this.formData.N_INDEPENDENT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_independent_cost;
                       this.formData.N_PREP_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_prep_cost;
                       this.formData.N_SIGHT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_sight_cost;
                       this.formData.N_SUBSIDY_CITY = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_city;
-                      this.formData.N_SUBSIDY_DISTRICT =
-li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
+                      this.formData.N_SUBSIDY_DISTRICT = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
                       this.formData.N_SUBSIDY_TOWN = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_town;
                       this.formData.N_WCGGSL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggsl;
                       this.formData.N_WCGGMJ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggmj;
@@ -359,16 +377,15 @@ li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
                       this.formData.N_WCDXH = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxh;
                       this.formData.N_WCCQMQ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_cqmq;
                       this.formData.N_WCXFJDL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_xfjdl;
-                      
-                      this.kkkk = this.StatusToNum(li.EnginFarmGetResponse.info.n_pace_status);
-                      //this.formData.N_PACE_STATUS = this.StatusToNum(li.EnginFarmGetResponse.info.n_pace_status);
-                      //
-                      debugger
+
                       if (li.EnginFarmGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
                       } else {
-                          this.isFinish = false; 
+                          this.isFinish = false;
                       }
+                      //this.kkkk = this.StatusToNum(li.EnginFarmGetResponse.info.n_pace_status);
+                      this.StatusToNum(li.EnginFarmGetResponse.info.n_pace_status);
+                      
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -387,6 +404,24 @@ li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
                   .catch(function (error) {
                       console.log(error);
                   });
+            },
+            beforeAvatarUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                if (fileType == 'exe') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
             },
             handleRemove: function (file, fileList) {
                 console.log(file, fileList);
@@ -502,33 +537,32 @@ li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
                     window.location = "Index";
             },
             StatusToNum: function (status) {
-                var result = 0;
+                debugger
                 switch (status) {
                     case '工前准备':
-                        result = 1;
+                        this.formData.N_PACE_STATUS = 1;
                         break;
                     case '开工':
-                        result = 10;
+                        this.formData.N_PACE_STATUS = 10;
                         break;
                     case '完工':
-                        result = 20;
+                        this.formData.N_PACE_STATUS = 20;
                         break;
                     case '完工验收':
-                        result = 30;
+                        this.formData.N_PACE_STATUS = 30;
                         break;
                     case '决算审批':
-                        result = 40;
+                        this.formData.N_PACE_STATUS = 40;
                         break;
                     case '竣工验收':
-                        result = 50;
+                        this.formData.N_PACE_STATUS = 50;
                         break;
                     case '工程完结':
-                        result = 60;
+                        this.formData.N_PACE_STATUS = 60;
                         break;
                     default:
-                        result='请选择';
+                        break;
                 }
-                return result;
             },
         },
         watch: {
@@ -546,7 +580,10 @@ li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
     #appFile .tableCss th {
         background-color: #F5F5F5;
     }
-
+    
+    #appFile {
+        margin-bottom:60px;
+    }
     #appTop .selCss {
         width: 120px;
     }

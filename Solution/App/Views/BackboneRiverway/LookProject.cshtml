@@ -88,9 +88,8 @@
                     </el-col>
                 </el-row>
 
-                <el-dialog title="工程位置草图详情" v-bind:visible.sync="mapDialogVisible" width="70%" top="6vh">
-                    @*<div id="gcctmap" v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap"></div>*@
-                    <com-gcctmapview v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap"></com-gcctmapview>
+                <el-dialog title="工程草图详情" v-bind:visible.sync="mapDialogVisible" width="70%" top="6vh">
+                    <com-gcctmapview v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap" v-bind:gcctinfo=this.gcctinfo></com-gcctmapview>
                 </el-dialog>
 
                 <el-row class="el-row">
@@ -550,6 +549,20 @@
     new Vue({
         el: "#app",
         data: {
+            gcctinfo: {
+                S_PROJECT_NO: "",
+                N_PACE_STATUS: "",
+                N_YEAR: "",
+                N_TYPE: "",
+                S_LEGAL_PERSON: "",
+                S_TOWN: "",
+                S_ADDRESS: "",
+                S_UNIT_DESIGN: "",
+                S_UNIT_BUILD: "",
+                S_UNIT_SUPERVISE: "",
+                N_RECKON_TOTAL_AMT: "",
+                REMARK: ""
+            },
             s_id: '',
             labelPosition: 'right',
             detildata: [],
@@ -573,14 +586,7 @@
             height: '0px',
             gcctmapheight:document.documentElement.clientHeight - 200,
             tableData: [],
-            mapDialogVisible: false,
-            gcctxqMap: null,
-            baseurl: "http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
-            gccturl: "http://localhost:8090/iserver/services/map-gcct04202/rest/maps/gcctdxm0420_test",
-            layer_gcct: null,
-            baselayer: null,
-            gcctlayer: null,
-            layers: []
+            mapDialogVisible: false
         },
         components: {
             //'com-table': comTable,
@@ -635,33 +641,23 @@
                       console.log(error);
                   });
             },
-            //initMap: function () {
-            //    this.gcctxqMap = new SuperMap.Map("gcctmap", { allOverlays: true });
-            //    this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.baseurl, {
-            //        transparent: true,
-            //        cacheEnabled: true
-            //    }, {
-            //        maxResolution: 'auto'
-            //    });
-            //    this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.gccturl, {
-            //        transparent: true,
-            //        cacheEnabled: false
-            //    }, null);
-            //    this.layers = [this.baselayer, this.layer_gcct];
-            //    this.baselayer.events.on({
-            //        'layerInitialized': this.addLayer
-            //    });
-            //},
-            //addLayer: function () {
-            //    this.gcctxqMap.addLayers(this.layers);
-            //    this.gcctxqMap.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
-            //},
             showMapDialog: function () {
+                this.bindGCCTData();
                 this.mapDialogVisible = true;
-                //setTimeout(function () {
-                //    this.$refs.gcctmap.innerHTML = "";
-                //    this.initMap();
-                //}.bind(this), 100);
+            },
+            bindGCCTData: function (val) {
+                this.gcctinfo.S_PROJECT_NO = this.detildata.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.detildata.n_pace_status;
+                this.gcctinfo.N_TYPE = this.detildata.n_type;
+                this.gcctinfo.N_YEAR = this.detildata.n_year;
+                this.gcctinfo.S_LEGAL_PERSON = this.detildata.s_legal_person;
+                this.gcctinfo.S_TOWN = this.detildata.s_town;
+                this.gcctinfo.S_ADDRESS = this.detildata.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.detildata.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.detildata.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.detildata.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.detildata.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.detildata.s_remark;
             },
             handleClick: function (tab, event) {
                 //debugger

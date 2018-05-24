@@ -3,9 +3,9 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "EditPage";
 }
-
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="edit">
-    <el-form :model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small" ref="editForm" v-bind:rules="rules">
+    <el-form model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small" ref="editForm" v-bind:rules="rules">
         <div id="BasicInfo">
             <el-row type="flex">
                 <div class="blueTitle"></div>
@@ -393,7 +393,7 @@
             </el-row>
         </div>
 
-        <div id="editInfo"  style="margin-bottom:60px;">
+        <div id="editInfo" style="margin-bottom:60px;">
             <el-row type="flex">
                 <div class="blueTitle"></div>
                 <div class="titlecss">补充信息</div>
@@ -422,9 +422,12 @@
             <el-row>
                 <el-col v-bind:span="24">
                     <el-form-item label="工程位置草图:">
-                        <el-button type="text">工程位置草图</el-button>
+                        <el-button type="text" v-on:click="showgcctMapEdit">工程位置草图</el-button>
                     </el-form-item>
                 </el-col>
+                <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
+                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                </el-dialog>
             </el-row>
             <el-row>
                 <el-col v-bind:span="24">
@@ -454,7 +457,7 @@
         </div>
     </el-form>
 </div>
-
+@Html.Partial("~/Views/components/gcctMap/com_gcctEdit.cshtml")
 <script>
     new Vue({
         el: '#edit',
@@ -484,7 +487,23 @@
                 filesData: [],
                 dialogImageUrl: '',
                 dialogVisible: false,
+                mapEditDialogVisible: false,
+                gccteditmapheight: document.documentElement.clientHeight - 200,
                 isFinish: false,
+                gcctinfo: {
+                    S_PROJECT_NO: "",
+                    N_PACE_STATUS: "",
+                    N_YEAR: "",
+                    N_TYPE: "",
+                    S_LEGAL_PERSON: "",
+                    S_TOWN: "",
+                    S_ADDRESS: "",
+                    S_UNIT_DESIGN: "",
+                    S_UNIT_BUILD: "",
+                    S_UNIT_SUPERVISE: "",
+                    N_RECKON_TOTAL_AMT: "",
+                    REMARK: ""
+                },
                 editForm: {
                     S_ID: '',
                     S_NAME: '',
@@ -556,6 +575,9 @@
                 },
             }
         },
+        components: {
+            "com-gcctmap-edit": comgcctmapEdit
+        },
         mounted: function () {
             var t = this.GetId();
             this.GetDetail("/FarmlandWater/GetDetail", { id: t.id });
@@ -565,8 +587,34 @@
             this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
             this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
             this.getDesignUnit("/FarmlandWater/GetDesignUnit", null);
+            $(window).resize(function () {
+                this.gccteditmapheight = document.documentElement.clientHeight - 200;
+            });
+        },
+        watch: {
+            gccteditmapheight: function (val) {
+                this.gccteditmapheight = val;
+            },
         },
         methods: {
+            bindGCCTData: function () {
+                this.gcctinfo.S_PROJECT_NO = this.editForm.S_PROJECT_NO;
+                this.gcctinfo.N_PACE_STATUS = this.editForm.N_PACE_STATUS;
+                this.gcctinfo.N_YEAR = this.editForm.N_YEAR;
+                this.gcctinfo.N_YEAR = this.editForm.N_TYPE;
+                this.gcctinfo.S_LEGAL_PERSON = this.editForm.S_LEGAL_PERSON;
+                this.gcctinfo.S_TOWN = this.editForm.S_TOWN;
+                this.gcctinfo.S_ADDRESS = this.editForm.S_ADDRESS;
+                this.gcctinfo.S_UNIT_DESIGN = this.editForm.S_UNIT_DESIGN;
+                this.gcctinfo.S_UNIT_BUILD = this.editForm.S_UNIT_BUILD;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.editForm.S_UNIT_SUPERVISE;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.editForm.N_RECKON_TOTAL_AMT;
+                this.gcctinfo.REMARK = this.editForm.S_REMARK;
+            },
+            showgcctMapEdit: function () {
+                this.bindGCCTData();
+                this.mapEditDialogVisible = true;
+            },
             getYear: function (url, type) {
                 axios.post(url, type)
                   .then(function (response) {
@@ -622,7 +670,7 @@
                       console.log(error);
                   });
             },
-             
+
             changeStatics: function (param) {
                 this.editForm.N_PACE_STATUS = param;
             },
@@ -658,9 +706,9 @@
                      this.editForm.S_NAME = li.EnginFarmGetResponse.info.s_name;
                      this.editForm.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
                      this.editForm.S_ID = li.EnginFarmGetResponse.info.s_id;
-                     
+
                      this.editForm.N_YEAR = li.EnginFarmGetResponse.info.n_year;
-                  //   this.editForm.N_PACE_STATUS = li.EnginFarmGetResponse.info.n_pace_status;
+                     //   this.editForm.N_PACE_STATUS = li.EnginFarmGetResponse.info.n_pace_status;
                      this.editForm.S_TOWN = li.EnginFarmGetResponse.info.s_town;
                      this.editForm.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
                      this.editForm.S_LEGAL_PERSON = li.EnginFarmGetResponse.info.s_legal_person;
@@ -751,15 +799,15 @@
                         return false;
                     }
                 }.bind(this));
-               // axios.post('/FarmlandWater/Edit',
-               //{ param: JSON.stringify(this.editForm) }
-               //).then(function (response) {
-               //    var datas = JSON.parse(response.data);
-               //    if (datas.EnginFarmUpdateResponse.result == true) {
-               //        alert("修改成功！");
-               //        window.location.href = "/FarmlandWater/Index";
-               //    }
-               //});
+                // axios.post('/FarmlandWater/Edit',
+                //{ param: JSON.stringify(this.editForm) }
+                //).then(function (response) {
+                //    var datas = JSON.parse(response.data);
+                //    if (datas.EnginFarmUpdateResponse.result == true) {
+                //        alert("修改成功！");
+                //        window.location.href = "/FarmlandWater/Index";
+                //    }
+                //});
             },
 
             beforeRemove: function (file, fileList) {
@@ -912,5 +960,9 @@
 
         #edit.el-col-16 {
             width: 66.6%;
+        }
+
+        #editInfo .el-dialog__body {
+            padding: 10px 5px;
         }
 </style>

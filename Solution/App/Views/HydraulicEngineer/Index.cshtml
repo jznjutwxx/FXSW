@@ -1,16 +1,18 @@
 ﻿
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
-    ViewBag.Title = "其他水利工程";
+    ViewBag.Title = "工程管理-其它水利工程";
 }
 
 <div id="app">
-    <com-query v-on:emit-event="getEmitEvent" ref="comquery"></com-query>
-    <div>
+    <com-query v-on:emit-event="getEmitEvent" ref="smallQuery"></com-query>
+    <div id="tableData">
         <el-table v-bind:data="tableData"
+                  v-bind:height="height"
                   border
                   stripe
-                  v-bind:height="tableheight+'px'">
+                  style="width: 100%"
+                  class="tableCss">
             <el-table-column type="index"
                              v-bind:index="indexMethod"
                              label="序号"
@@ -25,27 +27,25 @@
                              width="100">
             </el-table-column>
             <el-table-column header-align="center"
-                             align="left"
                              label="工程名称">
                 <template slot-scope="scope">
-                    <el-button type="text" v-on:click="showDetail(scope.row.s_id)">{{scope.row.s_name}}</el-button>
+                    @*href="LookProject?t="*@
+                    <a v-on:click="openLook(scope.row.s_id)">{{ scope.row.s_name }}</a>
                 </template>
             </el-table-column>
             <el-table-column prop="s_project_no"
                              header-align="center"
-                             align="center"
-                             label="项目编号">
+                             align="right"
+                             label="工程编号">
             </el-table-column>
             <el-table-column prop="n_pace_status"
                              header-align="center"
-                             align="center"
                              label="工程状态">
             </el-table-column>
             <el-table-column prop="s_town"
                              header-align="center"
                              align="center"
-                             label="所属镇"
-                             width="100">
+                             label="所属镇" width="100">
             </el-table-column>
             <el-table-column prop="s_unit_design"
                              header-align="center"
@@ -53,111 +53,120 @@
             </el-table-column>
             <el-table-column prop="s_legal_person"
                              header-align="center"
-                             align="center"
-                             label="项目法人"
-                             width="100">
+                             label="项目法人" width="100">
             </el-table-column>
             <el-table-column label="操作"
                              header-align="center"
                              align="center"
                              width="300">
                 <template slot-scope="scope">
-                    <el-button size="mini" v-on:click="handleEdit(scope.$index,scope.row)">编辑</el-button>
+                    <el-button size="mini" v-on:click="openEdit(scope.row.s_id)">编辑</el-button>
                     <el-button size="mini" type="info" v-on:click="openFileManage(scope.row.s_id)">文件管理</el-button>
-                    <el-button size="mini" type="danger" v-on:click="handleDel(scope.row.s_id)">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="DeleteData(scope.row.s_id)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-form v-bind:inline="true" label-position="right" size="small">
-            <div style="text-align:right">
-                <el-form-item>
-                    <el-pagination v-on:size-change="sizeChange" v-on:current-change="currentChange" layout="total,sizes,prev,pager,next,jumper" v-bind:current-page="currentPage" v-bind:page-sizes="[10,20,30,40]" v-bind:page-size="pagesize" v-bind:total="total">
-                    </el-pagination>
-                </el-form-item>
-            </div>
-        </el-form>
+    </div>
+    <div style="text-align:right;padding-top:10px;">
+        <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-size="pagesize" v-bind:total="total">
+        </el-pagination>
     </div>
 </div>
 
 @Html.Partial("~/Views/HydraulicEngineer/components/com_query.cshtml")
+
 <script>
     new Vue({
         el: "#app",
         data: {
+            styles: {
+                width: '90%',
+                height: '0px',
+                float: 'left',
+            },
+            height: '0px',
             tableData: [],
-            tableheight: 0,
             total: 0, //默认数据总数
             pagesize: 10,//每页的数据条数
             currentPage: 1,//默认开始页面
             params: []
         },
         components: {
-            "com-query": comquery
+            "com-query": query,
         },
         mounted: function () {
-            this.resize();
-            this.setSize();
-            this.setTableData('/HydraulicEngineer/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: this.$refs.comquery.gState, Town: this.$refs.comquery.gTown })
+            this.setSize()
+            this.resize()
+            this.setTableData('/HydraulicEngineer/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '1', Town: '四团镇' });
+            //this.$refs.smallQuery.gStatus   this.$refs.smallQuery.gTown
         },
         methods: {
-            sizeChange: function (pagesize) {
-                this.pagesize = pagesize;
-                this.setTableData('/HydraulicEngineer/GetProjectData', {
-                    Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
-                });
-            },
-            currentChange: function (currentpage) {
-                this.currentPage = currentpage;
-                this.setTableData('/HydraulicEngineer/GetProjectData', {
-                    Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
-                });
-            },
-            indexMethod: function (index) {
+            //sizeChange: function (pagesize) {
+            //    this.pagesize = pagesize;
+            //    this.setTableData('/HydraulicEngineer/GetProjectData', {
+            //        Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
+            //    });
+            //},
+            //currentChange: function (currentpage) {
+            //    this.currentPage = currentpage;
+            //    this.setTableData('/HydraulicEngineer/GetProjectData', {
+            //        Page: this.currentPage, pageSize: this.pagesize, startYear: this.params.beginYear, endYear: this.params.endYear, Status: this.params.State, Town: this.params.Town
+            //    });
+            //},
+
+            indexMethod: function(index) {
                 return (index + 1) + (this.currentPage - 1) * this.pagesize;
             },
             getEmitEvent: function (param) {
-                this.params = param;
+                debugger
                 this.setTableData('/HydraulicEngineer/GetProjectData', {
-                    Page: this.currentPage, pageSize: this.pagesize, startYear: param.beginYear, endYear: param.endYear, Status: param.State, Town: param.Town
+                    Page: this.currentPage, pageSize: this.pagesize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town
                 });
             },
-            setData: function (url, param) {
-                this.params = param;
-                this.setTableData(url, param);
-            },
             setTableData: function (url, param) {
+                this.params = param;
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
+                      //var datas = tempData.EnginListGetResponse.engin_list;
                       this.tableData = tempData.EnginListGetResponse.engin_list;
-                      this.total = parseInt(tempData.EnginListGetResponse.totalCount);
+                      this.total = tempData.EnginListGetResponse.totalCount;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
+
             },
-            showDetail: function (id) {
-                //跳转详细信息页面
-                location.href = "Detail?id=" + id
+            openLook: function (id) {
+                window.location = "Detail?id=" + id;
+                //window.open('LookProject?id=' + ID);
             },
-            handleDel: function (id) {
-                this.$confirm('此操作将永久删除该文件, 是否继续?', '提示', {
+            openFileManage: function (id) {
+                window.location = "FileManage?id=" + id;
+            },
+            openEdit: function (id) {
+                window.location = "Edit?id=" + id;
+            },
+            DeleteData: function (id) {
+                this.$confirm('是否确认删除?', '提示', {
                     confirmButtonText: '确定',
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(function () {
-                    axios.post("/HydraulicEngineer/DelData", { id: id })
+                    axios.post("/HydraulicEngineer/DeleteProjectData", { s_id: id })
                   .then(function (response) {
+                      debugger
                       var tempData = JSON.parse(response.data);
-                      if (tempData.EnginFarmUpdateResponse.result) {
+                      if (tempData.EnginCoreUpdateResponse.result) {
                           this.$message({
                               type: 'success',
                               message: '删除成功!'
                           });
                       } else {
-                          this.$message.error('删除失败！' + tempData.EnginFarmUpdateResponse.result);
+                          this.$message.error('删除失败！' + tempData.EnginCoreUpdateResponse.result);
                       }
-                      this.setData('/HydraulicEngineer/GetProjectData', this.params);
+                      debugger
+                      this.setTableData('/HydraulicEngineer/GetProjectData', this.params)
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -169,28 +178,40 @@
                     });
                 });
             },
-            openFileManage: function (id) {
-                location.href = "FileManage?id=" + id;
+            currentChange: function (val) {
+                this.params.Page = val;
+                //this.setData('/FarmlandWater/GetTabData', this.params);
+                this.setTableData('/HydraulicEngineer/GetProjectData', this.params)
             },
-            handleEdit(index, row) {
-                location.href = "/HydraulicEngineer/Edit?id=" + row.s_id;
+
+            sizeChange: function (pagesize) {
+                this.currentPage = pagesize;
             },
             setSize: function () {
-                var docH = document.documentElement.clientHeight;
-                var queryH = this.$refs.comquery.$el.clientHeight;
-                var contentH = docH - queryH - 64;
-                this.tableheight = contentH - 20;
+                var docH = document.documentElement.clientHeight
+                var queryH = this.$refs.smallQuery.$el.clientHeight
+                var contentH = docH - queryH - 40
+                this.height = contentH - 40
             },
             resize: function () {
                 $(window).resize(function () {
                     this.setSize()
                 }.bind(this));
-            }
+            },
         }
-    });
+
+    })
 </script>
 
-<style scoped>
+<style>
+    #tableData a {
+        text-decoration: none;
+        font-size: 14px;
+        color: #2288f1;
+        cursor: pointer;
+    }
 
+    #tableData th {
+        background-color: #F5F5F5;
+    }
 </style>
-

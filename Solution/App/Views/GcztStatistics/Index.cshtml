@@ -145,30 +145,47 @@
                               name: '序号',
                               type: 'index',
                               width: '60',
+                              headerAlign: 'center',
+                              align: 'center'
                           }, {
                               name: '统计类别',
                               value: 'gctype',
+                              headerAlign: 'center',
                           }, {
                               name: '全部(个)',
                               value: 'allcount',
+                              headerAlign: 'center',
+                              align:'right'
                           }, {
                               name: '工前',
                               value: 'gqzb',
+                              headerAlign: 'center',
+                              align: 'right'
                           }, {
                               name: '开工',
                               value: 'kg',
+                              headerAlign: 'center',
+                              align: 'right'
                           }, {
                               name: '完工',
                               value: 'wg',
+                              headerAlign: 'center',
+                              align: 'right'
                           }, {
                               name: '完工验收',
                               value: 'wgys',
+                              headerAlign: 'center',
+                              align: 'right'
                           }, {
                               name: '决算审批',
                               value: 'jssp',
+                              headerAlign: 'center',
+                              align: 'right'
                           }, {
                               name: '竣工验收',
                               value: 'jgys',
+                              headerAlign: 'center',
+                              align: 'right'
                           }],
                           tableData: datas
                           }
@@ -231,5 +248,20 @@
         margin-left:0px !important;
         padding-top:16px;
     }
-     
+    @@media all and (max-height:632px) {
+        .centerradio {
+            padding-top: 10px;
+        }
+    }
+
+    @@media all and (min-height:632px) and (max-height:700px) {
+        .centerradio {
+            padding-top: 20px;
+        }
+    }
+
+    @@media all and (min-height:700px) and (max-height:900px) {
+        .centerradio {
+            padding-top: 80px;
+        }
 </style>

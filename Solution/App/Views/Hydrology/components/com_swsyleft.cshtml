@@ -3,11 +3,13 @@
     <div id="leftContent" v-bind:style="{height:leftheight+'px'}">
         @*<div class="titlediv hdgkdiv" v-on:click="getFatherHD" style="position:absolute;color:white;">河道概况</div>*@
         <div class="topdiv">       
-            <el-row class="topleft">
-                <el-col v-bind:span="24" class="col">
+            <el-row class="topleft" >
+                <el-col v-bind:xs="12" v-bind:sm="14" v-bind:md="17" v-bind:lg="18" v-bind:xl="19" class="col">
                     <div class="divcss">河道总数(条)：</div>
                     <div class="text-gra">4598</div>
-                    <div class="xzqh">{{lefttwon}}</div>
+                </el-col>
+                <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="6" v-bind:lg="5" v-bind:xl="4" style="margin-top:6px;line-height:30px;">
+                    <span class="xzqh">{{lefttwon}}</span>
                 </el-col>
                 <el-col v-bind:span="24" class="col" style="margin-top: 2px !important;height:30px;">
                     <div class="divcss">重污染河道(条)：</div>
@@ -287,10 +289,13 @@
         #leftContent .centerdiv{
             margin-top:50px !important;
         }
-     #leftContent .xzqh{
+     /*#leftContent .xzqh{
          margin-left: 118px !important;
-     }
+     }*/ 
   }
+    @@media screen and (min-width: 1025px) {
+        
+    }
     .xzqhrow {
         padding: 10px 40px 0 0;
     }
@@ -299,7 +304,7 @@
         height:22px;
         line-height:22px;
         color:white; 
-        margin: -4px 0 0 44px;
+       /* margin: -4px 0 0 44px;*/
         text-align:center; 
         float:left; 
         background-color:#0056ce;

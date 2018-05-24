@@ -17,8 +17,8 @@
             </header>
             <div id="jzSelect">
                 <!--indeterminate 属性用以表示 checkbox 的不确定状态，一般用于实现全选的效果-->
-                <img src="/Images/zhjc/ico_jiezhen.png" /><span class="jztext">街镇</span>
-                <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true" style="margin-left:65px;">
+                <img src="/Images/zhjc/ico_jiezhen.png" /><span class="jztext" style="margin-left:7px;">街镇</span>
+                <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true" style="margin-left:59px;">
                     全选
                 </el-checkbox>
                 <div style="margin: 15px 0;" class="fgdiv"></div>
@@ -93,11 +93,6 @@
                                     <el-dropdown-item command="水质监测">水质监测</el-dropdown-item>
                                 </el-dropdown-menu>
                             </el-dropdown>
-                            @*<el-select v-model="nowxm" placeholder="请选择">
-                                <el-option v-for="item in zdjcxm"
-                                           v-bind:value="item">
-                                </el-option>
-                            </el-select>*@
                         </div>
                         <div id="zdzt">
                             <div id='zdztTitle'><img src="/Images/zhjc/ico_站点状态.png" /> <span>站点状态</span></div>
@@ -109,7 +104,8 @@
                     </el-tab-pane>
                     <el-tab-pane label="人工取样点" name="rgqyd">
                         <div id="rgqyd">
-                            <div>水质检测任务</div>
+                            <img src="/Images/zhjc/rgqyd/ico_szjcrw.png"/>
+                            <span>水质检测任务</span>
                             <el-checkbox-group v-on:change="szjcrwChange" v-model="checkedSzjcrw">
                                 <el-row>
                                     <el-col v-bind:span="12">
@@ -180,7 +176,7 @@
                 if (window.screen.height < 900) {
                     $("#leftcontent").css("height", "320px");
                     $("#jzSelect .el-row").css("margin-bottom", "0px");
-                    $("#jzSelect > img").css("margin", "0px 0 0 -29px");
+                    $("#jzSelect > img").css("margin", "0px 0 0 -28px");
                     $("#jzSelect .fgdiv ").css("margin", "0px");
                     $("#jzSelect").css("height", "138px");
                     $("#rgqyd .el-checkbox").css("margin", "3px 0");
@@ -192,7 +188,7 @@
                 else {
                     $("#leftcontent").css("height", "411px");
                     $("#jzSelect .el-row").css("margin-bottom", "3px");
-                    $("#jzSelect > img").css("margin", "15px 0 0 -29px;");
+                    $("#jzSelect > img").css("margin", "15px 0 0 -28px;");
                     $("#jzSelect .fgdiv ").css("margin", "15px 0");
                     $("#jzSelect").css("height", "190px");
                     $("#rgqyd .el-checkbox").css("margin", "10px 0;");
@@ -395,7 +391,7 @@
 
         #jzSelect > img {
             height: 12px;
-            margin: 15px 0 0 -29px;
+            margin: 15px 0 0 -28px;
         }
    #jzSelect .el-row{
        margin-bottom:3px;

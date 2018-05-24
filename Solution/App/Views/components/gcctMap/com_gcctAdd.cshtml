@@ -1,4 +1,4 @@
-﻿<script type="text/x-template" id="com-gcctmapEdit">
+﻿<script type="text/x-template" id="com-gcctmapAdd">
     <div id="tp_gcctmap">
         <div id="tp_map">
             <div id="tp_toolbar">
@@ -20,12 +20,11 @@
                 <el-button type="primary" v-on:click="activateDeleteFeature">删除</el-button>
             </div>
         </div>
-
     </div>
 </script>
 <script>
-    var comgcctmapEdit = {
-        template: "#com-gcctmapEdit",
+    var comgcctmapAdd = {
+        template: "#com-gcctmapAdd",
         props: ["gcctinfo"],
         data: function () {
             return {
@@ -73,30 +72,12 @@
             }
         },
         watch: {
-            "gcctinfo.S_PROJECT_NO":function(val){
-                this.gcctinfo.S_PROJECT_NO = val;
-                this.setLayer();
-            }
+
         },
         mounted: function () {
             this.init();
         },
         methods: {
-            open: function () {
-                window.open('/EngineerSketch/Index', 'newwindow',
-                    'height=750,width=900,top=180,left=500,toolbar=no,menubar=no,scrollbars=no, Resizable=no,location=no, status=no'
-                );
-            },
-            close: function () {
-                window.close();
-            },
-            location: function () {
-                if (this.coorX == "" || this.coorY == "") {
-                    return;
-                }
-                var lonlat = new SuperMap.LonLat(this.coorX, this.coorY);
-                this.map.setCenter(lonlat, 6);
-            },
             init: function () {
                 this.layer = new SuperMap.Layer.TiledDynamicRESTLayer('奉贤底图', this.url1, {
                     transparent: true,
@@ -187,23 +168,17 @@
             },
             setLayerCompleted: function (e) {
                 var tempLayerID = e.result.newResourceID;
-                if (this.layer_gcct==null) {
-                    this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.url2, {
-                        transparent: true,
-                        cacheEnabled: false,
-                        redirect: true,
-                        layersID: tempLayerID
-                    }, {
-                        bufferImgCount: 0
-                    });
-                    this.layer_gcct.events.on({
-                        'layerInitialized': this.addLayer
-                    });
-                } else {
-                    this.layer_gcct.params.layersID=tempLayerID;
-                    this.layer_gcct.redraw();
-                    // this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
-                }
+                this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.url2, {
+                    transparent: true,
+                    cacheEnabled: false,
+                    redirect: true,
+                    layersID: tempLayerID
+                }, {
+                    bufferImgCount: 0
+                });
+                this.layer_gcct.events.on({
+                    'layerInitialized': this.addLayer
+                });
             },
             //编辑要素完成
             editFeatureCompleted: function (event) {
@@ -678,7 +653,7 @@
         display: none;
     }
 
-    #com-gcctmapEdit {
+    #com-gcctmapAdd {
         display: none;
     }
 

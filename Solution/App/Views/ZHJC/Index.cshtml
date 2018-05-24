@@ -176,7 +176,7 @@
         </div>
         <!--人工取样点视频播放弹窗-->
         <div id="rgqydVideo">
-            <el-dialog v-bind:visible.sync="rgqydVideoDialogVisible" v-bind:before-close="handleClose">
+            <el-dialog v-bind:visible.sync="rgqydVideoDialogVisible" v-bind:before-close="handleClose" title="视频播放">
                 <div class="titlebg"></div>
                 <video id="my-video" preload="auto" controls class="video-js vjs-big-play-centered" style="width:880px;height:496px;" v-bind:src="nowVideoURL"></video>
             </el-dialog>
@@ -320,7 +320,6 @@
                 </el-table-column>
                 <el-table-column property="ck" label="查看"  header-align="center" align="center">
             </el-table>
-            @*<el-pagination samll layout="prev, pager, next" v-bind:total="leftData.length" v-on:current-change="current_change" v-bind:page-size="pagesize"> </el-pagination>*@
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
@@ -409,15 +408,16 @@
             afreshBelowContent: function () {
                 debugger;
                 if (window.screen.height <= 900) {
+                    debugger;
                     $("#belowContent").css("height", "200px");
                     $(".el-table__body-wrapper").css("height", "89px");
                     $(".el-table__body-wrapper").css("overflow-y", "auto");
-                    $("#hideBelowContent").css("bottom", "200px")
+                    $("#hideBelowContent").css("bottom", "200px");
                 }
                 else {
                     $("#belowContent").css("height", "303px");
-                    $(".el-table__body-wrapper").css("height", "100%");
-                    $(".el-table__body-wrapper").css("overflow", "hidden");
+                    $(".el-table__body-wrapper").css("height", "192px");
+                    $(".el-table__body-wrapper").css("overflow-y", "auto");
                     $("#hideBelowContent").css("bottom", "303px")
                 }
             },
@@ -525,23 +525,6 @@
             },
             //取得需要展示的坐标点数据
             getLeftData: function (leftData, bleowTableTitle, jclx) {
-                if (window.screen.width <= 1024) {
-                 
-                }
-                else if (1024 < window.screen.width && window.screen.width <= 1280) {
-
-
-                }
-                else if (1280 < window.screen.width && window.screen.width <= 1366) {
-                 
-                }
-                else if (1366 < window.screen.width && window.screen.width <= 1600) {
-                  
-
-                }
-                else {
-                   
-                }
                 debugger;
                 this.leftData = leftData;  //筛选后的数据
                 console.log(this.leftData);
@@ -739,7 +722,7 @@
                     }
                     else { //水质监测
                         contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'>" + "</span><div><div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + this.mapJcdPopTitle + "</span></div>"
-                        contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>时间</td><td class='secondlist' style='font-size:13px;'>" + nowPtAttr.time.slice(0, nowPtAttr.time.length - 3) + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + nowPtAttr.rivername + "</td></tr><tr><td class='firtlist'>所属街镇</td><td class='secondlist'>" + nowPtAttr.area + "</td></tr><tr><td class='firtlist'>设备状态</td><td class='secondlist'>" + nowPtAttr.status + "</td></tr><tr><td class='firtlist'>监测信息</td><td class='secondlist'>" + "<a href='http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html'>查看详情</a>" + "</td></tr></table>";
+                        contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>时间</td><td class='secondlist' style='font-size:13px;'>" + nowPtAttr.time.slice(0, nowPtAttr.time.length - 3) + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + nowPtAttr.rivername + "</td></tr><tr><td class='firtlist'>所属街镇</td><td class='secondlist'>" + nowPtAttr.area + "</td></tr><tr><td class='firtlist'>设备状态</td><td class='secondlist'>" + nowPtAttr.status + "</td></tr><tr><td class='firtlist'>监测信息</td><td class='secondlist'>" + "<a href='http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html' style='color:#2288f1;text-decoration:none; '>查看详情</a>" + "</td></tr></table>";
                         contentHTML += " </div>";
                     }
                 }
@@ -1473,7 +1456,7 @@
                         }
                     });
                     $.each($('.zdjcdTableDiv tbody .el-table_5_column_35'), function (index, item) {
-                        item.children[0].innerHTML = '<a href="http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html">查看详情</a>';
+                        item.children[0].innerHTML = '<a href="http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html" style="color:#2288f1;text-decoration:none; " >查看详情</a>';
                     })              
                 }
                 else if (this.rgqyd_table) {  //人工取样点
@@ -1848,7 +1831,10 @@
         line-height: 32px;
         color: white;
     }
-
+    .el-table__body-wrapper{
+      overflow-y: auto !important;
+      height: 192px ;/*!important;*/
+    }
     /*.zdjcdTableDiv th, .zdjcdTableDiv td, #rgqydTableDiv th, #rgqydTableDiv td {
         text-align: center;
     }*/

@@ -43,29 +43,30 @@
             </el-row>
         </div>
 
-        <div class="bardiv2" id="interval2">@*interval2：块与块的上下间距*@
-        <div class="titlediv" style="width: 70px !important;left: 22px !important;">雨量统计</div>
-        <div id="barCharts" class="barcss"></div>
-    </div>
+        <div class="bardiv2" id="interval2">
+            @*interval2：块与块的上下间距*@
+            <div class="titlediv" style="width: 70px !important;left: 22px !important;">雨量统计</div>
+            <div id="barCharts" class="barcss"></div>
+        </div>
 
-    <div class="tablediv">
-        <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
-        <div class="tablecss">
-            <el-row class="headercss titlecss" style="">
-                <el-col v-bind:span="3">序号</el-col>
-                <el-col v-bind:span="8">站点名称</el-col>
-                <el-col v-bind:span="7">报警类型</el-col>
-                <el-col v-bind:span="6">报警信息</el-col>
-            </el-row>
-            <el-row class="titlecss" v-for="todo in tableList">
-                <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
-                <el-col v-bind:span="8">{{todo.text}}</el-col>
-                <el-col v-bind:span="7">{{todo.type}}</el-col>
-                <el-col v-bind:span="6">{{todo.imformation}}</el-col>
-            </el-row>
+        <div class="tablediv">
+            <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
+            <div class="tablecss">
+                <el-row class="headercss titlecss" style="">
+                    <el-col v-bind:span="3">序号</el-col>
+                    <el-col v-bind:span="8">站点名称</el-col>
+                    <el-col v-bind:span="7">报警类型</el-col>
+                    <el-col v-bind:span="6">报警信息</el-col>
+                </el-row>
+                <el-row class="titlecss" v-for="todo in tableList">
+                    <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
+                    <el-col v-bind:span="8">{{todo.text}}</el-col>
+                    <el-col v-bind:span="7">{{todo.type}}</el-col>
+                    <el-col v-bind:span="6">{{todo.imformation}}</el-col>
+                </el-row>
+            </div>
         </div>
     </div>
-</div>
 </script>
 
 @Html.Partial("~/Views/Hydrology/components/com_bar.cshtml")
@@ -77,8 +78,9 @@
             return {
                 rightheight: document.documentElement.clientHeight - 32,
                 barOption: null,
-                datas: ['齐贤1', '金汇2', '中港闸内3', '金汇港南闸内4', '南竹港出海闸5', '南竹港出海闸外6', '齐贤7', '金汇8', ],
-                
+                datas: ['齐贤', '金汇', '中港闸内', '金汇港南闸内', '南竹港出海闸', '南竹港出海闸外', '齐贤', '金汇'],
+
+                num: 3,
                 tableList: [
       { id: 1, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
       { id: 2, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
@@ -120,7 +122,6 @@
             setData: function (url, param) {
                 this.setBarData(url, param);
             },
-            
             setBarData: function (url, param) {
                 // 基于准备好的dom，初始化echarts实例
                 var barChart = echarts.init(document.getElementById('barCharts'));
@@ -139,14 +140,14 @@
 					                  show: false,
 					                  type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
 					                  startValue: 0,      // 从头开始。
-					                  endValue: 4         // 一次性展示5个。
+					                  endValue: this.num       // 一次性展示(num+1)个。
 					              }
                         ],
                         grid: {
-                            top: '2%',
-                            left: '20%',
-                            right: '3%',
-                            bottom: '7%',
+                            top: '3%',
+                            left: '3%',
+                            bottom: '3%',
+                            containLabel:true
                         },
                         xAxis: {
                             name: 'mm',
@@ -197,19 +198,24 @@
                         ],
                     }
                     barChart.setOption(barOption);
-
+                    $(window).resize(function () {
+                        setTimeout(function () {
+                            barChart.resize();
+                        }.bind(this), 100);
+                    }.bind(this));
+                   
                     setInterval(function () {
-                        debugger
                         var len = this.datas.length;
+
                         if (barOption.dataZoom[0].endValue == len - 1) {// 每次向后滚动一个，最后一个从头开始。
-                            barOption.dataZoom[0].endValue = 4;
+                            barOption.dataZoom[0].endValue = this.num;
                             barOption.dataZoom[0].startValue = 0;
                         } else {
                             barOption.dataZoom[0].endValue = barOption.dataZoom[0].endValue + 1;
-                            barOption.dataZoom[0].startValue =barOption.dataZoom[0].startValue + 1;
+                            barOption.dataZoom[0].startValue = barOption.dataZoom[0].startValue + 1;
                         }
-                         barChart.setOption(barOption);
-                    }.bind(this), 2000)
+                        barChart.setOption(barOption);
+                    }.bind(this), 1000)
                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -217,14 +223,26 @@
             },
 
             resize: function () {
-                $(window).resize(function () { 
+                $(window).resize(function () {
                     this.setSize()
                 }.bind(this));
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight;
+                var docW = document.documentElement.clientWidth;
                 var contentH = docH - 30;
                 this.height = contentH / 3;
+
+                //分辨率不同 显示条数变化
+                if (docH <= 768) {
+                    this.num = 3;
+                } else if (768 < docH <= 960) {
+                    this.num = 7;
+                } else if (960 < docH <= 1024) {
+                    this.num = 8;
+                } else {
+                    this.num = 10;
+                }
             }
         }
     }
@@ -309,7 +327,7 @@
 
     .barcss {
         height: 95%;
-        width: 90%;
+        width: 99%;
     }
 
     .tablediv {

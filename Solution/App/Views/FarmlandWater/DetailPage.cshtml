@@ -2,7 +2,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程管理-农田水利-详情";
 }
-
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="detail">
     <el-form v-model="detail" v-bind:inline="true" label-position="right" label-width="100px" size="small">
         <div id="leftInfo">
@@ -84,9 +84,11 @@
                 </el-col>
             </el-row>
             <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="工程位置:"></el-form-item>
-                    <span><a href="#" style="text-decoration:none;">工程位置草图</a></span>
+                <el-col v-bind:span="12" class="colCss">
+                    <el-form-item label="工程位置草图:">
+                        <el-button type="text" v-on:click="showMapDialog">工程位置草图</el-button>
+                    </el-form-item>
+                </el-col>
             </el-row>
             <el-row type="flex">
                 <el-col v-bind:span="12" class="colcss" style="height:90px;">
@@ -395,18 +397,35 @@
         <el-button style="width: 90px;" v-on:click="openIndex" size="small">返回</el-button>
     </div>
 </div>
-
+@Html.Partial("~/Views/components/gcctMap/com_gcctView.cshtml")
 <script>
     new Vue({
         el: '#detail',
+        components: {
+            'com-gcctmapview': comgcctmapView
+        },
         data: {
+            mapDialogVisible:false,
             detail: {},
             replyData:{},
             investData: {},
             fundData: {},
             finishData: {},
             s_id:'',
-
+            gcctinfo: {
+                S_PROJECT_NO: "",
+                N_PACE_STATUS: "",
+                N_YEAR: "",
+                N_TYPE: "",
+                S_LEGAL_PERSON: "",
+                S_TOWN: "",
+                S_ADDRESS: "",
+                S_UNIT_DESIGN: "",
+                S_UNIT_BUILD: "",
+                S_UNIT_SUPERVISE: "",
+                N_RECKON_TOTAL_AMT: "",
+                REMARK: ""
+            },
             tableData: [],
             height: 0,
             projectFile: [
@@ -440,12 +459,29 @@
             ],
         },
         mounted: function () {
-            debugger
             this.s_id = this.GetId().id;
             this.GetDetail("/FarmlandWater/GetDetail", { id: this.s_id });
             this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.s_id, s_type: "工程图纸" });
         },
         methods: {
+            showMapDialog: function () {
+                this.bindGCCTData();
+                this.mapDialogVisible = true;
+            },
+            bindGCCTData: function () {
+                this.gcctinfo.S_PROJECT_NO = this.detail.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.detail.n_pace_status;
+                this.gcctinfo.N_TYPE = this.detail.n_type;
+                this.gcctinfo.N_YEAR = this.detail.n_year;
+                this.gcctinfo.S_LEGAL_PERSON = this.detail.s_legal_person;
+                this.gcctinfo.S_TOWN = this.detail.s_town;
+                this.gcctinfo.S_ADDRESS = this.detail.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.detail.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.detail.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.detail.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.detail.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.detail.s_remark;
+            },
             GetId: function () {
                 var url = window.location.search;
                 var theRequest = new Object();

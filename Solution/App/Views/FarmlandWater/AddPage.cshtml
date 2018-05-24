@@ -425,9 +425,12 @@
             <el-row>
                 <el-col v-bind:span="24">
                     <el-form-item label="工程位置草图:">
-                        <el-button type="text">工程位置草图</el-button>
+                        <el-button type="text" v-on:click="showgcctMapAdd">工程位置草图</el-button>
                     </el-form-item>
                 </el-col>
+                <el-dialog title="新增工程位置草图" v-bind:visible.sync="mapAddDialogVisible" width="70%" top="6vh">
+                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                </el-dialog>
             </el-row>
             <el-row>
                 <el-col v-bind:span="24">
@@ -505,7 +508,7 @@
                 S_LEGAL_PERSON: "",
                 DesignUnitOption: [],
                 S_UNIT_DESIGN: "",
-                mapEditDialogVisible: false,
+                mapAddDialogVisible: false,
                 gccteditmapheight: document.documentElement.clientHeight - 200,
                 addForm: {
                     S_NAME: '',
@@ -597,11 +600,11 @@
             },
         },
         methods: {
-            bindGCCTData:function(val){
+            bindGCCTData:function(){
                 this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO; 
                 this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;
                 this.gcctinfo.N_YEAR = this.addForm.N_YEAR;
-                this.gcctinfo.N_TYPE = "小型农田水利";
+                this.gcctinfo.N_TYPE = this.addForm.N_TYPE;
                 this.gcctinfo.S_LEGAL_PERSON = this.addForm.S_LEGAL_PERSON;
                 this.gcctinfo.S_TOWN = this.addForm.S_TOWN;
                 this.gcctinfo.S_ADDRESS = this.addForm.S_ADDRESS;
@@ -611,9 +614,9 @@
                 this.gcctinfo.N_RECKON_TOTAL_AMT = this.addForm.N_RECKON_TOTAL_AMT;
                 this.gcctinfo.REMARK = this.addForm.S_REMARK;
             },
-            showgcctMapEdit: function () {
+            showgcctMapAdd: function () {
                 this.bindGCCTData();
-                this.mapEditDialogVisible = true;
+                this.mapAddDialogVisible = true;
             },
             getYear: function (url, type) {
                 axios.post(url, type)

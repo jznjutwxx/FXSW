@@ -25,7 +25,7 @@
             <el-row>
                 <el-col v-bind:span="8" class="col">
                     <span class="text-gra" style="font-size:16px;">125252m³</span>
-                </el-col>
+                </el-col> 
                 <el-col v-bind:span="8" class="col">
                     <span class="text-gra" style="font-size:16px;">64252m³</span>
                 </el-col>
@@ -57,8 +57,8 @@
     </div>
 
     <div class="bardiv">
-        <div class="title" style="width:100px;">用水性质分布</div>
-        <com-bar v-bind:option="barOption" class="barcss"></com-bar>
+        <div class="title" style="width:195px;">水质汇总(2017年第三季度)</div>
+        <div id="radarCharts" class="barcss"></div>
     </div>
 </div>
 </script>
@@ -73,20 +73,17 @@
             return {
                 leftheight: document.documentElement.clientHeight - 32,
                 param: {
-
+                    
                 },
                 lineOption: null,
                 GYpieOption: null,
                 SHpieOption: null,
                 NYpieOption: null,
-                barOption: null,
-                barOption: null
             }
         },
         components: {
             "com-line": comLine,
             "com-pie": comPie,
-            "com-bar": comBar
         },
         watch: {
             leftheight: function (val) {
@@ -112,7 +109,7 @@
                 this.setGYPieData(url, param);
                 this.setSHPieData(url, param);
                 this.setNYpieData(url, param);
-                this.setBarData(url, param);
+                this.setRadarData(url, param);
             },
             setLineData: function (url, param) {
                 this.$children[3].charts.showLoading();
@@ -135,7 +132,7 @@
                         },
                         xAxis: {
                             type: 'category',
-                            data: ['二月', '四月', '六月', '八月', '十月', '十二月'],
+                            data: ['2月', '4月', '6月', '8月', '10月', '12月'],
                             axisLabel: {
                                 interval: 0,//横轴信息全部显示
                                 rotate: 30,//-30度角倾斜显示
@@ -340,76 +337,56 @@
                       console.log(error);
                   });
             },
-            setBarData: function (url, param) {
-                this.$children[7].charts.showLoading();
+            setRadarData: function (url, param) {
+                // 基于准备好的dom，初始化echarts实例
+                var radarChart = echarts.init(document.getElementById('radarCharts'));
                 axios.post(url).then(function (response) {
-                    this.$children[7].charts.hideLoading();
-                    this.barOption = {
-                        color: '#5788ec',
-                        grid: {
-                            top: '12%',
-                            left: '4%',
-                            right: '2%',
-                            //bottom: '5%',
+                    var radarOption = {
+                        color:'#50a6ff',
+                        tooltip: {
+                            trigger: 'axis'
                         },
-                        xAxis: {
-                            type: 'category',
-                            data: ['民用', '重工业', '企业单位', '医用', '消防', '餐饮'],
-                            axisLabel: {
-                                color: '#ffffff',
-                                interval: 0,//横轴信息全部显示
-                                rotate: 30,//-30度角倾斜显示
-                            },
-                            axisTick: {
-                                show: false
-                            },
-                            axisLine: {
-                                show: false
-                            },
-                            splitLine: { show: false },//去除网格线
+                        textStyle: {
+                            color: 'white',
+                            fontWeight: 'normal',
+                            fontSize: 14
                         },
-                        yAxis: {
-                            type: 'value',
-                            name: '亿（m³）',
-                            nameGap: 5,
-                            nameTextStyle: {
-                                color: '#ffffff',
-                                padding: 10
-                            },
-                            axisLine: {
-                                show: false
-                            },
-                            axisTick: {
-                                show: false
-                            },
-                            axisLabel: {
-                                textStyle: {
-                                    color: '#ffffff'
-                                }
-                            },
-                            splitLine: {
-                                show: true,//保留网格线
-                                lineStyle: {
-                                    color: '#3d4997'
-                                }
-                            },
-                        },
+                        radar: [
+                            {
+                                indicator: [
+                                    { text: '综合', max: 100 }, // max: '100%'
+                                    { text: '管水网7项', max: 100 },
+                                    { text: '出水厂非常规23项', max: 100 },
+                                    { text: '出水厂常规44项', max: 100 },
+                                    { text: '原水21项', max: 100 }
+                                ],
+                                radius: 80,
+                                center: ['50%', '50%'],
+                            }
+
+                        ],
                         series: [
                             {
-                                type: 'bar',
-                                barWidth: '60%',
-                                data: [1.3, 2.2, 2.0, 1.7, 1.5, 3.2],
+                                type: 'radar',
+                                radarIndex: 0,
                                 label: {
                                     normal: {
                                         show: true,
-                                        position: 'top',
-                                        formatter: '{c} ',
-                                        color: '#ffffff'
+                                        position: 'inner',
+                                        formatter: "{c}%",
+
                                     }
-                                }
+                                },
+                                data: [
+                                    {
+                                        value: [95, 80, 95, 90, 93],
+                                        name: '第三季度水质汇总'
+                                    }
+                                ]
                             }
                         ]
                     }
+                    radarChart.setOption(radarOption);
                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -469,7 +446,7 @@
 
     .col {
         height: 30px;
-        padding-left: 20px;
+        /*padding-left: 20px;*/
         line-height: 30px;
         text-align: center;
     }

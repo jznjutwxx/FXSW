@@ -242,17 +242,16 @@ namespace App.Controllers
         }
         public JsonResult SaveProjectStatus(string param)
         {
-            //转成实体对象
             T_ENGIN_MAIN_SEWAGE arr = new T_ENGIN_MAIN_SEWAGE();
-            arr = JsonHelper.JSONToObject<T_ENGIN_MAIN_SEWAGE>(param);
+            arr = JsonHelper.JSONToObject<T_ENGIN_MAIN_SEWAGE>(param); //转成实体对象
 
-            // 接口
-            string method = "wavenet.fxsw.engin.farm.update";
-            // 接口所需传递的参数
+            string method = "wavenet.fxsw.engin.sewage.update";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            #region
-            //基本信息   
+            //基本信息
             paramDictionary.Add("s_id", arr.S_ID); //id
+
+            #region
+            //基本信息
             paramDictionary.Add("s_name", arr.S_NAME);
             paramDictionary.Add("s_project_no", arr.S_PROJECT_NO);
             paramDictionary.Add("n_year", arr.N_YEAR);//年度
@@ -294,16 +293,9 @@ namespace App.Controllers
             paramDictionary.Add("n_complete_jdclz", arr.N_WCJDCLZ);//就地处理站
             paramDictionary.Add("n_complete_gwcd", arr.N_WCGWCD);//管网长度
             paramDictionary.Add("n_complete_xfjhfc", arr.N_WCXFJHFC);//新翻建化粪池
-
-            Dictionary<string, string> fileParams = new Dictionary<string, string>();
-            fileParams.Add("picture_file", @"D:\timg (2).jpg");
-            fileParams.Add("picture_file2", @"D:\Paul .jpg");
-            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file4", @"D:\Paul .jpg");
-            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file6", @"D:\Paul .jpg");
-            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
             #endregion
+            paramDictionary.Add("remove_pic_ids", "");//删除的图片ID
+            paramDictionary.Add("is_delete", "0");//是否删除 1删除
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);

@@ -8,7 +8,7 @@
 <div id="app">
     <header>
         <el-row id="firstSelect">
-            <el-col v-bind:span="8">
+            <el-col v-bind:span="7">
                 <span>所属镇:</span>
                 <el-select v-model="twon" placeholder="请选择">
                     <el-option v-for="item in twons"
@@ -30,7 +30,7 @@
             </el-col>
         </el-row>
         <el-row id="secondSelect">
-            <el-col v-bind:span="8">
+            <el-col v-bind:span="7">
                 <span>统计类别:</span>
                 <el-radio v-model="radio" label="1">月报</el-radio>
                 <el-radio v-model="radio" label="2">年报</el-radio>
@@ -65,26 +65,24 @@
         </div>
     </div>
     <div id="hdTable" v-bind:style="{height:chartheight+'px'}">
-        <el-table v-bind:data="hdData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;" v-bind:border='true' v-bind:stripe="true" >
-            <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index">
+        <el-table v-bind:data="hdData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;" v-bind:border='true' v-bind:stripe="true"  v-bind:height="chartheight-50">
+            <el-table-column type="index" v-bind:index="indexOrder" width="80" label='序号' property="index" header-align="center" align="center">
             </el-table-column>
-            <el-table-column property="riverwayname" label="河道名称">
+            <el-table-column property="riverwayname" label="河道名称" header-align="center" align="left">
             </el-table-column>
-            <el-table-column property="dmname" label="断面名称">
+            <el-table-column property="dmname" label="断面名称" header-align="center" align="left">
             </el-table-column>
-            <el-table-column property="town" label="所属镇">
+            <el-table-column property="town" label="所属镇" header-align="center" align="center">
             </el-table-column>
-            <el-table-column property="szlb" label="水质类别">
+            <el-table-column property="szlb" label="水质类别" header-align="center" align="center">
             </el-table-column>
-            <el-table-column label="重污染情况" style="text-align:center;">
-                <el-table-column prop="sfzwr" label="是/否重污染" width="120">
+            <el-table-column label="重污染情况" style="text-align:center;" header-align="center" align="left">
+                <el-table-column prop="sfzwr" label="是/否重污染" width="100" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column prop="zwrjcz" label="重污染超标项目(监测值)" width="120">
+                <el-table-column prop="zwrjcz" label="重污染超标项目(监测值)" width="175" header-align="center" align="left">
                 </el-table-column>
             </el-table-column>
         </el-table>
-        <el-pagination samll layout="prev, pager, next" v-bind:total="hdData.length" v-on:current-change="current_change" v-bind:page-size="pagesize">
-        </el-pagination>
         <el-pagination   layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize"  v-bind:total="hdData.length">
         </el-pagination>
     </div>
@@ -101,7 +99,7 @@
                 label: '庄行镇'
             }, {
                 value: '选项3',
-                label: '拓林镇'
+                label: '柘林镇'
             }, {
                 value: '选项4',
                 label: '南桥镇'
@@ -138,7 +136,7 @@
             origin: '全部',
             monthValue: moment().format('YYYY-MM'),
             radio: '1',
-            chartheight: (document.documentElement.clientHeight - 102) / 2,
+            chartheight: (document.documentElement.clientHeight - 122) / 2,
             barOption: null,
             pieOption: null,
             currentPage: 1,
@@ -146,35 +144,64 @@
             hdData: [{
                 riverwayname: '河道1',
                 dmname: '断面1',
-                town: '拓林镇',
+                town: '柘林镇',
                 szlb: '水质类别',
                 sfzwr: '是',
                 zwrjcz: '监测值1',
             }, {
                 riverwayname: '河道2',
                 dmname: '断面2',
-                town: '拓林镇',
+                town: '柘林镇',
                 szlb: '水质类别',
                 sfzwr: '是',
                 zwrjcz: '监测值1',
             }, {
                 riverwayname: '河道3',
                 dmname: '断面3',
-                town: '拓林镇',
+                town: '柘林镇',
                 szlb: '水质类别',
                 sfzwr: '是',
                 zwrjcz: '监测值1',
             }, {
                 riverwayname: '河道4',
                 dmname: '断面4',
-                town: '拓林镇',
+                town: '柘林镇',
                 szlb: '水质类别',
                 sfzwr: '是',
                 zwrjcz: '监测值1',
             }, {
                 riverwayname: '河道5',
                 dmname: '断面5',
-                town: '拓林镇',
+                town: '柘林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道6',
+                dmname: '断面6',
+                town: '柘林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道7',
+                dmname: '断面7',
+                town: '柘林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            },
+            {
+                riverwayname: '河道8',
+                dmname: '断面8',
+                town: '柘林镇',
+                szlb: '水质类别',
+                sfzwr: '是',
+                zwrjcz: '监测值1',
+            }, {
+                riverwayname: '河道9',
+                dmname: '断面9',
+                town: '柘林镇',
                 szlb: '水质类别',
                 sfzwr: '是',
                 zwrjcz: '监测值1',
@@ -187,8 +214,10 @@
         mounted: function () {
             const vm = this;
             $(window).resize(function () {
-                vm.chartheight = (document.documentElement.clientHeight - 102) / 2;
+
+                vm.chartheight = (document.documentElement.clientHeight - 122) / 2;
             });
+            alert(vm.chartheight);
             setTimeout(function () {
                 vm.setBarData();
                 vm.setPieData();
@@ -476,11 +505,11 @@
 
     #hdChart {
         border-bottom: 1px solid #b9b9b9;
-        min-height: 300px;
+        min-height: 200px;
     }
 
     #hdTable {
-        min-height: 300px;
+        min-height: 200px;
     }
 
     #hdChart .charts {
@@ -499,5 +528,11 @@
         width: 49%;
         height: 100%;
         float: left;
+    }
+      .el-table--border{
+        margin-bottom:4px;
+    }
+    .el-pagination{
+        float:right
     }
 </style>

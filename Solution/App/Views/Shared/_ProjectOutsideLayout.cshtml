@@ -20,10 +20,10 @@
             <el-header>
                 <div class="logo"></div>
                 <el-menu v-bind:default-active="activeIndex" class="top-menu" mode="horizontal" v-on:select="handleSelect" background-color="transparent" text-color="#fff" active-text-color="#fff">
-                    <el-menu-item v-bind:index="menu.id" v-bind:key="menu.id" v-for="menu in menus"><span>{{menu.title}}</span></el-menu-item>
+                    <el-menu-item v-bind:index="menu.id" v-bind:key="menu.id" v-for="menu in menus"><span>{{menu.name}}</span></el-menu-item>
                 </el-menu>
                 <el-dropdown v-on:command="handleCommand">
-                    <span class="el-dropdown-link"  >
+                    <span class="el-dropdown-link">
                         @ViewBag.UserName<i class="el-icon-arrow-down el-icon--right"></i>
                     </span>
                     <el-dropdown-menu slot="dropdown">
@@ -32,11 +32,23 @@
                 </el-dropdown>
             </el-header>
             <el-container>
-                <el-aside  ref="aside" width="auto"  v-show="isShow">
-                    <el-menu v-bind:default-openeds="['1']" v-bind:default-active="activeTreeIndex" v-for="item in menuTree" v-bind:key="item.id" background-color="#003e93" text-color="#fff" active-text-color="#409eff">
-                        <el-submenu index="1">
+                <el-aside ref="aside" width="auto" v-show="isShow">
+                    <el-menu v-bind:style="{height:frameHeight}" v-bind:default-openeds="[activeTreeIndex]" v-bind:default-active="activeTreeIndex" background-color="#003e93" text-color="#fff" active-text-color="#409eff">
+                        <el-submenu v-bind:index="item.id" v-if="!item.children" v-for="item in menuTree" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.title}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
+                            </template>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child.url)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
+                        </el-submenu>
+                        <el-submenu v-bind:index="item.id" v-else-if="item.children&&!item.children[0].children" v-for="item in menuTree" v-bind:key="item.id">
+                            <template slot="title">
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
+                            </template>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child.url)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
+                        </el-submenu>
+                        <el-submenu v-else-if="item.children&&item.children[0].children" v-bind:index="item.id" v-for="item in menuTree[0].children" v-bind:key="item.id">
+                            <template slot="title">
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
                             </template>
                             <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child.url)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
@@ -82,30 +94,16 @@
                 },
                 changeMenu: function (url) {
                     this.$refs.mainFrame.src = url
-                    setTimeout(function () { this.$refs.aside.$el.style.overflowY = 'auto' }.bind(this), 1000)
                 },
                 getMenus: function () {
                     this.menus = [{
-                        id: '0',
-                        title: '综合监测',
-                        icon: 'ico_biaozhi',
-                        url: '/ZHJC/Index'
-                    }, {
-                        id: '1',
-                        title: '水文统计',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '41', name: '重污染河道水质', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
-                            { id: '42', name: '水质取样统计', icon: 'ico_gghd', url: '/SZQYJL/Index' }
-                        ]
-                    }, {
                         id: '2',
-                        title: '工程总览',
+                        name: '工程总览',
                         icon: 'ico_biaozhi',
                         url: '/ProOverView/Index'
                     }, {
                         id: '3',
-                        title: '工程管理',
+                        name: '工程管理',
                         icon: 'ico_biaozhi',
                         children: [
                             { id: '11', name: '骨干河道', icon: 'ico_gghd', url: '/BackboneRiverway/Index' },
@@ -116,7 +114,7 @@
                         ]
                     }, {
                         id: '4',
-                        title: '工程统计',
+                        name: '工程统计',
                         icon: 'ico_biaozhi',
                         children: [
                             { id: '21', name: '工程状态统计', icon: 'ico_gczt', url: '/GcztStatistics/Index' },
@@ -127,7 +125,7 @@
                         ]
                     }, {
                         id: '5',
-                        title: '系统设置',
+                        name: '系统设置',
                         icon: 'ico_biaozhi',
                         children: [
                             { id: '51', name: '设计单位管理', icon: 'ico_sjdwgl', url: '/DesignOrganizationManger/Index' },
@@ -138,7 +136,7 @@
                 },
                 handleSelect: function (key, keyPath) {
                     var tempMenu = []
-                    for (var i = 0; i < this.menus.length; i++) {      
+                    for (var i = 0; i < this.menus.length; i++) {
                         if (this.menus[i].id == key) {
                             tempMenu.push(this.menus[i])
                         }
@@ -152,10 +150,12 @@
                     } else {
                         this.isShow = false
                     }
-                    this.$refs.aside.$el.style.overflowY = 'hidden'
                     this.activeIndex = this.menus[0].id
-                    this.activeTreeIndex = this.menuTree[0].children === undefined ? this.menuTree[0].id : this.menuTree[0].children[0].id
-                    this.changeMenu(this.menuTree[0].children === undefined ? this.menuTree[0].url : this.menuTree[0].children[0].url)
+                    this.activeTreeIndex = this.menuTree[0].children === undefined ? this.menuTree[0].id :
+                        this.menuTree[0].children[0].children === undefined ? this.menuTree[0].children[0].id : this.menuTree[0].children[0].children[0].id
+                    var url = this.menuTree[0].children === undefined ? this.menuTree[0].url :
+                        this.menuTree[0].children[0].children === undefined ? this.menuTree[0].children[0].url : this.menuTree[0].children[0].children[0].url
+                    this.changeMenu(url)
                 },
                 handleCommand: function (command) {
                     if (command == 'logout') {
@@ -175,14 +175,15 @@
 
     <style>
         .el-container {
-            height: 100%; 
+            height: 100%;
             border: 0px solid #eee;
         }
+
         .el-header {
             background-color: #004fbc;
             background-image: url('../../Images/gc_main/img_header_right_gczxt.png');
-            background-position:right;
-            background-repeat:no-repeat;
+            background-position: right;
+            background-repeat: no-repeat;
             color: #333;
             height: 78px !important;
             line-height: 78px;
@@ -190,69 +191,98 @@
             font-size: 12px;
             padding: 0px;
         }
-        .el-header .logo {
-            height:78px;
-            width: 100%;
-            max-width:895px;
-            display: inline-block;
-            float: left;
-            background-image: url('../../Images/gc_main/img_header_gczxt.png');
-            background-repeat: no-repeat;
-        }
-        .el-header .el-menu {
-            display: inline-block;
-            height:78px;
-            position: absolute;
-            right: 150px;
-        }
 
-        .el-header .el-menu .el-menu-item{
-            margin-top:8px;
-        }
-         .el-header .el-menu .el-menu-item:hover,.el-header .el-menu .el-menu-item:focus,.el-header .el-menu .el-menu-item:active{
-             background-color:transparent !important;
-         }
+            .el-header .logo {
+                height: 78px;
+                width: 100%;
+                max-width: 1056px;
+                display: inline-block;
+                float: left;
+                background-image: url('../../Images/gc_main/img_header_xm.png');
+                background-repeat: no-repeat;
+            }
 
-         .el-header .el-menu .el-menu-item span{
-            font-size:16px;
-        }
+            .el-header .el-menu {
+                display: inline-block;
+                height: 78px;
+                position: absolute;
+                right: 150px;
+            }
 
-        .el-header .el-dropdown{
-            display:inline;
-            font-size: 16px;
-            color: white;
-            margin: 0 30px 0 0px;
-            cursor: pointer;
-        }
+                .el-header .el-menu .el-menu-item {
+                    margin-top: 8px;
+                }
+
+                    .el-header .el-menu .el-menu-item:hover, .el-header .el-menu .el-menu-item:focus, .el-header .el-menu .el-menu-item:active {
+                        background-color: transparent !important;
+                    }
+
+                    .el-header .el-menu .el-menu-item span {
+                        font-size: 16px;
+                    }
+
+            .el-header .el-dropdown {
+                display: inline;
+                font-size: 16px;
+                color: white;
+                margin: 0 30px 0 0px;
+                cursor: pointer;
+            }
 
 
         .el-aside {
-            min-width:200px;
+            min-width: 200px;
             border-right: solid 1px #003e93;
             overflow-x: auto;
+            background: #003e93;
         }
 
-        .el-aside .el-menu {
-            border: 0px;
-            height: 100%;
+        .el-aside::-webkit-scrollbar-track
+        {
+	        -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+	        background-color: #F5F5F5;
+	        border-radius: 10px;
         }
 
-        .el-aside .el-menu .el-submenu div{
-            padding-right:10px !important;
-            background-color:#003276 !important;
+        .el-aside::-webkit-scrollbar
+        {
+	        width: 10px;
+	        background-color: #F5F5F5;
         }
 
-        .el-aside .el-menu .el-menu-item{
-            padding-left:25px !important;
+        .el-aside::-webkit-scrollbar-thumb
+        {
+	        border-radius: 10px;
+	        background-image: -webkit-gradient(linear,
+									           left bottom,
+									           left top,
+									           color-stop(0.44, rgb(122,153,217)),
+									           color-stop(0.72, rgb(73,125,189)),
+									           color-stop(0.86, rgb(28,58,148)));
         }
 
-        .el-aside .el-menu .icon-title {
-            width:14px;
-            height:14px;
-            display: inline-block;
-            padding-right:10px;
-            background-repeat:no-repeat;
-        }
+            .el-aside .el-menu {
+                border: 0px;
+                /*height: 100%;*/
+            }
+
+                .el-aside .el-menu .el-submenu div {
+                    padding-right: 10px !important;
+                    background-color: #003276 !important;
+                }
+
+                .el-aside .el-menu .el-menu-item {
+                    padding-left: 25px !important;
+                }
+
+                .el-aside .el-menu .icon-title {
+                    width: 14px;
+                    height: 14px;
+                    display: inline-block;
+                    padding-right: 10px;
+                    background-repeat: no-repeat;
+                }
+
         .el-main {
             padding: 0px;
         }
@@ -266,9 +296,10 @@
             line-height: 30px;
             padding: 0px;
         }
-        .el-footer span{
-            margin-left:20px;
-        }
+
+            .el-footer span {
+                margin-left: 20px;
+            }
     </style>
 </body>
 </html>

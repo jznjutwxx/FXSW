@@ -59,8 +59,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="开工">
@@ -91,8 +94,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工">
@@ -123,8 +129,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工验收">
@@ -155,8 +164,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="决算审批">
@@ -187,8 +199,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="竣工验收">
@@ -219,8 +234,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
         </el-collapse>
@@ -386,6 +404,24 @@
             //submitUpload:function () {
             //    this.$refs.upload.submit();
             //},
+            beforeAvatarUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                if (fileType == 'exe') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+            },
             handleRemove: function (file, fileList) {
                 console.log(file, fileList);
             },
@@ -550,6 +586,9 @@
     #app {
         padding:20px;
         font-size:14px;
+    }
+    #appFile {
+        margin-bottom:60px;
     }
     #appFile .tableCss th{
         background-color:#F5F5F5;

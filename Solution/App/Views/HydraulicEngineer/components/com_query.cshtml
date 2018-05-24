@@ -2,21 +2,29 @@
     <div id="appquery">
         <div class="query">
             <el-form v-bind:inline="true" size="small">
-                <el-form-item label="年度：">
-                    <el-date-picker type="year" v-model="beginYear" placeholder="选择年份" value-format="yyyy" style="width:120px" v-bind:picker-options="pickerOptionsB"></el-date-picker>
+                <el-form-item label="年度:">
+                    @*<com-select v-on:change="getStartYear" v-bind:options="getStartYearOption" class="selCss"></com-select>*@
+                    <el-date-picker v-model="startYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsS">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="至">
-                    <el-date-picker type="year" v-model="endYear" placeholder="选择年份" style="width:120px;" value-format="yyyy" v-bind:picker-options="pickerOptionsE"></el-date-picker>
+                    @*<com-select v-on:change="getEndYear" v-bind:options="getEndYearOption" class="selCss"></com-select>*@
+                    <el-date-picker v-model="endYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
+                    </el-date-picker>
                 </el-form-item>
                 <el-form-item label="工程状态">
-                    <el-select v-on:change="changeState" v-model="gState" class="dateCss">
-                        <el-option v-for="item in getStateOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                    <el-select v-on:change="changeStatus" v-model="gStatus" class="selCss">
+                        <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item label="所属镇">
-                    <el-select v-on:change="changeTown" v-model="gTown" class="dateCss">
-                        <el-option v-for="item in getTownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                    <el-select v-on:change="changeTown" v-model="gTown" class="selCss">
+                        <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -25,11 +33,11 @@
                               prefix-icon="el-icon-search" size="small">
                     </el-input>
                 </el-form-item>
-                <el-form-item>
-                    <el-button type="primary" icon="el-icon-search" v-on:click="search" class="btnCss">查询</el-button>
+                <el-form-item style="padding-left:20px;">
+                    <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent" class="btnSel">查询</el-button>
                 </el-form-item>
                 <el-form-item>
-                    <el-button type="primary" class="btnAdd" v-on:click="Add"></el-button>
+                    <el-button type="primary" class="btnAdd" v-on:click="addProject"></el-button>
                     <el-button type="primary" class="btnDown"></el-button>
                     <el-button type="primary" class="btnImport"></el-button>
                 </el-form-item>
@@ -39,38 +47,38 @@
 </script>
 
 <script>
-    var comquery = {
-        template: "#query",
+    var comquery = ({
+        template: '#query',
         data: function () {
             return {
-                beginYear: moment().format("YYYY"),
-                endYear: moment().format("YYYY"),
-                getStateOption: [],
-                getTownOption: [],
-                gState: '',
+                param: {
+                    startYear: '',
+                    endYear: '',
+                    Status: '',
+                    Town: '',
+                },
+                startYearValue: moment().format('YYYY'),
+                endYearValue: moment().format('YYYY'),
+                StatusOption: [],
+                TownOption: [],
+                gStatus: '',
                 gTown: '',
-                pickerOptionsB: {
+                pickerOptionsS: {
                     disabledDate: function (time) {
-                        if (this.endYear != "") {
-                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYear).getTime();
+                        if (this.endYearValue != "" && this.endYearValue != null && this.endYearValue != undefined) {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
                         } else {
                             return time.getTime() > Date.now();
+                            //return time.getTime() > Date.now() - 8.64e6
                         }
-                    }
+                    }.bind(this)
                 },
                 pickerOptionsE: {
                     disabledDate: function (time) {
-                        if (this.beginYear != "") {
-                            return time.getTime() < new Date(this.beginYear).getTime();
-                        }
-                    }
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
+                    }.bind(this)
                 },
-                param: {
-                    beginYear: '',
-                    endYear: '',
-                    State: '',
-                    Town: ''
-                }
+
             }
         },
         mounted: function () {
@@ -85,8 +93,9 @@
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      this.getStateOption = tempData.DictionaryGetResponse.list;
-                      this.gState = this.getStateOption[0].s_cd_key;
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                      this.gStatus = this.StatusOption[0].s_cd_key;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -96,59 +105,76 @@
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      this.getTownOption = tempData.DictionaryGetResponse.list;
-                      this.gTown = this.getTownOption[0].s_cd_value;
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.TownOption = tempData.DictionaryGetResponse.list;
+                      this.gTown = this.TownOption[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
-            changeState: function (value) {
-                this.gState = value;
-            },
-            changeTown: function (value) {
-                this.gTown = value;
-            },
-            search: function () {
-                this.param.beginYear = new Date(this.beginYear).getFullYear();
-                this.param.endYear = new Date(this.endYear).getFullYear();
-                this.param.State = this.gState;
+            emitEvent: function () {
+                var sYear = new Date(this.startYearValue).getFullYear();
+                var eYear = new Date(this.endYearValue).getFullYear();
+                if (sYear == '1970') {
+                    sYear = '';
+                }
+                if (eYear == '1970') {
+                    eYear = '';
+                }
+                this.param.startYear = sYear;
+                this.param.endYear = eYear;
+                this.param.Status = this.gStatus;
                 this.param.Town = this.gTown;
-                this.$emit("emit-event", this.param);
+                this.$emit('emit-event', this.param)
             },
-            Add: function () {
-                location.href = "/HydraulicEngineer/Add";
-            }
-
+            addProject: function () {
+                window.location = "/HydraulicEngineer/Add?id=gg";
+            },
+            changeStatus: function (param) {
+                this.gStatus = param;
+            },
+            changeTown: function (param) {
+                this.gTown = param;
+            },
+            getData: function () { }
         }
-    };
+    })
 </script>
 
-<style scoped>
+<style>
     #appquery .query {
         font-size: 14px;
         padding: 10px 20px 0px 20px;
         border-bottom: 1px solid #dcdcdc;
-        position:relative;
-        top:5px;
     }
 
-    #appquery .dateCss {
+    #appquery .centerQuery {
+        padding: 10px 20px 10px 20px;
+        float: left;
+    }
+
+    #appquery .selCss {
         width: 120px;
     }
 
-    #appquery .btnCss {
+    #appquery .txtInput {
+        float: left;
+        padding-right: 20px;
+    }
+
+    #appquery .btnSel {
         height: 32px;
         padding-left: 20px;
-        margin-left: 35px;
+        padding-top: -3px;
     }
 
     #appquery .btnAdd {
-        width: 75px;
+        width: 73px;
         height: 32px;
-        float: left;
-        background: url('/Images/gcgl/btn_xinzeng_normal.png') no-repeat;
-        border: none;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        border: 0px;
     }
 
         #appquery .btnAdd:focus {
@@ -166,9 +192,9 @@
     #appquery .btnDown {
         width: 100px;
         height: 32px;
-        float: left;
-        border: none;
-        background: url('/Images/gcgl/btn_mobanxz_normal.png') no-repeat;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        border: 0px;
     }
 
         #appquery .btnDown:focus {
@@ -182,9 +208,9 @@
     #appquery .btnImport {
         width: 100px;
         height: 32px;
-        float: left;
-        border: none;
-        background: url('/Images/gcgl/btn_piliangdr_normal.png') no-repeat;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        border: 0px;
     }
 
         #appquery .btnImport:focus {
