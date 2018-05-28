@@ -2,40 +2,40 @@
 <script type="text/x-template" id="query">
     <div>
         <el-form v-bind:inline="true" class="query" size="small">
-            <el-form-item label="年度：">
+            <el-form-item label="年度:">
                 <el-date-picker v-model="startYearValue"
                                 type="year"
                                 value-format="yyyy"
-                                placeholder="选择年份" style="width: 100px;" v-bind:picker-options="pickerOptionsS">
+                                placeholder="选择年份" style="width: 120px;" v-bind:picker-options="pickerOptionsS">
                 </el-date-picker>
             </el-form-item>
             <el-form-item label="至">
                 <el-date-picker v-model="endYearValue"
                                 type="year"
                                 value-format="yyyy"
-                                placeholder="选择年份" style="width: 100px;" v-bind:picker-options="pickerOptionsE">
+                                placeholder="选择年份" style="width: 120px;" v-bind:picker-options="pickerOptionsE">
                 </el-date-picker>
             </el-form-item>
 
-            <el-form-item label="工程状态：">
-                <el-select v-model="staticVal" style="width: 100px;">
+            <el-form-item label="工程状态:">
+                <el-select v-model="staticVal" style="width: 120px;">
                     <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
                     </el-option>
                 </el-select>
             </el-form-item>
-            <el-form-item label="所属镇：">
-                <el-select v-model="xzqhVal" style="width: 100px;">
+            <el-form-item label="所属镇:">
+                <el-select v-model="xzqhVal" style="width: 120px;">
                     <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
                     </el-option>
                 </el-select>
             </el-form-item>
             <el-form-item>
-                <el-input placeholder="请输入工程名称/项目编号" size="small">
-                    <i slot="prefix" class="el-input__icon el-icon-search"></i>
+                <el-input placeholder="请输入工程名称/工程编号"
+                          prefix-icon="el-icon-search" size="small" v-model="gNameNum" clearable>
                 </el-input>
             </el-form-item>
-            <el-form-item>
-                <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+            <el-form-item style="padding-left:20px;">
+                <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent" style="width:78px;">查询</el-button>
             </el-form-item>
             <el-form-item>
                 <el-button type="primary" class="addbtn" v-on:click="add"></el-button>
@@ -55,12 +55,14 @@
                     sYear: '',
                     eYear: '',
                     status: [],
-                    town: []
+                    town: [],
+                    NameNum: '',
                 },
                 staticsOptions: [],
                 xzqhOptions: [],
                 staticVal: "",
                 xzqhVal: "",
+                gNameNum: '',
                 //startYearValue: moment().add(-8, "y").format("YYYY"),
                 //endYearValue: moment().add(1, "y").format("YYYY"),
                 startYearValue: moment().format('YYYY'),
@@ -87,7 +89,7 @@
         mounted: function () {
             this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
             this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
-            this.emitEvent();
+            //this.emitEvent();
         },
         methods: {
             getTown: function (url, type) {
@@ -96,7 +98,7 @@
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.DictionaryGetResponse.list;
                       this.xzqhOptions = datas;
-                      this.xzqhVal = this.xzqhOptions[0].s_cd_value;
+                      //this.xzqhVal = this.xzqhOptions[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -108,17 +110,27 @@
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.DictionaryGetResponse.list;
                       this.staticsOptions = datas;
-                      this.staticVal = this.staticsOptions[0].s_cd_key;
+                      //this.staticVal = this.staticsOptions[0].s_cd_key;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
             emitEvent: function () {
+                var sYearValue = new Date(this.startYearValue).getFullYear();
+                var eYearValue = new Date(this.endYearValue).getFullYear();
+                if (sYearValue == '1970') {
+                    sYearValue = '';
+                }
+                if (eYearValue == '1970') {
+                    eYearValue = '';
+                }
+
                 this.param.status = this.staticVal;
                 this.param.town = this.xzqhVal;
-                this.param.sYear = this.startYearValue;
-                this.param.eYear = this.endYearValue;
+                this.param.sYear = sYearValue;
+                this.param.eYear = eYearValue;
+                this.param.NameNum = this.gNameNum;
                 this.$emit('emit-event', this.param);
             },
             changeStatics: function (param) {
@@ -145,8 +157,7 @@
 
     .query {
         font-size: 14px;
-        padding: 15px 20px 0px 20px;
-        border-bottom: 1px solid #dcdcdc;
+        padding: 10px 20px 0px 20px;
     }
 
     .inputcss {

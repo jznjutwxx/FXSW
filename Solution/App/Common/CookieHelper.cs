@@ -16,9 +16,9 @@ namespace App.Common
         public static APCookie GetCookie(HttpRequestBase Request)
         {
             APCookie apCookie = new APCookie();
-            apCookie.app_key = ReadCookie("app_key");
-            apCookie.app_secret = ReadCookie("app_secret");
-            apCookie.app_session = ReadCookie("app_session");
+            apCookie.app_key = ReadCookie("app_key")!=""? ReadCookie("app_key"): "1005";
+            apCookie.app_secret = ReadCookie("app_secret")!=""? ReadCookie("app_secret"): "77A8799C9E43";
+            apCookie.app_session = ReadCookie("app_session")!=""? ReadCookie("app_session"): "DEEACA5342B646A7BE08740438C20810";
             apCookie.unit_id = ReadCookie("unit_id");
             return apCookie;
         }

@@ -8,8 +8,9 @@
                 <div v-on:click="mapZoomToSmall" style="width:24px;height:24px;margin-top:2px; background:url(/Images/swsy/btn_jian.png) no-repeat;cursor:pointer;"></div>
             </div>
             <el-row class="a-link-water">
-                <el-col v-bind:span="12" v-bind:offset="12">
-                    <a>点击跳转自来水公司网站查看供水详情</a>
+                <el-col v-bind:span="24" style="text-align:right;padding-right:20px;">
+                    <div v-on:click="aLinkEvent" style="display:inline-block;width:13px;height:13px; background:url(/Images/szysy/ico_link_white.png) no-repeat;cursor:pointer;"></div>
+                    <a v-on:click="aLinkEvent" style="color:#ffffff;">点击跳转自来水公司网站查看供水详情</a>
                 </el-col>
             </el-row>
             <div id="show_map">
@@ -57,7 +58,7 @@
                 layers: null,
                 markerLayer: null,   //具体测站图层
                 //fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
-                fxbaselayerurl: "http://172.18.1.25:8090/iserver/services/map-ugcv5-fxjztiled/rest/maps/fxjz_tiled",
+                fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-FengXian20162/rest/maps/FengXianJiChuDiTu",
                 markerPointData: [
                      { x: 121.37811, y: 30.93234, twon: "庄行镇", statId: "fx-10012", type: 1 },
                      { x: 121.45077, y: 30.95084, twon: "南桥镇", statId: "fx-10013", type: 0 },
@@ -72,9 +73,11 @@
         },
         mounted: function () {
             this.initMap();
+            this.afreshBelowContent()
             const that = this;
             $(window).resize(function () {
                 that.mapheight = document.body.clientHeight - 32;
+                that.afreshBelowContent();
             });
         },
         watch:{
@@ -83,11 +86,20 @@
             },
         },
         methods: {
+            afreshBelowContent: function () {
+                debugger;
+                if (window.screen.height <= 900) {
+                    $("#show_map").css("height", "92%");
+                }
+                else {
+                    $("#show_map").css("height", "95%");
+                }
+            },
             //初始化地图
             initMap: function () {
                 this.map = new SuperMap.Map("show_map", {
                     controls: [
-                        //new SuperMap.Control.ScaleLine(),
+                        new SuperMap.Control.ScaleLine(),
                         //new SuperMap.Control.MousePosition(),
                         //new SuperMap.Control.Zoom(),
                         new SuperMap.Control.Navigation({
@@ -100,14 +112,14 @@
                 var baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto" });
                 //标注点图层
                 this.markerLayer = new SuperMap.Layer.Markers("标注");
-
+                
                 this.layers = [baselayer];
                 baselayer.events.on({ "layerInitialized": this.addLayers });
             },
             //加载图层信息
             addLayers: function () {
                 this.map.addLayers(this.layers);
-                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 1);
+                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
                 this.addMarkerPoints();//加载marker标注点
             },
             //显示详情弹框
@@ -168,6 +180,9 @@
             mapZoomToSmall: function () {
                 this.map.zoomTo(this.map.getZoom() - 1)
             },
+            aLinkEvent: function() {
+                window.open("http://www.fengxianwater.com/");
+            },
         }
     }
 </script>
@@ -181,7 +196,7 @@
         border: 1px solid #0146b2;
         overflow: hidden;
         min-width: 400px;
-        min-height: 610px;
+        /*min-height: 610px;*/
         background-color: #051266;
     }
 
@@ -189,8 +204,9 @@
             top: 10px;
             margin-bottom: 20px;
             font-family: "微软雅黑";
-            font-size: 12px;
+            font-size: 14px;
             color: #1ED6E4;
+            z-index:2048;
         }
 
         #mapContainer #show_map {
@@ -205,7 +221,7 @@
         #mapContainer .map_buttom_content {
             position: absolute;
             width: 100%;
-            height: 130px;
+            height: 150px;
             left: 1px;
             bottom: 1px;
             font-family: "微软雅黑";
@@ -241,6 +257,23 @@
         /*height: 100%;
         padding: 10px 0 0 10px;*/
         position: relative;
+    }
+    /*比例尺样式重写*/
+    .smControlScaleLine{
+        z-index: 3500 !important;
+    }
+    .smControlScaleLineTop {
+        border: 2px solid #1e50bc !important;
+        border-top: none !important;
+        text-align: center;
+        width: 100px !important;
+        position: absolute;
+        bottom: 5px;
+        left: 35px;
+        color: white;
+    }
+    .smControlScaleLineBottom{
+        display:none !important;
     }
 
     /**具体测站点的弹框样式*/

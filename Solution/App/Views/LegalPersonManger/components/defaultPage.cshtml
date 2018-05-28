@@ -2,8 +2,7 @@
 <script type="text/x-template" id="defaultPage">
     <div id="defaultpage">
         <div id="queryhead">
-            <el-input v-bind:placeholder="promptMessage"
-                      prefix-icon="el-icon-search" size="small">
+            <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" v-model="frName">
             </el-input>
             <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryFRinfo">查询</el-button>
             <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
@@ -29,7 +28,7 @@
                 </el-table-column>
             </el-table>
         </div>
-        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frData.length" v-bind:float="right">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frData.length">
         </el-pagination>
     </div>
 </script>
@@ -234,6 +233,7 @@
                 addpage_visible: false,
                 editpage_visible: false,
                 nowEditData: null,//当前编辑的数据
+                frName:"",
             }
         },
         components: {
@@ -244,6 +244,7 @@
             $(window).resize(function () {
                 vm.tableHeight = document.documentElement.clientHeight - (53 + 34);
             });
+
         },
         methods: {
             indexOrder: function (index) {
@@ -276,6 +277,9 @@
             //查询法人信息
             queryFRinfo: function () {
                 this.$message("查询法人姓名");
+                axios.post("/LegalPersonManger/queryFrInfo", { currentPage: this.currentPage, pagesize: this.pagesize, frName: this.frName }).then(function (response) {
+
+                  })
             },
             //删除法人信息
             deletFRinfo: function () {
@@ -288,7 +292,7 @@
                     this.$message("取消删除");
                 }
             },
-            exportExcel () {
+            exportExcel:function () {
                 debugger;
                 /* generate workbook object from table */
                 var wb = XLSX.utils.table_to_book(document.querySelector('#out-table'))

@@ -1,66 +1,73 @@
 ﻿<script type="text/x-template" id="com-szyleft">
     <div id="leftContent" v-bind:style="{height:leftheight+'px'}">
-        @*<div class="title" style="text-align:center;">月用水量(1月)</div>*@
-        <div class="topdiv">
-            <el-row class="row">
-                <el-col v-bind:span="12" class="col">
-                    <div class="text-gra">645252m³</div>
-                </el-col>
-                <el-col v-bind:span="12" class="col">
-                    <span class="divcss">环比增长：</span>
-                    <span class="divcss" style="font-family:Arial;">12.5%</span>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="col">
-                    <span class="divcss">自来水</span>
-                </el-col> 
-                <el-col v-bind:span="8" class="col">
-                    <span class="divcss">地表水</span>
-                </el-col>
-                <el-col v-bind:span="8" class="col">
-                    <span class="divcss">农业用水</span>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="col">
-                    <span class="text-gra" style="font-size:16px;">125252m³</span>
-                </el-col> 
-                <el-col v-bind:span="8" class="col">
-                    <span class="text-gra" style="font-size:16px;">64252m³</span>
-                </el-col>
-                <el-col v-bind:span="8" class="col">
-                    <span class="text-gra" style="font-size:16px;">435252m³</span>
-                </el-col>
-            </el-row>
+        <div id="topdiv" class="topdiv">
+            <div id="top" v-bind:style="{marginTop:marginHeight+'px',marginLeft:marginWidth+'px'}">
+                <el-row class="row">
+                    <el-col v-bind:span="12" class="col">
+                        <div class="text-gra">645252m³</div>
+                    </el-col>
+                    <el-col v-bind:span="12" class="col">
+                        <span class="divcss">环比增长：</span>
+                        <span class="divcss" style="font-family:Arial;">12.5%</span>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="divcss">自来水</span>
+                    </el-col>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="divcss">地表水</span>
+                    </el-col>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="divcss">农业用水</span>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="text-gra" style="font-size:16px;">125252m³</span>
+                    </el-col>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="text-gra" style="font-size:16px;">64252m³</span>
+                    </el-col>
+                    <el-col v-bind:span="8" class="col">
+                        <span class="text-gra" style="font-size:16px;">435252m³</span>
+                    </el-col>
+                </el-row>
+            </div>
         </div>
 
         <div class="center" id="interval">
-            @*interval：块与块的上下间距*@
-        <div style="height:50%;">
-            <div class="title" style="width:70px;">用水统计</div>
-            <com-line v-bind:option="lineOption" class="chartcss" style="height:99%;"></com-line>
-        </div>
-        <div style="width:100%;height:50%;">
-            <div class="divcss ysqk">累计用水情况</div>
-            <div class="piediv">
-                <com-pie v-bind:option="GYpieOption" class="charts"></com-pie>@*class="chartcss"*@
-                <com-pie v-bind:option="SHpieOption" class="charts"></com-pie>
-                <com-pie v-bind:option="NYpieOption" class="charts"></com-pie>
+            <div style="height:100%;" v-bind:style="{marginTop:marginCHeight+'px'}">
+                @*interval：块与块的上下间距*@
+                <div style="height:50%;">
+                    <div class="title" style="width:70px;">用水统计</div>
+                    <com-line v-bind:option="lineOption"  ref="line" class="chartcss"></com-line>
+                </div>
+                <div style="width:100%;height:50%;">
+                    <div class="divcss ysqk">累计用水情况</div>
+                    <div class="piediv">
+                        <com-pie v-bind:option="GYpieOption" class="charts"></com-pie>
+                        <span class="textcss">工业用水</span>
+                    </div>
+                    <div class="piediv">
+                        <com-pie v-bind:option="SHpieOption" class="charts"></com-pie>
+                        <span class="textcss">生活用水</span>
+                    </div>
+                    <div class="piediv">
+                        <com-pie v-bind:option="NYpieOption" class="charts"></com-pie>
+                        <span class="textcss">农业用水</span>
+                    </div>
+                </div>
             </div>
-            <div class="divcss textdiv">
-                <span class="textcss">工业用水</span>
-                <span class="textcss">生活用水</span>
-                <span class="textcss">农业用水</span>
-            </div>
         </div>
-    </div>
 
-    <div class="bardiv">
-        <div class="title" style="width:195px;">水质汇总(2017年第三季度)</div>
-        <div id="radarCharts" class="barcss"></div>
+
+
+        <div class="bardiv">
+            <div class="title" style="width:195px;">水质汇总(2017年第三季度)</div>
+            <div id="radarCharts" class="barcss"></div>
+        </div>
     </div>
-</div>
 </script>
 @Html.Partial("~/Views/components/echarts/com_line.cshtml")
 @Html.Partial("~/Views/components/echarts/com_pie.cshtml")
@@ -72,9 +79,14 @@
         data: function () {
             return {
                 leftheight: document.documentElement.clientHeight - 32,
-                param: {
-                    
-                },
+                marginHeight: 0,
+                marginWidth: 0,
+                marginCHeight:0,
+                param: {},
+                lineLegendData: ['计划用水量', '实际用水量'],
+                lineGridTop: '28%',
+                lineyAxisName: '亿（m³）',
+                radarRadius:85,
                 lineOption: null,
                 GYpieOption: null,
                 SHpieOption: null,
@@ -89,13 +101,21 @@
             leftheight: function (val) {
                 this.leftheight = val;
             },
+            getScreen: function () {
+                var topHeight = document.getElementById("topdiv").clientHeight;
+                var topHei = document.getElementById("top").clientHeight;
+                var topWidth = document.getElementById("topdiv").clientWidth;
+                var topWid = document.getElementById("top").clientWidth;
+                this.marginHeight = (topHeight - topHei) / 2;
+                this.marginWidth = (topWidth - topWid) / 2;
+            }
         },
         mounted: function () {
             const that = this;
 
             $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             $(window).resize(function () {
-                that.leftheight = document.body.clientHeight - 32;
+                that.leftheight = document.documentElement.clientHeight - 30;
                 $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             });
             that.init();
@@ -103,7 +123,10 @@
         methods: {
             init: function () {
                 this.setData('/WaterRes/GetData', null);
+                this.resize();
+                this.setSize();
             },
+            
             setData: function (url, param) {
                 this.setLineData(url, param);
                 this.setGYPieData(url, param);
@@ -112,45 +135,56 @@
                 this.setRadarData(url, param);
             },
             setLineData: function (url, param) {
-                this.$children[3].charts.showLoading();
+                this.$refs.line.charts.showLoading();
                 axios.post(url).then(function (response) {
-                    this.$children[3].charts.hideLoading();
+                    this.$refs.line.charts.hideLoading();
                     this.lineOption = {
                         color: ['#ebcf12', '#0dd9dc'],
                         legend: {
                             selectedMode: false,
-                            data: ['计划用水量', '实际用水量'],
+                            data: this.lineLegendData,
+                           // data: ['计划用水量', '实际用水量'],
                             textStyle: {
                                 color: '#ffffff'
-                            }
+                            },
+                            top:10
                         },
                         grid: {
-                            top: '18%',
-                            left: '4%',
-                            right: '4%',
-                            bottom: '5%',
+                            top: this.lineGridTop,
+                            left: '4%', 
+                            right: '10%'
                         },
                         xAxis: {
                             type: 'category',
                             data: ['2月', '4月', '6月', '8月', '10月', '12月'],
                             axisLabel: {
                                 interval: 0,//横轴信息全部显示
-                                rotate: 30,//-30度角倾斜显示
+                                rotate: 0,//-30度角倾斜显示
+                                color: '#fff'
+                            },
+                            legend: {
+                                textStyle: {
+                                    color: '#ffffff'
+                                }
                             },
                             axisLine: {
                                 lineStyle: {
-                                    color: '#ffffff',
+                                    color: '#3d4997',
                                 }
                             },
-                            axisTick: {
-                                show: false
-                            }
+                            axisTick: { show:false },
                         },
                         yAxis: {
                             type: 'value',
-                            name: '亿（m³）',
+                            name: this.lineyAxisName,
                             nameTextStyle: {
-                                padding: [0, 0, 0, 30]
+                                padding: [0, 0, -5, 30]
+                            },
+                            splitLine: {
+                                show: true,//保留网格线
+                                lineStyle: {
+                                    color: '#3d4997'
+                                }
                             },
                             axisLine: {
                                 show: false,
@@ -158,6 +192,7 @@
                                     color: '#ffffff',
                                 }
                             },
+                            axisTick: { show: false },
                         },
                         series: [
                             {
@@ -165,26 +200,26 @@
                                 type: 'line',
                                 smooth: true,
                                 symbol: 'rect',
-                                data: [1.1, 3.8, 1.7, 2.6, 3.5, 2],
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'top'
-                                    }
-                                }
+                                data: [5.1, 3.8, 9.7, 2.6, 3.5, 2],
+                                //label: {
+                                //    normal: {
+                                //        show: true,
+                                //        position: 'top'
+                                //    }
+                                //}
                             },
                             {
                                 name: '实际用水量',
                                 type: 'line',
                                 smooth: true,
                                 symbol: 'rect',
-                                data: [1, 3.4, 2, 1.2, 3, 2.1],
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'top'
-                                    }
-                                }
+                                data: [1, 3.4, 2, 1.2, 7, 2.1],
+                                //label: {
+                                //    normal: {
+                                //        show: true,
+                                //        position: 'top'
+                                //    }
+                               // }
                             }
                         ]
                     };
@@ -195,33 +230,35 @@
                   });
             },
             setGYPieData: function (url, param) {
-                this.$children[4].charts.showLoading();
+               // this.$children[5].charts.showLoading();
                 axios.post(url).then(function (response) {
-                    this.$children[4].charts.hideLoading();
+                 //   this.$children[5].charts.hideLoading();
                     this.GYpieOption = {
                         color: ['#1486FD', '#849BE2'],
-
                         title: {
-                            subtext: '54%',
-                            subtextStyle: {
+                            text: '54%',
+                            textStyle: {
                                 fontSize: 14,
                                 color: '#ffffff',
                                 fontWeight: 'normal'
                             },
-                            left: '25%',
-                            top: '17%'
+                            x:'center',
+                            y:'center'
+                        },
+                        grid: {
+                            top:'0'
                         },
                         series: [
                             {
                                 name: '访问来源',
                                 type: 'pie',
-                                radius: ['62%', '82%'],
-                                center: ['45%', '40%'],
+                                radius: ['45%', '65%'],
                                 label: {
                                     normal: {
                                         show: false,
                                     }
                                 },
+                                hoverAnimation: false,
                                 labelLine: {
                                     normal: {
                                         show: false
@@ -240,28 +277,27 @@
                   });
             },
             setSHPieData: function (url, param) {
-
-                this.$children[5].charts.showLoading();
+                //this.$children[5].charts.showLoading();
                 axios.post(url).then(function (response) {
-                    this.$children[5].charts.hideLoading();
+                   // this.$children[5].charts.hideLoading();
                     this.SHpieOption = {
                         color: ['#BD64E5', '#849BE2'],
                         title: {
-                            subtext: '26%',
-                            subtextStyle: {
+                            text: '26%',
+                            textStyle: {
                                 fontSize: 14,
                                 color: '#ffffff',
                                 fontWeight: 'normal'
                             },
-                            left: '25%',
-                            top: '17%'
+                            x: 'center',
+                            y: 'center'
                         },
                         series: [
                             {
                                 name: '访问来源',
                                 type: 'pie',
-                                radius: ['62%', '82%'],
-                                center: ['45%', '40%'],
+                                radius: ['45%', '65%'],
+                                hoverAnimation: false,
                                 label: {
                                     normal: {
                                         show: false,
@@ -287,10 +323,9 @@
                   });
             },
             setNYpieData: function (url, param) {
-
-                this.$children[6].charts.showLoading();
+               // this.$children[6].charts.showLoading();
                 axios.post(url).then(function (response) {
-                    this.$children[6].charts.hideLoading();
+                //    this.$children[6].charts.hideLoading();
                     this.NYpieOption = {
                         color: ['#04C9A8', '#849BE2'],
                         tooltip: {
@@ -298,21 +333,21 @@
                             formatter: "{d}%"
                         },
                         title: {
-                            subtext: '24%',
-                            subtextStyle: {
+                            text: '24%',
+                            textStyle: {
                                 fontSize: 14,
                                 color: '#ffffff',
                                 fontWeight: 'normal'
                             },
-                            left: '25%',
-                            top: '17%'
+                            x: 'center',
+                            y: 'center'
                         },
                         series: [
                             {
                                 name: '访问来源',
                                 type: 'pie',
-                                radius: ['62%', '82%'],
-                                center: ['45%', '40%'],
+                                radius: ['45%', '65%'],
+                                hoverAnimation: false,
                                 label: {
                                     normal: {
                                         show: false,
@@ -342,7 +377,7 @@
                 var radarChart = echarts.init(document.getElementById('radarCharts'));
                 axios.post(url).then(function (response) {
                     var radarOption = {
-                        color:'#50a6ff',
+                        color: '#50a6ff',
                         tooltip: {
                             trigger: 'axis'
                         },
@@ -354,13 +389,13 @@
                         radar: [
                             {
                                 indicator: [
-                                    { text: '综合', max: 100 }, // max: '100%'
+                                    {text: '综合', max: 100}, // max: '100%'
                                     { text: '管水网7项', max: 100 },
-                                    { text: '出水厂非常规23项', max: 100 },
-                                    { text: '出水厂常规44项', max: 100 },
-                                    { text: '原水21项', max: 100 }
+                                    {text: '出水厂非常规64项', max: 100  },
+                                    { text: '出水厂常规42项', max: 100 },
+                                    { text: '原水29项', max: 100 }
                                 ],
-                                radius: 80,
+                                radius:this.radarRadius,
                                 center: ['50%', '50%'],
                             }
 
@@ -387,6 +422,11 @@
                         ]
                     }
                     radarChart.setOption(radarOption);
+                    $(window).resize(function () {
+                        setTimeout(function () {
+                            radarChart.resize();
+                        }.bind(this), 100);
+                    }.bind(this));
                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -401,23 +441,41 @@
             setSize: function () {
                 var docH = document.documentElement.clientHeight;
                 var contentH = docH - 50;
-                this.styles.height = (contentH / 2) + 'px';
+
                 this.height = contentH / 3;
+                if (docH<=550) {
+                    this.lineLegendData = [];
+                    this.lineGridTop = '12%';
+                    this.lineyAxisName = '';
+                    this.radarRadius = 40;
+                } else if (docH >= 900) {
+                    this.radarRadius = 100;
+                }
             }
         }
     }
 </script>
 
 <style scoped>
+    @@media screen and (max-height:768px) {
+        .barcss {
+            height: 100% !important;
+            width: 100% !important;
+        }
+
+        .row {
+            padding-top: 5px !important;
+        }
+    }
+
     #leftContent {
         width: 100%;
         overflow: hidden;
-        min-width: 350px;
-        min-height: 610px;
-        position: relative;
+        position:relative;
+        margin-left:8px;
     }
 
-    .topdiv {
+   #leftContent .topdiv {
         height: 17%;
         width: 99%;
         border: 1px solid #0146b2;
@@ -441,7 +499,7 @@
     }
 
     .row {
-        padding-top: 10px;
+        padding-top: 15px;
     }
 
     .col {
@@ -473,7 +531,10 @@
     .ysqk {
         width: 5%;
         float: left;
-        padding-left: 16px;
+        padding-left: 12px;
+        height: 100px;
+        line-height: 1;
+        margin-top: 5%;
     }
 
     .center {
@@ -484,15 +545,21 @@
     }
 
     .piediv {
-        width: 90%;
-        height: 64%;
+        width: 30%;
+        height: 100%;
         float: left;
+        position:relative;
+        margin-top:-5%;
+        /*position: absolute;
+        top: -15px;*/
     }
 
     .charts {
-        width: 32% !important;
-        height: 90%;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100%;
         float: left;
+       
     }
 
     .chartcss {
@@ -507,11 +574,14 @@
         float: left;
     }
 
-    .textcss {
+     #leftContent .textcss {
         text-align: center;
-        height: 50%;
-        width: 30%;
+        width: 100%;
         float: left;
+        position:absolute;
+        bottom:1%;
+        left:0;
+        color:white;
     }
 
     .bardiv {
@@ -524,7 +594,8 @@
 
     .barcss {
         height: 97%;
-        width: 95% !important;
-        padding-top: 5px !important;
+        width: 95%;
+        
+        /*padding-top: 10% !important;*/
     }
 </style>

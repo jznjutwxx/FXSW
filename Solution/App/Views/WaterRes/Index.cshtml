@@ -8,16 +8,16 @@
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="app">
     <el-row v-bind:gutter="15" class="row_bg">
-        <el-col v-bind:xs="5" v-bind:sm="6" v-bind:md="6" v-bind:lg="6" v-bind:xl="5" class="sidescss">
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
             <div class="title" style="text-align:center;">月用水量(1月)</div>
             <com-szyleft ref="szyleft"></com-szyleft>
         </el-col>
-        <el-col v-bind:xs="13" v-bind:sm="11" v-bind:md="11" v-bind:lg="11" v-bind:xl="13">
+        <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
             <com_szymap ref="comSzyMap">
 
             </com_szymap>
         </el-col>
-        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" style="padding-left:11px;" class="sidescss">
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" >
             <div class="title ysxl">用水效率(2017年上半年)</div>
             <com-szyright>
 
@@ -80,7 +80,7 @@
 
     #app .title {
         position: absolute;
-        top: -13px;
+        /*top: -13px;*/
         left: 35px;
         z-index: 1400;
         background-color: #051266;

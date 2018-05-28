@@ -18,7 +18,7 @@
                     <el-col v-bind:span="8">
                         <img src="/Images/gczl/ico_jiezhen.png" />&nbsp;&nbsp;街镇
                     </el-col>
-                    <el-col v-bind:span="7" :offset="9">
+                    <el-col v-bind:span="7" v-bind:offset="9">
                         <el-checkbox v-bind:indeterminate="isIndeterminate" v-model="checkAll" v-on:change="handleCheckAllChange" v-bind:checked="true">
                             全选
                         </el-checkbox>
@@ -26,20 +26,20 @@
                 </el-row>
                 <el-checkbox-group v-model="checkTwons" v-on:change="handleCheckTwonsChange">
                     <el-row class="town_row">
-                        <el-col :span="11" class="town_col_style"><el-checkbox label="庄行镇"></el-checkbox></el-col>
-                        <el-col :span="9" class="town_col_style"><el-checkbox label="柘林镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="11" class="town_col_style"><el-checkbox label="庄行镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="9" class="town_col_style"><el-checkbox label="柘林镇"></el-checkbox></el-col>
                     </el-row>
                     <el-row class="town_row">
-                        <el-col :span="11" class="town_col_style"><el-checkbox label="南桥镇"></el-checkbox></el-col>
-                        <el-col :span="9" class="town_col_style"><el-checkbox label="青村镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="11" class="town_col_style"><el-checkbox label="南桥镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="9" class="town_col_style"><el-checkbox label="青村镇"></el-checkbox></el-col>
                     </el-row>
                     <el-row class="town_row">
-                        <el-col :span="11" class="town_col_style"><el-checkbox label="金汇镇"></el-checkbox></el-col>
-                        <el-col :span="9" class="town_col_style"><el-checkbox label="奉城镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="11" class="town_col_style"><el-checkbox label="金汇镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="9" class="town_col_style"><el-checkbox label="奉城镇"></el-checkbox></el-col>
                     </el-row>
                     <el-row class="town_row">
-                        <el-col :span="11" class="town_col_style"><el-checkbox label="四团镇"></el-checkbox></el-col>
-                        <el-col :span="9" class="town_col_style"><el-checkbox label="海湾镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="11" class="town_col_style"><el-checkbox label="四团镇"></el-checkbox></el-col>
+                        <el-col v-bind:span="9" class="town_col_style"><el-checkbox label="海湾镇"></el-checkbox></el-col>
                     </el-row>
                 </el-checkbox-group>
             </div>
@@ -117,6 +117,9 @@
             </div>
         </div>
         @* 地图上的四个图标按钮 *@
+        <el-button class="map_Btn clear_btn" icon="el-icon-delete" title="清除标注" v-on:click="clearFeature"></el-button>
+        <el-button class="map_Btn ceju_btn" icon="el-icon-rank" title="测距" v-on:click="measureDistance"></el-button>
+        <el-button class="map_Btn cemian_btn" icon="el-icon-minus" title="测面" v-on:click="measureArea"></el-button>
         <div class="map_Btn refresh_map" title="初始地图范围" v-on:click="refreshMap"></div>
         <div class="map_Btn tuli_btn" icon="el-icon-menu" v-on:click="onMouseOver"></div>
         <div class="map_Btn big_map" icon="el-icon-plus" v-on:click="mapZoomBig"></div>
@@ -149,13 +152,15 @@
                               style="width: 100%">
                         <el-table-column type="index"
                                          label="序号"
-                                         align="right"
+                                         align="center"
                                          header-align="center">
                         </el-table-column>
-                        <el-table-column prop="s_name"
-                                         label="工程名称"
+                        <el-table-column label="工程名称"
                                          align="left"
                                          header-align="center">
+                            <template slot-scope="scope">
+                                <a v-on:click="openGCDetail(scope.row.gc_type, scope.row.s_id)" class="proName">{{ scope.row.s_name }}</a>
+                            </template>
                         </el-table-column>
                         <el-table-column prop="s_project_no"
                                          label="工程编号"
@@ -164,12 +169,12 @@
                         </el-table-column>
                         <el-table-column prop="n_pace_status"
                                          label="工程状态"
-                                         align="left"
+                                         align="center"
                                          header-align="center">
                         </el-table-column>
                         <el-table-column prop="s_town"
                                          label="所属镇"
-                                         align="left"
+                                         align="center"
                                          header-align="center">
                         </el-table-column>
                         <el-table-column prop="n_total_invest"
@@ -179,7 +184,7 @@
                         </el-table-column>
                         <el-table-column prop="s_legal_person"
                                          label="项目法人"
-                                         align="left"
+                                         align="center"
                                          header-align="center">
                         </el-table-column>
                         <el-table-column prop="s_unit_design"
@@ -224,7 +229,10 @@
                 checkProAll: false,
                 checkPros: ['1'],//选中工程分类
                 isProIndeterminate: false,
-                pros: ['1','2','3','4','5'],
+                pros: ['1','2','3','4','5'],//工程分类（所有）
+                proNm: '',  //工程名称
+                proNos: [], //工程编号
+                ctFlag: '1',//是否有草图（0没有草图，1有草图，2查询所有）
                 map: null,
                 centerDialogVisible: false,
                 layers: null,
@@ -235,6 +243,14 @@
                 gcctRestDataUrl: "http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data",
                 vectorLayer: null,      //点线面feature显示的图层
                 vectorDataList: [],     //点线面feature的数据集合
+                vectorLine: null,   //测量长度所需要的线图层
+                vectorArea: null,   //测量面积所需要的面积图层
+                vectorUnit: null,   //显示测量的长度
+                vectorLayerTmp: null,   //临时点显示的图层
+                vectorX: null,   //删除
+                closeSelect: null,
+                lineMeasure: null, //测量长度
+                areaMeasure: null, //测量面积
                 filterTitleVal: '28',//筛选后的总的工程数量
                 GGCount: 5,//骨干河道筛选后数量
                 ZXXCount: 6,//中小型河道筛选后数量
@@ -280,18 +296,38 @@
             afreshBelowContent: function () {
                 debugger;
                 if (window.screen.height <= 900) {
-                    $(".proTable").css("height","180px");
-                    $(".el-table--fit").css("height", "118px");
+                    $(".proTable").css("height","170px");
+                    $(".el-table--fit").css("height", "108px");
                     $(".el-table__body-wrapper").css("height","70px");
                     $(".el-table__body-wrapper").css( "overflow-y","auto" );
-                    $(".hideDown").css("bottom","180px");
+                    $(".hideDown").css("bottom","170px");
                 }
                 else {
-                    $(".proTable").css("height","270px");
-                    $(".el-table--border").css("height","208px");
-                    $(".el-table__body-wrapper").css({ "height": "160px", "overflow-y": "hidden" });
-                    $(".hideDown").css("bottom", "270px");
+                    $(".proTable").css("height","265px");
+                    $(".el-table--border").css("height","202px");
+                    $(".el-table__body-wrapper").css({ "height": "170px", "overflow-y": "hidden" });
+                    $(".hideDown").css("bottom", "265px");
                 }
+            },
+            clearFeature: function() {
+                this.vectorUnit.removeAllFeatures();
+                this.vectorLine.removeAllFeatures();
+                this.vectorLayerTmp.removeAllFeatures();
+                this.vectorX.removeAllFeatures();
+            },
+            measureDistance: function () {
+                this.vectorUnit.removeAllFeatures();
+                this.vectorLine.removeAllFeatures();
+                this.vectorLayerTmp.removeAllFeatures();
+                this.vectorX.removeAllFeatures();
+                this.lineMeasure.activate();
+            },
+            measureArea: function () {
+                this.vectorUnit.removeAllFeatures();
+                this.vectorLine.removeAllFeatures();
+                this.vectorLayerTmp.removeAllFeatures();
+                this.vectorX.removeAllFeatures();
+                this.areaMeasure.activate();
             },
             initMap: function() {
                 this.map = new SuperMap.Map("showMap", {
@@ -310,15 +346,60 @@
                 //标注点图层
                 this.markerLayer = new SuperMap.Layer.Markers("工程点");
                 this.vectorLayer = new SuperMap.Layer.Vector("工程草图");
-                this.layers = [baselayer,this.markerLayer,this.vectorLayer];
+                this.vectorLine = new SuperMap.Layer.Vector("线");
+                this.vectorX = new SuperMap.Layer.Vector("删除");
+                this.vectorUnit = new SuperMap.Layer.Vector("unit");
+                this.vectorLayerTmp = new SuperMap.Layer.Vector("临时图层");
+                this.closeSelect = new SuperMap.Control.SelectFeature(this.vectorX, {
+                    onSelect: this.onCloseFeatureSelect
+                });
+                this.layers = [baselayer,this.markerLayer,this.vectorLayer,this.vectorLine,this.vectorUnit,
+                    this.vectorLayerTmp,this.vectorX];
                 baselayer.events.on({ "layerInitialized": this.addLayers });
                 this.map.events.on({ "zoomend": this.mapIsZoomend });
+                
+                //长度测量控件初始化
+                this.lineMeasure = new SuperMap.Control.Measure(
+                    SuperMap.Handler.Path, {
+                        immediate: true //当immediate为true时，量算过程中时时显示结果，同时会触发 “measurepartial” 事件
+                    }
+                );
+                this.lineMeasure.events.on({
+                    "measure": this.handleMeasure,
+                    "measurepartial": this.handleMeasurements
+                });
+                //面积测量控件初始化
+                this.areaMeasure = new SuperMap.Control.Measure(
+                    SuperMap.Handler.Polygon, {
+                        immediate: true
+                    }
+                );
+                this.areaMeasure.events.on({
+                    "measure": this.handleMeasureP,
+                    "measurepartial": this.handleMeasurementsP
+                });
+            },
+            onCloseFeatureSelect: function() {
+                this.vectorUnit.removeAllFeatures();
+                this.vectorLine.removeAllFeatures();
+                this.vectorX.removeAllFeatures();
+                this.closeSelect.deactivate();
             },
             //加载图层信息
             addLayers: function () {
                 this.map.addLayers(this.layers);
+                this.map.addControl(this.closeSelect);
+                this.gcctSelect = new SuperMap.Control.SelectFeature(this.vectorLayer, {
+                    onSelect: this.onGcctFeatureSelect
+                });
+                this.map.addControl(this.gcctSelect);
+                this.map.addControl(this.lineMeasure);
+                this.map.addControl(this.areaMeasure);
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
                 //this.addMarkerPoints();//加载marker标注点
+            },
+            onGcctFeatureSelect: function(e) {
+                console.log(e);
             },
             mapIsZoomend: function () {
                 var zom = this.map.getZoom();
@@ -327,6 +408,7 @@
                     this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
                 } else {
                     this.vectorLayer.removeAllFeatures();//去掉草图
+                    this.gcctSelect.deactivate();   //注销vectorLayer图层上的草图选择事件
                     this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
                 }
             },
@@ -349,7 +431,8 @@
                     page: this.currentPage, pagesize: this.pagesize,
                     sYear: this.dateBeginParam, eYear: this.dateEndParam,
                     status: this.checkPros.join(','), towns: this.checkTwons.join(","),
-                    stype: this.stype
+                    stype: this.stype, proNm: this.proNm, proNos: this.proNos.join(","),
+                    ctFlag: this.ctFlag
                 });
             },
             //条件筛选加载表格中的数据
@@ -375,16 +458,19 @@
             getMapDBData:function() {
                 axios.post('/ProOverView/GetMapData', {
                     sYear: this.dateBeginParam, eYear: this.dateEndParam,
-                    status: this.checkPros.join(','), towns: this.checkTwons.join(",")
+                    status: this.checkPros.join(','), towns: this.checkTwons.join(","),
+                    proNm: this.proNm, proNos: this.proNos.join(","),
+                    ctFlag: this.ctFlag
                 }).then(function (response) {
                     var li = JSON.parse(response.data);
                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
                     this.mapDbData = datas;
                     var zom = this.map.getZoom();
-                    if (zom >= 8) {
+                    if (zom >= 3) {
                         this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
                     } else {
                         this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                        this.gcctSelect.deactivate();     //注销vectorLayer图层上的草图选择事件
                     }
                 }.bind(this))
                   .catch(function (error) {
@@ -448,16 +534,23 @@
                         }
                     });
                 }
-                
                 getFeatureBySQLService.processAsync(getFeatureBySQLParams);
             },
             //渲染图层
             processCompleted2: function(e){
+                //设置草图图层的优先级到最大，否则无法选中上面的feature
+                this.map.setLayerIndex(this.vectorLayer,6);
+                this.vectorLayer.removeAllFeatures();
                 var obj = e.result.features;
+                let features = [];
                 for (var i = 0; i < obj.length; i++) {
-                    this.vectorLayer.addFeatures(obj[i]);
+                    let feature = obj[i];
+                    features.push(feature);
                 }
+                this.vectorLayer.addFeatures(features);
                 this.vectorDataList = obj;
+                this.gcctSelect.activate();     //打开vectorLayer图层上的草图选择事件
+                console.log(this.vectorLayer.features);
             },
             //加载数据
             processCompleted: function (e) {
@@ -601,19 +694,23 @@
                  );
                 this.infowin = framedCloud;
                 this.map.addPopup(framedCloud);
+                var thisobj = this;
                 $('#showGcDetail').click(function () {
-                    if (that.type == '骨干河道' || that.type == '中小河道') {
-                        window.open("/BackboneRiverway/LookProject?id=" + that.sid + "&flag=false");
-                    } else if (that.type == '其它水利工程') {
-                        window.open("/HydraulicEngineer/Detail?id=" + that.sid + "&flag=false");
-                    } else if (that.type == '小型农田水利') {
-                        window.open("/FarmlandWater/DetailPage?id=" + that.sid + "&flag=false");
-                    } else if (that.type == '农村生活污水') {
-                        window.open("/SanitarySewage/DetailPage?id=" + that.sid + "&flag=false");
-                    } else {
-                        console.log(that.type);
-                    }
-                })
+                    thisobj.openGCDetail(that.type, that.sid);
+                });
+            },
+            openGCDetail: function(type, sid) {
+                if (type == '骨干河道' || type == '中小河道') {
+                    window.open("/BackboneRiverway/LookProject?id=" + sid + "&flag=false");
+                } else if (type == '其他水利工程') {
+                    window.open("/HydraulicEngineer/Detail?id=" + sid + "&flag=false");
+                } else if (type == '小型农田水利') {
+                    window.open("/FarmlandWater/DetailPage?id=" + sid + "&flag=false");
+                } else if (type == '农村生活污水') {
+                    window.open("/SanitarySewage/DetailPage?id=" + sid + "&flag=false");
+                } else {
+                    console.log(type);
+                }
             },
             closeInfoWin: function () {
                 if (this.infowin) {
@@ -775,6 +872,195 @@
                     this.editableTabs2 = [];
                 };
             },
+            //最终双击结束
+            handleMeasure: function (event) {
+                this.map.setLayerIndex(this.vectorX,6);
+                this.lineMeasure.deactivate();
+                this.vectorLayerTmp.removeAllFeatures();
+                //获取最后的点
+                var pointFinish = new SuperMap.Geometry.Point(event.geometry.components[(event.geometry.components
+                    .length - 1)].x, event.geometry.components[(event.geometry.components.length - 1)].y);
+                //克隆坐标点 用于显示关闭按钮
+                var pointCopy = pointFinish.clone();
+                //单位转换
+                var unitString = "";
+                if (event.units == "m") {
+                    unitString = "米";
+                } else if (event.units == "km") {
+                    unitString = "公里";
+                } else {
+                    unitString = "";
+                }
+                //显示点和长度文字
+                var f = new SuperMap.Feature.Vector();
+                f.geometry = pointFinish;
+                f.style = {
+                    label: "总长：" + event.measure.toFixed(1) + unitString,
+                    fontColor: 'red',
+                    strokeColor: "red",
+                    strokeOpacity: 1,
+                    fillColor: "#ffffff",
+                    labelXOffset: 20,
+                    labelYOffset: 20,
+                    pointRadius: 4
+                };
+                //删除按钮
+                var fc = new SuperMap.Feature.Vector();
+                fc.geometry = pointCopy;
+                fc.style = {
+                    externalGraphic: "/images/gczl/Error.png",
+                    strokeColor: "red",
+                    graphicWidth: 16,
+                    graphicHeight: 16,
+                    strokeOpacity: 1,
+                    fillColor: "#ffffff",
+                    graphicXOffset: 10,
+                    pointRadius: 4
+                };
+                //保存之前绘制的节点用于显示其他样式
+                var points = [];
+                for (var i = 0; i < event.geometry.components.length; i++) {
+                    points.push(new SuperMap.Geometry.Point(event.geometry.components[i].x, event.geometry.components[i].y));
+                }
+                var qu = new SuperMap.Geometry.LineString(points);
+                var ff = new SuperMap.Feature.Vector();
+                ff.geometry = qu;
+                ff.style = {
+                    strokeColor: "#FC854D",
+                    strokeWidth: 2.5,
+                    pointerEvents: "visiblePainted",
+                    fillColor: "#FC854D",
+                    fillOpacity: 1
+                };
+                this.vectorLine.addFeatures(ff);
+                this.vectorUnit.addFeatures(f);
+                this.vectorX.addFeatures(fc);
+                //激活选择要素的控件
+                this.closeSelect.activate();
+            },
+            //绘制过程中单击和移动事件(线)
+            handleMeasurements: function (event) {
+                //console.log(event);
+                var geometry = event.geometry;
+                var type = event.type;
+                var unitString = "";
+                if (event.units == "m") {
+                    unitString = "米";
+                } else if (event.units == "km") {
+                    unitString = "公里";
+                } else {
+                    unitString = "";
+                }
+                if (type == 'click') {
+                    //当event.type 为 click时，即为鼠标点击操作，且event.geometry.components.length == 2时为首次点击起点
+                    if (event.geometry.components.length == 2) {
+                        var pointStart = new SuperMap.Geometry.Point(event.geometry.components[(event.geometry
+                            .components.length - 1)].x, event.geometry.components[(event.geometry.components
+                            .length - 1)].y);
+                        var f = new SuperMap.Feature.Vector();
+                        f.geometry = pointStart;
+                        f.style = {
+                            label: '起点',
+                            fontColor: 'red',
+                            strokeColor: "red",
+                            strokeOpacity: 1,
+                            fillColor: "#ffffff",
+                            labelXOffset: 20,
+                            labelYOffset: 20,
+                            pointRadius: 4
+                        };
+                        this.vectorUnit.addFeatures(f);
+                    } else {
+                        //单击节点
+                        var pointStart = new SuperMap.Geometry.Point(event.geometry.components[(event.geometry
+                            .components.length - 1)].x, event.geometry.components[(event.geometry.components
+                            .length - 1)].y);
+                        var f = new SuperMap.Feature.Vector();
+                        f.geometry = pointStart;
+                        f.style = {
+                            label: +event.measure.toFixed(1) + unitString,
+                            fontColor: 'red',
+                            strokeColor: "red",
+                            strokeOpacity: 1,
+                            fillColor: "#ffffff",
+                            labelXOffset: 20,
+                            labelYOffset: 20,
+                            pointRadius: 4
+                        };
+                        this.vectorUnit.addFeatures(f);
+                    }
+                } else {
+                    //临时显示点信息
+                    this.vectorLayerTmp.removeAllFeatures();
+                    var pointStart = new SuperMap.Geometry.Point(event.geometry.components[(event.geometry.components
+                        .length - 1)].x, event.geometry.components[(event.geometry.components.length -
+                        1)].y);
+                    var f = new SuperMap.Feature.Vector();
+                    f.geometry = pointStart;
+                    f.style = {
+                        label: +event.measure.toFixed(1) + unitString,
+                        fontColor: 'red',
+                        strokeColor: "red",
+                        strokeOpacity: 1,
+                        fillColor: "#ffffff",
+                        labelXOffset: 20,
+                        labelYOffset: 20,
+                        pointRadius: 4
+                    };
+                    this.vectorLayerTmp.addFeatures(f);
+                }
+            },
+            //最终双击结束（面积）
+            handleMeasureP: function (event) {
+                this.areaMeasure.deactivate();
+                var points = [];
+                var components = event.geometry.components[0].components;
+                for (var i = 0; i < components.length; i++) {
+                    points.push(new SuperMap.Geometry.Point(components[i].x, components[
+                        i].y));
+                }
+                var linearRings = new SuperMap.Geometry.LinearRing(points);
+                var region = new SuperMap.Geometry.Polygon([linearRings]);
+                var ff = new SuperMap.Feature.Vector();
+                ff.geometry = region;
+                ff.style = {
+                    strokeColor: "#304DBE",
+                    strokeWidth: 2,
+                    pointerEvents: "visiblePainted",
+                    fillColor: "#304DBE",
+                    fillOpacity: 0.8
+                };
+                this.vectorLine.addFeatures(ff);
+
+                //单位转换
+                var unitString = "";
+                if (event.units == "m") {
+                    unitString = "平方米";
+                } else if (event.units == "km") {
+                    unitString = "平方公里";
+                } else {
+                    unitString = "";
+                }
+                var pointcenter = region.getCentroid();
+                var f = new SuperMap.Feature.Vector();
+                f.geometry = pointcenter;
+                f.style = {
+                    label: '总面积：' + event.measure.toFixed(2) + unitString,
+                    fontColor: 'red',
+                    strokeColor: "red",
+                    strokeOpacity: 1,
+                    fillColor: "#ffffff",
+                    fontSize: "14px",
+                    // labelXOffset: 20,
+                    // labelYOffset: 20
+                    // pointRadius: 4
+                };
+                this.vectorUnit.addFeatures(f);
+
+            },
+            handleMeasurementsP: function (event) {
+                // console.log(event);
+            },
             //图例鼠标悬停事件
             onMouseOver: function () {
                 $('.tuli_img').toggle();
@@ -804,7 +1090,7 @@
         position: absolute;
         z-index: 1355;
         left: 258px;
-        top: 12px;
+        top: 0;
         width: 22px;
         text-align: center;
         height: 32px;
@@ -813,7 +1099,7 @@
         position: absolute;
         z-index: 1355;
         left: 0px;
-        top: 12px;
+        top: 0;
         width: 22px;
         text-align: center;
         height: 32px;
@@ -856,6 +1142,12 @@
         height:270px;
         background-color: #ffffff;
         /*border:1px solid #0026ff;*/
+    }
+
+    /*表格显示工程名称信息样式*/
+    .proName{
+        color:#2288f1;
+        font-weight: bold;
     }
 
     .filter_title{
@@ -994,6 +1286,18 @@
         cursor:pointer;
         z-index:1253;
     }
+    .clear_btn{
+        top:38px;
+        padding:0px;
+    }
+    .ceju_btn{
+        top:72px;
+        padding:0px;
+    }
+    .cemian_btn{
+        top:106px;
+        padding:0px;
+    }
     .refresh_map{
         top:140px;
         background:url(/Images/zhjc/legend/btn_initMapExtent.png) no-repeat;
@@ -1076,9 +1380,9 @@
     }
      .el-table__body-wrapper{
       overflow-y: auto !important;
-      height: 160px ;/*!important;*/
+      height: 170px ;/*!important;*/
     }
      .el-table--border{
-         height:208px;
+         height:202px;
      }
 </style>

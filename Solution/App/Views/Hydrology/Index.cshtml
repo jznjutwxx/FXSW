@@ -143,9 +143,9 @@
                 </el-dialog>
             </div>
         </el-col>
-        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" style="padding-left:12px;">
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" style="padding-left:12px;"> 
             <div class="titlediv cztj" v-on:click="showZCnum">测站统计</div>
-            <com-swsyright @*v-on:getcztj-event="showZCnum"*@>
+            <com-swsyright v-bind:lefttwon='lefttwon' @*v-on:getcztj-event="showZCnum"*@>
 
             </com-swsyright>
         </el-col>
@@ -222,7 +222,6 @@
             this.initMap();
             this.getNowDay();
             const that = this;
-            debugger;
             this.getCWYBdata();
             $(window).resize(function () {
                 that.mapheight = document.body.clientHeight - 32.5;
@@ -231,7 +230,6 @@
         watch: {
             mapheight: function (val) {
                 this.mapheight = val;
-                console.log(this.mapheight);
             },
         },
         methods: {
@@ -302,7 +300,6 @@
                     dblclick: function (currentFeature) {
                     }
                 };
-                debugger;
                 vm.selectFeature = new SuperMap.Control.SelectFeature(this.hdNumCoverLayer, {
                     callbacks: callbacks,
                     repeat: true,
@@ -313,7 +310,6 @@
             },
             addLayers: function () {
                 var that = this;
-                debugger;
                 that.map.addLayers(that.layers);
                 if (window.screen.width <= 1024) {
                     this.map.zoomTo(0);
@@ -390,7 +386,6 @@
             },
             //在地图上移动时触发
             selectTwon: function (e) {
-                debugger;
                 //console.log(e.clientX + "" + e.clientY);
                 //var lonlat = this.map.getLonLatFromPixel(new SuperMap.Pixel(e.clientX, e.clientY));
                 //var extent = this.map.getExtent();
@@ -499,7 +494,6 @@
                                 this.map.removeLayer(this.representativeMarkersLayer);
                             }
                             if (allLayers[i].name != "具体测站图层"  && !jtcz) {
-                                debugger;
                                 this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
                                 this.map.addLayer(this.czNameCoverLayer);
                                 jtcz = true;
@@ -564,7 +558,6 @@
             },
             //点选
             dxCompleted: function (getFeaturesEventArgs) {
-                debugger;
                 var result = getFeaturesEventArgs.result;
                 //console.log(result);
                 var style = {
@@ -581,10 +574,9 @@
                         feature.style = style;
                         this.dxvectorLayer.addFeatures(feature);
                     }
-                    debugger;
                     if (feature.attributes && feature.attributes.NAME) {
                         this.lefttwon = feature.attributes.NAME;
-                        console.log(feature);
+                        console.log(this.lefttwon);
                     }
                     else {
                         this.lefttwon = "奉贤区";
@@ -888,8 +880,6 @@
             //雨量图
             setBarData: function (url, param) {
                 try {
-                    console.log(this.$refs.ylbar);
-                    ;
                     this.$refs.ylbar.charts.showLoading();
                 } catch (e) {
                     alert("showloading报错了");
@@ -1170,7 +1160,6 @@
             getCWYBdata: function () {
                 var vm = this;
                 axios.post('/Hydrology/getCWYB', { date: '2018-06-02' }).then(function (result) {  //vm.cwybDate
-                    debugger;
                     var datas = JSON.parse(result.data).TidePredictionGetResponse.tide_prediction_list;
                     /*var jsondata = {
                         TidePredictionGetResponse: {
@@ -1242,8 +1231,8 @@
         /*border: 1px solid #0146b2;*/
         overflow: hidden;
         min-width: 400px;
-        min-height: 610px;
-        background-color: #051266;
+        /*min-height: 610px;*/
+        background-color: #051266; 
     }
 
     #mapTitle {

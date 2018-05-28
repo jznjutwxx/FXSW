@@ -7,14 +7,14 @@
 <div id="app">
     <div id="appTop" style="padding-left:20px;">
         <el-form v-bind:inline="true" size="small">
-            <el-form-item label="项目编号：">
+            <el-form-item label="工程编号：">
                 <span style="padding-right:30px;">
                     {{formData.s_project_no}}
                 </span>
             </el-form-item>
             <el-form-item label="工程分类：">
                 <span style="padding-right:30px;">
-                    其他水利工程
+                    {{formData.n_type}}
                 </span>
             </el-form-item>
             <el-form-item label="工程状态：">
@@ -29,6 +29,7 @@
 
     </div>
     <div id="appFile">
+        @*v-bind:value="Status"*@
         <el-collapse accordion v-on:change="changeSel" v-bind:value="Status">
             <el-collapse-item name="工前准备">
                 <template slot="title">
@@ -43,12 +44,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -56,8 +59,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="开工">
@@ -73,12 +79,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -86,8 +94,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工">
@@ -103,12 +114,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -116,8 +129,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="完工验收">
@@ -133,12 +149,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -146,8 +164,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="决算审批">
@@ -163,12 +184,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -176,8 +199,11 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
             <el-collapse-item name="竣工验收">
@@ -193,12 +219,14 @@
                         <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
                         <el-table-column label="操作" header-align="center" align="center" width="200">
                             <template slot-scope="scope">
+                                @*<el-button size="mini" class="btnCss btnDownload"></el-button>*@
                                 <el-button size="mini" type="primary" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)">下载</el-button>
                                 <el-button size="mini" type="danger" v-bind:disabled="isFinish" v-on:click="deleteFiles(scope.row.s_id)">删除</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
                 </div>
+                @*<el-button type="primary" class="btnUp" v-bind:disabled="isFinish"></el-button>*@
                 <el-upload class="upload-demo"
                            ref="upload"
                            action="/HydraulicEngineer/UpFiles"
@@ -206,16 +234,19 @@
                            v-bind:on-remove="handleRemove"
                            v-bind:on-change="getFile"
                            v-bind:on-success="sucess"
-                           v-bind:show-file-list="false" v-bind:disabled="isFinish">
+                           v-bind:show-file-list="false"
+                           v-bind:disabled="isFinish"
+                           v-bind:before-upload="beforeAvatarUpload">
                     <el-button slot="trigger" size="small" type="primary" class="btnUpp" v-bind:disabled="isFinish">上传文件<i class="el-icon-upload el-icon--right"></i></el-button>
+                    <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                 </el-upload>
             </el-collapse-item>
         </el-collapse>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish">保存</el-button>
-        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
+        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>
+        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish" size="small">工程完结</el-button>
     </div>
 </div>
 
@@ -234,29 +265,21 @@
             Status: '',
             formData: {
                 s_id: '',
-                s_name: '',
-                s_project_no: '',
-                n_year: '',
-                n_type: '',
-                n_pace_status: '',
-                s_town: '',
-                s_address: '',
-                s_legal_person: '',
-                s_unit_design: '',
-                n_reckon_total_amt: '',
-                n_empty_area: '',
-                s_remark: '',
-                s_content: '',
-                s_gkpf: '',
-                s_cspf: '',
-                s_zjpw: '',
-                n_total_invest: '',
-                n_engin_cost: '',
-                n_independent_cost: '',
-                n_prep_cost: '',
-                n_sight_cost: '',
-                n_build_cost: '',
-                s_completecontent: '' // 待胡润君添加字段
+                s_name: '', s_project_no: '', n_year: moment().format('YYYY'),
+                n_pace_status: '', s_town: '',
+                s_address: '', s_legal_person: '',
+                s_unit_design: '', s_unit_build: '', s_unit_supervise: '',
+                n_reckon_total_amt: '', n_water_area: '',
+                s_remark: '', n_draft: '', n_type: '', remove_pic_ids: '',
+
+                s_content: '', s_gkpf: '', s_cspf: '', s_zjpw: '',
+
+                n_total_invest: '', n_engin_cost: '', n_independent_cost: '',
+                n_prep_cost: '', n_sight_cost: '', n_build_cost: '',
+
+                n_subsidy_city: '', n_subsidy_district: '', n_subsidy_town: '',
+
+                s_complete_content: '',
             },
         },
         components: {
@@ -267,21 +290,15 @@
         },
         methods: {
             init: function () {
-                this.s_id = this.getUrlParam("id");
+                this.s_id = this.getRequest().id;
                 this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
                 this.getProjectData('/HydraulicEngineer/GetOneProjectData', { s_id: this.s_id });
-            },
-            getUrlParam: function (name) {
-                var reg = new RegExp("(^|&)" + name + "=([^&]*)(&|$)");
-                var r = window.location.search.substr(1).match(reg);
-                if (r != null)
-                    return unescape(r[2]);
-                return null;
             },
             getStatus: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
                       this.StatusOption = tempData.DictionaryGetResponse.list;
                   }.bind(this))
                   .catch(function (error) {
@@ -292,67 +309,53 @@
                 axios.post(url, s_id)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      var detildata = tempData.EnginCoreGetResponse.info;
-                      var replyData = tempData.EnginCoreGetResponse.info.EnginMainCore;
-                      var capitalData = tempData.EnginCoreGetResponse.info.EnginInvestmentCore;
-                      var investData = tempData.EnginCoreGetResponse.info.EnginCapitalCore;
-                      var finishData = tempData.EnginCoreGetResponse.info.EnginCompleteCore;
-                      this.num = tempData.EnginCoreGetResponse.info.s_project_no;
-                      this.type = tempData.EnginCoreGetResponse.info.n_type;
-                      this.Status = tempData.EnginCoreGetResponse.info.n_pace_status;
-                      this.tableName = tempData.EnginCoreGetResponse.info.n_pace_status;
+                      debugger
+                      var replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
+                      var capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
+                      var investData = tempData.EnginOtherGetResponse.info.EnginInvestmentOther;
+                      var finishData = tempData.EnginOtherGetResponse.info.EnginCompleteOther;
+                      this.num = tempData.EnginOtherGetResponse.info.s_project_no;
+                      this.type = tempData.EnginOtherGetResponse.info.n_type;
+                      this.Status = tempData.EnginOtherGetResponse.info.n_pace_status;
+                      this.tableName = tempData.EnginOtherGetResponse.info.n_pace_status;
                       this.getProjectFile('/HydraulicEngineer/GetProjectFileData', { s_id: this.s_id, s_type: this.Status });
 
-                      this.formData.s_id = tempData.EnginCoreGetResponse.info.s_id;
-                      this.formData.s_name = tempData.EnginCoreGetResponse.info.s_name;
-                      this.formData.s_project_no = tempData.EnginCoreGetResponse.info.s_project_no;
-                      this.formData.n_year = tempData.EnginCoreGetResponse.info.n_year;
-                      this.formData.n_draft = tempData.EnginCoreGetResponse.info.n_draft;
-                      this.formData.s_town = tempData.EnginCoreGetResponse.info.s_town;
-                      this.formData.s_address = tempData.EnginCoreGetResponse.info.s_address;
-                      this.formData.s_legal_person = tempData.EnginCoreGetResponse.info.s_legal_person;
-                      this.formData.s_unit_design = tempData.EnginCoreGetResponse.info.s_unit_design;
-                      this.formData.s_unit_build = tempData.EnginCoreGetResponse.info.s_unit_build;
-                      this.formData.s_unit_supervise = tempData.EnginCoreGetResponse.info.s_unit_supervise;
-                      this.formData.n_reckon_total_amt = tempData.EnginCoreGetResponse.info.n_reckon_total_amt;
-                      this.formData.n_water_area = tempData.EnginCoreGetResponse.info.n_water_area;
-                      this.formData.s_remark = tempData.EnginCoreGetResponse.info.s_remark;
-                      this.formData.n_type = tempData.EnginCoreGetResponse.info.n_type;
+                      this.formData.s_id = tempData.EnginOtherGetResponse.info.s_id;
+                      this.formData.s_name = tempData.EnginOtherGetResponse.info.s_name;
+                      this.formData.s_project_no = tempData.EnginOtherGetResponse.info.s_project_no;
+                      this.formData.n_year = tempData.EnginOtherGetResponse.info.n_year.toString();
+                      this.formData.s_town = tempData.EnginOtherGetResponse.info.s_town;
+                      this.formData.s_address = tempData.EnginOtherGetResponse.info.s_address;
+                      this.formData.s_legal_person = tempData.EnginOtherGetResponse.info.s_legal_person;
+                      this.formData.s_unit_design = tempData.EnginOtherGetResponse.info.s_unit_design;
+                      this.formData.s_unit_build = tempData.EnginOtherGetResponse.info.s_unit_build;
+                      this.formData.s_unit_supervise = tempData.EnginOtherGetResponse.info.s_unit_supervise;
+                      this.formData.n_reckon_total_amt = tempData.EnginOtherGetResponse.info.n_reckon_total_amt;
+                      this.formData.n_water_area = tempData.EnginOtherGetResponse.info.n_water_area;
+                      this.formData.s_remark = tempData.EnginOtherGetResponse.info.s_remark;
+                      this.formData.n_draft = tempData.EnginOtherGetResponse.info.n_draft;
+                      this.formData.n_type = tempData.EnginOtherGetResponse.info.n_type;
 
-                      this.formData.n_length = replyData.n_length;
-                      this.formData.n_land_area = replyData.n_land_area;
-                      this.formData.n_protect_hard = replyData.n_protect_hard;
-                      this.formData.n_protect_ecology = replyData.n_protect_ecology;
-                      this.formData.n_bridge = replyData.n_bridge;
-                      this.formData.n_plant_bank = replyData.n_plant_bank;
-                      this.formData.n_plant_slope = replyData.n_plant_slope;
-                      this.formData.n_plant_depth = replyData.n_plant_depth;
-                      this.formData.n_river_count = replyData.n_river_count;
+                      this.formData.s_content = replyData.s_content;
+                      this.formData.s_gkpf = replyData.s_gkpf;
+                      this.formData.s_cspf = replyData.s_cspf;
+                      this.formData.s_zjpw = replyData.s_zjpw;
 
-                      this.formData.n_total_invest = capitalData.n_total_invest;
-                      this.formData.n_engin_cost = capitalData.n_engin_cost;
-                      this.formData.n_independent_cost = capitalData.n_independent_cost;
-                      this.formData.n_prep_cost = capitalData.n_prep_cost;
-                      this.formData.n_sight_cost = capitalData.n_sight_cost;
-                      this.formData.n_empty_area = capitalData.n_empty_area;
-                      this.formData.n_build_cost = capitalData.n_build_cost;
+                      this.formData.n_total_invest = investData.n_total_invest;
+                      this.formData.n_engin_cost = investData.n_engin_cost;
+                      this.formData.n_independent_cost = investData.n_independent_cost;
+                      this.formData.n_prep_cost = investData.n_prep_cost;
+                      this.formData.n_sight_cost = investData.n_sight_cost;
+                      this.formData.n_build_cost = investData.n_build_cost;
 
-                      this.formData.n_subsidy_city = investData.n_subsidy_city;
-                      this.formData.n_subsidy_district = investData.n_subsidy_district;
-                      this.formData.n_subsidy_town = investData.n_subsidy_town;
+                      this.formData.n_subsidy_city = capitalData.n_subsidy_city;
+                      this.formData.n_subsidy_district = capitalData.n_subsidy_district;
+                      this.formData.n_subsidy_town = capitalData.n_subsidy_town;
 
-                      this.formData.n_complete_length = finishData.n_complete_length;
-                      this.formData.n_complete_land_area = finishData.n_complete_land_area;
-                      this.formData.n_complete_protect_hard = finishData.n_complete_protect_hard;
-                      this.formData.n_complete_protect_ecology = finishData.n_complete_protect_ecology;
-                      this.formData.n_complete_bridge = finishData.n_complete_bridge;
-                      this.formData.n_complete_plant_bank = finishData.n_complete_plant_bank;
-                      this.formData.n_complete_plant_slope = finishData.n_complete_plant_slope;
-                      this.formData.n_complete_plant_depth = finishData.n_complete_plant_depth;
-                      this.formData.n_complete_river_count = finishData.n_complete_river_count;
-                      var ss = tempData.EnginCoreGetResponse.info.n_pace_status;
+                      this.formData.s_complete_content = finishData.s_complete_content;
+                      var ss = tempData.EnginOtherGetResponse.info.n_pace_status;
                       this.StatusToNum(ss);
-                      if (tempData.EnginCoreGetResponse.info.n_pace_status == '工程完结') {
+                      if (tempData.EnginOtherGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
                       } else {
                           this.isFinish = false;
@@ -376,14 +379,36 @@
                       console.log(error);
                   });
             },
+
+            //submitUpload:function () {
+            //    this.$refs.upload.submit();
+            //},
+            beforeAvatarUpload: function (file) {
+                var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                if (fileType == 'exe') {
+                    this.$message({
+                        message: '不支持上传该类型文件！',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+                const isLt2M = file.size / 1024 / 1024 < 10
+                if (!isLt2M) {
+                    this.$message({
+                        message: '上传文件大小不能超过 10MB!',
+                        type: 'warning'
+                    });
+                    return false;
+                }
+            },
             handleRemove: function (file, fileList) {
-                //console.log(file, fileList);
+                console.log(file, fileList);
             },
             handlePreview: function (file, fileList) {
-                //console.log(file);
+                console.log(file);
             },
             getFile: function (file, fileList) {
-                //console.log(file);
+                console.log(file);
             },
             sucess: function (response, file, fileList, data) {
                 if (response == "OK") {
@@ -416,6 +441,7 @@
                 }).then(function () {
                     axios.post("/HydraulicEngineer/DeleteFile", { file_ids: id })
                   .then(function (response) {
+                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginFileDelResponse.result) {
                           this.$message({
@@ -465,30 +491,31 @@
                 window.location.href = '/Uploader/Download?pathid=1';
             },
             saveStatus: function () {
-                //axios.post('/HydraulicEngineer/UpdateProjectStatus', { param: JSON.stringify(this.formData) })
-                //  .then(function (response) {
-                //      var tempData = JSON.parse(response.data);
-                //      if (tempData.EnginCoreUpdateResponse.result) {
-                //          this.$message({
-                //              message: '保存成功！',
-                //              type: 'success'
-                //          });
-                //      } else {
-                //          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
-                //      }
-                //  }.bind(this))
-                //  .catch(function (error) {
-                //      console.log(error);
-                //  });
+                axios.post('/HydraulicEngineer/UpdateProjectStatus', { param: JSON.stringify(this.formData) })
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      if (tempData.EnginOtherUpdateResponse.result) {
+                          this.$message({
+                              message: '保存成功！',
+                              type: 'success'
+                          });
+                      } else {
+                          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
+                      }
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
             },
 
             projectFinish: function () {
                 this.isFinish = true;
             },
             openIndex: function () {
-                location.href = "/HydraulicEngineer/Index";
+                window.location = "/HydraulicEngineer/Index";
             },
             StatusToNum: function (status) {
+                debugger
                 switch (status) {
                     case '工前准备':
                         this.formData.n_pace_status = 1;
@@ -517,14 +544,14 @@
             },
         },
         watch: {
-            'formData.n_pace_status': function () {
-                if (this.formData.n_pace_status == "60") {
-                    this.isShow = true;
-                } else
-                {
-                    this.isShow = false;
-                }
-            }
+            //'formData.n_pace_status': function () {
+            //    if (this.formData.n_pace_status == "60") {
+            //        this.isShow = true;
+            //    } else
+            //    {
+            //        this.isShow = false;
+            //    }
+            //}
         }
     })
 </script>
@@ -535,9 +562,13 @@
         font-size: 14px;
     }
 
-    #appFile .tableCss th {
-        background-color: #F5F5F5;
+    #appFile {
+        margin-bottom: 60px;
     }
+
+        #appFile .tableCss th {
+            background-color: #F5F5F5;
+        }
 
     #appTop .selCss {
         width: 120px;

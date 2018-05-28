@@ -3,234 +3,503 @@
     ViewBag.Title = "工程管理-农村生活污水详情";
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
-<div id="detail">
-    <el-form v-model="detail" v-bind:inline="true" label-position="right" label-width="100px" size="small">
-        <div id="leftInfo">
-            <el-row type="flex">
-                <el-col v-bind:span="24">
-                    <div class="titlecss">金汇港河道整治</div>
-                </el-col>
-            </el-row>
-            <el-row type="flex" style="padding-top: 15px;">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="项目编号:">
-                        <el-input v-model="detail.s_project_no" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="年度:">
-                        <el-input v-model="detail.n_year" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="工程分类:">
-                        <el-input v-model="detail.n_type" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="工程状态:">
-                        <el-input v-model="detail.n_pace_status" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="所属镇:">
-                        <el-input v-model="detail.s_town" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="工程地址:">
-                        <el-input v-model="detail.s_address" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="项目法人:">
-                        <el-input v-model="detail.s_legal_person" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="设计单位:">
-                        <el-input v-model="detail.s_unit_design" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="施工单位:">
-                        <el-input v-model="detail.s_unit_build" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="监理单位:">
-                        <el-input v-model="detail.s_unit_supervise" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="估算总投资:">
-                        <el-input v-model="detail.n_reckon_total_amt" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="12" class="colcss">
-                    <el-form-item label="新增面积:">
-                        <el-input v-model="detail.n_water_area" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colCss">
-                    <el-form-item label="工程位置草图:">
-                        <el-button type="text" v-on:click="showMapDialog">工程位置草图</el-button>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="12" class="colcss" style="height:90px;">
-                    <el-form-item label="备注:">
-                        <el-input type="textarea" v-model="detail.s_remark" v-bind:rows="3" style="width:94%;padding-top:10px;" disabled resize="none">
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
+<div id="app">
+    <div id="appBasic">
+        <div id="leftBasic">
+            <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="detildata" class="basicForm">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">基本信息</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row" type="flex">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程名称:">
+                            <el-input v-model="detildata.s_name" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程编号:">
+                            <el-input v-model="detildata.s_project_no" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程分类:">
+                            <el-input v-model="detildata.n_type" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程状态:">
+                            <el-input v-model="detildata.n_pace_status" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="年度:">
+                            <el-input v-model="detildata.n_year" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="所属镇:">
+                            <el-input v-model="detildata.s_town" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程地址:">
+                            <el-input v-model="detildata.s_address" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="项目法人:">
+                            <el-input v-model="detildata.s_legal_person" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="设计单位:">
+                            <el-input v-model="detildata.s_unit_design" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="施工单位:">
+                            <el-input v-model="detildata.s_unit_build" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="监制单位:">
+                            <el-input v-model="detildata.s_unit_supervise" size="mini" v-bind:disabled="true"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="工程位置草图:">
+                            <el-button type="text" v-on:click="showMapDialog">工程位置草图</el-button>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+
+                <el-dialog title="工程草图详情" v-bind:visible.sync="mapDialogVisible" width="70%" top="6vh">
+                    <com-gcctmapview v-bind:style="{height:gcctmapheight+'px'}" ref="gcctmap" v-bind:gcctinfo=this.gcctinfo></com-gcctmapview>
+                </el-dialog>
+
+                <el-row class="el-row">
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="估算总投资:">
+                            <el-input v-model="detildata.n_reckon_total_amt" size="mini" v-bind:disabled="true">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="12" class="colCss">
+                        <el-form-item label="新增水面积:">
+                            <el-input v-model="detildata.n_water_area" size="mini" v-bind:disabled="true">
+                                <template slot="append">
+                                    亩
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row ">
+                    <el-col v-bind:span="24" style="height:90px;">
+                        <el-form-item label="备注:">
+                            <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" v-model="detildata.s_remark" style="width:127%;padding-top:10px;" disabled resize="none">
+                            </el-input>
+                            @*<el-input v-model="detildata.name" size="mini" v-bind:disabled="true" style="width:802px;"></el-input> n_draft*@
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </el-form>
         </div>
-        <div id="rightInfo">
+        <div id="rightBasic">
             <template>
-                <el-carousel v-bind:interval="3000" type="card" height="200px">
+                <el-carousel v-bind:interval="3000" type="card" height="220px">
                     <el-carousel-item v-for="(imgData,index) in imgData" v-bind:key="index" v-if="imgData.s_type === '图片'">
                         <img v-bind:src="imgData.s_path" style="width:100%;height:100%;" />
                     </el-carousel-item>
                 </el-carousel>
             </template>
         </div>
-        
-        <div id="appReply" style="padding-top:10px;">
-            <el-row>
+    </div>
+
+    <div id="appReply" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="replyData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="appTitle">批复工程量</div>
+                    <div class="blueTitle"></div><div class="appTitle">批复工程量</div>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="村组数量:">
-                        <el-input v-model="replyData.n_czsl" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_czsl" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                个
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="总户数:">
-                        <el-input v-model="replyData.n_zhs" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_zhs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="就地处理户数:">
-                        <el-input v-model="replyData.n_jdclhs" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_jdclhs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="市政纳管户数:">
-                        <el-input v-model="replyData.n_sznghs" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_sznghs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="就地处理站:">
-                        <el-input v-model="replyData.n_jdclz" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_jdclz" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="管网长度:">
-                        <el-input v-model="replyData.n_gwcd" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_gwcd" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                公里
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="新翻建化粪池:">
-                        <el-input v-model="replyData.n_xfjhfc" v-bind:disabled="true"></el-input>
+                        <el-input v-model="replyData.n_xfjhfc" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                @*<el-col v-bind:span="8" class="colcss">
-                    <el-form-item label="设计污水收集处理量:">
-                        <el-input v-model="replyData.n_cqmq" v-bind:disabled="true"></el-input>
-                    </el-form-item>
-                </el-col>*@
             </el-row>
-        </div>
 
-        <div id="appInvest" style="padding-top:10px;">
-            <el-row>
+
+        </el-form>
+    </div>
+
+    <div id="appInvest" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="investData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="appTitle">概算投资</div>
+                    <div class="blueTitle"></div><div class="appTitle">概算投资</div>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="总投资:">
-                        <el-input v-model="investData.n_total_invest" v-bind:disabled="true"></el-input>
+                        <el-input v-model="investData.n_total_invest" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="工程直接费:">
-                        <el-input v-model="investData.n_engin_cost" v-bind:disabled="true"></el-input>
+                        <el-input v-model="investData.n_engin_cost" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="独立费用:">
-                        <el-input v-model="investData.n_independent_cost" v-bind:disabled="true"></el-input>
+                        <el-input v-model="investData.n_independent_cost" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="预备费:">
-                        <el-input v-model="investData.n_prep_cost" v-bind:disabled="true"></el-input>
+                        <el-input v-model="investData.n_prep_cost" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-        </div>
+            </el-row>
+        </el-form>
+    </div>
 
-        <div id="fundForm" style="padding-top:10px;">
-            <el-row>
+    <div id="appCapital" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="capitalData" class="basicForm">
+            <el-row class="el-row">
                 <el-col v-bind:span="24">
-                    <div class="appTitle">资金配套组成</div>
+                    <div class="blueTitle"></div><div class="appTitle">资金配套组成</div>
                 </el-col>
             </el-row>
-            <el-row>
-                <el-col v-bind:span="8" class="colcss">
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="市补:">
-                        <el-input v-model="fundData.n_subsidy_city" v-bind:disabled="true"></el-input>
+                        <el-input v-model="capitalData.n_subsidy_city" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="区配套:">
-                        <el-input v-model="fundData.n_subsidy_district" v-bind:disabled="true"></el-input>
+                        <el-input v-model="capitalData.n_subsidy_district" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
                 </el-col>
-                <el-col v-bind:span="8" class="colcss">
+                <el-col v-bind:span="8" class="colCss">
                     <el-form-item label="镇配套:">
-                        <el-input v-model="fundData.n_subsidy_town" v-bind:disabled="true"></el-input>
+                        <el-input v-model="capitalData.n_subsidy_town" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                万元
+                            </template>
+                        </el-input>
                     </el-form-item>
+                </el-col>
+            </el-row>
+
+        </el-form>
+    </div>
+
+    <div id="appFinish" style="padding-top:10px;">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="finishData" class="basicForm">
+            <el-row class="el-row">
+                <el-col v-bind:span="24">
+                    <div class="blueTitle"></div><div class="appTitle">完成工程量</div>
+                </el-col>
+            </el-row>
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="村组数量:">
+                        <el-input v-model="finishData.n_complete_czsl" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                个
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="总户数:">
+                        <el-input v-model="finishData.n_complete_zhs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="就地处理户数:">
+                        <el-input v-model="finishData.n_complete_jdclhs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="市政纳管户数:">
+                        <el-input v-model="finishData.n_complete_sznghs" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                户
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="就地处理站:">
+                        <el-input v-model="finishData.n_complete_jdclz" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="管网长度:">
+                        <el-input v-model="finishData.n_complete_gwcd" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                公里
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+            <el-row class="el-row">
+                <el-col v-bind:span="8" class="colCss">
+                    <el-form-item label="新翻建化粪池:">
+                        <el-input v-model="finishData.n_complete_xfjhfc" size="mini" v-bind:disabled="true">
+                            <template slot="append">
+                                座
+                            </template>
+                        </el-input>
+                    </el-form-item>
+                </el-col>
+            </el-row>
+
+        </el-form>
+    </div>
+
+    <div id="appFiles">
+        <div>
+            <el-row class="el-row">
+                <el-col v-bind:span="24">
+                    <div class="blueTitle"></div><div class="appTitle">工程文件</div>
                 </el-col>
             </el-row>
         </div>
+        <div style="padding:20px 0 0 20px;">
+            <el-tabs value="drawing" type="card" v-on:tab-click="handleClick">
+                <el-tab-pane label="工程图纸" name="drawing">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="工前准备" name="second">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="开工" name="plan">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="完工" name="complete">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="完工验收" name="accept">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="决算审批" name="final">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+                <el-tab-pane label="竣工验收" name="completed">
+                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss">
+                        <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
+                        <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
+                        <el-table-column prop="s_create_time" label="上传时间" header-align="center" align="center"></el-table-column>
+                        <el-table-column label="操作" header-align="center" align="center" width="200">
+                            <template slot-scope="scope">
+                                <el-button size="mini" class="btnCss btnDownload" v-on:click="downloadFile(scope.row.s_path,scope.row.s_file_name)"></el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                </el-tab-pane>
+            </el-tabs>
+        </div>
+    </div>
 
-
-    </el-form>
-    <div style="margin-left:47%;margin-top:10px;">
-        <el-button plain v-on:click="openIndex" size="small">返回</el-button>
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
+        <el-button plain v-on:click="openIndex" v-show="showBack" size="small">返回</el-button>
     </div>
 </div>
 
+@*@Html.Partial("~/Views/SanitarySewage/components/com_table.cshtml")*@
+@Html.Partial("~/Views/components/gcctMap/com_gcctView.cshtml")
+
 <script>
     new Vue({
-        el: '#detail',
+        el: "#app",
         data: {
-            mapDialogVisible: false,
             gcctinfo: {
                 S_PROJECT_NO: "",
                 N_PACE_STATUS: "",
@@ -245,121 +514,282 @@
                 N_RECKON_TOTAL_AMT: "",
                 REMARK: ""
             },
-            detail: {},
-            replyData: {},
-            fundData: {},
-            investData: {},
-            tableData: [],
-            height: 0,
-            imgData: [
-                     { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
-                     { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "55", "s_path": "http://img.taopic.com/uploads/allimg/120727/201995-120HG1030762.jpg" },
-                     { "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img3.redocn.com/tupian/20150312/haixinghezhenzhubeikeshiliangbeijing_3937174.jpg" }
+            s_id: '',
+            labelPosition: 'right',
+            detildata: [],
+            replyData: [],
+            capitalData: [],
+            investData: [],
+            finishData: [],
+            imgData: [],
+            projectFile: [
+                //{
+                //    "s_id": "D102247D6F2145258A2D3748E0E9306E",
+                //    "s_file_name": "名称",
+                //    "s_type": "工程图纸",
+                //    "s_person": "田俊",
+                //    "s_create_time": "2018-03-05 14:21",
+                //    "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png"
+                //},
             ],
-         
+            height: '0px',
+            gcctmapheight:document.documentElement.clientHeight - 200,
+            tableData: [],
+            mapDialogVisible: false,
+            showBack: true,
+        },
+        components: {
+            //'com-table': comTable,
+            'com-gcctmapview': comgcctmapView
         },
         mounted: function () {
-          //  debugger
-            var t = this.GetId();
-            this.GetDetail("/SanitarySewage/GetDetail", { id: t.id }); 
-          
+            this.s_id = this.getRequest().id;
+            var flag = this.getRequest().flag;
+            if (flag != undefined)
+            {
+                this.showBack = false;
+            }
+            this.setSize();
+            this.reSize();
+            this.getProjectData('/SanitarySewage/GetDetail', { id: this.s_id });
+            this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: "图纸" });
+        },
+        computed: {
         },
         methods: {
+            getRequest: function(){
+                var url = window.location.search; //获取url中"?"符后的字串
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for(var i = 0; i < strs.length; i ++) {
+
+                        theRequest[strs[i].split("=")[0]]=decodeURI(strs[i].split("=")[1]);
+
+                    }
+                }
+                return theRequest;
+            },
+            getProjectData: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var placeholder = [{ "s_id": "0", "s_type": "图片", "s_path": "/Images/main/img_null.png" }];
+                      this.detildata = tempData.EnginSewageGetResponse.info;
+                      this.replyData = tempData.EnginSewageGetResponse.info.EnginMainSewage;
+                      this.capitalData = tempData.EnginSewageGetResponse.info.EnginCapitalSewage;
+                      this.investData = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage;
+                      this.finishData = tempData.EnginSewageGetResponse.info.EnginCompleteSewage;
+                      var pictureLists = tempData.EnginSewageGetResponse.info.FileUploaderList;
+                      for (var i = 0; i < pictureLists.length; i++)
+                      {
+                          if (pictureLists[i].s_type !== undefined && pictureLists[i].s_type == '图片') {
+                              this.imgData.push(pictureLists[i]);
+                          }
+                      }
+
+                      if (this.imgData.length == 0) {
+                          this.imgData = placeholder;
+                      }
+
+
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getProjectFile: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.projectFile = tempData.EnginFileManagerListGetResponse.file_list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
             showMapDialog: function () {
                 this.bindGCCTData();
                 this.mapDialogVisible = true;
             },
             bindGCCTData: function (val) {
-                this.gcctinfo.S_PROJECT_NO = this.detail.s_project_no;
-                this.gcctinfo.N_PACE_STATUS = this.detail.n_pace_status;
-                this.gcctinfo.N_TYPE = this.detail.n_type;
-                this.gcctinfo.N_YEAR = this.detail.n_year;
-                this.gcctinfo.S_LEGAL_PERSON = this.detail.s_legal_person;
-                this.gcctinfo.S_TOWN = this.detail.s_town;
-                this.gcctinfo.S_ADDRESS = this.detail.s_address;
-                this.gcctinfo.S_UNIT_DESIGN = this.detail.s_unit_design;
-                this.gcctinfo.S_UNIT_BUILD = this.detail.s_unit_build;
-                this.gcctinfo.S_UNIT_SUPERVISE = this.detail.s_unit_supervise;
-                this.gcctinfo.N_RECKON_TOTAL_AMT = this.detail.n_reckon_total_amt;
-                this.gcctinfo.REMARK = this.detail.s_remark;
-            },
-            GetId: function () {
-                var url = window.location.search;
-                var theRequest = new Object();
-                if (url.indexOf("?") != -1) {
-                    var str = url.substr(1);
-                    strs = str.split("&");
-                    for (var i = 0; i < strs.length; i++) {
-                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
-                    }
-                }
-                return theRequest;
-            },
-
-            GetDetail: function (url, id) {
-                axios.post(url, id)
-                 .then(function (response) {
-                     debugger
-                     var li = JSON.parse(response.data);
-                     this.detail = li.EnginSewageGetResponse.info;
-                     this.replyData = li.EnginSewageGetResponse.info.EnginMainSewage;
-                     this.investData = li.EnginSewageGetResponse.info.EnginInvestmentSewage;
-                     this.fundData = li.EnginSewageGetResponse.info.EnginCapitalSewage;
-                     //this.finishData = li.EnginSewageGetResponse.info.EnginCompleteFarm;
-                 }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+                this.gcctinfo.S_PROJECT_NO = this.detildata.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.detildata.n_pace_status;
+                this.gcctinfo.N_TYPE = this.detildata.n_type;
+                this.gcctinfo.N_YEAR = this.detildata.n_year;
+                this.gcctinfo.S_LEGAL_PERSON = this.detildata.s_legal_person;
+                this.gcctinfo.S_TOWN = this.detildata.s_town;
+                this.gcctinfo.S_ADDRESS = this.detildata.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.detildata.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.detildata.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.detildata.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.detildata.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.detildata.s_remark;
             },
             handleClick: function (tab, event) {
-               // this.getProjectFile('/SanitarySewage/GetProjectFileData', { s_id: s_id, s_type: tab.label });
+                //
+                //console.log(tab, event);
+                if (tab.label == "工程图纸") {
+                    tab.label = "图纸";
+                }
+                this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: tab.label });
             },
-            //返回按钮
+            setSize: function () {
+
+                var docH = document.documentElement.clientHeight;
+                var contentH = docH - 40;
+
+                this.height = contentH;
+                console.log(contentH);
+                this.gcctmapheight = document.documentElement.clientHeight - 200;
+            },
+            reSize: function () {
+                const vm = this;
+                $(window).resize(function () {
+                    vm.setSize()
+                }.bind(this));
+            },
+            downloadFile: function (url,name) {
+                var $a = document.createElement('a');
+                $a.setAttribute("href", url);
+                $a.setAttribute("download", name);
+                var evObj = document.createEvent('MouseEvents');
+                evObj.initMouseEvent('click', true, true, window, 0, 0, 0, 0, 0, false, false, true, false, 0, null);
+                $a.dispatchEvent(evObj);
+            },
             openIndex: function () {
-                window.location.href = "/SanitarySewage/Index";
+                window.location = "/SanitarySewage/Index";
             },
+
+        },
+        watch: {
+            gcctmapheight: function (val) {
+                this.gcctmapheight = val;
+            }
         }
     })
 </script>
 
 <style>
-    .titlecss {
-        float: left;
-        font-size: 16px;
-        font-weight: bold;
-        color: #666666;
-        padding-top: 15px;
-        padding-left: 20px;
+    #app {
+        padding: 20px;
+        font-size: 14px;
+        min-width: 900px;
     }
 
-    #leftInfo {
+        #app .el-form-item {
+            width: 100%;
+        }
+
+        #app .el-form-item__content {
+            width: 65%;
+        }
+
+        #app input, select, textarea {
+            max-width: none;
+            color: #333333;
+            font-size: 14px;
+        }
+
+        #app .el-input-group__append {
+            color: #333333;
+            font-size: 14px;
+        }
+
+        #app .el-textarea__inner {
+            color: #333333;
+            font-size: 14px;
+        }
+
+    #appBasic {
+        overflow: hidden;
+    }
+
+    #leftBasic {
         float: left;
         width: 67%;
     }
 
-    #rightInfo {
+    #rightBasic {
         float: left;
         width: 33%;
         padding: 5% 0;
     }
 
-    .appTitle {
+        #rightBasic .el-carousel__item h3 {
+            color: #475669;
+            font-size: 14px;
+            opacity: 0.75;
+            line-height: 200px;
+            margin: 0;
+        }
+
+        #rightBasic .el-carousel__item:nth-child(2n) {
+            background-color: #99a9bf;
+        }
+
+        #rightBasic .el-carousel__item:nth-child(2n+1) {
+            background-color: #d3dce6;
+        }
+
+    #appFiles {
+        padding: 20px 0;
+        margin-bottom: 50px;
+    }
+
+        #appFiles th {
+            background-color: #F5F5F5;
+        }
+
+    #app .blueTitle {
+        width: 7px;
+        height: 18px;
+        background-color: #409eff;
+        float: left;
+    }
+
+    #app .appTitle {
         float: left;
         font-size: 14px;
         font-weight: bold;
         color: #666666;
-        padding-left: 25px;
+        padding-left: 10px;
     }
 
-    .colcss {
-        height: 40px;
-        line-height: 40px;
+    #app .colCss {
+        height: 35px;
     }
 
-    input {
-        width: 220px !important;
+    #app .btnCss {
+        width: 20px;
+        height: 20px;
+        border: 0;
+        background: rgba(255, 255, 255, 0);
+        background-repeat: no-repeat;
     }
-    #leftInfo .el-dialog__body{
-        padding:10px 5px;
+
+    #app .btnDownload {
+        background-image: url(/Images/gcgl/btn_download.png);
+    }
+
+        #app .btnDownload:hover {
+            background: rgba(255, 255, 255, 0);
+            background-repeat: no-repeat;
+            background-image: url(/Images/gcgl/btn_download.png);
+        }
+
+        #app .btnDownload:focus {
+            background: rgba(255, 255, 255, 0);
+            background-repeat: no-repeat;
+            background-image: url(/Images/gcgl/btn_download.png);
+        }
+
+    #app .el-dialog__title {
+        font-family: 微软雅黑;
+    }
+
+    #app .el-dialog__body {
+        padding: 16px 20px !important;
     }
 </style>

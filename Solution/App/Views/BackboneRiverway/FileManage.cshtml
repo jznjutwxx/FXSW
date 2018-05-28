@@ -7,7 +7,7 @@
 <div id="app">
     <div id="appTop" style="padding-left:20px;">
         <el-form v-bind:inline="true" size="small">
-            <el-form-item label="项目编号：">
+            <el-form-item label="工程编号：">
                 <span style="padding-right:30px;">
                     {{formData.s_project_no}}
                 </span>
@@ -244,9 +244,9 @@
         </el-collapse>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish">保存</el-button>
-        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
+        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
+        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>
+        <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish" size="small">工程完结</el-button>
     </div>
 </div>
 

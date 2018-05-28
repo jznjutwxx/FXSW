@@ -3,6 +3,7 @@
     width:100%;
     margin: 0px;
     padding: 0px;
+    overflow-y: hidden;
 }
 
 /* Set padding to keep content from hitting the edges */

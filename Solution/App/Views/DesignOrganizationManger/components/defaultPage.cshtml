@@ -2,31 +2,30 @@
 <script type="text/x-template" id="defaultPage">
     <div id="defaultpage">
         <div id="queryhead">
-            <el-input v-bind:placeholder="promptMessage"
-                      prefix-icon="el-icon-search" size="small">
+            <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" ref="inputSjdw" v-model="sjdwName">
             </el-input>
             <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryDesignOrganization">查询</el-button>
             <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
             <el-button type="primary" class="btnDown"></el-button>
             <el-button type="primary" class="btnImport"></el-button>
         </div>
-        <el-table v-bind:data="sjdwData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row v-bind:border='true'  v-bind:height="tableHeight" v-bind:stripe="true" ref="sjdwtable">
+        <el-table v-bind:data="sjdwData" highlight-current-row v-bind:border='true' v-bind:height="tableHeight" v-bind:stripe="true" ref="sjdwtable">
             <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
             </el-table-column>
-            <el-table-column property="sjdwmc" label="设计单位名称" header-align="center" align="left">
+            <el-table-column property="s_name" label="设计单位名称" header-align="center" align="left">
             </el-table-column>
-            <el-table-column property="zh" label="账号" header-align="center" align="left">
+            <el-table-column property="s_account" label="账号" header-align="center" align="left">
             </el-table-column>
-            <el-table-column property="glgz" label="关联未完结工程" header-align="center" align="left">
+            <el-table-column property="engin_name" label="关联未完结工程" header-align="center" align="left">
             </el-table-column>
             <el-table-column property="cz" label="操作" header-align="center" align="center">
                 <template slot-scope="scope">
                     <el-button size="mini" v-on:click="showEditPage(scope)">编辑</el-button>
-                    <el-button size="mini" type="danger" v-on:click="deletDesignOrganization">删除</el-button>
+                    <el-button size="mini" type="danger" v-on:click="deletDesignOrganization(scope)">删除</el-button>
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwData.length" v-bind:float="right">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwTotalCount" >
         </el-pagination>
     </div>
 </script>
@@ -38,9 +37,9 @@
                 promptMessage: "请输入设计单位名称",
                 sjdwData: [{
                     id: "0gdhsh44444hhedh",
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: "mima0",
                     nf: "2017",
                     town: "拓林",
@@ -49,27 +48,27 @@
 
                 }, {
                     id: "1gdhsh44444hhedh",
-                    sjdwmc: "超图",
-                    zh: "supermap123",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima1',
                     nf: "2018",
                     town: "海湾",
                     gzclass: "骨干河道",
                 }, {
                     id: "2gdhsh44444hhedh",
-                    sjdwmc: "网波",
-                    zh: "wb111",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima2',
                     nf: "2010",
                     town: "庄行",
                     gzclass: "骨干河道",
                 }, {
                     id: "3gdhsh44444hhedh",
-                    sjdwmc: "上海网波",
-                    zh: "shwb",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima3',
                     nf: "2014",
                     town: "南桥",
@@ -77,26 +76,26 @@
 
                 }, {
                     sjdwmc: "上海网波软件",
-                    zh: "shwbrj",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima4',
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     nf: "2015",
                     town: "金汇",
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海网波软件股份",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima5',
                     nf: "2015",
                     town: "拓林",
                     gzclass: "骨干河道",
 
                 }, {
-                    sjdwmc: "上海有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
+                    s_name: "上海网波软件股份有限公司",
+                    s_account: "wavenet2018",
+                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
                     mm: 'mima6',
                     nf: "2015",
                     town: "拓林",
@@ -225,12 +224,14 @@
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, ],
+                sjdwTotalCount:0,
                 currentPage: 1,
-                pagesize: 14,
+                pagesize: 6,
                 addpage_visible: false,
                 editpage_visible: false,
                 nowEditData: null,//当前编辑的数据
                 tableHeight: document.documentElement.clientHeight - (53 + 34),
+                sjdwName: "",
             }
         },
         components: {
@@ -241,7 +242,7 @@
             $(window).resize(function () {
                 vm.tableHeight = document.documentElement.clientHeight - (53 + 34);
             })
-           // this.$refs.sjdwtable.height = this.tableHeight;
+            vm.queryDesignOrganization();
         },
         methods: {
             indexOrder: function (index) {
@@ -250,37 +251,59 @@
             },
             current_change: function (currentPage) {
                 this.currentPage = currentPage;
+                // alert("当前页" + this.currentPage + "；每页数" + this.pagesize);
+                this.queryDesignOrganization();
             },
             pagesize_Change: function (pagesize) {
                 this.pagesize = pagesize;
+                this.queryDesignOrganization();
             },
             showAddPage: function () {
                 this.addpage_visible = true;
                 this.editpage_visible = false;
                 this.dataToFather();
+
             },
             showEditPage: function (scope) {
                 debugger;
                 var rowInfo = scope.row;//当前行信息
                 var index = scope.$index; //当前行在数据数组中的序号，0开始
-                this.nowEditData = this.sjdwData[index];
+                this.nowEditData = this.sjdwData[index];  //当前编辑数据
                 this.editpage_visible = true;
                 this.addpage_visible = false;
                 this.dataToFather();
+
             },
             dataToFather: function () {
                 this.$emit("defaultpage-event", this.addpage_visible, this.editpage_visible, this.nowEditData);
             },
             //查询设计单位
             queryDesignOrganization: function () {
-                this.$message("查询设计单位");
+                //不输入设计单位名称默认查询所有
+                const vm = this;
+                axios.post("/DesignOrganizationManger/queryDesignOrganization", { currentPage: this.currentPage, page_size: this.pagesize, sjdwName: this.sjdwName }).then(function (response) {
+                    debugger;
+                    var resultArry = JSON.parse(response.data).EnginUnitListGetResponse;
+                    vm.sjdwTotalCount = resultArry.totalCount;
+                    vm.sjdwData = resultArry.engin_unit_person_list;
+                });
             },
             //删除设计单位
-            deletDesignOrganization: function () {
+            deletDesignOrganization: function (scope) {
                 debugger;
+                const vm = this;
+                var rowInfo = scope.row;//当前行信息
+                var sjdwId = rowInfo.s_id;
                 var deleteDesOrg = window.confirm("确认删除？");
                 if (deleteDesOrg) {
-                    this.$message("删除成功");
+                    axios.post("/DesignOrganizationManger/deleteDesignOrganization", { s_id:sjdwId}).then(function (response) {
+                        var result = JSON.parse(response.data).EnginUnitUpdateResponse.result;
+                        if (result) {
+                            vm.$message("删除成功");
+                            vm.queryDesignOrganization();
+                        }
+                    });
+                 
                 }
                 else {
                     this.$message("取消删除");
@@ -363,10 +386,12 @@
     .el-table__body-wrapper {
         overflow-y: auto !important;
     }
-    .el-table--border{
-        margin-bottom:4px;
+
+    .el-table--border {
+        margin-bottom: 4px;
     }
-      .el-pagination{
-        float:right
+
+    .el-pagination {
+        float: right;
     }
 </style>

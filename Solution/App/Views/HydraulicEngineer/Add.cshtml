@@ -33,7 +33,7 @@
                                 </el-select>*@
                             <el-date-picker v-model="formData.n_year"
                                             type="year"
-                                            placeholder="选择年份" class="selCss" size="mini">
+                                            placeholder="选择年度" class="selCss" size="mini">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -45,7 +45,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="工程状态:">
+                        <el-form-item label="工程状态:" prop="n_pace_status">
                             @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
                             <el-select v-model="formData.n_pace_status" class="selCss" size="mini">
                                 <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
@@ -54,7 +54,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="所属镇:">
+                        <el-form-item label="所属镇:" prop="s_town">
                             @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
                             <el-select v-model="formData.s_town" class="selCss" size="mini">
                                 <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
@@ -65,14 +65,14 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="16" class="colCss">
-                        <el-form-item label="工程地址:" prop="s_legal_person">
-                            <el-input v-model="formData.s_legal_person" size="mini" style="width:127%;"></el-input>
+                        <el-form-item label="工程地址:" prop="s_address">
+                            <el-input v-model="formData.s_address" size="mini" style="width:127%;"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="项目法人:" prop="s_address">
+                        <el-form-item label="项目法人:">
                             @*<el-input v-model="formData.s_legal_person" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_address" class="selCss" size="mini">
+                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -84,13 +84,13 @@
                         <el-form-item label="设计单位:">
                             @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
                             <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
-                                @*<el-option v-for="item in UnitOption" v-bind:key="item.s_name" v-bind:label="item.s_name" v-bind:value="item.s_name">
-                                    </el-option>*@
+                                <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
+                                </el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="估算总投资:" prop="n_reckon_total_amt">
+                        <el-form-item label="估算总投资:">
                             <el-input v-model="formData.n_reckon_total_amt" size="mini">
                                 <template slot="append">
                                     万元
@@ -168,7 +168,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="总投资:">
+                        <el-form-item label="总投资:" prop="n_total_invest">
                             <el-input v-model="formData.n_total_invest" size="mini">
                                 <template slot="append">
                                     万元
@@ -177,7 +177,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="工程直接费:">
+                        <el-form-item label="工程直接费:" prop="n_engin_cost">
                             <el-input v-model="formData.n_engin_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -186,7 +186,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="独立费用:">
+                        <el-form-item label="独立费用:" prop="n_independent_cost">
                             <el-input v-model="formData.n_independent_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -197,7 +197,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="预备费:">
+                        <el-form-item label="预备费:" prop="n_prep_cost">
                             <el-input v-model="formData.n_prep_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -206,7 +206,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="景观等费用:">
+                        <el-form-item label="景观等费用:" prop="n_sight_cost">
                             <el-input v-model="formData.n_sight_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -215,7 +215,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="建设用地费:">
+                        <el-form-item label="建设用地费:" prop="n_build_cost">
                             <el-input v-model="formData.n_build_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -233,7 +233,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="市补:">
+                        <el-form-item label="市补:" prop="n_subsidy_city">
                             <el-input v-model="formData.n_subsidy_city" size="mini">
                                 <template slot="append">
                                     万元
@@ -242,7 +242,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="区配套:">
+                        <el-form-item label="区配套:" prop="n_subsidy_district">
                             <el-input v-model="formData.n_subsidy_district" size="mini">
                                 <template slot="append">
                                     万元
@@ -251,7 +251,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="镇配套:">
+                        <el-form-item label="镇配套:" prop="n_subsidy_town">
                             <el-input v-model="formData.n_subsidy_town" size="mini">
                                 <template slot="append">
                                     万元
@@ -340,9 +340,9 @@
         </el-form>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex">取消</el-button>
+        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
         @*<el-button type="primary" v-on:click="saveData">保存</el-button>*@
-        <el-button type="primary" v-on:click="saveData('formData')">保存</el-button>
+        <el-button type="primary" v-on:click="saveData('formData')" size="small">保存</el-button>
     </div>
 </div>
 @Html.Partial("~/Views/components/gcctMap/com_gcctEdit.cshtml")
@@ -353,11 +353,12 @@
             var checkNum = function (rule, value, callback) {
                 //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
                 var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
-                if (value === '') {
-                    callback(new Error('不能为空'));
-                }
-                if (!reNum.test(value)) {
-                    callback(new Error('请输入正确的数字值（支持8位整数，2位小数）'));
+                if (value != '') {
+                    if (!reNum.test(value)) {
+                        callback(new Error('请输入正确的数字值（最大支持8位整数，2位小数）'));
+                    } else {
+                        callback();
+                    }
                 } else {
                     callback();
                 }
@@ -409,34 +410,58 @@
 
                 rules: {
                     s_name: [
-                        { required: true, message: '请输入工程名称', trigger: 'blur' }
+                    { required: true, message: '请输入工程名称', trigger: 'blur' }
                     ],
                     s_project_no: [
                         { required: true, message: '请输入项目编号', trigger: 'blur' }
                     ],
-                    s_legal_person: [
-                        { required: true, message: '请输入工程地址', trigger: 'blur' }
-                    ],
                     s_address: [
-                        { required: true, message: '请选择项目法人', trigger: 'blur' }
-                    ],
-                    s_unit_build: [
-                        { required: true, message: '请输入施工单位', trigger: 'blur' }
-                    ],
-                    s_unit_supervise: [
-                        { required: true, message: '请输入监理单位', trigger: 'blur' }
-                    ],
-                    n_reckon_total_amt: [
-                        { required: true, message: '请输入估算总投资', trigger: 'blur' },
-                        { validator: checkNum, trigger: 'blur' }
-                    ],
-                    n_water_area: [
-                        { required: true, message: '请输入新增水面积', trigger: 'blur' },
-                        { validator: checkNum, trigger: 'blur' }
+                        { required: true, message: '请输入工程地址', trigger: 'blur' }
                     ],
                     n_year: [
                         { required: true, message: '请选择年份', trigger: 'blur' }
                     ],
+                    n_pace_status: [
+                        { required: true, message: '请选择工程状态', trigger: 'blur' }
+                    ],
+                    s_town: [
+                        { required: true, message: '请选择所属镇', trigger: 'blur' }
+                    ],
+                    n_reckon_total_amt: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_water_area: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+
+                    n_total_invest: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_engin_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_independent_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_prep_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_sight_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_build_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_city: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_district: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_town: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+
                 },
             }
 
@@ -456,11 +481,14 @@
             },
         },
         methods: {
+            opendialog: function () {
+                this.bindGCCTData();
+            },
             bindGCCTData: function () {
                 this.gcctinfo.S_PROJECT_NO = this.formData.s_project_no;
                 this.gcctinfo.N_PACE_STATUS = this.formData.n_pace_status;
                 this.gcctinfo.N_YEAR = this.formData.n_year;
-                this.gcctinfo.N_YEAR = this.formData.n_type;
+                this.gcctinfo.N_TYPE = this.formData.n_type;
                 this.gcctinfo.S_LEGAL_PERSON = this.formData.s_legal_person;
                 this.gcctinfo.S_TOWN = this.formData.s_town;
                 this.gcctinfo.S_ADDRESS = this.formData.s_address;
@@ -520,7 +548,7 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      this.formData.s_address = this.PersonOption[0].s_id;
+                      this.formData.s_legal_person = this.PersonOption[0].s_id;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -532,6 +560,7 @@
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
                       //this.formData.s_town = this.TownOption[0].s_cd_value;
+                      this.formData.s_unit_design = this.UnitOption[0].s_id;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -577,17 +606,21 @@
                               //var tempData = eval('(' + response.data + ')');
                               var tempR = tempData.EnginOtherReportResponse.result;
                               if (tempR) {
+                                  this.formData.n_year = moment().format('YYYY');
                                   window.location = "/HydraulicEngineer/Index";
                               } else {
+                                  this.formData.n_year = moment().format('YYYY');
                                   this.$message.error('保存失败！' + TempR);
                               }
                           }.bind(this))
                           .catch(function (error) {
+                              this.formData.n_year = moment().format('YYYY');
                               console.log(error);
                           });
 
 
                     } else {
+                        this.formData.n_year = moment().format('YYYY');
                         console.log('error submit!!');
                         return false;
                     }

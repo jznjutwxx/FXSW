@@ -29,11 +29,24 @@ namespace App.Controllers
         /// 测站统计
         /// </summary>
         /// <returns></returns>
-        public JsonResult getCZnum()
+        public JsonResult getCZnum(string s_area)
         {
             string method = "wavenet.fxsw.station.statistics.distribution.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            paramDictionary.Add("s_area", "南桥镇");                                         
+            paramDictionary.Add("s_area", s_area);                                         
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
+        /// <summary>
+        /// 雨量统计
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult getYLnum(string s_area)
+        {
+            string method = "wavenet.fxsw.statistics.yltoday.get";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_area", s_area);
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
@@ -50,6 +63,20 @@ namespace App.Controllers
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("date",date);//日期
+            // 调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+
+            return Json(authorization);
+        }
+        /// <summary>
+        /// 实时报警信息
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult getTimeInfo()
+        {
+            string method = "wavenet.fxsw.real.time.alarm.get";
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
 

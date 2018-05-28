@@ -17,21 +17,21 @@
                                     placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
                     </el-date-picker>
                 </el-form-item> 
-                <el-form-item label="工程状态">
+                <el-form-item label="工程状态:">
                     <el-select v-on:change="changeStatus" v-model="gStatus" class="selCss">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
                 </el-form-item>
-                <el-form-item label="所属镇">
+                <el-form-item label="所属镇:">
                     <el-select v-on:change="changeTown" v-model="gTown" class="selCss">
                         <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                         </el-option>
                     </el-select>
                 </el-form-item>
                 <el-form-item>
-                    <el-input placeholder="请输入工程名称/项目编号"
-                              prefix-icon="el-icon-search" size="small">
+                    <el-input placeholder="请输入工程名称/工程编号"
+                              prefix-icon="el-icon-search" size="small" v-model="gNameNum" clearable>
                     </el-input>
                 </el-form-item>
                 <el-form-item style="padding-left:20px;">
@@ -43,9 +43,6 @@
                     <el-button type="primary" class="btnImport"></el-button>
                 </el-form-item>
             </el-form>
-        </div>
-        <div class="centerQuery">
-            
         </div>
     </div>
 </script>
@@ -62,6 +59,7 @@
                     endYear: '',
                     Status: '',
                     Town: '',
+                    NameNum: '',
                 },
                 startYearValue: moment().format('YYYY'),
                 endYearValue: moment().format('YYYY'),
@@ -69,6 +67,7 @@
                 TownOption: [],
                 gStatus: '',
                 gTown: '',
+                gNameNum: '',
                 pickerOptionsS: {
                     disabledDate: function (time) {
                         if (this.endYearValue != "" && this.endYearValue != null && this.endYearValue != undefined) {
@@ -104,7 +103,7 @@
                       var tempData = JSON.parse(response.data);
                       //var datas = tempData.DictionaryGetResponse.list;
                       this.StatusOption = tempData.DictionaryGetResponse.list;
-                      this.gStatus = this.StatusOption[0].s_cd_key;
+                      //this.gStatus = this.StatusOption[0].s_cd_key;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -116,7 +115,7 @@
                       var tempData = JSON.parse(response.data);
                       //var datas = tempData.DictionaryGetResponse.list;
                       this.TownOption = tempData.DictionaryGetResponse.list;
-                      this.gTown = this.TownOption[0].s_cd_value;
+                      //this.gTown = this.TownOption[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -131,11 +130,12 @@
                 }
                 if (eYear == '1970') {
                     eYear = '';
-                }
+                } 
                 this.param.startYear = sYear;
                 this.param.endYear = eYear;
                 this.param.Status = this.gStatus;
                 this.param.Town = this.gTown;
+                this.param.NameNum = this.gNameNum;
                 this.$emit('emit-event', this.param)
             },
             addProject: function () {
@@ -156,7 +156,7 @@
     #appquery .query {
         font-size: 14px;
         padding: 10px 20px 0px 20px;
-        border-bottom: 1px solid #dcdcdc;
+        /*border-bottom: 1px solid #dcdcdc;*/
     }
 
     #appquery .centerQuery {

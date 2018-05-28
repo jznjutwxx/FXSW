@@ -113,7 +113,7 @@
         </div>
         <div id="rightBasic">
             <template>
-                <el-carousel v-bind:interval="3000" type="card" height="200px">
+                <el-carousel v-bind:interval="3000" type="card" height="220px">
                     <el-carousel-item v-for="(imgData,index) in imgData" v-bind:key="index" v-if="imgData.s_type === '图片'">
                         <img v-bind:src="imgData.s_path" style="width:100%;height:100%;" />
                     </el-carousel-item>
@@ -278,7 +278,7 @@
             </el-row>
         </el-form>
     </div>
-
+    
     <div id="appFinish" style="padding-top:10px;">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" v-model="finishData" class="basicForm">
             <el-row class="el-row">
@@ -403,7 +403,7 @@
     </div>
 
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex">返回</el-button>
+        <el-button plain v-on:click="openIndex" v-show="showBack" size="small">返回</el-button>
     </div>
 </div>
 
@@ -434,11 +434,10 @@
             capitalData: [],
             investData: [],
             finishData: [],
-            imgData: [
-                //{ "s_id": "549842D38D4944659B21E6CDDD62DC5C", "s_type": "图片", "s_path": "http://img.zcool.cn/community/0142135541fe180000019ae9b8cf86.jpg@1280w_1l_2o_100sh.png" },
-            ],
+            imgData: [],
             projectFile: [],
             height: '0px',
+            showBack: true,
             gcctmapheight:document.documentElement.clientHeight - 200,
             tableData: [],
             mapDialogVisible: false,
@@ -456,6 +455,10 @@
         },
         mounted: function () {
             this.s_id = this.getRequest().id;
+            var flag = this.getRequest().flag;
+            if (flag != undefined) {
+                this.showBack = false;
+            }
             this.setSize();
             this.reSize();
             this.getProjectData('/HydraulicEngineer/GetOneProjectData', { s_id: this.s_id });
@@ -482,13 +485,22 @@
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-
+                      var placeholder = [{ "s_id": "0", "s_type": "图片", "s_path": "/Images/main/img_null.png" }];
                       this.detildata = tempData.EnginOtherGetResponse.info;
                       this.replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
                       this.capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
                       this.investData = tempData.EnginOtherGetResponse.info.EnginInvestmentOther;
                       this.finishData = tempData.EnginOtherGetResponse.info.EnginCompleteOther;
-                      this.imgData = tempData.EnginOtherGetResponse.info.FileUploaderList;
+                      var pictureLists = tempData.EnginOtherGetResponse.info.FileUploaderList;
+                      for (var i = 0; i < pictureLists.length; i++) {
+                          if (pictureLists[i].s_type !== undefined && pictureLists[i].s_type == '图片') {
+                              this.imgData.push(pictureLists[i]);
+                          }
+                      }
+
+                      if (this.imgData.length == 0) {
+                          this.imgData = placeholder;
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -505,7 +517,22 @@
                   });
             },
             showMapDialog: function () {
+                this.bindGCCTData();
                 this.mapDialogVisible = true;
+            },
+            bindGCCTData: function (val) {
+                this.gcctinfo.S_PROJECT_NO = this.detildata.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.detildata.n_pace_status;
+                this.gcctinfo.N_TYPE = this.detildata.n_type;
+                this.gcctinfo.N_YEAR = this.detildata.n_year;
+                this.gcctinfo.S_LEGAL_PERSON = this.detildata.s_legal_person;
+                this.gcctinfo.S_TOWN = this.detildata.s_town;
+                this.gcctinfo.S_ADDRESS = this.detildata.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.detildata.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.detildata.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.detildata.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.detildata.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.detildata.s_remark;
             },
             handleClick: function (tab, event) {
                 //debugger
@@ -516,10 +543,8 @@
                 this.getProjectFile('/HydraulicEngineer/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
-                debugger;
                 var docH = document.documentElement.clientHeight;
                 var contentH = docH - 40;
-                debugger;
                 this.height = contentH;
                 console.log(contentH);
                 this.gcctmapheight = document.documentElement.clientHeight - 200;

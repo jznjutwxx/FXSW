@@ -97,7 +97,7 @@ namespace App.Controllers
         }
 
         //public JsonResult GetProjectData(string Page, string Size, string Name, string ProjectID, string startYear, string endYear, string Status, string Town)
-        public JsonResult GetProjectData(string Page, string pageSize, string startYear, string endYear, string Status, string Town)
+        public JsonResult GetProjectData(string Page, string pageSize, string startYear, string endYear, string Status, string Town, string NameNum)
         {
             // 接口
             string method = "wavenet.fxsw.engin.list.get";
@@ -106,9 +106,9 @@ namespace App.Controllers
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", Page);
             paramDictionary.Add("page_size", pageSize);
-            paramDictionary.Add("n_type", "1");//1:骨干河道  2:中小河道	 3:小型农田水利	 4:农村生活污水	 5:其他水利工程	
-            paramDictionary.Add("s_name", "");//工程名
-            paramDictionary.Add("s_project_no", "");//项目编号
+            paramDictionary.Add("n_type", "5");//1:骨干河道  2:中小河道	 3:小型农田水利	 4:农村生活污水	 5:其他水利工程	
+            paramDictionary.Add("s_name", NameNum);//工程名
+            paramDictionary.Add("s_project_no", NameNum);//工程编号
             paramDictionary.Add("n_year_begin", startYear);//开始年度
             paramDictionary.Add("n_year_end", endYear);//结束年度
             paramDictionary.Add("n_pace_status", Status);//工程状态1：工前准备 10:开工 20:完工 30:完工验收 40:决算审批 50:竣工验收 60:工程完结	
@@ -123,7 +123,7 @@ namespace App.Controllers
         public JsonResult GetOneProjectData(string s_id)
         {
             // 接口
-            string method = "wavenet.fxsw.engin.core.get";
+            string method = "wavenet.fxsw.engin.other.get";
 
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -191,11 +191,11 @@ namespace App.Controllers
         public JsonResult UpdateProjectStatus(string param)
         {
             //转成实体对象
-            BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
-            Arr = JsonHelper.JSONToObject<BackboneRiverwayInfo>(param);
+            OtherRiverwayInfo Arr = new OtherRiverwayInfo();
+            Arr = JsonHelper.JSONToObject<OtherRiverwayInfo>(param);
 
             // 接口
-            string method = "wavenet.fxsw.engin.core.update";
+            string method = "wavenet.fxsw.engin.other.update";
 
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -215,39 +215,28 @@ namespace App.Controllers
             paramDictionary.Add("n_draft", Arr.n_draft);//是否有草图 1.有 0.没有
             paramDictionary.Add("s_remark", Arr.s_remark);
 
+
             //批复工程量
-            paramDictionary.Add("n_length", Arr.n_length);//长度
-            paramDictionary.Add("n_land_area", Arr.n_land_area);//土方
-            paramDictionary.Add("n_protect_hard", Arr.n_protect_hard);//硬质护岸
-            paramDictionary.Add("n_protect_ecology", Arr.n_protect_ecology);//生态护岸
-            paramDictionary.Add("n_bridge", Arr.n_bridge);//桥梁
-            paramDictionary.Add("n_plant_bank", Arr.n_plant_bank);//岸域绿化
-            paramDictionary.Add("n_plant_slope", Arr.n_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_plant_depth", Arr.n_plant_depth);//水深绿化
-            paramDictionary.Add("n_river_count", Arr.n_river_count);//条段
+            paramDictionary.Add("s_content", Arr.s_content);//批复工程内容
+            paramDictionary.Add("s_gkpf", Arr.s_gkpf);//工可批复
+            paramDictionary.Add("s_cspf", Arr.s_cspf);//初设批复
+            paramDictionary.Add("s_zjpw", Arr.s_zjpw);//资金批文
+
             //概算投资
             paramDictionary.Add("n_total_invest", Arr.n_total_invest);//总投资
             paramDictionary.Add("n_engin_cost", Arr.n_engin_cost);//工程直接费
             paramDictionary.Add("n_independent_cost", Arr.n_independent_cost);//独立费用
             paramDictionary.Add("n_prep_cost", Arr.n_prep_cost);//预备费
             paramDictionary.Add("n_sight_cost", Arr.n_sight_cost);//景观等费用
-            paramDictionary.Add("n_empty_area", Arr.n_empty_area);//腾地面积
             paramDictionary.Add("n_build_cost", Arr.n_build_cost);//建设用地费
+
             //资金配套组成
             paramDictionary.Add("n_subsidy_city", Arr.n_subsidy_city);//市补
             paramDictionary.Add("n_subsidy_district", Arr.n_subsidy_district);//区配套
             paramDictionary.Add("n_subsidy_town", Arr.n_subsidy_town);//镇配套
 
             //完成工程量
-            paramDictionary.Add("n_complete_length", Arr.n_complete_length);//长度
-            paramDictionary.Add("n_complete_land_area", Arr.n_complete_land_area);//土方
-            paramDictionary.Add("n_complete_protect_hard", Arr.n_complete_protect_hard);//硬质护岸
-            paramDictionary.Add("n_complete_protect_ecology", Arr.n_complete_protect_ecology);//生态护岸
-            paramDictionary.Add("n_complete_bridge", Arr.n_complete_bridge);//桥梁
-            paramDictionary.Add("n_complete_plant_bank", Arr.n_complete_plant_bank);//岸域绿化
-            paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
-            paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
+            paramDictionary.Add("s_complete_content", Arr.s_complete_content);//完成工程量
 
             paramDictionary.Add("remove_pic_ids", "");
             paramDictionary.Add("is_delete", "0");//是否删除 1删除
@@ -307,16 +296,15 @@ namespace App.Controllers
         public JsonResult SaveProjectData(string param, string drawingFiles, string pictureFiles)
         {
             //转成实体对象
-            BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
-            Arr = JsonHelper.JSONToObject<BackboneRiverwayInfo>(param);
+            OtherRiverwayInfo Arr = new OtherRiverwayInfo();
+            Arr = JsonHelper.JSONToObject<OtherRiverwayInfo>(param);
 
             // 接口
-            string method = "wavenet.fxsw.engin.core.report";
+            string method = "wavenet.fxsw.engin.other.report";
 
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             //基本信息
-            paramDictionary.Add("s_gg_or_zxx", Arr.s_gg_or_zxx); //gg:骨干  zxx:中小型
             paramDictionary.Add("s_name", Arr.s_name);
             paramDictionary.Add("s_project_no", Arr.s_project_no);
             paramDictionary.Add("n_year", Arr.n_year);//年度
@@ -331,40 +319,29 @@ namespace App.Controllers
             paramDictionary.Add("n_water_area", Arr.n_water_area);//新增水面积
             paramDictionary.Add("n_draft", Arr.n_draft);//是否有草图 1.有 0.没有
             paramDictionary.Add("s_remark", Arr.s_remark);
+            paramDictionary.Add("s_person", "小张");//上传图片人
 
             //批复工程量
-            paramDictionary.Add("n_length", Arr.n_length);//长度
-            paramDictionary.Add("n_land_area", Arr.n_land_area);//土方
-            paramDictionary.Add("n_protect_hard", Arr.n_protect_hard);//硬质护岸
-            paramDictionary.Add("n_protect_ecology", Arr.n_protect_ecology);//生态护岸
-            paramDictionary.Add("n_bridge", Arr.n_bridge);//桥梁
-            paramDictionary.Add("n_plant_bank", Arr.n_plant_bank);//岸域绿化
-            paramDictionary.Add("n_plant_slope", Arr.n_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_plant_depth", Arr.n_plant_depth);//水深绿化
-            paramDictionary.Add("n_river_count", Arr.n_river_count);//条段
+            paramDictionary.Add("s_content", Arr.s_content);//批复工程内容
+            paramDictionary.Add("s_gkpf", Arr.s_gkpf);//工可批复
+            paramDictionary.Add("s_cspf", Arr.s_cspf);//初设批复
+            paramDictionary.Add("s_zjpw", Arr.s_zjpw);//资金批文
+
             //概算投资
             paramDictionary.Add("n_total_invest", Arr.n_total_invest);//总投资
             paramDictionary.Add("n_engin_cost", Arr.n_engin_cost);//工程直接费
             paramDictionary.Add("n_independent_cost", Arr.n_independent_cost);//独立费用
             paramDictionary.Add("n_prep_cost", Arr.n_prep_cost);//预备费
             paramDictionary.Add("n_sight_cost", Arr.n_sight_cost);//景观等费用
-            paramDictionary.Add("n_empty_area", Arr.n_empty_area);//腾地面积
             paramDictionary.Add("n_build_cost", Arr.n_build_cost);//建设用地费
+
             //资金配套组成
             paramDictionary.Add("n_subsidy_city", Arr.n_subsidy_city);//市补
             paramDictionary.Add("n_subsidy_district", Arr.n_subsidy_district);//区配套
             paramDictionary.Add("n_subsidy_town", Arr.n_subsidy_town);//镇配套
 
             //完成工程量
-            paramDictionary.Add("n_complete_length", Arr.n_complete_length);//长度
-            paramDictionary.Add("n_complete_land_area", Arr.n_complete_land_area);//土方
-            paramDictionary.Add("n_complete_protect_hard", Arr.n_complete_protect_hard);//硬质护岸
-            paramDictionary.Add("n_complete_protect_ecology", Arr.n_complete_protect_ecology);//生态护岸
-            paramDictionary.Add("n_complete_bridge", Arr.n_complete_bridge);//桥梁
-            paramDictionary.Add("n_complete_plant_bank", Arr.n_complete_plant_bank);//岸域绿化
-            paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
-            paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
+            paramDictionary.Add("s_complete_content", Arr.s_complete_content);//完成工程量
 
             //文件路径
             string path = Request.ApplicationPath;
@@ -400,11 +377,11 @@ namespace App.Controllers
         public JsonResult UpdateProjectData(string param, string drawingFiles, string pictureFiles)
         {
             //转成实体对象
-            BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
-            Arr = JsonHelper.JSONToObject<BackboneRiverwayInfo>(param);
+            OtherRiverwayInfo Arr = new OtherRiverwayInfo();
+            Arr = JsonHelper.JSONToObject<OtherRiverwayInfo>(param);
 
             // 接口
-            string method = "wavenet.fxsw.engin.core.update";
+            string method = "wavenet.fxsw.engin.other.update";
 
             // 接口所需传递的参数
             #region
@@ -413,7 +390,7 @@ namespace App.Controllers
             paramDictionary.Add("s_name", Arr.s_name);
             paramDictionary.Add("s_project_no", Arr.s_project_no);
             paramDictionary.Add("n_year", Arr.n_year);//年度
-            paramDictionary.Add("n_pace_status", Arr.n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
+            paramDictionary.Add("n_pace_status", Arr.n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收
             paramDictionary.Add("s_town", Arr.s_town);//所属镇
             paramDictionary.Add("s_address", Arr.s_address);//项目法人s_legal_person
             paramDictionary.Add("s_legal_person", Arr.s_legal_person);//工程地址
@@ -424,40 +401,29 @@ namespace App.Controllers
             paramDictionary.Add("n_water_area", Arr.n_water_area);//新增水面积
             paramDictionary.Add("n_draft", Arr.n_draft);//是否有草图 1.有 0.没有
             paramDictionary.Add("s_remark", Arr.s_remark);
+            paramDictionary.Add("s_person", "小张");//上传图片人
 
             //批复工程量
-            paramDictionary.Add("n_length", Arr.n_length);//长度
-            paramDictionary.Add("n_land_area", Arr.n_land_area);//土方
-            paramDictionary.Add("n_protect_hard", Arr.n_protect_hard);//硬质护岸
-            paramDictionary.Add("n_protect_ecology", Arr.n_protect_ecology);//生态护岸
-            paramDictionary.Add("n_bridge", Arr.n_bridge);//桥梁
-            paramDictionary.Add("n_plant_bank", Arr.n_plant_bank);//岸域绿化
-            paramDictionary.Add("n_plant_slope", Arr.n_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_plant_depth", Arr.n_plant_depth);//水深绿化
-            paramDictionary.Add("n_river_count", Arr.n_river_count);//条段
+            paramDictionary.Add("s_content", Arr.s_content);//批复工程内容
+            paramDictionary.Add("s_gkpf", Arr.s_gkpf);//工可批复
+            paramDictionary.Add("s_cspf", Arr.s_cspf);//初设批复
+            paramDictionary.Add("s_zjpw", Arr.s_zjpw);//资金批文
+
             //概算投资
             paramDictionary.Add("n_total_invest", Arr.n_total_invest);//总投资
             paramDictionary.Add("n_engin_cost", Arr.n_engin_cost);//工程直接费
             paramDictionary.Add("n_independent_cost", Arr.n_independent_cost);//独立费用
             paramDictionary.Add("n_prep_cost", Arr.n_prep_cost);//预备费
             paramDictionary.Add("n_sight_cost", Arr.n_sight_cost);//景观等费用
-            paramDictionary.Add("n_empty_area", Arr.n_empty_area);//腾地面积
             paramDictionary.Add("n_build_cost", Arr.n_build_cost);//建设用地费
+
             //资金配套组成
             paramDictionary.Add("n_subsidy_city", Arr.n_subsidy_city);//市补
             paramDictionary.Add("n_subsidy_district", Arr.n_subsidy_district);//区配套
             paramDictionary.Add("n_subsidy_town", Arr.n_subsidy_town);//镇配套
 
             //完成工程量
-            paramDictionary.Add("n_complete_length", Arr.n_complete_length);//长度
-            paramDictionary.Add("n_complete_land_area", Arr.n_complete_land_area);//土方
-            paramDictionary.Add("n_complete_protect_hard", Arr.n_complete_protect_hard);//硬质护岸
-            paramDictionary.Add("n_complete_protect_ecology", Arr.n_complete_protect_ecology);//生态护岸
-            paramDictionary.Add("n_complete_bridge", Arr.n_complete_bridge);//桥梁
-            paramDictionary.Add("n_complete_plant_bank", Arr.n_complete_plant_bank);//岸域绿化
-            paramDictionary.Add("n_complete_plant_slope", Arr.n_complete_plant_slope);//斜坡绿化
-            paramDictionary.Add("n_complete_plant_depth", Arr.n_complete_plant_depth);//水深绿化
-            paramDictionary.Add("n_complete_river_count", Arr.n_complete_river_count);//条段
+            paramDictionary.Add("s_complete_content", Arr.s_complete_content);//完成工程量
 
             paramDictionary.Add("is_delete", "0");//是否删除 1删除
             paramDictionary.Add("remove_pic_ids", Arr.remove_pic_ids);
@@ -493,7 +459,7 @@ namespace App.Controllers
 
         public ActionResult DeleteProjectData(string s_id)
         {
-            string method = "wavenet.fxsw.engin.core.update";
+            string method = "wavenet.fxsw.engin.other.update";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             //基本信息
             paramDictionary.Add("s_id", s_id); //id

@@ -14,14 +14,14 @@
                 </el-col>
                 <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">雨量站</div>
-                    <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">{{CZdatas.length>0?CZdatas[1].count:0}}</div>
                 </el-col>
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水位站.png"></div>
                 </el-col>
                 <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水位站</div>
-                    <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">{{CZdatas.length>0?CZdatas[2].count:0}}</div>
                 </el-col>
             </el-row>
             <el-row type="flex" class="topicon" justify="center" align="middle">
@@ -31,14 +31,14 @@
                 </el-col>
                 <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水文站</div>
-                    <div class="col cztjnum" style="margin-top: 1px !important;">142</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">{{CZdatas.length>0?CZdatas[3].count:0}}</div>
                 </el-col>
                 <el-col v-bind:span="4">
                     <div style="float:left;"><img src="/Images/swsy/水质站.png"></div>
                 </el-col>
                 <el-col v-bind:span="7" class="rightopicon">
                     <div class="cztjname">水质站</div>
-                    <div class="col cztjnum" style="margin-top: 1px !important;">14</div>
+                    <div class="col cztjnum" style="margin-top: 1px !important;">{{CZdatas.length>0?CZdatas[0].count:0}}</div>
                 </el-col>
             </el-row>
         </div>
@@ -51,18 +51,18 @@
 
         <div class="tablediv">
             <div class="titlediv" style="left: 25px !important;">实时报警信息</div>
+            <el-row class="headercss titlecss">
+                <el-col v-bind:span="3">序号</el-col>
+                <el-col v-bind:span="8">站点名称</el-col>
+                <el-col v-bind:span="7">报警类型</el-col>
+                <el-col v-bind:span="6">报警信息</el-col>
+            </el-row>
             <div class="tablecss">
-                <el-row class="headercss titlecss" style="">
-                    <el-col v-bind:span="3">序号</el-col>
-                    <el-col v-bind:span="8">站点名称</el-col>
-                    <el-col v-bind:span="7">报警类型</el-col>
-                    <el-col v-bind:span="6">报警信息</el-col>
-                </el-row>
-                <el-row class="titlecss" v-for="todo in tableList">
-                    <el-col v-bind:span="3" style="text-align:center;">{{todo.id}}</el-col>
-                    <el-col v-bind:span="8">{{todo.text}}</el-col>
-                    <el-col v-bind:span="7">{{todo.type}}</el-col>
-                    <el-col v-bind:span="6">{{todo.imformation}}</el-col>
+                <el-row class="titlecss" v-for="(realTime, index) in realTimedatas">
+                    <el-col v-bind:span="3" style="text-align:center;">{{index+1}}</el-col>
+                    <el-col v-bind:span="8">{{realTime.name}}</el-col>
+                    <el-col v-bind:span="7">{{realTime.type}}</el-col>
+                    <el-col v-bind:span="6">{{realTime.value}}</el-col>
                 </el-row>
             </div>
         </div>
@@ -76,38 +76,33 @@
         template: "#com-swsyright",
         data: function () {
             return {
-                rightheight: document.documentElement.clientHeight - 32,
+                rightheight: document.documentElement.clientHeight - 30,
                 barOption: null,
-                datas: ['齐贤', '金汇', '中港闸内', '金汇港南闸内', '南竹港出海闸', '南竹港出海闸外', '齐贤', '金汇'],
-
-                num: 3,
-                tableList: [
-      { id: 1, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
-      { id: 2, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
-      { id: 3, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
-       { id: 4, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
-      { id: 5, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
-      { id: 6, text: '金汇港北闸外', type: "潮位报警", imformation: "5.52m" },
-      { id: 7, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
-      { id: 8, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" },
-       { id: 9, text: '金汇港北闸内', type: "水质报警", imformation: "5.52mm/h" },
-      { id: 10, text: '南横泾闸内', type: "水位报警", imformation: "225mm/h" }
-
-                ]
+                CZdatas: [],
+                realTimedatas: [],
+                YLnames: [],
+                YLnums: [],
+                num: 0,
+                town: ''
             }
         },
+        props: { lefttwon: { type: String, default: "" } },
         components: {
         },
         watch: {
             rightheight: function (val) {
                 this.rightheight = val;
             },
+            lefttwon: function (val, oldval) {
+                this.town = val;
+                this.getCZnum('/Hydrology/getCZnum', { s_area: val });
+            }
         },
         mounted: function () {
             const that = this;
             $("#interval2").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             $(window).resize(function () {
-                that.rightheight = document.body.clientHeight - 32;
+                that.rightheight = document.documentElement.clientHeight - 30;
                 $("#interval2").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             });
             this.setSize();
@@ -117,109 +112,160 @@
 
         methods: {
             init: function () {
-                this.setData('/Hydrology/GetData', null);
+                console.log(this.props);
+                this.getCZnum('/Hydrology/getCZnum', { s_area: this.town });
+                this.getYLnum('/Hydrology/getYLnum', { s_area: "金汇镇" });
+                this.getTimeInfo('/Hydrology/getTimeInfo', null);
             },
-            setData: function (url, param) {
-                this.setBarData(url, param);
-            },
-            setBarData: function (url, param) {
-                // 基于准备好的dom，初始化echarts实例
-                var barChart = echarts.init(document.getElementById('barCharts'));
-                axios.post(url).then(function (response) {
-                    var barOption = {
-                        color: '#38C9E2',
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        },
-                        dataZoom: [
-					              {
-					                  yAxisIndex: 0,
-					                  show: false,
-					                  type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
-					                  startValue: 0,      // 从头开始。
-					                  endValue: this.num       // 一次性展示(num+1)个。
-					              }
-                        ],
-                        grid: {
-                            top: '3%',
-                            left: '3%',
-                            bottom: '3%',
-                            containLabel:true
-                        },
-                        xAxis: {
-                            name: 'mm',
-                            nameLocation: 'end',
-                            nameGap: '1',
-                            type: 'value',
-                            nameTextStyle: {
-                                color: '#fff'
-                            },
-                            splitLine: { show: false },//去除网格线
-                            axisTick: { show: false },
-                            axisLabel: {
-                                color: '#fff'
-                            },
-                            axisLine: {
-                                lineStyle: {
-                                    color: '#3d4997',
-                                }
-                            }
-                        },
-                        yAxis: {
-                            type: 'category',
-                            data: this.datas,
-                            axisTick: { show: false },
-                            axisLabel: {
-                                color: '#fff'
-                            },
-                            axisLine: {
-                                lineStyle: {
-                                    color: '#3d4997',
-                                }
-                            }
-                        },
-                        series: [
-                            {
-                                name: '',
-                                type: 'bar',
-                                data: [126, 175, 115, 174, 113, 165],
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: ['45%', '40%'],
-                                        color: '#000000',
-                                        fontSize: 14,
-                                    }
-                                }
-                            }
-                        ],
-                    }
-                    barChart.setOption(barOption);
-                    $(window).resize(function () {
-                        setTimeout(function () {
-                            barChart.resize();
-                        }.bind(this), 100);
-                    }.bind(this));
-                   
-                    setInterval(function () {
-                        var len = this.datas.length;
-
-                        if (barOption.dataZoom[0].endValue == len - 1) {// 每次向后滚动一个，最后一个从头开始。
-                            barOption.dataZoom[0].endValue = this.num;
-                            barOption.dataZoom[0].startValue = 0;
-                        } else {
-                            barOption.dataZoom[0].endValue = barOption.dataZoom[0].endValue + 1;
-                            barOption.dataZoom[0].startValue = barOption.dataZoom[0].startValue + 1;
-                        }
-                        barChart.setOption(barOption);
-                    }.bind(this), 1000)
-                }.bind(this))
+            getCZnum: function (url, param) {
+                axios.post(url, param)
+                 .then(function (response) {
+                     var li = JSON.parse(response.data);
+                     this.CZdatas = li.StatisticsStationDistributionGetResponse.statistics_station_distribution_count_list;
+                     for (var i = 0; i < this.CZdatas.length; i++) {
+                         this.CZdatas.s_type = this.CZdatas[i].s_type;
+                         this.CZdatas.count = this.CZdatas[i].count;
+                     }
+                 }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
+            },
+            getTimeInfo: function (url, param) {
+                axios.post(url, param)
+                 .then(function (response) {
+                     var li = JSON.parse(response.data);
+                     this.realTimedatas = li.RealTimeAlarmGetResponse.real_time_alarm_list;
+                 }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getYLnum: function (url, param) {
+                axios.post(url, param)
+                .then(function (response) {
+                    var li = JSON.parse(response.data);
+                    var YLdatas = li.StatisticsYLTodayGetResponse.statistics_yl_today_list;
+                    for (var i = 0; i < YLdatas.length; i++) {
+                        this.YLnames.push(YLdatas[i].name);
+                        this.YLnums.push(YLdatas[i].result);
+                    }
+                    this.setBarData();
+                }.bind(this))
+                 .catch(function (error) {
+                     console.log(error);
+                 });
+            },
+
+            setBarData: function () {
+                // 基于准备好的dom，初始化echarts实例
+                var barChart = echarts.init(document.getElementById('barCharts'));
+    debugger
+                var dataShadow = [];
+                var yMax = 500;
+                for (var i = 0; i < this.YLnames.length; i++) {
+                    dataShadow.push(yMax);
+                }
+
+                var barOption = {
+                    color: '#4a77ff',
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            type: 'shadow'
+                        }
+                    },
+                    dataZoom: [
+                              {
+                                  yAxisIndex: 0,
+                                  show: false,
+                                  type: 'slider', // 这个 dataZoom 组件是 slider 型 dataZoom 组件
+                                  startValue: 0,      // 从头开始。
+                                  endValue: this.num > this.YLnames.length ? this.YLnames.length - 1 : this.num - 1       // 一次性展示(num+1)个。
+                              }
+                    ],
+                    grid: {
+                        top: '3%',
+                        left: '3%',
+                        bottom: '9%',
+                        containLabel: true
+                    },
+                    xAxis: {
+                        name: 'mm',
+                        nameLocation: 'end',
+                        nameGap: '1',
+                        type: 'value',
+                        nameTextStyle: {
+                            color: '#fff'
+                        },
+                        splitLine: { show: false },//去除网格线
+                        axisTick: { show: false },
+                        axisLabel: {
+                            color: '#fff'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#3d4997',
+                            }
+                        }
+                    },
+                    yAxis: {
+                        type: 'category',
+                        data: this.YLnames,
+                        axisTick: { show: false },
+                        axisLabel: {
+                            color: '#fff'
+                        },
+                        axisLine: {
+                            lineStyle: {
+                                color: '#3d4997',
+                            }
+                        }
+                    },
+                    series: [
+{ // For shadow
+    type: 'bar',
+    itemStyle: {
+        normal: { color: 'rgba(26,94,153,0.5)' }
+    },
+    barGap: '-100%',
+    barCategoryGap: '40%',
+    data: dataShadow,
+    animation: false
+},
+                        {
+                            name: '',
+                            type: 'bar',
+                            data: this.YLnums,
+                            label: {
+                                normal: {
+                                    show: true,
+                                    position: ['45%', '40%'],
+                                    color: '#fff',
+                                    fontSize: 14,
+                                }
+                            }
+                        }
+                    ],
+                }
+                barChart.setOption(barOption);
+                $(window).resize(function () {
+                    setTimeout(function () {
+                        barChart.resize();
+                    }.bind(this), 100);
+                }.bind(this));
+
+                setInterval(function () {
+                    var len = this.YLnames.length;
+                    if (barOption.dataZoom[0].endValue == len - 1) {// 每次向后滚动一个，最后一个从头开始。
+                        barOption.dataZoom[0].endValue = this.num > len ? len - 1 : this.num - 1;
+                        barOption.dataZoom[0].startValue = 0;
+                    } else {
+                        barOption.dataZoom[0].endValue = barOption.dataZoom[0].endValue + 1;
+                        barOption.dataZoom[0].startValue = barOption.dataZoom[0].startValue + 1;
+                    }
+                    barChart.setOption(barOption);
+                }.bind(this), 1000)
             },
 
             resize: function () {
@@ -235,7 +281,7 @@
 
                 //分辨率不同 显示条数变化
                 if (docH <= 768) {
-                    this.num = 3;
+                    this.num = 4;
                 } else if (768 < docH <= 960) {
                     this.num = 7;
                 } else if (960 < docH <= 1024) {
@@ -253,21 +299,34 @@
         width: 100%;
         overflow: hidden;
         min-width: 280px;
-        min-height: 610px;
+        /*min-height: 610px;*/
         position: relative;
     }
 
-    @@media screen and (min-width: 1025px) {
+    @@media screen and (min-height: 768px) {
         .rightopicon {
             margin-left: -10px;
             margin-top: 5px;
         }
-
         .topicon {
             height: 55px !important;
         }
+        .tablediv {
+            height: 40% !important;
+            padding-top:12px;
     }
-
+        .topdiv2 {
+            height: 20% !important;
+        }
+    }
+    /*@@media screen and (max-width: 1366px) {
+        .tablediv {
+            height: 35%;
+    }
+        .topdiv2 {
+            height: 25%;
+        }
+    }*/
     .topleft {
         height: 35px !important;
     }
@@ -337,11 +396,19 @@
         position: absolute;
         border: 1px solid #0146b2;
     }
+        .tablecss::-webkit-scrollbar
+        {
+            display:none;
+        }
 
     .tablecss {
         width: 100%;
-        height: 95%;
-        margin-top: 10px;
+        height: 80%;
+       
+        overflow: hidden;
+    }
+
+    .tablecss:hover{
         overflow: auto;
     }
 
@@ -374,7 +441,7 @@
     }
 
     .topdiv2 {
-        height: 20%;
+        height: 25%;
         position: relative;
         border: 1px solid #0146b2;
         width: 99%;

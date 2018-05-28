@@ -22,6 +22,11 @@ namespace App.Controllers
             return View();
         }
 
+        public ActionResult LegalPerson()
+        {
+            return View();
+        }
+
         public ActionResult OverTime()
         {
             Session.Abandon();
@@ -32,8 +37,8 @@ namespace App.Controllers
             Session.Abandon();
             return View();
         }
-        
-        public JsonResult checkLogin(string name,string pwd)
+
+        public JsonResult checkLogin(string name,string pwd,string type="")
         {
             var result = "error";
             var username = "";
@@ -66,6 +71,7 @@ namespace App.Controllers
                     CookieHelper.WriteCookie("unit_name", signInResponse.SignInAuthorizationFXSWRightResponse.unit_name, 0);
                     CookieHelper.WriteCookie("token", signInResponse.SignInAuthorizationFXSWRightResponse.token, 0);
                     CookieHelper.WriteCookie("role", signInResponse.SignInAuthorizationFXSWRightResponse.role, 0);
+                    CookieHelper.WriteCookie("type", type, 0);
                 }
             }
             return Json(new { name=name, result=result });
@@ -81,6 +87,7 @@ namespace App.Controllers
             CookieHelper.DeleteCookie("unit_name");
             CookieHelper.DeleteCookie("token");
             CookieHelper.DeleteCookie("role");
+            CookieHelper.DeleteCookie("type");
             return Json(new { result = "sucess" });
         }
 

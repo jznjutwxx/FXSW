@@ -24,7 +24,8 @@ namespace App.Controllers.Main
 
         public ActionResult ProjectOutside()
         {
-            ViewData["username"] = "系统管理员";//Session["name"] != null ? Session["name"].ToString() : "";
+            ViewData["username"] = Session["name"] != null ? Session["name"].ToString() : "";
+          
             return View();
         }
 

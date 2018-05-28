@@ -1,0 +1,44 @@
+﻿
+@{
+    ViewBag.Title = "单河道水质统计";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div id="app">
+    <header>
+        <el-row style="margin:10px 0px 10px 24px; min-width:1000px;">
+            <el-col v-bind:span="7">
+                <span>所属镇:</span>
+                <el-select v-model="town" placeholder="请选择">
+                    <el-option v-for="item in towns"
+                               v-bind:key="item.value"
+                               v-bind:label="item.label"
+                               v-bind:value="item.value">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-col v-bind:span="7">
+                <span>河道等级:</span>
+                <el-select v-model="level" placeholder="请选择">
+                    <el-option v-for="item in levels"
+                               v-bind:value="item">
+                    </el-option>
+                </el-select>
+            </el-col>
+            <el-form-item>
+                <el-input placeholder="请输入工程名称/项目编号"
+                          prefix-icon="el-icon-search" size="small">
+                </el-input>
+            </el-form-item>
+        </el-row>
+        <el-row style="margin:15px 0 0 10px;min-width:1000px;">
+          
+          
+            <el-col v-bind:span="8">
+                <el-button type="primary" icon="el-icon-search" v-on:click="getQyjlData">查询</el-button>
+               
+            </el-col>
+
+        </el-row>
+    </header>
+</div>

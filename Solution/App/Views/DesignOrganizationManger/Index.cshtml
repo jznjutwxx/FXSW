@@ -7,13 +7,13 @@
 @Html.Partial("~/Views/DesignOrganizationManger/components/addPage.cshtml")
 @Html.Partial("~/Views/DesignOrganizationManger/components/editPage.cshtml")
 <div id="sjdwgl">
-    <default-page v-on:defaultpage-event="getDefaultpageDate">
+    <default-page  ref="defaultPage"  v-on:defaultpage-event="getDefaultpageDate">
         <!--v-bind:属性名一定要小写-->
     </default-page>
-    <add-page ref="addPage">
+    <add-page ref="addPage" v-on:refresh-event="refreshDispaly">
 
     </add-page>
-    <edit-page ref="editPage">
+    <edit-page ref="editPage" v-bind:now_edit_data="now_edit_data" v-on:refresh-event="refreshDispaly">
 
     </edit-page>
 </div>
@@ -26,7 +26,9 @@
             "edit-page": editPage,
         },
         data: {
-           
+            now_edit_data: null,//当前编辑的数据
+            defalut_selected_projectKey:[], //当前编辑的设计单位已经关联了的工程key
+
         },
         mounted: function () {
 
@@ -36,22 +38,34 @@
                 debugger;
                 this.$refs.addPage.addDialogVisible = addpage_visible;
                 this.$refs.editPage.editDialogVisible = editpage_visible;
-                //sjdwmc: "",
-                //account: "",
-                //password:"",
-               // yearVlue: moment().format('YYYY'),
-               // town: "奉贤区",    
-                //nowPrjClass: "骨干河道",
+                this.now_edit_data = nowEditData;
+                if (addpage_visible) {                  
+                    this.$refs.addPage.sjdwmc="";
+                    this.$refs.addPage.account="";
+                    this.$refs.addPage.password = "";
+                    this.$refs.addPage.queryProjct_add();
+                }
                 /*----------------进入编辑页面默认看到的信息->当前选中编辑的信息-------------------------------*/
                 if (editpage_visible) {
-                    this.$refs.editPage.sjdwmc = nowEditData.sjdwmc;
-                    this.$refs.editPage.account = nowEditData.zh;
-                    this.$refs.editPage.password = nowEditData.mm;
-                    this.$refs.editPage.yearVlue = nowEditData.nf;
-                    this.$refs.editPage.town = nowEditData.town;
-                    this.$refs.editPage.nowPrjClass = nowEditData.gzclass;
+                    debugger;
+                    //nowEditData--当前编辑的设计单位信息
+                    this.$refs.editPage.sjdwmc = nowEditData.s_name;
+                    this.$refs.editPage.account = nowEditData.s_account;
+                    this.$refs.editPage.password = nowEditData.s_password;   
+                    var defalutSelectProjectKey = this.$refs.editPage.selectedProjecKey;
+                    this.defalut_selected_projectKey = defalutSelectProjectKey;
+                    debugger;
+                    const vm = this;
+                    setTimeout(function () {
+                        vm.$refs.editPage.queryProjct_edit();//查询已关联和未关联工程
+                    },100)
+                    
                 }
-            }
+            },
+            //编辑、新增、删除后，刷新页面
+            refreshDispaly: function () {
+                this.$refs.defaultPage.queryDesignOrganization();
+            },
         },
     })
 </script>

@@ -40,7 +40,7 @@
             </el-table-column>
             <el-table-column prop="n_pace_status"
                              header-align="center"
-                             label="工程状态">
+                             label="工程状态" width="120">
             </el-table-column>
             <el-table-column prop="s_town"
                              header-align="center"
@@ -73,7 +73,7 @@
     </div>
 
     <div style="text-align:right;padding-top:10px;">
-        <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-size="pagesize" v-bind:total="total">
+        <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, sizes, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-size="pageSize" v-bind:page-sizes="[10, 20, 30, 40, 50]" v-bind:total="total">
         </el-pagination>
     </div>
 </div>
@@ -89,10 +89,10 @@
                 height: '0px',
                 float: 'left',
             },
-            height: '0px',
+            height: 0,
             tableData: [],
             total: 0, //默认数据总数
-            pagesize: 10,//每页的数据条数
+            pageSize: 10,//每页的数据条数
             currentPage: 1,//默认开始页面
             params: []
             
@@ -103,7 +103,7 @@
         mounted: function () {
             this.setSize()
             this.resize()
-            this.setTableData('/ZXRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pagesize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '1', Town: '四团镇' });
+            this.setTableData('/ZXRiverway/GetProjectData', { Page: this.currentPage, pageSize: this.pageSize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '', Town: '', NameNum: '' });
             //this.$refs.smallQuery.gStatus   this.$refs.smallQuery.gTown
         },
         methods: {
@@ -113,7 +113,7 @@
             },
             getEmitEvent: function (param) {
                 this.setTableData('/ZXRiverway/GetProjectData', {
-                    Page: this.currentPage, pageSize: this.pagesize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town
+                    Page: this.currentPage, pageSize: this.pageSize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town, NameNum: param.NameNum,
                 });
             },
             setTableData: function (url, param) {
@@ -171,20 +171,23 @@
                 });
             },
             indexMethod: function (index) {
-                return (index + 1) + (this.currentPage - 1) * this.pagesize;
+                return (index + 1) + (this.currentPage - 1) * this.pageSize;
             },
             currentChange: function (val) {
+                this.currentPage = val;
                 this.params.Page = val;
                 this.setTableData('/ZXRiverway/GetProjectData', this.params)
             },
-            sizeChange: function (pagesize) {
-                this.currentPage = pagesize;
+            sizeChange: function (val) {
+                this.pageSize = val;
+                this.params.pageSize = val;
+                this.setTableData('/ZXRiverway/GetProjectData', this.params)
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight
                 var queryH = this.$refs.smallQuery.$el.clientHeight
                 var contentH = docH - queryH - 40
-                this.height = contentH - 40
+                this.height = contentH - 5
             },
             resize: function () {
                 $(window).resize(function () {

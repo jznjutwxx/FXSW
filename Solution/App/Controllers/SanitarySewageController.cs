@@ -38,7 +38,7 @@ namespace App.Controllers
             return Json(new { result = "ok" });
         }
         //,string town
-        public JsonResult GetTabData(string page, string pagesize, string sYear, string eYear, string status, string town)
+        public JsonResult GetTabData(string page, string pagesize, string sYear, string eYear, string status, string town, string NameNum)
         {
             string method = "wavenet.fxsw.engin.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
@@ -49,6 +49,8 @@ namespace App.Controllers
             paramDictionary.Add("n_year_end", eYear);//结束年度
             paramDictionary.Add("n_pace_status", status);//工程状态1：工前准备 10:开工 20:完工 30:完工验收 40:决算审批 50:竣工验收 60:工程完结	
             paramDictionary.Add("s_town", town);//城镇
+            paramDictionary.Add("s_name", NameNum);//工程名
+            paramDictionary.Add("s_project_no", NameNum);//工程编号
 
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
@@ -84,6 +86,7 @@ namespace App.Controllers
             paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             paramDictionary.Add("s_remark", arr.S_REMARK);
+            paramDictionary.Add("s_person", "小张");//上传图片人
 
             //批复工程量
             paramDictionary.Add("n_czsl", arr.N_CZSL);//村组数量
@@ -178,6 +181,7 @@ namespace App.Controllers
             paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             paramDictionary.Add("s_remark", arr.S_REMARK);
+            paramDictionary.Add("s_person", "小张");//上传图片人
 
             //批复工程量
             paramDictionary.Add("n_czsl", arr.N_CZSL);//村组数量

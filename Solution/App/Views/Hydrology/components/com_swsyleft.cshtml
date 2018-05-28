@@ -56,7 +56,7 @@
         template: "#com-swsyleft",
         data: function () {
             return {
-                leftheight: document.documentElement.clientHeight - 32,
+                leftheight: document.documentElement.clientHeight - 30,
                 param: {
 
                 },
@@ -79,7 +79,7 @@
 
             $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             $(window).resize(function () {
-                that.leftheight = document.body.clientHeight - 32;
+                that.leftheight = document.documentElement.clientHeight - 30;
                 $("#interval").css("margin-top", (document.documentElement.clientHeight * 0.05 - 6) / 2);
             });
             this.init();
@@ -278,24 +278,17 @@
         width: 100%;
         overflow: hidden;
         min-width: 288px;
-        min-height: 610px;
         position:relative;
         margin-left:8px;
     }
-    @@media screen and (min-width: 1025px) {
+    @@media screen and (min-height: 768px) {
        #leftContent .col {
             height: 45px !important;
         }
         #leftContent .centerdiv{
             margin-top:50px !important;
         }
-     /*#leftContent .xzqh{
-         margin-left: 118px !important;
-     }*/ 
   }
-    @@media screen and (min-width: 1025px) {
-        
-    }
     .xzqhrow {
         padding: 10px 40px 0 0;
     }
@@ -304,14 +297,13 @@
         height:22px;
         line-height:22px;
         color:white; 
-       /* margin: -4px 0 0 44px;*/
         text-align:center; 
         float:left; 
         background-color:#0056ce;
     }
     .titlediv {
         position: absolute;
-        top: -11px;
+        top: -10px;
         left:30px;
         z-index: 1246;
         background-color: #051266;

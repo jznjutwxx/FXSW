@@ -8,10 +8,10 @@
                 <el-input placeholder="请输入设计单位名称" prefix-icon="el-icon-search" size="small" v-model="sjdwmc">
                 </el-input>
                 <span class="distance" style="width:170px;">账号:</span>
-                <el-input placeholder="请输入账号" prefix-icon="el-icon-search" size="small"  v-model="account">
+                <el-input placeholder="请输入账号" prefix-icon="el-icon-search" size="small" v-model="account">
                 </el-input>
                 <span class="distance" style="width:170px;">密码:</span>
-                <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-search" size="small"  v-model="password">
+                <el-input placeholder="请输入密码" type="password" prefix-icon="el-icon-search" size="small" v-model="password">
                 </el-input>
             </div>
             <div id="gzsx" style="margin-top:10px;">
@@ -27,13 +27,13 @@
                 </el-select>
                 <span class="distance">工程分类:</span>
                 <el-select v-model="nowPrjClass" placeholder="请选择" size="small" style="width:150px;">
-                    <el-option v-for="item in projectsClass"
-                               v-bind:value="item">
+                    <el-option v-for="item in projectsClass" v-bind:value="item.value" v-bind:key="item.key" ref="gcClass">
                     </el-option>
                 </el-select>
-                <el-button type="primary" icon="el-icon-search" class="btnSel" plain>查询</el-button>
+                <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryProjct_edit">查询</el-button>
             </div>
-            <el-transfer v-model="selected" v-bind:data="projectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[]">
+            <el-transfer v-model="selectedProjecKey" v-bind:data="allProjectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[]"
+                         v-on:change="rightSelectChange">
 
             </el-transfer>
             <div class="gnDiv">
@@ -50,54 +50,151 @@
             return {
                 editDialogVisible: false,
                 yearVlue: moment().format('YYYY'),
-                towns: ['奉贤区', '庄行镇', '拓林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                towns: ['奉贤区', '庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇', '西渡街道 ', '奉浦街道', '金海社区', '海湾旅游区'],
                 town: "奉贤区",
-                projectsClass: ['骨干河道', '中小河道', '小型农田水利'],  //工程类别
+                projectsClass: [{ key: 1, value: '骨干河道' }, { key: 2, value: '中小河道' }, { key: 3, value: '小型农田水利' }, { key: 4, value: '农村生活污水' }, { key: 5, value: '其他水利工程' }],  //工程类别
                 nowPrjClass: "骨干河道",
-                projectsName: ['奉贤农田水利工程(2018061511101)', '奉贤农田水利工程2', '奉贤农田水利工程3', '奉贤农田水利工程4', '奉贤农田水利工程5', '奉贤农田水利工程6', '奉贤农田水利工程7', '奉贤农田水利工程8', '奉贤农田水利工程9', '奉贤农田水利工程10', '奉贤农田水利工程11', '奉贤农田水利工程12', '奉贤农田水利工程13', '奉贤农田水利工程14', '奉贤农田水利工程15', '奉贤农田水利工程16', '奉贤农田水利工程17', '奉贤农田水利工程18', '奉贤农田水利工程19', '奉贤农田水利工程20'],
-                projectsNameData: [],
-                selected: [11, 12], //默认选中的工程的key
+                allProject: [],//所有工程完整信息（未选和当前设计单位已选）
+                nowSJDWselectedProjcet: [],//当前设计单位已经选择的工程
+                allProjectsNameData: [],   //所有的工程（未选和已选）的名字
+                selectedProjecKey: [], //已被选中的工程的key
                 projectTitiles: ["待选工程", "已选工程"],
                 //编辑时的默认值
                 sjdwmc: "",
                 account: "",
-                password:"",
+                password: "",
+                current_selected_projectKey: [],  //当前选中的工程的key值
+                beforeEditSelectedProjcetId :[],//当前条件下，编辑之前已选择的工程的id
             }
         },
+        props: ["now_edit_data", "defalut_selected_projectKey"],
         components: {
         },
         mounted: function () {
-            this.getProjectsNameData();
+
         },
         methods: {
             handleClose(done) {
                 done();
-               /* this.$confirm('确认关闭？').then(function () {
-                    done();
-                }).catch(function () {
-                });*/
+                /* this.$confirm('确认关闭？').then(function () {
+                     done();
+                 }).catch(function () {
+                 });*/
             },
-            getProjectsNameData: function () {
+            //右边穿梭框的值发生改变时调用
+            //rightValue--右边框的值的key值    movingDirection--数据移动方向   movingKey--发生移动的数据的key值
+            rightSelectChange: function (rightValue, movingDirection, movingKey) {
                 debugger;
-                for (var i = 0; i < this.projectsName.length; i++) {
-                    this.projectsNameData.push({
-                        key: i + 1,
-                        label: this.projectsName[i],
-                        //disabled:i%2==0,
-                    })
-                }
+                this.current_selected_projectKey = rightValue;
             },
             //保存编辑后的信息
             saveEditInfo: function () {
-                //sjdwmc: "",
-                //account: "",
-                //password:"",
-                // yearVlue: moment().format('YYYY'),
-                // town: "奉贤区",    
-                //nowPrjClass: "骨干河道",
-                //selected
+                debugger;
+                const vm = this;
+                var nowSJDWid;
+                try{
+                    nowSJDWid = this.now_edit_data.s_id;  //当前设计单位id
+                }
+                catch (e) {
+                    alert("error");
+                }
+                var ZHhaveChanged = true, MChaveChanged=true;  //设计单位账号、名称是否改变了
+                if (this.account == this.now_edit_data.s_account) {
+                    ZHhaveChanged = false;
+                }
+                if (this.sjdwmc == this.now_edit_data.s_name) {
+                    MChaveChanged = false;
+                }
+                var current_selected_projectId = []; //当前筛选条件下，编辑之后，已选择的工程id
+                for (var i = 0; i < this.current_selected_projectKey.length; i++) {
+                    var index = this.current_selected_projectKey[i];
+                    current_selected_projectId.push(this.allProject[index].s_id);
+                }
+                var current_selected_projectIdStr = current_selected_projectId.join(',');
+                var beforeEditSelectedProjcetIdStr= vm.beforeEditSelectedProjcetId.join(',');
+                var addProjcctId = [];//新增的工程id
+                var deleteProjectId = [];//删除的工程id
+                for (var i = 0; i < vm.beforeEditSelectedProjcetId.length; i++) {
+                    if (current_selected_projectIdStr.indexOf(vm.beforeEditSelectedProjcetId[i])==-1) {
+                        //-1,不包含,删除
+                        deleteProjectId.push(vm.beforeEditSelectedProjcetId[i]);
+                    } 
+                }
+                for (var i = 0; i <current_selected_projectId.length; i++) {
+                    if (beforeEditSelectedProjcetIdStr.indexOf(current_selected_projectId[i])==-1) {
+                        //-1.不包含，新增
+                        addProjcctId.push(current_selected_projectId[i]);
+                    }
+                }
+                var addProjcctIdStr = addProjcctId.join(',');
+                var deleteProjectIdStr = deleteProjectId.join(',');
+                var s_name = this.sjdwmc;
+                var s_account = this.account;
+                var s_password = this.password;
+                axios.post("/DesignOrganizationManger/updateDesignOrganization", { sjdwId: nowSJDWid, sjdwmc: s_name, sjdwzh: s_account, sjdwpwd: s_password, ZHhaveChanged: ZHhaveChanged, MChaveChanged: MChaveChanged, addProjcctIdStr: addProjcctIdStr, deleteProjectIdStr: deleteProjectIdStr }).then(function (response) {
+                    debugger;
+                    var res = JSON.parse(response.data).EnginUnitUpdateResponse.result;
+                    if (res == true) {
+                        vm.$message("编辑成功");
+                        vm.$emit("refresh-event");
+                    } else {
+                        vm.$message("编辑失败");
+                    }
+                })
+            },
+            //编辑设计单位中进行工程查询，需要当前设计单位的id值，去查询当前设计单位在当前条件下已经关联的工程
+            queryProjct_edit: function () {
+                debugger;
+                const vm = this;
+                var sjdwId = this.now_edit_data.s_id;  //设计单位id
+                var year = this.yearVlue;             //年份
+                var town = this.town;                //街镇
+                if (town == "奉贤区") {
+                    town = "";
+                }
+                var gcClass = this.nowPrjClass;  //工程类别
+                var gckey = "1";   //骨干河道
+                switch (gcClass) {
+                    case "中小河道": gckey = "2";
+                        break;
+                    case "小型农田水利": gckey = "3";
+                        break;
+                    case "农村生活污水": gckey = "4";
+                        break;
+                    case "其他水利工程": gckey = "5";
+                        break;
+                }
+                vm.allProject = [];  //所有工程的所有信息（未选、已选）
+                vm.allProjectsNameData = []; //所有工程的名字信息（未选、已选）
+                vm.selectedProjecKey = [];   //已经被选择的工程的key;
+                vm.beforeEditSelectedProjcetId = [];//当前条件下，编辑之前已选择的工程的id
+                axios.post("/DesignOrganizationManger/getSelectedProject", { s_town: town, n_type: gckey, n_year: year, s_id: sjdwId, isEditPage: true, unit_or_person: "unit" }).then(function (response) {
+                    //获取当前设计单位 在当前工程分类下 已关联的工程
+                    debugger;
+                    vm.nowSJDWselectedProjcet = JSON.parse(response.data).EnginChoiceGetResponse.engin_choice_list; //当前设计单位 在当前工程分类下 关联的工程
+                    for (var i = 0; i < vm.nowSJDWselectedProjcet.length; i++) {
+                        vm.allProject.push(vm.nowSJDWselectedProjcet[i]);
+                        vm.selectedProjecKey.push(i);
+                        debugger;
+                        vm.beforeEditSelectedProjcetId.push(vm.nowSJDWselectedProjcet[i].s_id);//当前条件下，编辑之前已选择的工程的id
+                    }
+                    axios.post("/DesignOrganizationManger/getUnselectedProject", { s_town: town, n_type: gckey, n_year: year, unit_or_person: "unit" }).then(function (response) {
+                        //获取当前设计单位 在当前工程分类下 未关联的工程
+                        debugger;
+                        var noSelectedProjcet = JSON.parse(response.data).EnginNoChoiceGetResponse.engin_choice_list;
+                        for (var i = 0; i < noSelectedProjcet.length; i++) {
+                            vm.allProject.push(noSelectedProjcet[i]);
+                        }
+                        for (var i = 0; i < vm.allProject.length; i++) {
+                            vm.allProjectsNameData.push({
+                                key: i,
+                                label: vm.allProject[i].s_name
+                            });
+                        }
+                    });
+                });
 
-            }
+            },
         }
     }
 </script>

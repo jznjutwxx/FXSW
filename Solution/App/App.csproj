@@ -181,11 +181,13 @@
     <Compile Include="Controllers\LegalPersonMangerController.cs" />
     <Compile Include="Controllers\Login\LoginController.cs" />
     <Compile Include="Controllers\Main\MainController.cs" />
+    <Compile Include="Controllers\ProjectOutside\BackboneRiverOutsideController.cs" />
     <Compile Include="Controllers\ProOverViewController.cs" />
     <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
     <Compile Include="Controllers\RiverStatisticssController.cs" />
     <Compile Include="Controllers\SanitarySewageController.cs" />
     <Compile Include="Controllers\SHWSProjectStatisticsController.cs" />
+    <Compile Include="Controllers\SingleChannelSztjController.cs" />
     <Compile Include="Controllers\SingleStatisticsController.cs" />
     <Compile Include="Controllers\SmallCroplandStatisticsController.cs" />
     <Compile Include="Controllers\SZQYJLController.cs" />
@@ -259,6 +261,7 @@
     <Content Include="Images\gczl\btn_up.png" />
     <Content Include="Images\gczl\btn_wangong.png" />
     <Content Include="Images\gczl\btn_wangongys.png" />
+    <Content Include="Images\gczl\Error.png" />
     <Content Include="Images\gczl\gongcxq.png" />
     <Content Include="Images\gczl\ico_gongchngfl.png" />
     <Content Include="Images\gczl\ico_jiezhen.png" />
@@ -326,9 +329,12 @@
     <Content Include="Images\main\head\btn_shuizy_normal.png" />
     <Content Include="Images\main\head\img_header.png" />
     <Content Include="Images\main\head\img_header_zonghe.png" />
+    <Content Include="Images\main\img_null.png" />
     <Content Include="Images\sw_main\img_header_sw.png" />
     <Content Include="Images\gc_main\img_header_xm.png" />
     <Content Include="Images\main\img_bg_x.png" />
+    <Content Include="Images\szysy\ico_link.png" />
+    <Content Include="Images\szysy\ico_link_white.png" />
     <Content Include="Images\zhjc\img_fxfxbg.png" />
     <Content Include="Images\zhjc\legend\btn_initMapExtent.png" />
     <Content Include="Images\zhjc\legend\btn_showLegend.png" />
@@ -1313,12 +1319,19 @@
     <Content Include="Views\Main\ProjectOutside.cshtml" />
     <Content Include="Views\Shared\_ProjectOutsideLayout.cshtml" />
     <Content Include="Views\components\gcctMap\com_gcctAdd.cshtml" />
+    <Content Include="Views\SingleChannelSztj\Index.cshtml" />
+    <Content Include="Views\SingleChannelSztj\components\query.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\Index.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\components\query.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\AddProject.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\EditProject.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\FileManage.cshtml" />
+    <Content Include="Views\Login\LegalPerson.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
     <Folder Include="Controllers\Common\" />
     <Folder Include="Controllers\Hydrology\" />
-    <Folder Include="Controllers\ProjectOutside\" />
     <Folder Include="Controllers\Project\" />
     <Folder Include="Views\EngineerSketch\components\" />
     <Folder Include="Views\Uploader\" />
