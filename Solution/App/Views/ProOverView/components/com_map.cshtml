@@ -116,10 +116,36 @@
                 </el-row>
             </div>
         </div>
+        @* 在地图上增加工具栏（搜索，框选，测距，测面，清除） *@
+        <div class="map_tools">
+            <div class="tool tool-search" v-on:click="showSearchInput" style="margin-left:6px;">
+                <div class="search-img icon-img"></div>
+            </div>
+            <div class="tool tool-kuangx" v-on:click="">
+                <div class="kuangx-img icon-img"></div>
+            </div>
+            <div class="tool tool-ceju" v-on:click="measureDistance">
+                <div class="ceju-img icon-img"></div>
+            </div>
+            <div class="tool tool-cemian" v-on:click="measureArea">
+                <div class="cemian-img icon-img"></div>
+            </div>
+            <div class="tool tool-clear" v-on:click="clearFeature">
+                <div class="clear-img icon-img"></div>
+            </div>
+        </div>
+        <div class="hideRight" ref="hideRi" title="隐藏" v-on:click="hideRight">
+            <img src="/Images/gczl/btn_right.png" alt="隐藏" />
+        </div>
+        <div class="showRight" ref="" title="展开" v-on:click="showRight">
+            <img src="/Images/gczl/btn_left.png" alt="展开" />
+        </div>
+        <div class="search-input-div">
+            <el-input placeholder="请输入工程名称" v-model="proNm" size="mini">
+                <el-button slot="append" icon="el-icon-search" v-on:click="clickSearchBtn"></el-button>
+            </el-input>
+        </div>
         @* 地图上的四个图标按钮 *@
-        <el-button class="map_Btn clear_btn" icon="el-icon-delete" title="清除标注" v-on:click="clearFeature"></el-button>
-        <el-button class="map_Btn ceju_btn" icon="el-icon-rank" title="测距" v-on:click="measureDistance"></el-button>
-        <el-button class="map_Btn cemian_btn" icon="el-icon-minus" title="测面" v-on:click="measureArea"></el-button>
         <div class="map_Btn refresh_map" title="初始地图范围" v-on:click="refreshMap"></div>
         <div class="map_Btn tuli_btn" icon="el-icon-menu" v-on:click="onMouseOver"></div>
         <div class="map_Btn big_map" icon="el-icon-plus" v-on:click="mapZoomBig"></div>
@@ -232,7 +258,7 @@
                 pros: ['1','2','3','4','5'],//工程分类（所有）
                 proNm: '',  //工程名称
                 proNos: [], //工程编号
-                ctFlag: '1',//是否有草图（0没有草图，1有草图，2查询所有）
+                ctFlag: "2",//是否有草图（0没有草图，1有草图，2查询所有）
                 map: null,
                 centerDialogVisible: false,
                 layers: null,
@@ -275,6 +301,8 @@
                 pointDataArr: [],//组合完属性后的标注点信息集合
                 mapSpaceId: [],
                 markers: [],
+                lonlat:'',       //点击地图获取的坐标点
+                showInput: true,
             }
         },
         mounted: function () { 
@@ -294,7 +322,7 @@
         },
         methods: {
             afreshBelowContent: function () {
-                debugger;
+                //debugger;
                 if (window.screen.height <= 900) {
                     $(".proTable").css("height","170px");
                     $(".el-table--fit").css("height", "108px");
@@ -346,6 +374,10 @@
                 //标注点图层
                 this.markerLayer = new SuperMap.Layer.Markers("工程点");
                 this.vectorLayer = new SuperMap.Layer.Vector("工程草图");
+                this.gcctSelect = new SuperMap.Control.SelectFeature(this.vectorLayer, {
+                    onSelect: this.onGcctFeatureSelect,
+                    repeat: true
+                });
                 this.vectorLine = new SuperMap.Layer.Vector("线");
                 this.vectorX = new SuperMap.Layer.Vector("删除");
                 this.vectorUnit = new SuperMap.Layer.Vector("unit");
@@ -357,6 +389,7 @@
                     this.vectorLayerTmp,this.vectorX];
                 baselayer.events.on({ "layerInitialized": this.addLayers });
                 this.map.events.on({ "zoomend": this.mapIsZoomend });
+                this.map.events.on({ "click": this.mapClickEvent });
                 
                 //长度测量控件初始化
                 this.lineMeasure = new SuperMap.Control.Measure(
@@ -389,20 +422,72 @@
             addLayers: function () {
                 this.map.addLayers(this.layers);
                 this.map.addControl(this.closeSelect);
-                this.gcctSelect = new SuperMap.Control.SelectFeature(this.vectorLayer, {
-                    onSelect: this.onGcctFeatureSelect
-                });
                 this.map.addControl(this.gcctSelect);
                 this.map.addControl(this.lineMeasure);
                 this.map.addControl(this.areaMeasure);
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
                 //this.addMarkerPoints();//加载marker标注点
             },
+            mapClickEvent: function(e){
+                this.lonlat = this.map.getLonLatFromPixel(new SuperMap.Pixel(e.clientX, e.clientY));
+            },
             onGcctFeatureSelect: function(e) {
-                console.log(e);
+                let proNo = e.data.S_PROJECT_NO;
+                if(proNo != undefined && proNo != ''){
+                    this.closeInfoWin();
+                    var podata = this.pointDataArr;
+                    var that = {};
+                    for(let i=0;i<podata.length;i++){
+                        if(podata[i].id == proNo){
+                            that = podata[i];
+                        }
+                    }
+                    var x,y;
+                    var contentHTML = "<div  id='ptPop'>";  //地图上点的弹框
+                    contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'></span>";
+                    contentHTML += "<div>";
+                    contentHTML += "<div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + that.name + "</span></div>";
+                    contentHTML += "<table cellspacing='0' border='1' cellpadding='0'>";
+                    contentHTML += "<tr><td class='firtlist'>项目编号</td><td class='secondlist'>" + that.id + "</td><td class='threelist'>年度</td><td class='secondlist'>" + that.year + "</td></tr>";
+                    contentHTML += "<tr><td class='firtlist'>工程分类</td><td class='secondlist'>" + that.type + "</td><td class='threelist'>工程状态</td><td class='secondlist'>" + that.status + "</td></tr>";
+                    contentHTML += "<tr><td class='firtlist'>项目法人</td><td class='secondlist'>" + that.xmfr + "</td><td class='threelist'>所属镇</td><td class='secondlist'>" + that.ssz + "</td></tr>";
+                    contentHTML += "<tr><td class='firtlist'>工程地址</td><td class='secondlist' colspan='3'>" + that.gcdz + "</td></tr>";
+                    contentHTML += "<tr><td class='firtlist'>设计单位</td><td class='secondlist'>" + that.sjdw + "</td><td class='threelist'>设计单位</td><td class='secondlist'>" + that.sgdw + "</td></tr>";
+                    contentHTML += "<tr><td class='firtlist'>监理单位</td><td class='secondlist'>" + that.jldw + "</td><td class='threelist'>估算总投资</td><td class='secondlist'>" + that.gszje + "</td></tr>";
+                    contentHTML += "</table></div>";
+                    contentHTML += "<div style='width:100%;text-align:center;margin-top:5px;'><input type='button' value='' id='showGcDetail'></div></div></div>";
+                    if(e.geometry.id.indexOf("Point") != -1){
+                        x = e.geometry.x;
+                        y = e.geometry.y;
+                    } else {
+                        x = e.geometry.getCentroid().x;
+                        y = e.geometry.getCentroid().y;
+                    }
+                    //初始化FramedCloud类
+                    var framedCloud = new SuperMap.Popup.FramedCloud(
+                        "ptInfo", //id
+                        new SuperMap.LonLat(x, y),
+                        null,
+                        contentHTML,
+                        null,
+                        true,
+                        null,
+                        true
+                    );
+                    this.infowin = framedCloud;
+                    this.map.addPopup(framedCloud);
+                    this.map.setCenter(new SuperMap.LonLat(x, y));
+                    var thisobj = this;
+                    $('#showGcDetail').click(function () {
+                        thisobj.openGCDetail(that.type, that.sid);
+                    });
+                }
             },
             mapIsZoomend: function () {
                 var zom = this.map.getZoom();
+                if(zom == 3){
+                    this.closeInfoWin();
+                }
                 if (zom >= 3) {
                     this.markerLayer.clearMarkers();//去掉所有的点
                     this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
@@ -437,18 +522,20 @@
             },
             //条件筛选加载表格中的数据
             getTableData: function (url, param) {
+                var _this = this;
                 axios.post(url, param).then(function (response) {
                      var li = JSON.parse(response.data);
                      var datas = li.EnginPandectGetResponse.engin_pandect_list;
-                     this.tableData = datas;
-                     this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
-                     this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
-                     this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
-                     this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
-                     this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
-                     this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
-                     this.initTab();    //根据条件增加或减少Tab标签页
-                     this.getMapDBData();   //获取数据库数据（地图使用）
+                     _this.tableData = datas;
+                     console.log(_this.tableData);
+                     _this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
+                     _this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
+                     _this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
+                     _this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
+                     _this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
+                     _this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
+                     _this.initTab();    //根据条件增加或减少Tab标签页
+                     _this.getMapDBData();   //获取数据库数据（地图使用）
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -554,6 +641,8 @@
             },
             //加载数据
             processCompleted: function (e) {
+                this.mapSpaceData = [];
+                this.mapSpaceId = [];
                 var obj = e.result.features;
                 for (var i = 0; i < obj.length; i++) {
                     let gcobj = {};
@@ -588,6 +677,7 @@
             getPointDataArr: function () {
                 var spData = this.mapSpaceData;
                 var dbData = this.mapDbData;
+                this.pointDataArr = [];
                 let i=0,j=0;
                 for (; i < spData.length;i++){
                     let po = {}, k = 0;
@@ -766,7 +856,9 @@
                 axios.post('/ProOverView/GetData', {
                     page: this.currentPage, pagesize: this.pagesize,
                     sYear: this.dateBeginParam, eYear: this.dateEndParam,
-                    status: this.checkPros.join(','), towns: ct, stype: this.stype
+                    status: this.checkPros.join(','), towns: ct, 
+                    stype: this.stype, proNm: this.proNm, proNos: this.proNos.join(","),
+                    ctFlag: this.ctFlag
                 }).then(function (response) {
                     var li = JSON.parse(response.data);
                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
@@ -781,7 +873,8 @@
                     page: this.currentPage, pagesize: this.pagesize,
                     sYear: this.dateBeginParam, eYear: this.dateEndParam,
                     status: this.checkPros.join(','), towns: this.checkTwons.join(","),
-                    stype: this.stype
+                    stype: this.stype, proNm: this.proNm, proNos: this.proNos.join(","),
+                    ctFlag: this.ctFlag
                 }).then(function (response) {
                     var li = JSON.parse(response.data);
                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
@@ -801,6 +894,21 @@
                 $(".showLeft").hide();
                 $(".proFilter").animate({ width: "show" }, "normal", function () {
                     $(".hideLeft").show();
+                })
+            },
+            hideRight: function () {
+                $(".hideRight").hide();
+                $(".search-input-div").hide();
+                $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                this.showInput = true;
+                $(".map_tools").animate({ width: "hide" }, "normal", function () {
+                    $(".showRight").show();
+                })
+            },
+            showRight: function () {
+                $(".showRight").hide();
+                $(".map_tools").animate({ width: "show" }, "normal", function () {
+                    $(".hideRight").show();
                 })
             },
             hideDown: function () {
@@ -823,6 +931,15 @@
                 this.currentPage = pagesize;
                 this.refreshTableData();
             },
+            //搜索的点击事件
+            clickSearchBtn: function() {
+                console.log(this.proNm);
+                if(this.proNm == ''){
+
+                }else{
+                    this.getDataEvent();
+                }
+            },
             //街镇全选框的事件
             handleCheckAllChange: function (val) {
                 this.checkTwons = val ? this.twons : [];//
@@ -832,6 +949,7 @@
                 } else {
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
+                    this.markerLayer.clearMarkers();
                 }
             },
             //具体街镇change事件
@@ -845,6 +963,7 @@
                 } else {
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
+                    this.markerLayer.clearMarkers();
                 };
             },
             //工程分布全选的事件
@@ -857,6 +976,7 @@
                 } else {
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
+                    this.markerLayer.clearMarkers();
                 }
             },
             //具体的工程分布的改变（change）事件
@@ -870,6 +990,7 @@
                 } else {
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
+                    this.markerLayer.clearMarkers();
                 };
             },
             //最终双击结束
@@ -1059,14 +1180,13 @@
 
             },
             handleMeasurementsP: function (event) {
-                // console.log(event);
+                console.log(event);
             },
             //图例鼠标悬停事件
             onMouseOver: function () {
                 $('.tuli_img').toggle();
             },
             refreshMap: function () {   //复原地图
-                debugger
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
             },
             mapZoomBig: function () {
@@ -1074,6 +1194,17 @@
             },
             mapZoomSmall: function () {
                 this.map.zoomTo(this.map.getZoom() - 1);
+            },
+            showSearchInput:function(){
+                if(this.showInput){
+                    $(".search-input-div").show();
+                    $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
+                    this.showInput = false;
+                }else{
+                    $(".search-input-div").hide();
+                    $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                    this.showInput = true;
+                }
             },
         }
     }
@@ -1277,6 +1408,94 @@
     #showGcDetail:hover {
         background: url(/Images/gczl/btn_gongcxq_active.png);
     }
+    /* 地图上的工具栏 */
+    .hideRight {
+        position: absolute;
+        z-index: 2050;
+        right: 17px;
+        top: 6px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+    }
+    .showRight {
+        position: absolute;
+        z-index: 2050;
+        right: 17px;
+        top: 5px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+        display: none;
+    }
+    .search-input-div{
+        position: absolute;
+        z-index:2048;
+        top:42px;
+        right: 150px;
+        width: 231px;
+        display:none;
+    }
+    .map_tools{
+        position: absolute;
+        height:32px;
+        width:364px;
+        top:5px;
+        right:16px;
+        z-index: 2048;
+        background: white;
+        border:1px solid #cccccc;
+        line-height: 32px;
+    }
+    .map_tools .tool{
+        display:inline-block;
+        text-align: center;
+        width: 62px;
+        height: 100%;
+        text-align: center;
+    }
+    .tool .icon-img{
+        display:inline-block;
+        padding:0px;
+        width:54px;
+        height:18px;
+        margin-top: 7px;
+    }
+    /* 搜索 */
+    .search-img{
+        background: url(/Images/gczl/gjl/ico-search-normal.png) no-repeat;
+    }
+    .tool-search:hover>.search-img{
+        background: url(/Images/gczl/gjl/ico-search-active.png) no-repeat;
+    }
+    /* 框选 */
+    .kuangx-img{
+        background: url(/Images/gczl/gjl/ico-kuangx-normal.png) no-repeat;
+    }
+    .tool-kuangx:hover>.kuangx-img{
+        background: url(/Images/gczl/gjl/ico-kuangx-active.png) no-repeat;
+    }
+    /* 测距 */
+    .ceju-img{
+        background: url(/Images/gczl/gjl/ico-ceju-normal.png) no-repeat;
+    }
+    .tool-ceju:hover>.ceju-img{
+        background: url(/Images/gczl/gjl/ico-ceju-active.png) no-repeat;
+    }
+    /* 测面 */
+    .cemian-img{
+        background: url(/Images/gczl/gjl/ico-cemian-normal.png) no-repeat;
+    }
+    .tool-cemian:hover>.cemian-img{
+        background: url(/Images/gczl/gjl/ico-cemian-active.png) no-repeat;
+    }
+    /* 清除 */
+    .clear-img{
+        background: url(/Images/gczl/gjl/ico-clear-normal.png) no-repeat;
+    }
+    .tool-clear:hover>.clear-img{
+        background: url(/Images/gczl/gjl/ico-clear-active.png) no-repeat;
+    }
     /*地图上的四个悬浮的图标按钮*/
     .map_Btn{
         position:absolute;
@@ -1285,18 +1504,6 @@
         height:34px;
         cursor:pointer;
         z-index:1253;
-    }
-    .clear_btn{
-        top:38px;
-        padding:0px;
-    }
-    .ceju_btn{
-        top:72px;
-        padding:0px;
-    }
-    .cemian_btn{
-        top:106px;
-        padding:0px;
     }
     .refresh_map{
         top:140px;

@@ -10,7 +10,7 @@
         <el-row id="firstSelect">
             <el-col v-bind:span="7">
                 <span>所属镇:</span>
-                <el-select v-model="twon" placeholder="请选择">
+                <el-select v-model="twon" placeholder="请选择" size="small">
                     <el-option v-for="item in twons"
                                v-bind:key="item.value"
                                v-bind:label="item.label"
@@ -20,7 +20,7 @@
             </el-col>
             <el-col v-bind:span="8">
                 <span>数据来源:</span>
-                <el-select v-model="origin" placeholder="请选择">
+                <el-select v-model="origin" placeholder="请选择" size="small">
                     <el-option v-for="item in dataOrigin"
                                v-bind:key="item.value"
                                v-bind:label="item.label"
@@ -36,18 +36,18 @@
                 <el-radio v-model="radio" label="2">年报</el-radio>
             </el-col>
             <el-col v-bind:span="8">
-                <el-button icon="el-icon-arrow-left" v-on:click="preMonth">上一月</el-button>
-                <el-date-picker v-model="monthValue" style="width:120px;"
+                <el-button icon="el-icon-arrow-left" v-on:click="preMonth" size="small">上一月</el-button>
+                <el-date-picker v-model="monthValue" style="width:120px;" size="small"
                                 type="month"
                                 value-format="yyyy-MM"
                                 placeholder="选择月"
                                 key="key-date">
                 </el-date-picker>
-                <el-button v-on:click="nextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                <el-button v-on:click="nextMonth" size="small">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
             </el-col>
             <el-col v-bind:span="8">
-                <el-button type="primary" icon="el-icon-search">查询</el-button>
-                <el-button type="primary" icon="el-icon-upload2">导出</el-button>
+                <el-button type="primary" icon="el-icon-search" size="small">查询</el-button>
+                <el-button type="primary" icon="el-icon-upload2" size="small">导出</el-button>
             </el-col>
         </el-row>
     </header>
@@ -217,7 +217,6 @@
 
                 vm.chartheight = (document.documentElement.clientHeight - 122) / 2;
             });
-            alert(vm.chartheight);
             setTimeout(function () {
                 vm.setBarData();
                 vm.setPieData();
@@ -482,27 +481,12 @@
 
     #firstSelect .el-select .el-input__inner {
         width: 150px;
-        height: 30px;
     }
 
     #firstSelect, #secondSelect {
         margin: 20px 15px;
         min-width:1000px;
     }
-
-        #secondSelect .el-input__inner {
-            padding: 3px 30px;
-            height: 32px;
-        }
-
-    header .el-button {
-        padding: 8px 16px;
-    }
-
-    #secondSelect .el-input__icon {
-        line-height: 32px;
-    }
-
     #hdChart {
         border-bottom: 1px solid #b9b9b9;
         min-height: 200px;
@@ -531,8 +515,5 @@
     }
       .el-table--border{
         margin-bottom:4px;
-    }
-    .el-pagination{
-        float:right
     }
 </style>

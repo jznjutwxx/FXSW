@@ -172,6 +172,7 @@
     <Compile Include="Controllers\EngineerSketchController.cs" />
     <Compile Include="Controllers\FacilityStatisticsController.cs" />
     <Compile Include="Controllers\FarmlandWaterController.cs" />
+    <Compile Include="Controllers\ProjectOutside\FarmWaterOutsideController.cs" />
     <Compile Include="Controllers\GcztStatisticsController.cs" />
     <Compile Include="Controllers\GghdGclStatisticsController.cs" />
     <Compile Include="Controllers\HeavyPollutionReverwayController.cs" />
@@ -262,6 +263,26 @@
     <Content Include="Images\gczl\btn_wangong.png" />
     <Content Include="Images\gczl\btn_wangongys.png" />
     <Content Include="Images\gczl\Error.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_ceju_active.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_ceju_normal.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_cemian_active.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_cemian_normal.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_clear_active.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_clear_normal.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_kuangx_active.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_kuangx_normal.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_search_active.png" />
+    <Content Include="Images\gczl\gjl\btn_gongju_search_normal.png" />
+    <Content Include="Images\gczl\gjl\ico-ceju-active.png" />
+    <Content Include="Images\gczl\gjl\ico-ceju-normal.png" />
+    <Content Include="Images\gczl\gjl\ico-cemian-active.png" />
+    <Content Include="Images\gczl\gjl\ico-cemian-normal.png" />
+    <Content Include="Images\gczl\gjl\ico-clear-active.png" />
+    <Content Include="Images\gczl\gjl\ico-clear-normal.png" />
+    <Content Include="Images\gczl\gjl\ico-kuangx-active.png" />
+    <Content Include="Images\gczl\gjl\ico-kuangx-normal.png" />
+    <Content Include="Images\gczl\gjl\ico-search-active.png" />
+    <Content Include="Images\gczl\gjl\ico-search-normal.png" />
     <Content Include="Images\gczl\gongcxq.png" />
     <Content Include="Images\gczl\ico_gongchngfl.png" />
     <Content Include="Images\gczl\ico_jiezhen.png" />
@@ -1204,6 +1225,14 @@
     <Content Include="Scripts\vue\vue.js" />
     <Content Include="Scripts\vue\vue.min.js" />
     <Content Include="Scripts\vue\vuex.js" />
+    <Content Include="Scripts\xlsx\cpexcel.js" />
+    <Content Include="Scripts\xlsx\jszip.js" />
+    <Content Include="Scripts\xlsx\shim.min.js" />
+    <Content Include="Scripts\xlsx\xlsx.core.min.js" />
+    <Content Include="Scripts\xlsx\xlsx.extendscript.js" />
+    <Content Include="Scripts\xlsx\xlsx.full.min.js" />
+    <Content Include="Scripts\xlsx\xlsx.js" />
+    <Content Include="Scripts\xlsx\xlsx.min.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
     <Content Include="Web.Debug.config">
@@ -1217,7 +1246,6 @@
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
     <Content Include="Views\Home\Index.cshtml" />
-    <Content Include="Views\Home\components\query.cshtml" />
     <Content Include="Views\components\echarts\com_line.cshtml" />
     <Content Include="Views\components\echarts\com_bar.cshtml" />
     <Content Include="Views\components\echarts\com_pie.cshtml" />
@@ -1264,7 +1292,6 @@
     <Content Include="Views\BackboneRiverway\components\com_table.cshtml" />
     <Content Include="Views\BackboneRiverway\AddProject.cshtml" />
     <Content Include="Views\EngineerSketch\Index.cshtml" />
-    <Content Include="Views\Home\components\mapTest.cshtml" />
     <Content Include="Views\BackboneRiverway\LookProject.cshtml" />
     <Content Include="Views\FarmlandWater\AddPage.cshtml" />
     <Content Include="Views\RiverStatisticss\Index.cshtml" />
@@ -1327,6 +1354,15 @@
     <Content Include="Views\BackboneRiverOutside\EditProject.cshtml" />
     <Content Include="Views\BackboneRiverOutside\FileManage.cshtml" />
     <Content Include="Views\Login\LegalPerson.cshtml" />
+    <Content Include="Views\FarmWaterOutside\Index.cshtml" />
+    <Content Include="Views\FarmWaterOutside\components\query.cshtml" />
+    <Content Include="Views\FarmWaterOutside\AddPage.cshtml" />
+    <Content Include="Views\FarmWaterOutside\DetailPage.cshtml" />
+    <Content Include="Views\BackboneRiverOutside\Detail.cshtml" />
+    <Content Include="Scripts\xlsx\LICENSE" />
+    <Content Include="Scripts\xlsx\xlsx.core.min.map" />
+    <Content Include="Scripts\xlsx\xlsx.full.min.map" />
+    <Content Include="Scripts\xlsx\xlsx.min.map" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

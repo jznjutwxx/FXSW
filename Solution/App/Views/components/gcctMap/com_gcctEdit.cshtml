@@ -73,7 +73,7 @@
             }
         },
         watch: {
-            "gcctinfo.S_PROJECT_NO":function(val){
+            "gcctinfo.S_PROJECT_NO": function (val) {
                 this.gcctinfo.S_PROJECT_NO = val;
                 this.setLayer();
             }
@@ -187,7 +187,7 @@
             },
             setLayerCompleted: function (e) {
                 var tempLayerID = e.result.newResourceID;
-                if (this.layer_gcct==null) {
+                if (this.layer_gcct == null) {
                     this.layer_gcct = new SuperMap.Layer.TiledDynamicRESTLayer('工程草图', this.url2, {
                         transparent: true,
                         cacheEnabled: false,
@@ -200,7 +200,7 @@
                         'layerInitialized': this.addLayer
                     });
                 } else {
-                    this.layer_gcct.params.layersID=tempLayerID;
+                    this.layer_gcct.params.layersID = tempLayerID;
                     this.layer_gcct.redraw();
                     // this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
                 }
@@ -251,6 +251,9 @@
                         type: 'error'
                     });
                 }
+                this.$emit('draftstatus', {
+                    "n_draft": 1
+                });
             },
             addPointCompleted: function (drawGeometryArgs) {
                 this.drawPoint.deactivate();
@@ -305,6 +308,9 @@
                         message: '添加失败！'
                     });
                 }
+                this.$emit('draftstatus', {
+                    "n_draft": 1
+                });
             },
             addPathCompleted: function (drawGeometryArgs) {
                 this.drawLine.deactivate();
@@ -358,6 +364,9 @@
                         message: '添加失败！'
                     });
                 }
+                this.$emit('draftstatus', {
+                    "n_draft": 1
+                });
             },
             addPolygonCompleted: function (drawGeometryArgs) {
                 this.drawPolygon.deactivate();
@@ -411,6 +420,9 @@
                         message: '添加失败！'
                     });
                 }
+                this.$emit('draftstatus', {
+                    "n_draft": 1
+                });
             },
             //编辑要素
             editSelectedFeature: function (drawGeometryArgs) {
@@ -622,6 +634,7 @@
                         });
                     }
                 }
+
             },
             //删除地物成功
             deleteFeaturesProcessCompleted: function (editFeaturesEventArgs) {
@@ -639,7 +652,43 @@
                         type: 'error'
                     });
                 }
+                //判断删除后是否还存在要素
+                this.isExistDraft();
             },
+
+            isExistDraft: function () {
+                var getFeatureParam, getFeatureBySQLService, getFeatureBySQLParams;
+                getFeatureParam = new SuperMap.REST.FilterParameter({
+                    attributeFilter: "S_PROJECT_NO=" + this.gcctinfo.S_PROJECT_NO
+                });
+                getFeatureBySQLParams = new SuperMap.REST.GetFeaturesBySQLParameters({
+                    queryParameter: getFeatureParam,
+                    datasetNames: ["gcct0514:gcct_pt", "gcct0514:gcct_ln", "gcct0514:gcct_pl"],
+                    fromIndex: 0
+                });
+
+                getFeatureBySQLService = new SuperMap.REST.GetFeaturesBySQLService(this.url4, {
+                    eventListeners: {
+                        "processCompleted": this.processCompletedDraft,
+                        "processFailed": this.processFailed
+                    }
+                });
+                getFeatureBySQLService.processAsync(getFeatureBySQLParams);
+            },
+            processCompletedDraft: function (e) {
+                var features = e.result.features;
+                if (features.length > 0) {
+                    this.$emit('draftstatus', {
+                        "n_draft": 1
+                    });
+                } else {
+                    this.$emit('draftstatus', {
+                        "n_draft": 0
+                    });
+                }
+            },
+
+
             //画面
             activatePolygon: function () {
                 this.dataset = 'gcct_pl';

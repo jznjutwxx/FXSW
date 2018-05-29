@@ -19,17 +19,19 @@
         <el-container>
             <el-header>
                 <div class="logo"></div>
-                <el-menu v-bind:default-active="activeIndex" class="top-menu" mode="horizontal" v-on:select="handleSelect" background-color="transparent" text-color="#fff" active-text-color="#fff">
-                    <el-menu-item v-bind:index="menu.id" v-bind:key="menu.id" v-for="menu in menus"><span>{{menu.name}}</span></el-menu-item>
-                </el-menu>
-                <el-dropdown v-on:command="handleCommand">
-                    <span class="el-dropdown-link">
-                        @ViewBag.UserName<i class="el-icon-arrow-down el-icon--right"></i>
-                    </span>
-                    <el-dropdown-menu slot="dropdown">
-                        <el-dropdown-item command="logout">退 出</el-dropdown-item>
-                    </el-dropdown-menu>
-                </el-dropdown>
+                <div class="menu">
+                    <el-menu v-bind:default-active="activeIndex" class="top-menu" mode="horizontal" v-on:select="handleSelect" background-color="transparent" text-color="#fff" active-text-color="#fff">
+                        <el-menu-item v-bind:index="menu.id" v-bind:key="menu.id" v-for="menu in menus"><span>{{menu.name}}</span></el-menu-item>
+                    </el-menu>
+                    <el-dropdown v-on:command="handleCommand">
+                        <span class="el-dropdown-link">
+                            @ViewBag.UserName<i class="el-icon-arrow-down el-icon--right"></i>
+                        </span>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="logout">退 出</el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </div> 
             </el-header>
             <el-container>
                 <el-aside ref="aside" width="auto" v-show="isShow">
@@ -233,7 +235,7 @@
                                 children: [
                                      { id: '31', name: '单断面水质统计', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
                                      { id: '32', name: '单河道水质统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '33', name: '重污染河道水质', icon: 'ico_gghd', url: '/SZQYJL/Index' },
+                                     { id: '33', name: '重污染河道水质', icon: 'ico_gghd', url: '/HeavyPollutionReverway/Index' },
                                      { id: '34', name: '水功能区达标统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
                                      { id: '35', name: '骨干河道水质情况分析', icon: 'ico_gghd', url: '/SZQYJL/Index' },
                                      { id: '36', name: '清洁水行动水质达标统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
@@ -298,7 +300,6 @@
 
     <style>
         .el-container {
-            /*height: 100%;*/
             border: 0px solid #eee;
         }
 
@@ -324,12 +325,15 @@
                 background-image: url('../../Images/sw_main/img_header_sw.png');
                 background-repeat: no-repeat;
             }
+            .el-header .menu {
+                height: 78px;
+                position: absolute;
+                right: 0px;
+            }
 
             .el-header .el-menu {
                 display: inline-block;
                 height: 78px;
-                position: absolute;
-                right: 150px;
             }
 
                 .el-header .el-menu .el-menu-item {
@@ -348,8 +352,9 @@
                 display: inline;
                 font-size: 16px;
                 color: white;
-                margin: 0 30px 0 0px;
+                margin: 0 30px 0 20px;
                 cursor: pointer;
+                float:right;
             }
 
 
@@ -378,7 +383,6 @@
 
             .el-aside .el-menu {
                 border: 0px;
-                /*height: 100%;*/
             }
 
                 .el-aside .el-menu .el-submenu div {
@@ -413,21 +417,20 @@
             padding: 0px;
         }
 
-         .el-footer span {
+            .el-footer span {
                 margin-left: 20px;
             }
+
             @@media screen and (max-width: 1200px) {
-            .el-header .el-menu {
+           .el-header .el-menu {
                 display: inline-block;
                 height: 78px;
-                position: absolute;
-                right: 15px;
             }
             .el-header .el-menu .el-menu-item{
                 padding:0 10px;
             }
              .el-header .el-dropdown {
-                display:none;
+                margin: 0 10px 0 10px;
             }
         }
     </style>

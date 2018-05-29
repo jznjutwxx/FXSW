@@ -6,427 +6,428 @@
 
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="edit">
-    <el-form :model="editForm" v-bind:inline="true" label-position="right" label-width="100px" size="small" ref="editForm" v-bind:rules="rules">
-        <div id="BasicInfo">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss">基本信息</div>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程名称：" style="width:100%;" prop="S_NAME">
-                        <el-input v-model="editForm.S_NAME" v-bind:disabled="isFinish">
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目编号：" prop="S_PROJECT_NO">
-                        <el-input v-model="editForm.S_PROJECT_NO" v-bind:disabled="isFinish">
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="年度：" prop="N_YEAR">
-                        @*<el-select v-model="editForm.N_YEAR" class="selectwidth">
-                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeYear">
-                            </el-option>
-                        </el-select>*@
-                        <el-date-picker v-model="editForm.N_YEAR"
-                                        type="year"
-                                        placeholder="选择年份" style="width:90%;" v-bind:disabled="isFinish">
-                        </el-date-picker>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程分类：">
-                       农村生活污水
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程状态：" prop="N_PACE_STATUS">
-                        <el-select v-model="editForm.N_PACE_STATUS" class="selectwidth" v-bind:disabled="isFinish">
-                            <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key" v-on:change="changeStatics">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="所属镇：" prop="S_TOWN">
-                        <el-select v-model="editForm.S_TOWN" class="selectwidth" v-bind:disabled="isFinish">
-                            <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value" v-on:change="changeXzqh">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="16" class="colheight el-col-16">
-                    <el-form-item label="工程地址：" prop="S_ADDRESS">
-                        <el-input v-model="editForm.S_ADDRESS" style="width:116.5%;" v-bind:disabled="isFinish">
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="项目法人：">
-                        <el-select v-model="editForm.S_LEGAL_PERSON" class="selectwidth" v-bind:disabled="isFinish">
-                            <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeLegalper">
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-            </el-row>
+    <div id="editForm">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="editForm" ref="editForm" class="demo-ruleForm" v-bind:rules="rules">
+            <div id="appBasic">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">基本信息</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row" type="flex">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程名称:" prop="S_NAME">
+                            <el-input v-model="editForm.S_NAME" size="mini"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程编号:" prop="S_PROJECT_NO">
+                            <el-input v-model="editForm.S_PROJECT_NO" size="mini"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="年度:" prop="N_YEAR">
+                            <el-date-picker v-model="editForm.N_YEAR"
+                                            type="year"
+                                            placeholder="选择年份" class="selCss" size="mini">
+                            </el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程分类:">
+                            <span>农村生活污水</span>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程状态:" prop="N_PACE_STATUS">
+                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
+                            <el-select v-model="editForm.N_PACE_STATUS" class="selCss" size="mini">
+                                <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="所属镇:" prop="s_town">
+                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
+                            <el-select v-model="editForm.S_TOWN" class="selCss" size="mini">
+                                <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="16" class="colCss">
+                        <el-form-item label="工程地址:" prop="S_ADDRESS">
+                            <el-input v-model="editForm.S_ADDRESS" size="mini" style="width:127%;"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="项目法人:">
+                            <el-select v-model="editForm.S_LEGAL_PERSON" class="selCss" size="mini">
+                                <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="设计单位:">
+                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
+                            <el-select v-model="editForm.S_UNIT_DESIGN" class="selCss" size="mini">
+                                <el-option v-for="item in DesignUnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
+                                </el-option>
+                            </el-select>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="施工单位:">
+                            <el-input v-model="editForm.S_UNIT_BUILD" size="mini"></el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="监理单位:">
+                            <el-input v-model="editForm.S_UNIT_SUPERVISE" size="mini"></el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="估算总投资:" prop="N_RECKON_TOTAL_AMT">
+                            <el-input v-model="editForm.N_RECKON_TOTAL_AMT" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row ">
+                    <el-col v-bind:span="24" style="height:90px;">
+                        <el-form-item label="备注:">
+                            <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" resize="none" v-model="editForm.S_REMARK" style="width:136%;padding-top:10px;">
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+            <div id="appReply">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">批复工程量</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="村组数量:" prop="N_CZSL">
+                            <el-input v-model="editForm.N_CZSL" size="mini">
+                                <template slot="append">
+                                    个
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="总户数:" prop="N_ZHS">
+                            <el-input v-model="editForm.N_ZHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="就地处理户数:" prop="N_JDCLHS">
+                            <el-input v-model="editForm.N_JDCLHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="市政纳管户数:" prop="N_SZNGHS">
+                            <el-input v-model="editForm.N_SZNGHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="就地处理站:" prop="N_JDCLZ">
+                            <el-input v-model="editForm.N_JDCLZ" size="mini">
+                                <template slot="append">
+                                    座
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="管网长度:" prop="N_GWCD">
+                            <el-input v-model="editForm.N_GWCD" size="mini">
+                                <template slot="append">
+                                    公里
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="新翻建化粪池:" prop="N_XFJHFC">
+                            <el-input v-model="editForm.N_XFJHFC" size="mini">
+                                <template slot="append">
+                                    座
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+            <div id="appInvest">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">概算投资</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="总投资:" prop="N_TOTAL_INVEST">
+                            <el-input v-model="editForm.N_TOTAL_INVEST" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="工程直接费:" prop="N_ENGIN_COST">
+                            <el-input v-model="editForm.N_ENGIN_COST" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="独立费用:" prop="N_INDEPENDENT_COST">
+                            <el-input v-model="editForm.N_INDEPENDENT_COST" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="预备费:" prop="N_PREP_COST">
+                            <el-input v-model="editForm.N_PREP_COST" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="景观等费用:" prop="N_SIGHT_COST">
+                            <el-input v-model="editForm.N_SIGHT_COST" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+            <div id="appCapital">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">资金配套组成</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="市补:" prop="N_SUBSIDY_CITY">
+                            <el-input v-model="editForm.N_SUBSIDY_CITY" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="区配套:" prop="N_SUBSIDY_DISTRICT">
+                            <el-input v-model="editForm.N_SUBSIDY_DISTRICT" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="镇配套:" prop="N_SUBSIDY_TOWN">
+                            <el-input v-model="editForm.N_SUBSIDY_TOWN" size="mini">
+                                <template slot="append">
+                                    万元
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+            <div id="appFinish">
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">完成工程量</div>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="村组数量:" prop="N_WCCZSL">
+                            <el-input v-model="editForm.N_WCCZSL" size="mini">
+                                <template slot="append">
+                                    个
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="总户数:" prop="N_WCZHS">
+                            <el-input v-model="editForm.N_WCZHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="就地处理户数:" prop="N_WCJDCLHS">
+                            <el-input v-model="editForm.N_WCJDCLHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="市政纳管户数:" prop="N_WCSZNGHS">
+                            <el-input v-model="editForm.N_WCSZNGHS" size="mini">
+                                <template slot="append">
+                                    户
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="就地处理站:" prop="N_WCJDCLZ">
+                            <el-input v-model="editForm.N_WCJDCLZ" size="mini">
+                                <template slot="append">
+                                    座
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="管网长度:" prop="N_WCGWCD">
+                            <el-input v-model="editForm.N_WCGWCD" size="mini">
+                                <template slot="append">
+                                    公里
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row class="el-row">
+                    <el-col v-bind:span="8" class="colCss">
+                        <el-form-item label="新翻建化粪池:" prop="N_WCXFJHFC">
+                            <el-input v-model="editForm.N_WCXFJHFC" size="mini">
+                                <template slot="append">
+                                    座
+                                </template>
+                            </el-input>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+            <div id="appFiles">
+                <el-row type="flex">
+                    <div class="blueTitle"></div>
+                    <div class="titlecss">补充信息</div>
+                </el-row>
 
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="监理单位：">
-                        <el-input v-model="editForm.S_UNIT_SUPERVISE" v-bind:disabled="isFinish">
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="施工单位：">
-                        <el-input v-model="editForm.S_UNIT_BUILD" v-bind:disabled="isFinish">
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="设计单位：">
-                        <el-select v-model="editForm.S_UNIT_DESIGN" class="selectwidth" v-bind:disabled="isFinish">
-                            <el-option v-for="item in DesignUnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id" v-on:change="changeDesignUnit">
-                                @*v-bind:key="item.s_id"*@
-                            </el-option>
-                        </el-select>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="估算总投资：" prop="N_RECKON_TOTAL_AMT">
-                        <el-input v-model="editForm.N_RECKON_TOTAL_AMT" v-bind:disabled="isFinish">
-                            <span>万元</span>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="24">
-                    <el-form-item label="备注：">
-                        <el-input type="textarea" v-model="editForm.S_REMARK" placeholder="请输入内容" style="width:125%;" v-bind:rows="3" resize="none" v-bind:disabled="isFinish"></el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div id="ProjectInfo">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss"> 批复工程量</div>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="村组数量:" prop="N_CZSL">
-                        <el-input v-model="editForm.N_CZSL" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                个
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="总户数:" prop="N_ZHS">
-                        <el-input v-model="editForm.N_ZHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="就地处理户数:" prop="N_JDCLHS">
-                        <el-input v-model="editForm.N_JDCLHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="市政纳管户数:" prop="N_SZNGHS">
-                        <el-input v-model="editForm.N_SZNGHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="就地处理站:" prop="N_JDCLZ">
-                        <el-input v-model="editForm.N_JDCLZ" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="管网长度:" prop="N_GWCD">
-                        <el-input v-model="editForm.N_GWCD" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                公里
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="新翻建化粪池:" prop="N_XFJHFC">
-                        <el-input v-model="editForm.N_XFJHFC" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div id="InvestInfo">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss">概算投资</div>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="总投资：" prop="N_TOTAL_INVEST">
-                        <el-input v-model="editForm.N_TOTAL_INVEST" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="工程直接费：" prop="N_ENGIN_COST">
-                        <el-input v-model="editForm.N_ENGIN_COST" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="独立费用：" prop="N_INDEPENDENT_COST">
-                        <el-input v-model="editForm.N_INDEPENDENT_COST" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="预备费：" prop="N_PREP_COST">
-                        <el-input v-model="editForm.N_PREP_COST" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" label-position="right" class="colheight">
-                    <el-form-item label="景观等费用：" prop="N_SIGHT_COST">
-                        <el-input v-model="editForm.N_SIGHT_COST" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div id="fundForm">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss">资金配套组成</div>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="市补:" prop="N_SUBSIDY_CITY">
-                        <el-input v-model="editForm.N_SUBSIDY_CITY" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="区配套:" prop="N_SUBSIDY_DISTRICT">
-                        <el-input v-model="editForm.N_SUBSIDY_DISTRICT" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="镇配套:" prop="N_SUBSIDY_TOWN">
-                        <el-input v-model="editForm.N_SUBSIDY_TOWN" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                万元
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div id="finishInfo">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss">完成工程量</div>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="村组数量:" prop="N_WCCZSL">
-                        <el-input v-model="editForm.N_WCCZSL" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                个
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="总户数:" prop="N_WCZHS">
-                        <el-input v-model="editForm.N_WCZHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="就地处理户数:" prop="N_WCJDCLHS">
-                        <el-input v-model="editForm.N_WCJDCLHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="市政纳管户数:" prop="N_WCSZNGHS">
-                        <el-input v-model="editForm.N_WCSZNGHS" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                户
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="就地处理站:" prop="N_WCJDCLZ">
-                        <el-input v-model="editForm.N_WCJDCLZ" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="管网长度:" prop="N_WCGWCD">
-                        <el-input v-model="editForm.N_WCGWCD" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                公里
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row type="flex" class="rowpadding">
-                <el-col v-bind:span="8" class="colheight">
-                    <el-form-item label="新翻建化粪池:" prop="N_WCXFJHFC">
-                        <el-input v-model="editForm.N_WCXFJHFC" v-bind:disabled="isFinish">
-                            <template slot="append">
-                                座
-                            </template>
-                        </el-input>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div id="editInfo">
-            <el-row type="flex">
-                <div class="blueTitle"></div>
-                <div class="titlecss">补充信息</div>
-            </el-row>
-
-            <el-row>
-                <el-col v-bind:span="24">
-                    <el-form-item label="工程图纸上传:">
-                        <el-upload class="upload-demo"
-                                   ref="upload"
-                                   multiple
-                                   action="/FarmlandWater/UpFiles"
-                                   v-bind:on-change="getDrawing"
-                                   v-bind:on-remove="handleRemoveDrawing"
-                                   v-bind:on-success="upSucess"
-                                   v-bind:on-error="upError"
-                                   v-bind:before-remove="beforeRemove"
-                                   v-bind:file-list="drawingFiles"
-                                   v-bind:disabled="isFinish"
-                                   v-bind:before-upload="beforeAvatarUpload">
-                            <el-button slot="trigger" size="small" type="primary" v-bind:disabled="isFinish">选取文件</el-button>
-                            @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
-                            <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
-                        </el-upload>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-            <el-row>
-                <el-col v-bind:span="24">
-                    <el-form-item label="工程位置草图:">
-                        <el-button type="text" v-on:click="showgcctMapEdit" v-bind:disabled="isFinish">工程位置草图</el-button>
-                    </el-form-item>
-                </el-col>
-                <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
-                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
-                </el-dialog>
-            </el-row>
-            <el-row>
-                <el-col v-bind:span="24">
-                    <el-form-item label="工程图片上传:">
-                        <span class="el-upload__tip">支持png、jpg、jpeg、gif格式的图片上传；文件大小应在10M以内</span>
-                        <el-upload action="/FarmlandWater/UpFiles"
-                                   list-type="picture-card"
-                                   v-bind:on-preview="handlePreview"
-                                   v-bind:on-remove="handleRemovePicture"
-                                   v-bind:on-change="getPicture"
-                                   v-bind:on-success="upSucess2"
-                                   v-bind:on-error="upError"
-                                   v-bind:before-remove="beforeRemove"
-                                   v-bind:file-list="pictureFiles"
-                                   v-bind:disabled="isFinish"
-                                   v-bind:before-upload="beforeImagesUpload"
-                                   accept="image/png, image/jpg, image/jpeg, image/gif">
-                            <i class="el-icon-plus"></i>
-                        </el-upload>
-                        <el-dialog v-bind:visible.sync="dialogVisible" v-bind:disabled="isFinish">
-                            <img style="width:100%" v-bind:src="dialogImageUrl" alt="">
-                        </el-dialog>
-                    </el-form-item>
-                </el-col>
-            </el-row>
-        </div>
-
-        <div  style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-            <el-button v-on:click="cancel" size="small"> 取消</el-button>
-            <el-button type="primary" v-on:click="edit('editForm')" size="small" v-bind:disabled="isFinish">保存</el-button>
-        </div>
-    </el-form>
+                <el-row>
+                    <el-col v-bind:span="24">
+                        <el-form-item label="工程图纸上传:">
+                            <el-upload class="upload-demo"
+                                       ref="upload"
+                                       multiple
+                                       action="/SanitarySewage/UpFiles"
+                                       v-bind:on-change="getDrawing"
+                                       v-bind:on-remove="handleRemoveDrawing"
+                                       v-bind:on-success="upSucess"
+                                       v-bind:on-error="upError"
+                                       v-bind:before-remove="beforeRemove"
+                                       v-bind:file-list="drawingFiles"
+                                       v-bind:disabled="isFinish"
+                                       v-bind:before-upload="beforeAvatarUpload">
+                                <el-button slot="trigger" size="small" type="primary" v-bind:disabled="isFinish">选取文件</el-button>
+                                @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
+                                <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
+                            </el-upload>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="24">
+                        <el-form-item label="工程位置草图:">
+                            <el-button type="text" v-on:click="showgcctMapEdit" v-bind:disabled="isFinish">工程位置草图</el-button>
+                        </el-form-item>
+                    </el-col>
+                    <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
+                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                    </el-dialog>
+                </el-row>
+                <el-row>
+                    <el-col v-bind:span="24">
+                        <el-form-item label="工程图片上传:">
+                            <span class="el-upload__tip">支持png、jpg、jpeg、gif格式的图片上传；文件大小应在10M以内</span>
+                            <el-upload action="/SanitarySewage/UpFiles"
+                                       list-type="picture-card"
+                                       v-bind:on-preview="handlePreview"
+                                       v-bind:on-remove="handleRemovePicture"
+                                       v-bind:on-change="getPicture"
+                                       v-bind:on-success="upSucess2"
+                                       v-bind:on-error="upError"
+                                       v-bind:before-remove="beforeRemove"
+                                       v-bind:file-list="pictureFiles"
+                                       v-bind:disabled="isFinish"
+                                       v-bind:before-upload="beforeImagesUpload"
+                                       accept="image/png, image/jpg, image/jpeg, image/gif">
+                                <i class="el-icon-plus"></i>
+                            </el-upload>
+                            <el-dialog v-bind:visible.sync="dialogVisible" v-bind:disabled="isFinish">
+                                <img style="width:100%" v-bind:src="dialogImageUrl" alt="">
+                            </el-dialog>
+                        </el-form-item>
+                    </el-col>
+                </el-row>
+            </div>
+        </el-form>
+    </div>
+    <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
+        <el-button v-on:click="cancel" size="small"> 取消</el-button>
+        <el-button type="primary" v-on:click="edit('editForm')" size="small" v-bind:disabled="isFinish">保存</el-button>
+    </div>
 </div>
 @Html.Partial("~/Views/components/gcctMap/com_gcctEdit.cshtml")
 <script>
@@ -991,9 +992,23 @@
 </script>
 
 <style>
-    #edit input, textarea {
-        max-width: none;
-        width: 100%;
+    #edit {
+        font-size: 14px;
+        min-width: 900px;
+        overflow-x: hidden;
+    }
+
+    #editForm {
+        padding: 10px 20px 10px 20px;
+        margin-bottom: 60px;
+    }
+
+    #edit .el-row {
+        margin-bottom: 15px;
+    }
+
+    #edit .el-form-item__error {
+        padding-top: 0px;
     }
 
     #edit .el-form-item {
@@ -1001,56 +1016,55 @@
     }
 
     #edit .el-form-item__content {
-        width: 70%;
+        width: 65%;
     }
 
-    #edit .el-input {
-        width: 90%;
-    }
-
-    #edit {
-        width: 100%;
-        height: 95%;
-        padding: 20px;
+    #edit input, select, textarea {
+        max-width: none;
+        color: #333333;
         font-size: 14px;
-        min-width:1020px;
     }
-    
+
+    #edit .el-input-group__append {
+        color: #333333;
+        font-size: 14px;
+    }
+
+    #edit .el-textarea__inner {
+        color: #333333;
+        font-size: 14px;
+    }
+
+    #edit .el-form-item__label {
+        color: #333333;
+        font-size: 14px;
+    }
+
     #edit .blueTitle {
         width: 7px;
         height: 18px;
         background-color: #409eff;
         float: left;
     }
-    #edit .blueTitle {
-        width: 7px;
-        height: 18px;
-        background-color: #409eff;
+
+    #edit .appTitle {
         float: left;
-    }
-    #edit .titlecss {
         font-size: 14px;
         font-weight: bold;
         color: #666666;
-        float: left;
-    }
-    .rowpadding {
-        padding-bottom: 10px;
+        padding-left: 10px;
     }
 
-    .colheight {
-        height: 40px;
+    #edit .colCss {
+        height: 35px;
     }
 
-    .selectwidth {
+    #edit .selCss {
         width: 100%;
     }
 
-   #edit .el-col-16 {
-        width: 66.6%;
-    }
-   #editInfo .el-dialog__body{
-        padding:10px 5px;
+    #appFiles .el-dialog__body {
+        padding: 10px 5px;
     }
 </style>
 

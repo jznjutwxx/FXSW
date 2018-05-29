@@ -18,7 +18,7 @@ namespace App.Controllers.Main
 
         public ActionResult Project()
         {
-            ViewData["username"] = "系统管理员";//Session["name"] != null ? Session["name"].ToString() : "";
+            ViewData["username"] = Session["name"] != null ? Session["name"].ToString() : "";
             return View();
         }
 
@@ -31,7 +31,7 @@ namespace App.Controllers.Main
 
         public ActionResult Hydrology()
         {
-            ViewData["username"] = "系统管理员";//Session["name"] != null ? Session["name"].ToString() : "";
+            ViewData["username"] = Session["name"] != null ? Session["name"].ToString() : "";
             return View();
         }
     }

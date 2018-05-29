@@ -33,7 +33,8 @@ namespace App.Controllers
 
             paramDictionary.Add("engin_name", proNm);//工程名称 
             paramDictionary.Add("project_nos", proNos);//工程编号
-            if(!ctFlag.Equals("2")){    //2代表不限制是否有草图条件，查询所有的工程
+            if(ctFlag != "2")   //2代表不限制是否有草图条件，查询所有的工程
+            {    
                 paramDictionary.Add("draft", ctFlag);//0没草图 1有草图
             } 
 
@@ -57,7 +58,8 @@ namespace App.Controllers
 
             paramDictionary.Add("engin_name", proNm);//工程名称 
             paramDictionary.Add("project_nos", proNos);//工程编号
-            if(!ctFlag.Equals("2")){    //2代表不限制是否有草图条件，查询所有的工程
+            if (ctFlag != "2")  //2代表不限制是否有草图条件，查询所有的工程
+            {    
                 paramDictionary.Add("draft", ctFlag);//0没草图 1有草图
             } 
 

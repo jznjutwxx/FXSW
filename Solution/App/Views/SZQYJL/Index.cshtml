@@ -8,7 +8,7 @@
         <el-row style="margin:10px 0px 10px 24px; min-width:1000px;">
             <el-col v-bind:span="7">
                 <span>所属镇:</span>
-                <el-select v-model="town" placeholder="请选择">
+                <el-select v-model="town" placeholder="请选择" size="small">
                     <el-option v-for="item in towns"
                                v-bind:key="item.value"
                                v-bind:label="item.label"
@@ -18,7 +18,7 @@
             </el-col>
             <el-col v-bind:span="8">
                 <span>水质监测任务:</span>
-                <el-select v-model="task" placeholder="请选择">
+                <el-select v-model="task" placeholder="请选择" size="small">
                     <el-option v-for="item in tasks"
                                v-bind:value="item">
                     </el-option>
@@ -28,25 +28,25 @@
         <el-row style="margin:15px 0 0 10px;min-width:1000px;">
             <el-col v-bind:span="7">
                 <span>河道等级:</span>
-                <el-select v-model="level" placeholder="请选择">
+                <el-select v-model="level" placeholder="请选择" size="small">
                     <el-option v-for="item in levels"
                                v-bind:value="item">
                     </el-option>
                 </el-select>
             </el-col>
             <el-col v-bind:span="8">
-                <el-button icon="el-icon-arrow-left" v-on:click="preMonth">上一月</el-button>
-                <el-date-picker v-model="monthValue" style="width:120px;"
+                <el-button icon="el-icon-arrow-left" v-on:click="preMonth" size="small">上一月</el-button>
+                <el-date-picker v-model="monthValue" style="width:120px;" size="small"
                                 type="month"
                                 value-format="yyyy-MM"
                                 placeholder="选择月"
                                 key="key-date">
                 </el-date-picker>
-                <el-button v-on:click="nextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                <el-button v-on:click="nextMonth" size="small">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
             </el-col>
             <el-col v-bind:span="8">
-                <el-button type="primary" icon="el-icon-search" v-on:click="getQyjlData">查询</el-button>
-                <el-button type="primary" icon="el-icon-upload2">导出</el-button>
+                <el-button type="primary" icon="el-icon-search" v-on:click="getQyjlData" size="small">查询</el-button>
+                <el-button type="primary" icon="el-icon-upload2" size="small">导出</el-button>
             </el-col>
         </el-row>
     </header>
@@ -84,14 +84,14 @@
         <div class="titlebg"></div>
        <div id="qyjlSelect">
             <span class="sqqyjltext">水质取样记录</span>
-            <el-date-picker v-model="qyjlStartTime" type="datetime" placeholder="选择时间" class="qyjlDatePicker">
+            <el-date-picker v-model="qyjlStartTime" type="datetime" placeholder="选择时间" class="qyjlDatePicker" size="small">
             </el-date-picker>
             <span class="demonstration">-</span>
-            <el-date-picker v-model="qyjlEndTime" type="datetime" placeholder="选择时间" class="qyjlDatePicker">
+            <el-date-picker v-model="qyjlEndTime" type="datetime" placeholder="选择时间" class="qyjlDatePicker" size="small">
             </el-date-picker>
             <span id="qyjlBtnRange">
-                <el-button type="primary" icon="el-icon-search">查询</el-button>
-                <el-button type="primary" icon="el-icon-upload2">导出</el-button>
+                <el-button type="primary" icon="el-icon-search" size="small">查询</el-button>
+                <el-button type="primary" icon="el-icon-upload2" size="small">导出</el-button>
             </span>
         </div>
         <!----<div id="qyjlContent">
@@ -286,20 +286,20 @@
 
         header .el-select .el-input__inner {
             width: 150px;
-            height: 32px;
+            /*height: 32px;*/
         }
 
-    .el-input__inner {
+    /*.el-input__inner {
         height: 32px;
     }
 
     header .el-button {
         padding: 8px 16px;
-    }
+    }*/
 
-    header .el-input__icon {
+    /*header .el-input__icon {
         line-height: 32px;
-    }
+    }*/
 
     .el-table thead {
         background-color: #F5F5F5;
@@ -347,19 +347,16 @@
             color: #666666;
             font-family: 'Microsoft YaHei';
         }
-        #qyjlSelect .el-button{
+        /*#qyjlSelect .el-button{
             padding:8px 15px;
         }
         #qyjlSelect .el-input__icon {
         line-height: 34px;
-     }
+     }*/
         #qyjlSelect .el-date-editor.el-input, .el-date-editor.el-input__inner{
             width:200px;
         }
             .el-table--border{
         margin-bottom:4px;
-    }
-    .el-pagination{
-        float:right
     }
 </style>

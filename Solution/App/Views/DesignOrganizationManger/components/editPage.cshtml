@@ -74,7 +74,7 @@
 
         },
         methods: {
-            handleClose(done) {
+            handleClose:function(done) {
                 done();
                 /* this.$confirm('确认关闭？').then(function () {
                      done();
@@ -91,13 +91,7 @@
             saveEditInfo: function () {
                 debugger;
                 const vm = this;
-                var nowSJDWid;
-                try{
-                    nowSJDWid = this.now_edit_data.s_id;  //当前设计单位id
-                }
-                catch (e) {
-                    alert("error");
-                }
+                var nowSJDWid = this.now_edit_data.s_id;  //当前设计单位id
                 var ZHhaveChanged = true, MChaveChanged=true;  //设计单位账号、名称是否改变了
                 if (this.account == this.now_edit_data.s_account) {
                     ZHhaveChanged = false;
@@ -131,6 +125,10 @@
                 var s_name = this.sjdwmc;
                 var s_account = this.account;
                 var s_password = this.password;
+                if (s_name == "" || s_account == "" || s_password == "") {
+                    vm.$message("名称、账号或者密码为空,请完善信息");
+                    return;
+                }
                 axios.post("/DesignOrganizationManger/updateDesignOrganization", { sjdwId: nowSJDWid, sjdwmc: s_name, sjdwzh: s_account, sjdwpwd: s_password, ZHhaveChanged: ZHhaveChanged, MChaveChanged: MChaveChanged, addProjcctIdStr: addProjcctIdStr, deleteProjectIdStr: deleteProjectIdStr }).then(function (response) {
                     debugger;
                     var res = JSON.parse(response.data).EnginUnitUpdateResponse.result;
@@ -140,7 +138,7 @@
                     } else {
                         vm.$message("编辑失败");
                     }
-                })
+                });
             },
             //编辑设计单位中进行工程查询，需要当前设计单位的id值，去查询当前设计单位在当前条件下已经关联的工程
             queryProjct_edit: function () {

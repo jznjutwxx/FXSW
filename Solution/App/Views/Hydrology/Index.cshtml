@@ -12,7 +12,7 @@
     <el-row v-bind:gutter="15" class="row_bg">
         <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
             <div class="titlediv hdgkdiv" v-on:click="showHDnum">河道概况</div>
-            <com-swsyleft ref="swsyleft" @*v-on:gethd-event="showHDnum"*@ v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
+            <com-swsyleft ref="swsyleft"  v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
         </el-col>
         <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
             <div class="bigBox">
@@ -126,12 +126,12 @@
                     <!--时间查询区域-->
                     <div id="tiemSelect">
                         <span class="demonstration">时间：</span>
-                        <el-date-picker v-model="getDateStr(-1)" type="datetime" placeholder="选择日期时间">
+                        <el-date-picker v-model="getDateStr(-1)" type="datetime" placeholder="选择日期时间" size="small" style="width:190px;">
                         </el-date-picker>
                         <span class="demonstration">-</span>
-                        <el-date-picker v-model="getDateStr(0)" type="datetime" placeholder="选择日期时间">
+                        <el-date-picker v-model="getDateStr(0)" type="datetime" placeholder="选择日期时间" size="small" style="width:190px;" > 
                         </el-date-picker>
-                        <el-button type="primary" icon="el-icon-search">查询</el-button>
+                        <el-button type="primary" icon="el-icon-search" size="small">查询</el-button>
                     </div>
                     <!--图表重点内容提示区域-->
                     <div id="noticeMsg">
@@ -143,9 +143,9 @@
                 </el-dialog>
             </div>
         </el-col>
-        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss" style="padding-left:12px;"> 
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss"> 
             <div class="titlediv cztj" v-on:click="showZCnum">测站统计</div>
-            <com-swsyright v-bind:lefttwon='lefttwon' @*v-on:getcztj-event="showZCnum"*@>
+            <com-swsyright v-bind:lefttwon='lefttwon'>
 
             </com-swsyright>
         </el-col>
@@ -341,7 +341,7 @@
                 that.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
                 /*----鼠标在地图上经过,触发点选-------*/
                 that.map.events.on({ "mouseover": this.selectTwon });
-               // that.activeSelectTown();
+                // that.activeSelectTown();
                 //setTimeout(function () {
                 //    $(".smControlScaleLineTop").html().replace(/公里/, "km");
                 //},200)
@@ -391,7 +391,7 @@
                 //var extent = this.map.getExtent();
                 //if (this.mapTitle != '测站统计') {
                 //    debugger;
-                    this.drawPoint.activate();
+                this.drawPoint.activate();
                 //} else {
                 //    this.drawPoint.deactivate();
                 //}
@@ -455,45 +455,45 @@
                                 this.map.removeLayer(this.czNumCoverLayer);
                             }
                         }*/
-                       /* Array.prototype.in_array = function (str) {
-                            for (i = 0; i < this.length; i++) {
-                                if (this[i] == str) {
-                                    return true;
-                                }
-                            }
-                            return false;
-                        }
-                        var layersname = [];
-                        for (var i = 0; i < this.map.layers.length; i++) {
-                            layersname.push(this.map.layers[i].name);
-                        }
-                        if (layersname.in_array("一镇一站图层")) {
-                            debugger;
-                            this.map.removeLayer(this.representativeMarkersLayer);
-                           
-                        }
-                        var layersname = [];
-                        for (var i = 0; i < this.map.layers.length; i++) {
-                            layersname.push(this.map.layers[i].name);
-                        }
-                        if (layersname.in_array("各个镇的测站总数量图层")) {
-                            this.map.removeLayer(this.czNumCoverLayer);
-                        }
-                        var layersname = [];
-                        for (var i = 0; i < this.map.layers.length; i++) {
-                            layersname.push(this.map.layers[i].name);
-                        }
-                        if (!layersname.in_array("具体测站图层")) {
-                            this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
-                            //this.map.addLayer(this.czNameCoverLayer);
-                        }*/
+                        /* Array.prototype.in_array = function (str) {
+                             for (i = 0; i < this.length; i++) {
+                                 if (this[i] == str) {
+                                     return true;
+                                 }
+                             }
+                             return false;
+                         }
+                         var layersname = [];
+                         for (var i = 0; i < this.map.layers.length; i++) {
+                             layersname.push(this.map.layers[i].name);
+                         }
+                         if (layersname.in_array("一镇一站图层")) {
+                             debugger;
+                             this.map.removeLayer(this.representativeMarkersLayer);
+
+                         }
+                         var layersname = [];
+                         for (var i = 0; i < this.map.layers.length; i++) {
+                             layersname.push(this.map.layers[i].name);
+                         }
+                         if (layersname.in_array("各个镇的测站总数量图层")) {
+                             this.map.removeLayer(this.czNumCoverLayer);
+                         }
+                         var layersname = [];
+                         for (var i = 0; i < this.map.layers.length; i++) {
+                             layersname.push(this.map.layers[i].name);
+                         }
+                         if (!layersname.in_array("具体测站图层")) {
+                             this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
+                             //this.map.addLayer(this.czNameCoverLayer);
+                         }*/
                         var jtcz = false;
                         for (var i = 0; i < allLayers.length; i++) {
                             var layername = allLayers[i].name;
-                            if (allLayers[i].name == "一镇一站图层" ) {
+                            if (allLayers[i].name == "一镇一站图层") {
                                 this.map.removeLayer(this.representativeMarkersLayer);
                             }
-                            if (allLayers[i].name != "具体测站图层"  && !jtcz) {
+                            if (allLayers[i].name != "具体测站图层" && !jtcz) {
                                 this.map.addLayer(this.jtczLayer);        //这2行代码影像了点选
                                 this.map.addLayer(this.czNameCoverLayer);
                                 jtcz = true;
@@ -505,7 +505,7 @@
                         //this.map.addLayer(this.jtczLayer);
                         //this.map.addLayer(this.czNameCoverLayer);
                     } else {
-                        var yzyz = false,ggz=false;
+                        var yzyz = false, ggz = false;
                         //当缩放级别小于3时，不显示具体测站图层,显示representativeMarkersLayer和czNumCoverLayer
                         for (var i = 0; i < allLayers.length; i++) {
                             if (allLayers[i].name != "一镇一站图层" && !yzyz) {
@@ -542,7 +542,7 @@
                 this.map.zoomToExtent(drawGeometryArgs.feature.geometry.bounds);
                 this.map.zoomTo(3);
                 var url = "http://172.18.1.25:8090/iserver/services/map-fxjz2/rest/maps/fxjz_20180410222";
-                var queryParam = new SuperMap.REST.FilterParameter({ name: "奉贤8街镇@奉贤8街镇" });
+                var queryParam = new SuperMap.REST.FilterParameter({ name: "奉贤8街镇@奉贤8街镇" });  //街镇R@奉贤2016
                 var queryByGeometryParameters = new SuperMap.REST.QueryByGeometryParameters({
                     queryParams: [queryParam],
                     geometry: drawGeometryArgs.feature.geometry,
@@ -1322,7 +1322,6 @@
         z-index: 1500;
         height: 150px;
         bottom: 18px;
-        background-color: #051266;
         color: white;
         font-size: 14px;
         font-family: 'Microsoft YaHei';

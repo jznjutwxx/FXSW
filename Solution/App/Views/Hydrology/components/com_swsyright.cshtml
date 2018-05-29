@@ -58,7 +58,7 @@
                 <el-col v-bind:span="6">报警信息</el-col>
             </el-row>
             <div class="tablecss">
-                <el-row class="titlecss" v-for="(realTime, index) in realTimedatas">
+                <el-row class="titlecss" v-for="(realTime, index) in realTimedatas" v-bind:key="realTime.name">
                     <el-col v-bind:span="3" style="text-align:center;">{{index+1}}</el-col>
                     <el-col v-bind:span="8">{{realTime.name}}</el-col>
                     <el-col v-bind:span="7">{{realTime.type}}</el-col>
@@ -112,7 +112,6 @@
 
         methods: {
             init: function () {
-                console.log(this.props);
                 this.getCZnum('/Hydrology/getCZnum', { s_area: this.town });
                 this.getYLnum('/Hydrology/getYLnum', { s_area: "金汇镇" });
                 this.getTimeInfo('/Hydrology/getTimeInfo', null);

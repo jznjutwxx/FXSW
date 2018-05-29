@@ -12,6 +12,7 @@
     <div id="tableData">
         <el-table v-bind:data="tableData"
                   v-bind:height="height"
+                  v-loading="loading"
                   border
                   stripe
                   style="width: 100%"
@@ -70,7 +71,7 @@
             </el-table-column>
         </el-table>
     </div>
-    <div style="text-align:right;padding-top:10px;">
+    <div style="text-align:left;padding:10px 0 0 10px;">
         <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, sizes, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-size="pageSize" v-bind:page-sizes="[10, 20, 30, 40, 50]" v-bind:total="total">
         </el-pagination>
     </div>
@@ -82,6 +83,7 @@
     new Vue({
         el: '#app',
         data: {
+            loading: true,
             height: 0,
             total: 0, //默认数据总数
             pageSize: 10,//每页的数据条数
@@ -116,8 +118,10 @@
             },
 
             setTableData: function (url, param) {
+                this.loading = true,
                 axios.post(url, param)
                  .then(function (response) {
+                     this.loading = false;
                      var li = JSON.parse(response.data);
                      var datas = li.EnginListGetResponse.engin_list;
                      this.tableData = datas;

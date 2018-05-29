@@ -1,34 +1,44 @@
 ﻿
 <script type="text/x-template" id="defaultPage">
     <div id="defaultpage">
-        <div id="queryhead">
-            <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" v-model="frName">
-            </el-input>
-            <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryFRinfo">查询</el-button>
-            <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
-            <el-button type="primary" class="btnDown"></el-button>
-            <el-button type="primary" class="btnImport"></el-button>
-            <el-button type="primary" icon="el-icon-upload2" v-on:click="exportExcel" size="small"  plain>导出</el-button>
+        <div id="queryhead">             
+            <el-form v-bind:inline="true" size="small">
+                <el-form-item>
+                    <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" v-model="frName">
+                    </el-input>
+                </el-form-item>
+                <el-form-item style="padding-left:20px;">
+                    <el-button type="primary" icon="el-icon-search" class="btnSel"  v-on:click="queryFRinfo">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
+                    <el-button type="primary" class="btnDown"></el-button>
+                    <el-button type="primary" class="btnImport"></el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-upload2" v-on:click="exportExcel" size="small" plain>导出</el-button>
+                </el-form-item>
+            </el-form>           
         </div>
         <div id="out-table">
-            <el-table v-bind:data="frData.slice((currentPage-1)*pagesize,currentPage*pagesize)"    highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" v-bind:height="tableHeight">
+            <el-table v-bind:data="frData"    highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" v-bind:height="tableHeight">
                 <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="frname" label="法人姓名" header-align="center" align="center">
+                <el-table-column property="s_name" label="法人姓名" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="zh" label="账号" header-align="center" align="left">
+                <el-table-column property="s_account" label="账号" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="glgz" label="关联未完结工程" header-align="center" align="left">
+                <el-table-column property="engin_name" label="关联未完结工程" header-align="center" align="left">
                 </el-table-column>
                 <el-table-column property="cz" label="操作" header-align="center" align="center">
                     <template slot-scope="scope">
                         <el-button size="mini" v-on:click="showEditPage(scope)">编辑</el-button>
-                        <el-button size="mini" type="danger" v-on:click="deletFRinfo">删除</el-button>
+                        <el-button size="mini" type="danger" v-on:click="deletFRinfo(scope)">删除</el-button>
                     </template>
                 </el-table-column>
             </el-table>
         </div>
-        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frData.length">
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="frTotalCount">
         </el-pagination>
     </div>
 </script>
@@ -39,195 +49,8 @@
             return {
                 promptMessage: "请输入法人姓名",
                 tableHeight: document.documentElement.clientHeight - (53 + 34),
-                frData: [{
-                    id: "0gdhsh44444hhedh",
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: "mima0",
-                    nf: "2017",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-
-                }, {
-                    id: "1gdhsh44444hhedh",
-                    frname: "詹星星",
-                    zh: "supermap123",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima1',
-                    nf: "2018",
-                    town: "海湾",
-                    gzclass: "骨干河道",
-                }, {
-                    id: "2gdhsh44444hhedh",
-                    frname: "王星星",
-                    zh: "wb111",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima2',
-                    nf: "2010",
-                    town: "庄行",
-                    gzclass: "骨干河道",
-                }, {
-                    id: "3gdhsh44444hhedh",
-                    frname: "王星星",
-                    zh: "shwb",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima3',
-                    nf: "2014",
-                    town: "南桥",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "王星星",
-                    zh: "shwbrj",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima4',
-                    nf: "2015",
-                    town: "金汇",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "李四",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima5',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima6',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima7',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima8',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima9'
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima10'
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima11'
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima12'
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    frname: "王星星",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, ],
+                frData: [],
+                frTotalCount:0,
                 currentPage: 1,
                 pagesize: 14,
                 addpage_visible: false,
@@ -244,7 +67,7 @@
             $(window).resize(function () {
                 vm.tableHeight = document.documentElement.clientHeight - (53 + 34);
             });
-
+            vm.queryFRinfo();
         },
         methods: {
             indexOrder: function (index) {
@@ -253,9 +76,11 @@
             },
             current_change: function (currentPage) {
                 this.currentPage = currentPage;
+                this.queryFRinfo();
             },
             pagesize_Change: function (pagesize) {
                 this.pagesize = pagesize;
+                this.queryFRinfo();
             },
             showAddPage: function () {
                 this.addpage_visible = true;
@@ -276,17 +101,34 @@
             },
             //查询法人信息
             queryFRinfo: function () {
-                this.$message("查询法人姓名");
+                //this.$message("查询法人姓名");
+                const vm = this;
                 axios.post("/LegalPersonManger/queryFrInfo", { currentPage: this.currentPage, pagesize: this.pagesize, frName: this.frName }).then(function (response) {
-
-                  })
+                    debugger;
+                    var result = JSON.parse(response.data).EnginLegalPersonListGetResponse;   //totalCount  engin_unit_person_list
+                    vm.frData = result.engin_unit_person_list;
+                    vm.frTotalCount = result.totalCount;
+                    
+                 })
             },
             //删除法人信息
-            deletFRinfo: function () {
+            deletFRinfo: function (scope) {
                 debugger;
+                const vm = this;
+                var rowInfo = scope.row;//当前行信息
+                var frId = rowInfo.s_id;
                 var deleteDesOrg = window.confirm("确认删除？");
                 if (deleteDesOrg) {
-                    this.$message("删除成功");
+                    //deleteFrInfo
+                    axios.post("/LegalPersonManger/deleteFrInfo", { s_id: frId }).then(function (response) {
+                        debugger;
+                        var result = JSON.parse(response.data).EnginLegalPersonUpdateResponse.result;
+                        if (result) {
+                            vm.$message("删除成功");
+                            vm.queryFRinfo();
+                        }
+                    });
+                 
                 }
                 else {
                     this.$message("取消删除");
@@ -315,13 +157,13 @@
 </script>
 <style>
     #queryhead {
-        margin: 10px;
+        margin-left: 10px;
         min-width: 700px;
+        height:50px;
     }
-
         #queryhead .btnSel {
             padding: 8px 12px;
-            margin-left: 15px;
+            margin-left: 0px;
         }
 
         #queryhead .el-input--small {
@@ -332,20 +174,20 @@
             width: 73px;
             height: 32px;
             padding-left: 20px;
-            background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+            background: url(/Images/gcgl/btn_xinzeng_normal.png) no-repeat;
             border: 0px;
         }
 
             #queryhead .btnAdd:focus {
-                background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+                background: url(/Images/gcgl/btn_xinzeng_normal.png) no-repeat;
             }
 
             #queryhead .btnAdd:hover {
-                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+                background: url(/Images/gcgl/btn_xinzeng_active.png) no-repeat;
             }
 
             #queryhead .btnAdd:active {
-                background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+                background: url(/Images/gcgl/btn_xinzeng_active.png) no-repeat;
             }
 
         #queryhead .btnDown {
@@ -385,7 +227,7 @@
     .el-table--border{
         margin-bottom:4px;
     }
-    .el-pagination{
+    /*.el-pagination{
         float:right
-    }
+    }*/
 </style>

@@ -2,12 +2,23 @@
 <script type="text/x-template" id="defaultPage">
     <div id="defaultpage">
         <div id="queryhead">
-            <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" ref="inputSjdw" v-model="sjdwName">
-            </el-input>
-            <el-button type="primary" icon="el-icon-search" class="btnSel" plain v-on:click="queryDesignOrganization">查询</el-button>
-            <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
-            <el-button type="primary" class="btnDown"></el-button>
-            <el-button type="primary" class="btnImport"></el-button>
+            <el-form v-bind:inline="true" size="small">
+                <el-form-item>
+                    <el-input v-bind:placeholder="promptMessage" prefix-icon="el-icon-search" size="small" ref="inputSjdw" v-model="sjdwName">
+                    </el-input>
+                </el-form-item>
+                <el-form-item style="padding-left:20px;">
+                    <el-button type="primary" icon="el-icon-search" class="btnSel"  v-on:click="queryDesignOrganization">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" class="btnAdd" v-on:click="showAddPage"></el-button>
+                    <el-button type="primary" class="btnDown"></el-button>
+                    <el-button type="primary" class="btnImport"></el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" icon="el-icon-upload2"  size="small" plain>导出</el-button>
+                </el-form-item>            
+            </el-form>           
         </div>
         <el-table v-bind:data="sjdwData" highlight-current-row v-bind:border='true' v-bind:height="tableHeight" v-bind:stripe="true" ref="sjdwtable">
             <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
@@ -25,7 +36,7 @@
                 </template>
             </el-table-column>
         </el-table>
-        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwTotalCount" >
+        <el-pagination layout="total, sizes, prev, pager, next, jumper" v-on:size-change="pagesize_Change" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-sizes="[2, 3, 4, 5,6,7,8,9,10,11,12,13,14]" v-bind:page-size="pagesize" v-bind:total="sjdwTotalCount">
         </el-pagination>
     </div>
 </script>
@@ -224,7 +235,7 @@
                     glgz: "奉贤一期、奉贤二期、奉贤三期",
 
                 }, ],
-                sjdwTotalCount:0,
+                sjdwTotalCount: 0,
                 currentPage: 1,
                 pagesize: 6,
                 addpage_visible: false,
@@ -251,7 +262,6 @@
             },
             current_change: function (currentPage) {
                 this.currentPage = currentPage;
-                // alert("当前页" + this.currentPage + "；每页数" + this.pagesize);
                 this.queryDesignOrganization();
             },
             pagesize_Change: function (pagesize) {
@@ -296,14 +306,14 @@
                 var sjdwId = rowInfo.s_id;
                 var deleteDesOrg = window.confirm("确认删除？");
                 if (deleteDesOrg) {
-                    axios.post("/DesignOrganizationManger/deleteDesignOrganization", { s_id:sjdwId}).then(function (response) {
+                    axios.post("/DesignOrganizationManger/deleteDesignOrganization", { s_id: sjdwId }).then(function (response) {
                         var result = JSON.parse(response.data).EnginUnitUpdateResponse.result;
                         if (result) {
                             vm.$message("删除成功");
                             vm.queryDesignOrganization();
                         }
                     });
-                 
+
                 }
                 else {
                     this.$message("取消删除");
@@ -318,13 +328,14 @@
 </script>
 <style>
     #queryhead {
-        margin: 10px;
+        margin-left: 10px;
         min-width: 700px;
+         height:50px;ssssss
     }
 
         #queryhead .btnSel {
             padding: 8px 12px;
-            margin-left: 15px;
+            margin-left: 0px;
         }
 
         #queryhead .el-input--small {
@@ -391,7 +402,7 @@
         margin-bottom: 4px;
     }
 
-    .el-pagination {
+    /*.el-pagination {
         float: right;
-    }
+    }*/
 </style>

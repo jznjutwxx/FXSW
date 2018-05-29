@@ -406,9 +406,7 @@
         },
         methods: {
             afreshBelowContent: function () {
-                debugger;
                 if (window.screen.height <= 900) {
-                    debugger;
                     $("#belowContent").css("height", "200px");
                     $(".el-table__body-wrapper").css("height", "89px");
                     $(".el-table__body-wrapper").css("overflow-y", "auto");
@@ -422,7 +420,6 @@
                 }
             },
             initMap: function () {
-                debugger;
                 this.map = new SuperMap.Map("mapContainer", {
                     allOverlays: true, controls: [
                     //new SuperMap.Control.ScaleLine(),
@@ -491,18 +488,15 @@
                 this.map.zoomTo(this.map.getZoom() + 1)
             },
             mapZoomToSmall: function () {
-                debugger;
                 this.map.zoomTo(this.map.getZoom() - 1)
             },
             showJcdLegend: function () {
                 if (this.belowTitle == "雨量") {
-                    debugger;
                     $('#jcdLegend')[0].style.bottom = "306px";
                     this.ylLegendShow = true;
                     this.zdjcdLegendShow = false;
                     this.rgLegendShow = false;
                 } else if (this.belowTitle == "人工取样点") {
-                    debugger;
                     $('#jcdLegend')[0].style.bottom = "375px";
                     this.ylLegendShow = false;
                     this.zdjcdLegendShow = false;
@@ -517,7 +511,6 @@
             },
             //initPosition方法没用
             initPosition: function () {
-                debugger;
                 var bodyWidth = document.body.clientWidth;
                 var bodyHeight = document.body.clientHeight;
                 //document.getElementById("SuperMap.Control.Zoom_5").style.left = bodyWidth - 60 + "px";
@@ -525,7 +518,6 @@
             },
             //取得需要展示的坐标点数据
             getLeftData: function (leftData, bleowTableTitle, jclx) {
-                debugger;
                 this.leftData = leftData;  //筛选后的数据
                 console.log(this.leftData);
                 this.belowTitle = bleowTableTitle; //下方表格显示的title
@@ -536,14 +528,12 @@
             },
             //把左边筛选结果数据展示到地图上
             showPointOnMap: function () {
-                debugger;
                 this.jcdMarkersLayer.clearMarkers();
                 this.fsfxVectorLayer.removeAllFeatures();
                 var markers = [];
                 var vm = this;
                 /*------------------------后台真实数据的方法开始-----------------------------------*/
                 for (var i = 0; i < this.leftData.length; i++) {
-                    debugger;
                     var item = this.leftData[i];
                     var size = new SuperMap.Size(28, 33);
                     var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
@@ -682,7 +672,6 @@
                                 break;
                         }
                     }
-                    debugger
                     vm.differentColourToTable();  //根据表格中的列值不同，渲染不同的颜色
                     var icon = new SuperMap.Icon(picUrl, size, offset);
                     var marker = new SuperMap.Marker(new SuperMap.LonLat(item.n_jd, item.n_wd), icon);
@@ -702,7 +691,6 @@
                 var lon = e.object.lonlat.lon, lat = e.object.lonlat.lat;
                 var that = this;
                 var nowPtAttr = {}; //当前站点的属性数据
-                debugger;
                 for (var i = 0; i < this.leftData.length; i++) {
                     if (this.leftData[i].n_jd == lon && this.leftData[i].n_wd == lat) {
                         nowPtAttr = this.leftData[i];
@@ -778,7 +766,6 @@
             },
             showRgqydSzqs: function (szqsTableHTML) {
                 this.closeInfoWin();
-                debugger;
                 this.szqsDialogVisible = true;
                 this.activeName = 'szqsLine';       
                 this.noticeMsg = '铁浓度平均值为5mg/L,同比........';
@@ -797,10 +784,8 @@
                 vm.qyjlStartTime = moment().format('YYYY-MM-DD');
                 vm.qyjlStartTime = moment(vm.qyjlStartTime, "YYYY-MM-DD").subtract(1, 'y').format('YYYY-MM-DD');
                 vm.qyjlEndTime = moment(vm.qyjlEndTime).format('YYYY-MM-DD');
-                debugger;
                 //获取当前点的取样记录   nowPt.id          id为 4647F9509C9E411194D3E13133F146EB，兴园村兴隆708号
                 axios.post('/ZHJC/getRgqyd_qyjlData', { qyid: "4647F9509C9E411194D3E13133F146EB", startTime: '2017-01-01 10:50:00', endTime: '2020-06-10 10:50:00' }).then(function (response) {
-                    debugger;
                     //取样记录数据
                     vm.qyjlData = JSON.parse(response.data).SamplingReportListGetResponse.sampling_report_list;
                     vm.qyjlDialogVisible = true;
@@ -922,7 +907,6 @@
                 var seconds = (new Date()).getSeconds();
                 var sTime, eTime = vm.getDateStr(0) + (new Date()).toString().slice(15, 24);
                 if (hours > 7) {
-                    debugger;
                     //今天8点当当前时间
                     sTime = vm.getDateStr(0) + " 08:00:00";
                 }
@@ -930,7 +914,6 @@
                     sTime = vm.getDateStr(-1) + " 08:00:00";
                 }
                 axios.post('/ZHJC/getZdjcdChartData', { zdName: stationname, startTime: sTime, endTime: eTime }).then(function (response) {
-                    debugger
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
                     vm.setChartDatas(vm.yslDatas);
                 }).bind(this).catch(function (error) {
@@ -990,7 +973,6 @@
             //雨量图
             setBarData: function (ylTime, ylValue) {
                 this.$refs.ylbar.charts.showLoading();
-                debugger;
                 this.$refs.ylbar.charts.hideLoading();
                 this.barOption = {
                     color: '#50a6ff',
@@ -1069,7 +1051,6 @@
             },
             //水位图
             setSwLineData: function (swTime, swValue) {
-                debugger;
                 this.$refs.swline.charts.showLoading();
                 this.$refs.swline.charts.hideLoading();
                 this.swLineOption = {
@@ -1418,7 +1399,6 @@
                 return dateStr;
             },
             hideBelow: function () {
-                debugger;
                 var that = this;
                 this.hideBelowBtn = false;
                 $("#belowContent").animate({ height: "hide" }, "fast", function () {
@@ -1426,7 +1406,6 @@
                 });
             },
             showBelow: function () {
-                debugger;
                 var that = this;
                 this.showBelowBtn = false;
                 $("#belowContent").animate({ height: "show" }, "fast", function () {
@@ -1446,10 +1425,8 @@
                 if (!this.rgqyd_table) {//自动取样点,设置最后一列的样式
                     $.each($('.zdjcdTableDiv tbody tr td:last-child'), function (index, item) {
                         if (item.children[0].innerHTML == '正常') {
-                            debugger;
                             item.children[0].style.color = '#00b42a';
                         } else if (item.children[0].innerHTML == '设备异常') {
-                            debugger;
                             item.children[0].style.color = '#fd7d2b';
                         } else if (item.children[0].innerHTML == '报警') {
                             item.children[0].style.color = '#ed2727';
@@ -1469,16 +1446,13 @@
                         else if (item.children[0].innerHTML == 'III类') {
                             item.children[0].style.color = '#f1c3ad'
                         }
-                        else if (item.children[0].innerHTML == 'IV类') {
-                            debugger;
+                        else if (item.children[0].innerHTML == 'IV类') {       
                             item.children[0].style.color = '#ec2727'
                         }
                         else if (item.children[0].innerHTML == 'V类') {
-                            debugger;
                             item.children[0].style.color = '#f32e8c'
                         }
                         else if (item.children[0].innerHTML == '劣V类') {
-                            debugger;
                             item.children[0].style.color = '#333333'
                         }
                     });

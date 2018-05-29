@@ -445,7 +445,7 @@
                         </el-form-item>
                     </el-col>
                     <el-dialog title="新增工程位置草图" v-bind:visible.sync="mapAddDialogVisible" v-on:open="opendialog" width="70%" top="6vh">
-                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo v-on:draftstatus="setDraftStatus"></com-gcctmap-edit>
                     </el-dialog>
                 </el-row>                
                 <el-row>
@@ -525,7 +525,7 @@
 
                     n_complete_length: '', n_complete_land_area: '', n_complete_protect_hard: '',
                     n_complete_protect_ecology: '', n_complete_bridge: '', n_complete_plant_bank: '',
-                    n_complete_plant_slope: '', n_complete_plant_depth: '',
+                    n_complete_plant_slope: '', n_complete_plant_depth: '',n_draft:''
                 },
                 drawingFiles: '',
                 pictureFiles: '',
@@ -681,6 +681,9 @@
             },
         },
         methods: {
+            setDraftStatus:function(param){
+                this.formData.n_draft=param.n_draft;
+            },
             opendialog: function () {
                 this.bindGCCTData();
             },

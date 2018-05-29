@@ -2,231 +2,74 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "测试页面";
 }
+<script src="~/Scripts/xlsx/xlsx.full.min.js"></script>
 <div id="app">
-    <home-query v-on:emit-event="getEmitEvent" ref="homeQuery"></home-query>
-    <com-line v-bind:option="lineOption" v-bind:style="styles"></com-line>
-    <com-base-table v-bind:height="height" v-bind:tabledatas="tableData"></com-base-table>
+    <el-upload class="upload-demo"
+               drag
+               action="/Home/GetData"
+               v-bind:on-success="success"
+               v-bind:show-file-list="false">
+        <i class="el-icon-upload"></i>
+        <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
+    </el-upload>
+    <el-table v-bind:data="results" border style="width:100%;margin-top:20px;">
+        <el-table-column v-for="item of headers" v-bind:prop="item"  v-bind:label="item"  v-bind:key="item">
+        </el-table-column>
+    </el-table>
 </div>
 
-@Html.Partial("~/Views/Home/components/query.cshtml")
-@Html.Partial("~/Views/components/echarts/com_line.cshtml")
-@Html.Partial("~/Views/components/tables/com_base_table.cshtml")
+
+
 <script>
     new Vue({
         el: '#app',
         data: {
-            styles: {
-                height:  '0px',
-                width: '100%'
-            },
-            lineOption: null,
-            height: 0,
-            tableData: {
-                tableKey: [],
-                tableData: []
-            }
-        },
-        components: {
-            'home-query': query,
-            'com-base-table': comBaseTable,
-            'com-line': comLine
+            results: null,
+            headers:null
         },
         mounted: function () {
-            this.setSize()
-            this.resize()
-            this.init()
+
         },
         methods: {
-            getEmitEvent: function (param) {
-                this.setData('/Home/GetData', param)
+            success: function (response, file, fileList) {
+                debugger
+                var reader = new FileReader();
+                reader.onload = function (e) {
+                    debugger
+                    var data = e.target.result;
+                    var fixdata = this.fixData(data)
+                    var workbook = XLSX.read(btoa(fixdata), { type: 'base64' })
+                    var firstSheetName = workbook.SheetNames[0]
+                    var worksheet = workbook.Sheets[firstSheetName]
+                    var results = XLSX.utils.sheet_to_json(worksheet)
+                    var headers = this.getHeader(worksheet)
+                    this.headers = headers
+                    this.results = results
+                }.bind(this)
+                reader.readAsArrayBuffer(file.raw)
             },
-            init: function () {
-                this.setData('/Home/GetData', null)
+            fixData: function (data) { //文件流转BinaryString
+                var o = ""
+                var l = 0
+                var w = 10240
+                for (; l < data.byteLength / w; ++l) o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w, l * w + w)));
+                o += String.fromCharCode.apply(null, new Uint8Array(data.slice(l * w)));
+                return o;
             },
-            setData: function (url, param) {
-                this.setBarData(url, param)
-                this.setTableData(url, param)
-            },
-            setBarData: function (url, param) {
-                this.$children[1].charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
-                      this.$children[1].charts.hideLoading();
-                      this.lineOption = {
-                          title: {
-                              left: 'center',
-                              text: '金汇港北内闸——水位逐日统计',
-                              textStyle: {
-                                  color: '#666666',
-                                  fontSize: 16,
-                                  fontWeight: 'normal'
-                              }
-                          },
-                          legend: {
-                              //data: ['雨量']
-                          },
-                          xAxis: {
-                              type: 'category',
-                              data: ['1日', '2日', '3日', '4日', '5日', '6日', '7日', '8日', '9日', '10日', '11日', '12日', '13日', '14日', '15日', '16日', '17日', '18日', '19日', '20日', '21日', '22日', '23日', '24日', '25日', '26日', '27日', '28日', '29日', '30日']
-                          },
-                          yAxis: {
-                              name: '水位(单位：m)',
-                              type: 'value'
-                          },
-                          series: [
-                              {
-                                  name: '雨量',
-                                  type: 'line',
-                                  //barWidth: '60%',
-                                  data: [220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310, 220, 182, 191, 234, 290, 330, 310,220,300]
-                              }
-                          ]
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            setTableData: function (url, param) {
-                axios.post(url)
-                  .then(function (response) {
-                      if (!param) {
-                          this.tableData = {
-                              tableKey: [
-                                  {
-                                      name: '序号',
-                                      type: 'index',
-                                      width: '50',
-                                      style: 'text-align:center;'
-                                  }, {
-                                      name: '日期',
-                                      value: 'date'
-                                  }, {
-                                      name: '日均水位(m)',
-                                      value: 'name'
-                                  }, {
-                                      name: '日高水位(m)',
-                                      value: 'address'
-                                  }],
-                              tableData: [{
-                                  date: '2016-05-02',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-04',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-01',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '4.4',
-                                  address: '4.6'
-                              }]
-                          }
-                      } else {
-                          this.tableData = {
-                              tableKey: [
-                                      {
-                                          name: '序号',
-                                          type: 'index',
-                                          width: '150'
-                                      }, {
-                                          name: '日期',
-                                          value: 'date'
-                                      }, {
-                                          name: '日均水位(m)',
-                                          value: 'name'
-                                      }, {
-                                          name: '日高水位(m)',
-                                          value: 'address'
-                                      }],
-                              tableData: [{
-                                  date: '2016-05-02',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-04',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-01',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '5.6',
-                                  address: '5.8'
-                              }]
-                          }
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-
-            },
-            resize: function () {
-                $(window).resize(function () {
-                    this.setSize()
-                }.bind(this));
-            },
-            setSize: function () {
-                var docH = document.documentElement.clientHeight
-                var queryH = this.$refs.homeQuery.$el.clientHeight
-                var contentH = docH - queryH - 16
-                this.styles.height = (contentH / 2) + 'px'
-                this.height = contentH / 2
+            getHeader: function (sheet) {
+                var headers = []
+                var range = XLSX.utils.decode_range(sheet['!ref'])
+                var C;
+                var R = range.s.r
+                for (C = range.s.c; C <= range.e.c; ++C) {
+                    var cell = sheet[XLSX.utils.encode_cell({ c: C, r: R })]
+                    var hdr = 'UNKNOWN' + C
+                    if (cell && cell.t) {
+                        hdr = XLSX.utils.format_cell(cell)
+                    }
+                    headers.push(hdr)
+                }
+                return headers
             }
         }
 
@@ -234,7 +77,5 @@
 </script>
 
 <style scoped>
-    #app .com-bar {
-        width: 80%;
-    }
+
 </style>

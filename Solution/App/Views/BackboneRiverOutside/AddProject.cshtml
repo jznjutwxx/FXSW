@@ -3,10 +3,13 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程填报-骨干河道新增";
 }
-<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+<script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script><script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+
 <div id="add">
+    <div style="display:none;"> @ViewBag.type</div>
+
     <div id="addForm">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
                 <el-row class="el-row">
                     <el-col v-bind:span="24">
@@ -63,7 +66,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="项目法人:" prop="s_legal_person">
+                        <el-form-item label="项目法人:">
+                            @*<el-input  prop="s_legal_person" size="mini"></el-input>*@
                             <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
@@ -74,6 +78,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
+                           @* <el-input prop="s_unit_design" size="mini"></el-input>*@
                             <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
                                 <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
@@ -81,12 +86,12 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="施工单位:" prop="s_unit_build">
+                        <el-form-item label="施工单位:">
                             <el-input v-model="formData.s_unit_build" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="监理单位:" prop="s_unit_supervise">
+                        <el-form-item label="监理单位:">
                             <el-input v-model="formData.s_unit_supervise" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
@@ -128,7 +133,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="长度:">
+                        <el-form-item label="长度:" prop="n_length">
                             <el-input v-model="formData.n_length" size="mini">
                                 <template slot="append">
                                     公里
@@ -137,7 +142,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="土方:">
+                        <el-form-item label="土方:" prop="n_land_area">
                             <el-input v-model="formData.n_land_area" size="mini">
                                 <template slot="append">
                                     万立方米
@@ -146,7 +151,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="硬质护岸:">
+                        <el-form-item label="硬质护岸:" prop="n_protect_hard">
                             <el-input v-model="formData.n_protect_hard" size="mini">
                                 <template slot="append">
                                     公里
@@ -157,7 +162,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="生态护岸:">
+                        <el-form-item label="生态护岸:" prop="n_protect_ecology">
                             <el-input v-model="formData.n_protect_ecology" size="mini">
                                 <template slot="append">
                                     公里
@@ -166,7 +171,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="桥梁:">
+                        <el-form-item label="桥梁:" prop="n_bridge">
                             <el-input v-model="formData.n_bridge" size="mini">
                                 <template slot="append">
                                     座
@@ -175,7 +180,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="岸域绿化:">
+                        <el-form-item label="岸域绿化:" prop="n_plant_bank">
                             <el-input v-model="formData.n_plant_bank" size="mini">
                                 <template slot="append">
                                     平方米
@@ -186,7 +191,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="斜坡绿化:">
+                        <el-form-item label="斜坡绿化:" prop="n_plant_slope">
                             <el-input v-model="formData.n_plant_slope" size="mini">
                                 <template slot="append">
                                     平方米
@@ -195,7 +200,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="水深绿化:">
+                        <el-form-item label="水深绿化:" prop="n_plant_depth">
                             <el-input v-model="formData.n_plant_depth" size="mini">
                                 <template slot="append">
                                     平方米
@@ -213,7 +218,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="总投资:">
+                        <el-form-item label="总投资:" prop="n_total_invest">
                             <el-input v-model="formData.n_total_invest" size="mini">
                                 <template slot="append">
                                     万元
@@ -222,7 +227,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="工程直接费:">
+                        <el-form-item label="工程直接费:" prop="n_engin_cost">
                             <el-input v-model="formData.n_engin_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -231,7 +236,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="独立费用:">
+                        <el-form-item label="独立费用:" prop="n_independent_cost">
                             <el-input v-model="formData.n_independent_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -242,7 +247,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="预备费:">
+                        <el-form-item label="预备费:" prop="n_prep_cost">
                             <el-input v-model="formData.n_prep_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -251,7 +256,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="景观费用:">
+                        <el-form-item label="景观费用:" prop="n_sight_cost">
                             <el-input v-model="formData.n_sight_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -260,7 +265,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="腾地面积:">
+                        <el-form-item label="腾地面积:" prop="n_empty_area">
                             <el-input v-model="formData.n_empty_area" size="mini">
                                 <template slot="append">
                                     亩
@@ -271,7 +276,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="建设用地费:">
+                        <el-form-item label="建设用地费:" prop="n_build_cost">
                             <el-input v-model="formData.n_build_cost" size="mini">
                                 <template slot="append">
                                     万元
@@ -289,7 +294,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="市补:">
+                        <el-form-item label="市补:" prop="n_subsidy_city">
                             <el-input v-model="formData.n_subsidy_city" size="mini">
                                 <template slot="append">
                                     万元
@@ -298,7 +303,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="区配套:">
+                        <el-form-item label="区配套:" prop="n_subsidy_district">
                             <el-input v-model="formData.n_subsidy_district" size="mini">
                                 <template slot="append">
                                     万元
@@ -307,7 +312,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="镇配套:">
+                        <el-form-item label="镇配套:" prop="n_subsidy_town">
                             <el-input v-model="formData.n_subsidy_town" size="mini">
                                 <template slot="append">
                                     万元
@@ -325,7 +330,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="长度:">
+                        <el-form-item label="长度:" prop="n_complete_length">
                             <el-input v-model="formData.n_complete_length" size="mini">
                                 <template slot="append">
                                     公里
@@ -334,7 +339,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="土方:">
+                        <el-form-item label="土方:" prop="n_complete_land_area">
                             <el-input v-model="formData.n_complete_land_area" size="mini">
                                 <template slot="append">
                                     万立平方米
@@ -343,7 +348,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="硬质护岸:">
+                        <el-form-item label="硬质护岸:" prop="n_complete_protect_hard">
                             <el-input v-model="formData.n_complete_protect_hard" size="mini">
                                 <template slot="append">
                                     公里
@@ -354,7 +359,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="生态护岸:">
+                        <el-form-item label="生态护岸:" prop="n_complete_protect_ecology">
                             <el-input v-model="formData.n_complete_protect_ecology" size="mini">
                                 <template slot="append">
                                     公里
@@ -363,7 +368,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="桥梁:">
+                        <el-form-item label="桥梁:" prop="n_complete_bridge">
                             <el-input v-model="formData.n_complete_bridge" size="mini">
                                 <template slot="append">
                                     座
@@ -372,7 +377,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="岸域绿化:">
+                        <el-form-item label="岸域绿化:" prop="n_complete_plant_bank">
                             <el-input v-model="formData.n_complete_plant_bank" size="mini">
                                 <template slot="append">
                                     平方米
@@ -383,7 +388,7 @@
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="斜坡绿化:">
+                        <el-form-item label="斜坡绿化:" prop="n_complete_plant_slope">
                             <el-input v-model="formData.n_complete_plant_slope" size="mini">
                                 <template slot="append">
                                     平方米
@@ -392,7 +397,7 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="水深绿化:">
+                        <el-form-item label="水深绿化:" prop="n_complete_plant_depth">
                             <el-input v-model="formData.n_complete_plant_depth" size="mini">
                                 <template slot="append">
                                     平方米
@@ -414,7 +419,7 @@
                             <el-upload class="upload-demo"
                                        ref="upload"
                                        multiple
-                                       action="/BackboneRiverOutside/UpFiles"
+                                       action="/BackboneRiverway/UpFiles"
                                        v-bind:on-preview="handlePreview"
                                        v-bind:on-change="getDrawing"
                                        v-bind:on-remove="handleRemove"
@@ -423,6 +428,7 @@
                                        v-bind:before-remove="beforeRemove"
                                        v-bind:before-upload="beforeAvatarUpload">
                                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
+                                @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                                 <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                             </el-upload>
                         </el-form-item>
@@ -442,7 +448,7 @@
                     <el-col v-bind:span="24">
                         <el-form-item label="工程图片上传:">
                             <span class="el-upload__tip">支持png、jpg、jpeg、gif格式的图片上传；文件大小应在10M以内</span>
-                            <el-upload action="/BackboneRiverOutside/UpFiles"
+                            <el-upload action="/BackboneRiverway/UpFiles"
                                        list-type="picture-card"
                                        v-bind:on-preview="handlePreview"
                                        v-bind:on-remove="handleRemove"
@@ -476,16 +482,18 @@
         data: function () {
             var checkNum = function (rule, value, callback) {
                 var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
-                if (value === '') {
-                    callback(new Error('不能为空'));
-                }
-                if (!reNum.test(value)) {
-                    callback(new Error('请输入正确的数字值（支持8位整数，2位小数）'));
+                if (value != '') {
+                    if (!reNum.test(value)) {
+                        callback(new Error('请输入正确的数字值（最大支持8位整数，2位小数）'));
+                    } else {
+                        callback();
+                    }
                 } else {
                     callback();
                 }
             };
             return {
+                type:'', //当前登录账号：法人or设计单位
                 s_type: '',
                 YearOption: [],
                 StatusOption: [],
@@ -542,25 +550,8 @@
                     s_project_no: [
                         { required: true, message: '请输入项目编号', trigger: 'blur' }
                     ],
-                    s_legal_person: [
-                        { required: true, message: '请选择项目法人', trigger: 'blur' }
-                    ],
                     s_address: [
                         { required: true, message: '请输入工程地址', trigger: 'blur' }
-                    ],
-                    s_unit_build: [
-                        { required: true, message: '请输入施工单位', trigger: 'blur' }
-                    ],
-                    s_unit_supervise: [
-                        { required: true, message: '请输入监理单位', trigger: 'blur' }
-                    ],
-                    n_reckon_total_amt: [
-                        { required: true, message: '请输入估算总投资', trigger: 'blur' },
-                        { validator: checkNum, trigger: 'blur' }
-                    ],
-                    n_water_area: [
-                        { required: true, message: '请输入新增水面积', trigger: 'blur' },
-                        { validator: checkNum, trigger: 'blur' }
                     ],
                     n_year: [
                         { required: true, message: '请选择年份', trigger: 'blur' }
@@ -571,6 +562,92 @@
                     s_town: [
                         { required: true, message: '请选择所属镇', trigger: 'blur' }
                     ],
+                    n_reckon_total_amt: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_water_area: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+
+                    n_length: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_land_area: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_protect_hard: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_protect_ecology: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_bridge: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_plant_bank: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_plant_slope: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_plant_depth: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_total_invest: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_engin_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_independent_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_prep_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_sight_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_empty_area: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_build_cost: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_city: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_district: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_subsidy_town: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_length: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_land_area: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_protect_hard: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_protect_ecology: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_bridge: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_plant_bank: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_plant_slope: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+                    n_complete_plant_depth: [
+                        { validator: checkNum, trigger: 'blur' }
+                    ],
+
                 },
             }
 
@@ -588,6 +665,12 @@
                 this.formData.s_gg_or_zxx = "zxx";
                 this.s_type = "中小河道";
             }
+            getType: {
+                this.type = '@ViewData["type"]';
+                if (this.type=="person") {
+                    alert("哈哈！");
+                }
+            };
             this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
@@ -617,13 +700,15 @@
                 this.gcctinfo.REMARK = this.formData.s_remark;
             },
             showgcctMapAdd: function () {
+                //this.bindGCCTData();
                 this.mapAddDialogVisible = true;
             },
             init: function () {
-                this.getStatus("/BackboneRiverOutside/GetSelect", { Type: "工程状态" });
-                this.getTown("/BackboneRiverOutside/GetSelect", { Type: "街镇" });
-                this.getLegalPerson("/BackboneRiverOutside/GetLegalPerson", null);
-                this.getDesignUnit("/BackboneRiverOutside/GetDesignUnit", null);
+                //this.getYear("/BackboneRiverway/GetSelect", { Type: "年度" });
+                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
+                this.getTown("/BackboneRiverway/GetSelect", { Type: "街镇" });
+                this.getLegalPerson("/BackboneRiverway/GetLegalPerson", null);
+                this.getDesignUnit("/BackboneRiverway/GetDesignUnit", null);
             },
             getYear: function (url, param) {
                 axios.post(url, param)
@@ -640,6 +725,7 @@
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
                       this.StatusOption = tempData.DictionaryGetResponse.list;
                       this.formData.n_pace_status = this.StatusOption[0].s_cd_key;
                   }.bind(this))
@@ -663,7 +749,7 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      this.formData.s_legal_person = this.PersonOption[0].s_id;
+                      //this.formData.s_legal_person = this.PersonOption[0].s_id;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -674,7 +760,7 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      this.formData.s_unit_design = this.UnitOption[0].s_id;
+                      //this.formData.s_unit_design = this.UnitOption[0].s_id;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -695,9 +781,11 @@
                 return theRequest;
             },
             saveData: function (formName) {
+                //alert(this.formData.n_year)
                 this.formData.n_year = new Date(this.formData.n_year).getFullYear();
                 this.$refs[formName].validate(function (valid) {
                     if (valid) {
+                        //alert(this.formData.n_year);
                         var drawing = '';
                         var picture = '';
                         if (this.drawingFiles != '')
@@ -712,12 +800,14 @@
                                 picture = this.pictureFiles[i].name + ',' + picture
                             }
                         }
-                        axios.post('/BackboneRiverOutside/SaveProjectData',
+                        axios.post('/BackboneRiverway/SaveProjectData',
                             { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
                           .then(function (response) {
+                              //var tempData = JSON.parse(response.data);
                               var tempData = eval('(' + response.data + ')');
                               var tempR = tempData.EnginCoreReportResponse.result;
                               if (tempR) {
+                                  this.formData.n_year = moment().format('YYYY');
                                   if (this.s_type == "骨干河道") {
                                       window.location = "Index";
                                   }
@@ -725,6 +815,7 @@
                                       window.location = "/ZXRiverway/Index";
                                   }
                               } else {
+                                  this.formData.n_year = moment().format('YYYY');
                                   this.$message.error('保存失败！' + TempR);
                               }
                           }.bind(this))
@@ -733,6 +824,7 @@
                           });
 
                     } else {
+                        this.formData.n_year = moment().format('YYYY');
                         console.log('error submit!!');
                         return false;
                     }
@@ -760,6 +852,7 @@
             beforeImagesUpload: function (file) {
                 debugger
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
+                //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
                     this.$message({
                         message: '不支持上传该类型文件！',
@@ -785,7 +878,7 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(function () {
-                    axios.post('/BackboneRiverOutside/DeleteFiles', { filename: file.name})
+                    axios.post('/BackboneRiverway/DeleteFiles', { filename: file.name})
                   .then(function (response) {
                       if (response.data == "OK") {
                           this.$message({
@@ -808,14 +901,19 @@
 
             },
             handleRemove: function (file, fileList) {
+                //console.log(file, fileList);
+
             },
             getDrawing: function (file, fileList) {
                 this.drawingFiles = fileList;
+                //console.log(this.file);
             },
             getPicture: function (file, fileList) {
                 this.pictureFiles = fileList;
+                //console.log(this.file);
             },
             handlePreview: function (file) {
+                //console.log(file);
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
