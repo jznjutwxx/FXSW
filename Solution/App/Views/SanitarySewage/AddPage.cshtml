@@ -392,7 +392,7 @@
                         </el-form-item>
                     </el-col>
                     <el-dialog title="新增工程位置草图" v-bind:visible.sync="mapAddDialogVisible" width="70%" top="6vh">
-                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo v-on:draftstatus="setDraftStatus"></com-gcctmap-edit>
                     </el-dialog>
                 </el-row>
                 <el-row>
@@ -510,6 +510,7 @@
                     N_WCJDCLZ: '',
                     N_WCGWCD: '',
                     N_WCXFJHFC: '',
+                    N_DRAFT: '',
                 },
                 rules: {
                     S_NAME: [
@@ -622,6 +623,9 @@
             },
         },
         methods: {
+            setDraftStatus: function (param) {
+                this.addForm.N_DRAFT = param.n_draft;
+            },
             bindGCCTData: function (val) {
                 this.gcctinfo.S_PROJECT_NO = this.addForm.S_PROJECT_NO;
                 this.gcctinfo.N_PACE_STATUS = this.addForm.N_PACE_STATUS;

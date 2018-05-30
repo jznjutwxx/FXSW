@@ -15,7 +15,7 @@ namespace App.Common
             var account = filterContext.HttpContext.Session["name"];
             if (account == null || appKey == "")
             {
-                filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["OverTimeUrl"] + "'; </script>");
+                filterContext.HttpContext.Response.Write(" <script type='text/javascript'> window.top.location='" + System.Configuration.ConfigurationManager.AppSettings["ProjectOverTimeUrl"] + "'; </script>");
                 filterContext.Result = new EmptyResult();
                 return;
             }

@@ -92,7 +92,6 @@
             getTown: function (url, type) {
                 axios.post(url, type)
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.DictionaryGetResponse.list;
                       this.xzqhOptions = datas;
@@ -104,7 +103,6 @@
             getStatics: function (url, type) {
                 axios.post(url, type)
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.DictionaryGetResponse.list;
                       this.staticsOptions = datas;

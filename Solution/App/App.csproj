@@ -172,6 +172,7 @@
     <Compile Include="Controllers\EngineerSketchController.cs" />
     <Compile Include="Controllers\FacilityStatisticsController.cs" />
     <Compile Include="Controllers\FarmlandWaterController.cs" />
+    <Compile Include="Controllers\GGHDWaterAnalyzeController.cs" />
     <Compile Include="Controllers\ProjectOutside\FarmWaterOutsideController.cs" />
     <Compile Include="Controllers\GcztStatisticsController.cs" />
     <Compile Include="Controllers\GghdGclStatisticsController.cs" />
@@ -183,9 +184,11 @@
     <Compile Include="Controllers\Login\LoginController.cs" />
     <Compile Include="Controllers\Main\MainController.cs" />
     <Compile Include="Controllers\ProjectOutside\BackboneRiverOutsideController.cs" />
+    <Compile Include="Controllers\ProjectOutside\SanitarySewageOutsideController.cs" />
     <Compile Include="Controllers\ProOverViewController.cs" />
     <Compile Include="Controllers\RainfallISOSurfaceController.cs" />
     <Compile Include="Controllers\RiverStatisticssController.cs" />
+    <Compile Include="Controllers\SamplingSZStatisticsController.cs" />
     <Compile Include="Controllers\SanitarySewageController.cs" />
     <Compile Include="Controllers\SHWSProjectStatisticsController.cs" />
     <Compile Include="Controllers\SingleChannelSztjController.cs" />
@@ -196,6 +199,7 @@
     <Compile Include="Controllers\WaterResController.cs" />
     <Compile Include="Controllers\ZHJCController.cs" />
     <Compile Include="Controllers\ZXHDStatisticsController.cs" />
+    <Compile Include="Controllers\ProjectOutside\ZXRiverOutsideController.cs" />
     <Compile Include="Controllers\ZXRiverwayController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
@@ -351,6 +355,10 @@
     <Content Include="Images\main\head\img_header.png" />
     <Content Include="Images\main\head\img_header_zonghe.png" />
     <Content Include="Images\main\img_null.png" />
+    <Content Include="Images\swsy\btn_水位站.png" />
+    <Content Include="Images\swsy\btn_水文站.png" />
+    <Content Include="Images\swsy\btn_水质站.png" />
+    <Content Include="Images\swsy\btn_雨量站.png" />
     <Content Include="Images\sw_main\img_header_sw.png" />
     <Content Include="Images\gc_main\img_header_xm.png" />
     <Content Include="Images\main\img_bg_x.png" />
@@ -1353,7 +1361,6 @@
     <Content Include="Views\BackboneRiverOutside\AddProject.cshtml" />
     <Content Include="Views\BackboneRiverOutside\EditProject.cshtml" />
     <Content Include="Views\BackboneRiverOutside\FileManage.cshtml" />
-    <Content Include="Views\Login\LegalPerson.cshtml" />
     <Content Include="Views\FarmWaterOutside\Index.cshtml" />
     <Content Include="Views\FarmWaterOutside\components\query.cshtml" />
     <Content Include="Views\FarmWaterOutside\AddPage.cshtml" />
@@ -1363,6 +1370,21 @@
     <Content Include="Scripts\xlsx\xlsx.core.min.map" />
     <Content Include="Scripts\xlsx\xlsx.full.min.map" />
     <Content Include="Scripts\xlsx\xlsx.min.map" />
+    <Content Include="Views\GGHDWaterAnalyze\components\com_query.cshtml" />
+    <Content Include="Views\GGHDWaterAnalyze\Index.cshtml" />
+    <Content Include="Views\GGHDWaterAnalyze\components\com_bar.cshtml" />
+    <Content Include="Views\SamplingSZStatistics\Index.cshtml" />
+    <Content Include="Views\SamplingSZStatistics\components\query.cshtml" />
+    <Content Include="Views\ZXRiverOutside\Index.cshtml" />
+    <Content Include="Views\SanitarySewageOutside\Index.cshtml" />
+    <Content Include="Views\SanitarySewageOutside\AddPage.cshtml" />
+    <Content Include="Views\SanitarySewageOutside\EditPage.cshtml" />
+    <Content Include="Views\SanitarySewageOutside\DetailPage.cshtml" />
+    <Content Include="Views\ZXRiverOutside\components\query.cshtml" />
+    <Content Include="Views\ZXRiverOutside\AddProject.cshtml" />
+    <Content Include="Views\ZXRiverOutside\LookProject.cshtml" />
+    <Content Include="Views\ZXRiverOutside\EditProject.cshtml" />
+    <Content Include="Views\SanitarySewageOutside\components\query.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

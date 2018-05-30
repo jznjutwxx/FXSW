@@ -12,9 +12,9 @@
     <el-row v-bind:gutter="15" class="row_bg">
         <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
             <div class="titlediv hdgkdiv" v-on:click="showHDnum">河道概况</div>
-            <com-swsyleft ref="swsyleft"  v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
+            <com-swsyleft ref="swsyleft" v-on:getszdbl-event="showSZDBL" v-bind:lefttwon='lefttwon'></com-swsyleft>
         </el-col>
-        <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12">
+        <el-col v-bind:xs="12" v-bind:sm="10" v-bind:md="10" v-bind:lg="10" v-bind:xl="12" style="padding-left:3px;">
             <div class="bigBox">
                 <div id="mapContainer" v-bind:style="{height:mapheight+'px'}">
                     <div style="position:absolute;top:30px;left:15px;z-index:2000;">
@@ -129,7 +129,7 @@
                         <el-date-picker v-model="getDateStr(-1)" type="datetime" placeholder="选择日期时间" size="small" style="width:190px;">
                         </el-date-picker>
                         <span class="demonstration">-</span>
-                        <el-date-picker v-model="getDateStr(0)" type="datetime" placeholder="选择日期时间" size="small" style="width:190px;" > 
+                        <el-date-picker v-model="getDateStr(0)" type="datetime" placeholder="选择日期时间" size="small" style="width:190px;">
                         </el-date-picker>
                         <el-button type="primary" icon="el-icon-search" size="small">查询</el-button>
                     </div>
@@ -143,9 +143,9 @@
                 </el-dialog>
             </div>
         </el-col>
-        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss"> 
+        <el-col v-bind:xs="6" v-bind:sm="7" v-bind:md="7" v-bind:lg="7" v-bind:xl="6" class="sidescss">
             <div class="titlediv cztj" v-on:click="showZCnum">测站统计</div>
-            <com-swsyright v-bind:lefttwon='lefttwon'>
+            <com-swsyright v-bind:lefttwon='lefttwon'  ref="swsyRight">
 
             </com-swsyright>
         </el-col>
@@ -180,17 +180,17 @@
             szdblVectorLayer: null,   //水质达标率高亮图层
             controlSzdbltlShow: false,  //控制水质达标率图例的显示
             isCZnumModel: false,
-            fxbaselayerurl: "http://172.18.1.25:8090/iserver/services/map-ugcv5-fxjztiled/rest/maps/fxjz_tiled",
+            fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu4/rest/maps/FengXianJiChuDiTu",    
             //数据库中读取的数据，
             swAllInfo: [
-                 { x: 121.37811, y: 30.93234, twon: "庄行镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 18, zctype: "雨量站" },
-                 { x: 121.45077, y: 30.95084, twon: "南桥镇", hdnum: 200, szdbl: 0.9, percent: "90%", cznum: 20, zctype: "水文站" },
-                 { x: 121.43657, y: 30.84199, twon: "柘林镇", hdnum: 200, szdbl: 0.8, percent: "80%", cznum: 5, zctype: "水质站" },
-                 { x: 121.55052, y: 30.97956, twon: "金汇镇", hdnum: 200, szdbl: 0.7, percent: "70%", cznum: 9, zctype: "水位站" },
-                 { x: 121.54104, y: 30.91457, twon: "青村镇", hdnum: 200, szdbl: 0.6, percent: "60%", cznum: 4, zctype: "雨量站" },
-                 { x: 121.60198, y: 30.85589, twon: "海湾镇", hdnum: 200, szdbl: 0.5, percent: "50%", cznum: 7, zctype: "雨量站" },
-                 { x: 121.65426, y: 30.93564, twon: "奉城镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" },
-                 { x: 121.72939, y: 30.94165, twon: "四团镇", hdnum: 200, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" }],
+                 { x: 121.37811, y: 30.93567, twon: "庄行镇", hdnum: 153, szdbl: 1, percent: "100%", cznum: 18, zctype: "雨量站" },
+                 { x: 121.45077, y: 30.95395, twon: "南桥镇", hdnum: 210, szdbl: 0.9, percent: "90%", cznum: 20, zctype: "水文站" },
+                 { x: 121.44545, y: 30.85610, twon: "柘林镇", hdnum: 89, szdbl: 0.8, percent: "80%", cznum: 5, zctype: "水质站" },
+                 { x: 121.55954, y: 30.98448, twon: "金汇镇", hdnum: 125, szdbl: 0.7, percent: "70%", cznum: 9, zctype: "水位站" },
+                 { x: 121.54104, y: 30.91457, twon: "青村镇", hdnum: 156, szdbl: 0.6, percent: "60%", cznum: 4, zctype: "雨量站" },
+                 { x: 121.58283, y: 30.85589, twon: "海湾镇", hdnum: 53, szdbl: 0.5, percent: "50%", cznum: 7, zctype: "雨量站" },
+                 { x: 121.65281, y: 30.94117, twon: "奉城镇", hdnum: 69, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" },
+                 { x: 121.72939, y: 30.94165, twon: "四团镇", hdnum: 169, szdbl: 1, percent: "100%", cznum: 7, zctype: "雨量站" }],
             dialogVisible: false,
             barOption: null, //雨量柱状图的参数
             swLineOption: null, //水位图
@@ -268,9 +268,10 @@
                 this.map.addControl(this.drawPoint);
                 this.drawPoint.events.on({ "featureadded": this.drawPointCompleted });
                 //显示经纬度坐标的控件
-                // this.map.addControl(mousePosition, new SuperMap.Pixel(10, this.mapheight - 100));
+                //this.map.addControl(mousePosition, new SuperMap.Pixel(10, this.mapheight - 100));
                 this.baselayer.events.on({ "layerInitialized": this.addLayers });
                 this.map.events.on({ "zoomend": this.mapIsZoomend });
+                this.jtczLayer.events.on({ "mouseover": this.deactivePoint });
                 //一镇一站图层单击时
                 this.representativeMarkersLayer.events.on({ "mouseover": this.activePoint });
                 this.representativeMarkersLayer.events.on({ "mouseout": this.deactivePoint });
@@ -372,6 +373,7 @@
             //放大
             mapZoomToBig: function () {
                 // this.map.getZoom();
+                debugger;
                 this.map.zoomTo(this.map.getZoom() + 1)
             },
             mapZoomToSmall: function () {
@@ -541,8 +543,8 @@
                 this.drawPoint.deactivate();
                 this.map.zoomToExtent(drawGeometryArgs.feature.geometry.bounds);
                 this.map.zoomTo(3);
-                var url = "http://172.18.1.25:8090/iserver/services/map-fxjz2/rest/maps/fxjz_20180410222";
-                var queryParam = new SuperMap.REST.FilterParameter({ name: "奉贤8街镇@奉贤8街镇" });  //街镇R@奉贤2016
+                var url = "http://222.66.154.70:8090/iserver/services/map-queryFXJZ2/rest/maps/queryStreetownName";
+                var queryParam = new SuperMap.REST.FilterParameter({ name: "奉贤8街镇@奉贤8街镇" }); 
                 var queryByGeometryParameters = new SuperMap.REST.QueryByGeometryParameters({
                     queryParams: [queryParam],
                     geometry: drawGeometryArgs.feature.geometry,
@@ -567,6 +569,7 @@
                     fillOpacity: "1"
                 };
                 if (result) {
+                    debugger;
                     var features = result.recordsets[0].features
                     // console.log(features);
                     for (var i = 0; i < features.length; i++) {
@@ -574,9 +577,8 @@
                         feature.style = style;
                         this.dxvectorLayer.addFeatures(feature);
                     }
-                    if (feature.attributes && feature.attributes.NAME) {
-                        this.lefttwon = feature.attributes.NAME;
-                        console.log(this.lefttwon);
+                    if (feature && feature.attributes && feature.attributes.NAME) {
+                        this.lefttwon = feature.attributes.NAME;          
                     }
                     else {
                         this.lefttwon = "奉贤区";
@@ -636,6 +638,7 @@
             showZCnum: function () {
                 this.drawPoint.deactivate();
                 //右侧取到测站数据
+
                 //一镇一站，缩小到一定程度时，8个镇固定显示某一个测站
                 this.controlSzdbltlShow = false;
                 this.isCZnumModel = true;  //是否测站统计模块
@@ -674,7 +677,9 @@
                     that.representativeMarkersLayer.addMarker(new SuperMap.Marker(new SuperMap.LonLat(item.x, item.y), dbicon));
                 });
                 //街镇详细测站情况
-                var jzxxczqk = [{ x: 121.38372, y: 30.98031, twon: "庄行镇", zctype: "雨量站", czname: "庄行雨量站1" },
+                debugger;
+                var jzxxczqk = that.$refs.swsyRight.CZdatas;
+                    jzxxczqk = [{ x: 121.38372, y: 30.98031, twon: "庄行镇", zctype: "雨量站", czname: "庄行雨量站1" },
                                    { x: 121.38039, y: 30.9556, twon: "庄行镇", zctype: "水文站", czname: "庄行水文站1" },
                                    { x: 121.37469, y: 30.90437, twon: "庄行镇", zctype: "水质站", czname: "庄行水质站" },
                                    { x: 121.40939, y: 30.89665, twon: "庄行镇", zctype: "水位站", czname: "庄行水位站" },
@@ -721,15 +726,15 @@
                     }
                     czNameFeature.style = czNameStyle;
                     that.czNameCoverLayer.addFeatures(czNameFeature);
-                    var size = new SuperMap.Size(40, 40);
+                    var size = new SuperMap.Size(26, 32);
                     var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
-                    var picUrl = "/Images/swsy/水位站.png";
+                    var picUrl = "/Images/swsy/btn_水位站.png";
                     switch (item.zctype) {
-                        case "雨量站": picUrl = "/Images/swsy/雨量站.png";
+                        case "雨量站": picUrl = "/Images/swsy/btn_雨量站.png";
                             break;
-                        case "水文站": picUrl = "/Images/swsy/水文站.png";
+                        case "水文站": picUrl = "/Images/swsy/btn_水文站.png";
                             break;
-                        case "水质站": picUrl = "/Images/swsy/水质站.png";
+                        case "水质站": picUrl = "/Images/swsy/btn_水质站.png";
                             break;
                         case "水位站":
                             break;
@@ -803,7 +808,7 @@
             queryBySql: function () {
                 this.szdblVectorLayer.removeAllFeatures();
                 var queryParam, queryBySQLParams, queryBySQLService;
-                var url = "http://172.18.1.25:8090/iserver/services/map-fxjz2/rest/maps/fxjz_20180410222";
+                var url = "http://222.66.154.70:8090/iserver/services/map-queryFXJZ2/rest/maps/queryStreetownName";
                 queryParam = new SuperMap.REST.FilterParameter({
                     name: "奉贤8街镇@奉贤8街镇",  //查询的是街镇数据集，里面包含了奉贤所有街镇的信息（街镇名字）
                 });
@@ -1232,14 +1237,14 @@
         overflow: hidden;
         min-width: 400px;
         /*min-height: 610px;*/
-        background-color: #051266; 
+        background-color: #051266;
     }
 
     #mapTitle {
         position: absolute;
         top: -11px;
         left: 35px;
-        z-index: 1246;
+        z-index: 1250;
         background-color: #051266;
         width: 160px;
         height: 30px;
@@ -1255,7 +1260,6 @@
         width: 176px;
         height: 95px;
         bottom: 40px;
-        background-color: #051266;
     }
 
     .bigBox {
@@ -1290,7 +1294,7 @@
     }
 
     #szdbltl .bg-green {
-        background-color: rgba(40,160,112,0.76);
+        background-color: rgba(40,160,112,0.76); 
     }
 
     #szdbltl .bg-blue {

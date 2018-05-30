@@ -87,6 +87,7 @@ namespace App.Controllers
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             paramDictionary.Add("s_remark", arr.S_REMARK);
             paramDictionary.Add("s_person", "小张");//上传图片人
+            paramDictionary.Add("n_draft", arr.N_DRAFT);//是否有草图 1.有 0.没有
 
             //批复工程量
             paramDictionary.Add("n_czsl", arr.N_CZSL);//村组数量
@@ -182,6 +183,7 @@ namespace App.Controllers
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             paramDictionary.Add("s_remark", arr.S_REMARK);
             paramDictionary.Add("s_person", "小张");//上传图片人
+            paramDictionary.Add("n_draft", arr.N_DRAFT);//是否有草图 1.有 0.没有
 
             //批复工程量
             paramDictionary.Add("n_czsl", arr.N_CZSL);//村组数量

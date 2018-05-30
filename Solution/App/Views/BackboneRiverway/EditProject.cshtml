@@ -448,7 +448,7 @@
                     </el-col>
                 </el-row>
                 <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
-                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo></com-gcctmap-edit>
+                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo v-on:draftstatus="setDraftStatus"></com-gcctmap-edit>
                 </el-dialog>
                 <el-row>
                     <el-col v-bind:span="24">
@@ -683,6 +683,9 @@
             },
         },
         methods: {
+            setDraftStatus: function (param) {
+                this.formData.n_draft = param.n_draft;
+            },
             bindGCCTData: function () {
                 this.gcctinfo.S_PROJECT_NO = this.formData.s_project_no;
                 this.gcctinfo.N_PACE_STATUS = this.formData.n_pace_status;

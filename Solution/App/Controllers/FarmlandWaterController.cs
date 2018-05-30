@@ -150,7 +150,7 @@ namespace App.Controllers
             paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             //paramDictionary.Add("n_water_area", "65595");//新增水面积
-            //paramDictionary.Add("n_draft", "1");//是否有草图 1.有 0.没有
+            paramDictionary.Add("n_draft", arr.N_DRAFT);//是否有草图 1.有 0.没有
             paramDictionary.Add("s_remark", arr.S_REMARK);
             paramDictionary.Add("s_person", "小张");//上传图片人
 
@@ -247,6 +247,7 @@ namespace App.Controllers
             paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);//估计总投资
             paramDictionary.Add("s_remark", arr.S_REMARK);
             paramDictionary.Add("s_person", "小张");//上传图片人
+            paramDictionary.Add("n_draft", arr.N_DRAFT);//是否有草图 1.有 0.没有
 
             //批复工程量
             paramDictionary.Add("n_ggsl", arr.N_GGSL);//灌区数量

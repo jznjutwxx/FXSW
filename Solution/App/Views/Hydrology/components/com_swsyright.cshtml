@@ -4,7 +4,7 @@
             <el-row class="topleft">
                 <el-col v-bind:span="24" class="col">
                     <span class="divcss swzcss">水文站总数(座)：</span>
-                    <span class="text-gra swzcss">37</span>
+                    <span class="text-gra swzcss">{{czzs}}</span>
                 </el-col>
             </el-row>
             <el-row type="flex" class="topicon" justify="center" align="middle">
@@ -83,7 +83,9 @@
                 YLnames: [],
                 YLnums: [],
                 num: 0,
-                town: ''
+                town: '',
+                czzs: 0,
+                czxxnum:[]
             }
         },
         props: { lefttwon: { type: String, default: "" } },
@@ -119,8 +121,11 @@
             getCZnum: function (url, param) {
                 axios.post(url, param)
                  .then(function (response) {
+                     debugger
                      var li = JSON.parse(response.data);
                      this.CZdatas = li.StatisticsStationDistributionGetResponse.statistics_station_distribution_count_list;
+                     this.czxxnum = li.StatisticsStationDistributionGetResponse.statistics_station_distribution_info_list;
+                     this.czzs = this.czxxnum.length;
                      for (var i = 0; i < this.CZdatas.length; i++) {
                          this.CZdatas.s_type = this.CZdatas[i].s_type;
                          this.CZdatas.count = this.CZdatas[i].count;

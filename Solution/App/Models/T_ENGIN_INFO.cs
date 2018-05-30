@@ -23,6 +23,7 @@ namespace App.Models
         public string N_RECKON_TOTAL_AMT { get; set; }
         public string S_REMARK { get; set; }
         public string REMOVE_PIC_IDS { get; set; }
+        public string N_DRAFT { get; set; }
 
         //批复工程量
         public string N_GGSL { get; set; }

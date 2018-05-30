@@ -58,7 +58,6 @@
             mounted: function () {
                 this.getMenus()
                 this.resize()
-                this.setSize()
             },
             methods: {
                 resize: function () {
@@ -72,7 +71,7 @@
                     var num = Math.ceil(this.menus.length / 3)
                     this.maginTop = ((docH - 109) - (num * 174) - 15) / 2 + 'px'
                 },
-                mouseover: function (menu,event) {
+                mouseover: function (menu, event) {
                     if (menu.hasRole) {
                         event.currentTarget.style.backgroundImage = event.currentTarget.style.backgroundImage.replace(/normal/g, "active")
                     } else {
@@ -88,60 +87,81 @@
                 },
                 open: function (menu) {
                     if (menu.hasRole) {
-                        window.open(menu.url);
+                        this.openPostWindow(menu.url, menu.id)
                     }
                 },
                 getMenus: function () {
-                    this.menus = [{
-                        id: '1',
-                        name: '水文',
-                        icon: 'btn_swzxt_normal.png',
-                        url: '/Main/Hydrology',
-                        hasRole:true
-                    }, {
-                        id: '2',
-                        name: '水资源',
-                        icon: 'btn_szyzxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }, {
-                        id: '3',
-                        name: '河闸',
-                        icon: 'btn_hzzxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }, {
-                        id: '4',
-                        name: '排水',
-                        icon: 'btn_pszxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }, {
-                        id: '5',
-                        name: '防汛',
-                        icon: 'btn_fxzxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }, {
-                        id: '6',
-                        name: '海塘',
-                        icon: 'btn_htzxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }, {
-                        id: '7',
-                        name: '工程',
-                        icon: 'btn_xmzxt_normal.png',
-                        url: '/Main/Project',
-                        hasRole: true
-                    }, {
-                        id: '8',
-                        name: '设施',
-                        icon: 'btn_sszxt_normal.png',
-                        url: '/WaterRes/Index',
-                        hasRole: false
-                    }]
+                    axios.post('/Main/GetMenus', null)
+                         .then(function (response) {
+                             if (JSON.parse(response.data).SystemMenuGetResponse != undefined) {
+                                 this.menus = JSON.parse(response.data).SystemMenuGetResponse.menus
+                                 this.setSize()
+                             }
+                         }.bind(this))
+                         .catch(function (error) { })
                 },
+                openPostWindow: function (url, data) {
+                    var tempForm = document.createElement("form");
+                    tempForm.id = "tempForm";
+                    tempForm.method = "post";
+                    tempForm.action = url;
+                    tempForm.target = data;
+                    var hideInput = document.createElement("input");
+                    hideInput.type = "hidden";
+                    hideInput.name = "id";
+                    hideInput.value = data;
+                    tempForm.appendChild(hideInput);
+                    if (tempForm.attachEvent) {  // IE   
+                        tempForm.attachEvent("onsubmit", function () { window.open('about:blank', "_blank"); });
+                    } else if (tempForm.addEventListener) {  // DOM Level 2 standard    
+                        tempForm.addEventListener("onsubmit", function () { window.open('about:blank', "_blank"); });
+                    }
+                    document.body.appendChild(tempForm);
+                    if (document.createEvent) { // DOM Level 2 standard    
+                        evt = document.createEvent("MouseEvents");
+                        evt.initMouseEvent("submit", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+                        tempForm.dispatchEvent(evt);
+                    } else if (tempForm.fireEvent) { // IE    
+                        tempForm.fireEvent('onsubmit');
+                    }
+                    //必须手动的触发          
+                    tempForm.submit();
+                    document.body.removeChild(tempForm);
+                },
+                isBrowser: function () {
+                    var userAgent = navigator.userAgent;
+                    //微信内置浏览器
+                    if (userAgent.match(/MicroMessenger/i) == 'MicroMessenger') {
+                        return "MicroMessenger";
+                    }
+                        //QQ内置浏览器
+                    else if (userAgent.match(/QQ/i) == 'QQ') {
+                        return "QQ";
+                    }
+                        //Chrome
+                    else if (userAgent.match(/Chrome/i) == 'Chrome') {
+                        return "Chrome";
+                    }
+                        //Opera
+                    else if (userAgent.match(/Opera/i) == 'Opera') {
+                        return "Opera";
+                    }
+                        //Firefox
+                    else if (userAgent.match(/Firefox/i) == 'Firefox') {
+                        return "Firefox";
+                    }
+                        //Safari
+                    else if (userAgent.match(/Safari/i) == 'Safari') {
+                        return "Safari";
+                    }
+                        //IE
+                    else if (!!window.ActiveXObject || "ActiveXObject" in window) {
+                        return "IE";
+                    }
+                    else {
+                        return "未定义:" + userAgent;
+                    }
+                }
             }
         });
     </script>

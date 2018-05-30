@@ -2,12 +2,17 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程管理-工程编辑";
+
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
 }
 
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="edit">
+    <div style="display:none;"> @type</div>
+
     <div id="editForm">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
                 <el-row class="el-row">
                     <el-col v-bind:span="24">
@@ -64,8 +69,8 @@
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
-                        <el-form-item label="项目法人:" prop="s_legal_person">
-                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini" v-bind:disabled="isFinish">
+                        <el-form-item label="项目法人:">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="formData.s_legal_person" class="selCss" size="mini">
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -75,7 +80,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            <el-select v-model="formData.s_unit_design" class="selCss" size="mini" v-bind:disabled="isFinish">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="formData.s_unit_design" class="selCss" size="mini">
                                 <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -490,6 +495,8 @@
                 }
             };
             return {
+                isPersonDisable: true,
+                isUnitDisable: false,
                 gcctinfo: {
                     S_PROJECT_NO: "",
                     N_PACE_STATUS: "",
@@ -652,11 +659,22 @@
                       console.log(error);
                   });
             },
-            getLegalPerson: function (url, param) {
+             getLegalPerson: function (url, param) {
                 axios.post(url, param)
-                  .then(function (response) {
+                  .then(function (response) {debugger
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
+                      if ('@type' == "person") {
+                          this.isPersonDisable = true;
+                          this.isUnitDisable = false;
+                          var selectPerson = "";
+                          selectPerson = this.PersonOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          }); console.log(selectPerson);
+                          this.formData.s_legal_person = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -665,8 +683,21 @@
             getDesignUnit: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
+                      debugger
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
+                      if ('@type' == "unit") {
+                          this.isPersonDisable = false;
+                          this.isUnitDisable = true;
+
+                          var selectUnit = "";
+                          selectUnit = this.UnitOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          }); console.log(selectUnit);
+                          this.formData.s_unit_design = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -769,8 +800,9 @@
                                 picture = this.pictureFilesAdd[i].name + ',' + picture
                             }
                         }
-                        axios.post('/BackboneRiverway/UpdateProjectData', { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
+                        axios.post('/BackboneRiverOutside/UpdateProjectData', { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
                           .then(function (response) {
+                              debugger
                               var tempData = JSON.parse(response.data);
                               var tempR = tempData.EnginCoreUpdateResponse.result;
 
@@ -782,7 +814,7 @@
                                       window.location = "/ZXRiverway/Index";
                                   }
                               } else {
-                                  this.$message.error('保存失败！' + TempR);
+                                  this.$message.error('保存失败！' + tempR);
                               }
                           }.bind(this))
                           .catch(function (error) {

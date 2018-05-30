@@ -2,11 +2,14 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程填报-骨干河道新增";
+
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script><script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 
 <div id="add">
-    <div style="display:none;"> @ViewBag.type</div>
+    <div style="display:none;"> @type</div>
 
     <div id="addForm">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
@@ -67,8 +70,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            @*<el-input  prop="s_legal_person" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="formData.s_legal_person" class="selCss" size="mini" >
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -78,8 +80,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                           @* <el-input prop="s_unit_design" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="formData.s_unit_design"  class="selCss" size="mini">
                                 <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -493,7 +494,8 @@
                 }
             };
             return {
-                type:'', //当前登录账号：法人or设计单位
+                isPersonDisable: true,
+                isUnitDisable: false,
                 s_type: '',
                 YearOption: [],
                 StatusOption: [],
@@ -665,12 +667,6 @@
                 this.formData.s_gg_or_zxx = "zxx";
                 this.s_type = "中小河道";
             }
-            getType: {
-                this.type = '@ViewData["type"]';
-                if (this.type=="person") {
-                    alert("哈哈！");
-                }
-            };
             this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
@@ -700,15 +696,13 @@
                 this.gcctinfo.REMARK = this.formData.s_remark;
             },
             showgcctMapAdd: function () {
-                //this.bindGCCTData();
                 this.mapAddDialogVisible = true;
             },
             init: function () {
-                //this.getYear("/BackboneRiverway/GetSelect", { Type: "年度" });
-                this.getStatus("/BackboneRiverway/GetSelect", { Type: "工程状态" });
-                this.getTown("/BackboneRiverway/GetSelect", { Type: "街镇" });
-                this.getLegalPerson("/BackboneRiverway/GetLegalPerson", null);
-                this.getDesignUnit("/BackboneRiverway/GetDesignUnit", null);
+                this.getStatus("/BackboneRiverOutside/GetSelect", { Type: "工程状态" });
+                this.getTown("/BackboneRiverOutside/GetSelect", { Type: "街镇" });
+                this.getLegalPerson("/BackboneRiverOutside/GetLegalPerson", null);
+                this.getDesignUnit("/BackboneRiverOutside/GetDesignUnit", null);
             },
             getYear: function (url, param) {
                 axios.post(url, param)
@@ -749,7 +743,17 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      //this.formData.s_legal_person = this.PersonOption[0].s_id;
+                      if ('@type' == "person") {
+                          this.isPersonDisable = true;
+                          this.isUnitDisable = false;
+                          var selectPerson = "";
+                          selectPerson = this.PersonOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.formData.s_legal_person = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -760,7 +764,18 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      //this.formData.s_unit_design = this.UnitOption[0].s_id;
+                      if ('@type' == "unit") {
+                          this.isPersonDisable = false;
+                          this.isUnitDisable = true;
+
+                          var selectUnit = "";
+                          selectUnit = this.UnitOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.formData.s_unit_design = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -781,11 +796,9 @@
                 return theRequest;
             },
             saveData: function (formName) {
-                //alert(this.formData.n_year)
                 this.formData.n_year = new Date(this.formData.n_year).getFullYear();
                 this.$refs[formName].validate(function (valid) {
                     if (valid) {
-                        //alert(this.formData.n_year);
                         var drawing = '';
                         var picture = '';
                         if (this.drawingFiles != '')
@@ -800,10 +813,9 @@
                                 picture = this.pictureFiles[i].name + ',' + picture
                             }
                         }
-                        axios.post('/BackboneRiverway/SaveProjectData',
+                        axios.post('/BackboneRiverOutside/SaveProjectData',
                             { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
                           .then(function (response) {
-                              //var tempData = JSON.parse(response.data);
                               var tempData = eval('(' + response.data + ')');
                               var tempR = tempData.EnginCoreReportResponse.result;
                               if (tempR) {
@@ -816,7 +828,7 @@
                                   }
                               } else {
                                   this.formData.n_year = moment().format('YYYY');
-                                  this.$message.error('保存失败！' + TempR);
+                                  this.$message.error('保存失败！' + tempR);
                               }
                           }.bind(this))
                           .catch(function (error) {
@@ -850,9 +862,7 @@
                 }
             },
             beforeImagesUpload: function (file) {
-                debugger
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-                //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
                     this.$message({
                         message: '不支持上传该类型文件！',

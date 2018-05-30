@@ -33,6 +33,10 @@ namespace App.Controllers
         {
             string method = "wavenet.fxsw.station.statistics.distribution.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            if (s_area=="奉贤区")
+            {
+                s_area = "";
+            }
             paramDictionary.Add("s_area", s_area);                                         
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);

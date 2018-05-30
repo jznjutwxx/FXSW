@@ -20,4 +20,15 @@ namespace App.Models
         public string token { get; set; }
         public string role { get; set; }
     }
+
+    public class EnginSignInResponse
+    {
+        public EnginLoginResponse enginLoginResponse { get; set; }
+    }
+
+    public class EnginLoginResponse
+    {
+        public string result { get; set; }
+        public string name { get; set; }
+    }
 }

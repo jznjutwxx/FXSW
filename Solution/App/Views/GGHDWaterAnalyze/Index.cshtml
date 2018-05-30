@@ -1,0 +1,53 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "骨干河道水质情况分析";
+}
+
+<div id="demo">
+    <come-query v-on:emit-event="getEmitEvent" ref="comeQuery"></come-query>
+    @*<com-bar v-bind:option="barOption" v-bind:style="[styles]"></com-bar>*@
+
+</div>
+
+@Html.Partial("~/Views/GGHDWaterAnalyze/components/com_query.cshtml")
+@*@Html.Partial("~/Views/components/echarts/com_bar.cshtml")*@
+
+<script>
+    new Vue({
+        el: '#demo',
+        data: {
+            styles: {
+                width: '90%',
+                height: '0px',
+                float: 'left',
+            },
+        },
+        components: {
+            'come-query': query,
+            //'com-bar': comBar,
+            //'com-base-table': comBaseTable,
+        },
+        methods: {
+
+            getEmitEvent: function (param) {
+
+            },
+            setSize: function () {
+                var docH = document.documentElement.clientHeight
+                var queryH = this.$refs.comeQuery.$el.clientHeight
+                var contentH = docH - queryH - 40
+                this.styles.height = (contentH / 2) + 'px'
+                this.height = contentH / 2
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+        }
+    })
+</script>
+
+<style>
+
+</style>

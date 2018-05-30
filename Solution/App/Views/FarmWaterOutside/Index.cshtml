@@ -159,7 +159,6 @@
             setTableData: function (url, param) {
                 axios.post(url, param)
                  .then(function (response) {
-                     debugger
                      var li = JSON.parse(response.data);
                      var datas = li.EnginListGetResponse.engin_list;
                      this.tableData = datas;

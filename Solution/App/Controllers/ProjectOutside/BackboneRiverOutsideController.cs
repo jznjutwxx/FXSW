@@ -9,7 +9,7 @@ using System.Web.Mvc;
 
 namespace App.Controllers.ProjectOutside
 {
-    [ProjectAuthenticationAttribute]
+    [ProjectAuthentication] 
     public class BackboneRiverOutsideController : Controller
     {
         // GET: BackboneRiverOutside
@@ -19,10 +19,18 @@ namespace App.Controllers.ProjectOutside
         }
         public ActionResult AddProject()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult EditProject()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult Detail()
@@ -109,11 +117,15 @@ namespace App.Controllers.ProjectOutside
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
-
-            ViewData["type"] = type;
             return Json(authorization);
         }
+        //public ActionResult getType()
+        //{
+        //    var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+        //    var type = CookieHelper.ReadCookie("type");
 
+        //    ViewBag.type = type;
+        //}
         public JsonResult GetOneProjectData(string s_id)
         {
             // 接口
@@ -299,8 +311,6 @@ namespace App.Controllers.ProjectOutside
 
         public JsonResult SaveProjectData(string param, string drawingFiles, string pictureFiles)
         {
-            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
-            var type = CookieHelper.ReadCookie("type");
             //转成实体对象
             BackboneRiverwayInfo Arr = new BackboneRiverwayInfo();
             Arr = JsonHelper.JSONToObject<BackboneRiverwayInfo>(param);
@@ -310,16 +320,7 @@ namespace App.Controllers.ProjectOutside
 
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            if (type=="unit")
-            {
-                paramDictionary.Add("s_unit_design", type);//设计单位
-                paramDictionary.Add("s_legal_person", Arr.s_legal_person);
-            }
-            else if (type=="person")
-            {
-                paramDictionary.Add("s_legal_person", type);
-                paramDictionary.Add("s_unit_design", Arr.s_unit_design);
-            }
+
             //基本信息
             paramDictionary.Add("s_gg_or_zxx", Arr.s_gg_or_zxx); //gg:骨干  zxx:中小型
             paramDictionary.Add("s_name", Arr.s_name);
@@ -328,8 +329,8 @@ namespace App.Controllers.ProjectOutside
             paramDictionary.Add("n_pace_status", Arr.n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收
             paramDictionary.Add("s_town", Arr.s_town);//所属镇
             paramDictionary.Add("s_address", Arr.s_address);//工程地址
-           // paramDictionary.Add("s_legal_person", Arr.s_legal_person);//项目法人s_legal_person
-           // paramDictionary.Add("s_unit_design", Arr.s_unit_design);//设计单位
+            paramDictionary.Add("s_legal_person", Arr.s_legal_person);//项目法人s_legal_person
+            paramDictionary.Add("s_unit_design", Arr.s_unit_design);//设计单位
             paramDictionary.Add("s_unit_build", Arr.s_unit_build);
             paramDictionary.Add("s_unit_supervise", Arr.s_unit_supervise);
             paramDictionary.Add("n_reckon_total_amt", Arr.n_reckon_total_amt);//估计总投资

@@ -22,11 +22,6 @@ namespace App.Controllers
             return View();
         }
 
-        public ActionResult LegalPerson()
-        {
-            return View();
-        }
-
         public ActionResult OverTime()
         {
             Session.Abandon();
@@ -38,7 +33,7 @@ namespace App.Controllers
             return View();
         }
 
-        public JsonResult checkLogin(string name,string pwd,string type="")
+        public JsonResult checkLogin(string name,string pwd)
         {
             var result = "error";
             var username = "";
@@ -49,6 +44,7 @@ namespace App.Controllers
             AuthorizationParams ap = new AuthorizationParams();
             ap.TIMESTAMP = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
             ap.URL = ConfigurationManager.AppSettings["loginUrl"].ToString();
+            
 
             var authorization = AuthorizationUtils.LoginAuthorization(ap, paramDictionary);
 
@@ -59,7 +55,7 @@ namespace App.Controllers
             else
             {
                 SignInResponse signInResponse = JsonToObject<SignInResponse>(authorization);
-                if (signInResponse != null && signInResponse.SignInAuthorizationFXSWRightResponse.app_key!=null && signInResponse.SignInAuthorizationFXSWRightResponse.app_key != "")
+                if (signInResponse != null && signInResponse.SignInAuthorizationFXSWRightResponse!=null && signInResponse.SignInAuthorizationFXSWRightResponse.app_key!=null && signInResponse.SignInAuthorizationFXSWRightResponse.app_key != "")
                 {
                     result = "sucess";
                     username = signInResponse.SignInAuthorizationFXSWRightResponse.unit_name;
@@ -71,10 +67,53 @@ namespace App.Controllers
                     CookieHelper.WriteCookie("unit_name", signInResponse.SignInAuthorizationFXSWRightResponse.unit_name, 0);
                     CookieHelper.WriteCookie("token", signInResponse.SignInAuthorizationFXSWRightResponse.token, 0);
                     CookieHelper.WriteCookie("role", signInResponse.SignInAuthorizationFXSWRightResponse.role, 0);
-                    CookieHelper.WriteCookie("type", type, 0);
                 }
             }
             return Json(new { name=name, result=result });
+        }
+
+
+        public JsonResult checkOutsideLogin(string name, string pwd, string type = "")
+        {
+            var result = "error";
+            var username = "";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("userNo", name.Trim());
+            paramDictionary.Add("password", pwd.Trim());
+
+            AuthorizationParams ap = new AuthorizationParams();
+            
+            ap.METHOD = "wavenet.fxsw.engin.login";
+            ap.TIMESTAMP = DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss");
+            ap.URL = ConfigurationManager.AppSettings["apiUrl"].ToString();
+            ap.APP_KEY = CookieHelper.GetCookie(Request).app_key;
+            ap.APP_SECRET = CookieHelper.GetCookie(Request).app_secret;
+            ap.SESSION = CookieHelper.GetCookie(Request).app_session;
+            paramDictionary.Add("type", type);//unit  person 
+
+            var authorization = AuthorizationUtils.Authorization(ap, paramDictionary);
+
+            if (authorization.Contains("账号或密码错误"))
+            {
+                result = "error";
+            }
+            else
+            {
+                EnginSignInResponse signInResponse = JsonToObject<EnginSignInResponse>(authorization);
+                if (signInResponse != null && signInResponse.enginLoginResponse != null&&signInResponse.enginLoginResponse.result=="True")
+                {
+                    result = "sucess";
+                    username = signInResponse.enginLoginResponse.name;
+                    Session["name"] = username;
+                    CookieHelper.WriteCookie("app_key", CookieHelper.GetCookie(Request).app_key, 0);
+                    CookieHelper.WriteCookie("app_secret", CookieHelper.GetCookie(Request).app_secret, 0);
+                    CookieHelper.WriteCookie("app_session", CookieHelper.GetCookie(Request).app_session, 0);
+                    CookieHelper.WriteCookie("unit_name", username, 0);
+                    CookieHelper.WriteCookie("token", name, 0);
+                    CookieHelper.WriteCookie("type", type, 0);
+                }
+            }
+            return Json(new { name = name, result = result });
         }
 
         public JsonResult Logout()

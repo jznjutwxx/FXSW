@@ -38,21 +38,21 @@
                     <el-menu v-bind:style="{height:height}" v-bind:default-active="activeTreeIndex" background-color="#003e93" text-color="#fff" active-text-color="#409eff">
                         <el-submenu v-bind:index="item.id" v-if="!item.children" v-for="item in menuTree" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                         <el-submenu v-bind:index="item.id" v-else-if="item.children&&!item.children[0].children" v-for="item in menuTree" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                         <el-submenu v-else-if="item.children&&item.children[0].children" v-bind:index="item.id" v-for="item in menuTree[0].children" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+'.png)'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+'.png)'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                     </el-menu>
                 </el-aside>
@@ -194,65 +194,14 @@
 
                 },
                 getMenus: function () {
-                    this.menus = [{
-                        id: '0',
-                        name: '综合监测',
-                        icon: 'ico_biaozhi',
-                        url: '/ZHJC/Index'
-                    }, {
-                        id: '1',
-                        name: '水文统计',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            {
-                                id: '10',
-                                name: '雨量统计',
-                                icon: 'ico_gczt',
-                                url: '',
-                                children: [
-                                    { id: '11', name: '单站统计', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
-                                    { id: '12', name: '多站对比', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                    { id: '13', name: '面雨量统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                    { id: '14', name: '雨量等值面分析', icon: 'ico_gghd', url: '/SZQYJL/Index' }
-                                ]
-                            }, {
-                                id: '20',
-                                name: '水情统计',
-                                icon: 'ico_gczt',
-                                url: '',
-                                children: [
-                                     { id: '21', name: '单站统计', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
-                                     { id: '22', name: '多站对比', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '23', name: '水雨情趋势分析', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '24', name: '水位流量分析', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '25', name: '水量统计', icon: 'ico_gghd', url: '/SZQYJL/Index' }
-                                ]
-                            }, {
-                                id: '30',
-                                name: '河道水质评价',
-                                icon: 'ico_gczt',
-                                url: '',
-                                children: [
-                                     { id: '31', name: '单断面水质统计', icon: 'ico_gczt', url: '/HeavyPollutionReverway/Index' },
-                                     { id: '32', name: '单河道水质统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '33', name: '重污染河道水质', icon: 'ico_gghd', url: '/HeavyPollutionReverway/Index' },
-                                     { id: '34', name: '水功能区达标统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '35', name: '骨干河道水质情况分析', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '36', name: '清洁水行动水质达标统计', icon: 'ico_gghd', url: '/SZQYJL/Index' },
-                                     { id: '37', name: '水质取样统计', icon: 'ico_gghd', url: '/SZQYJL/Index' }
-                                ]
-                            }
-                        ]
-                    }, {
-                        id: '2',
-                        name: '系统设置',
-                        icon: 'ico_biaozhi',
-                        children: [
-                            { id: '41', name: '设计单位管理', icon: 'ico_sjdwgl', url: '/DesignOrganizationManger/Index' },
-                            { id: '42', name: '法人管理', icon: 'ico_frgl', url: '/LegalPersonManger/Index' }
-                        ]
-                    }]
-                    this.handleSelect(this.menus[0].id,null)
+                    axios.post('/Main/GetSubMenus', { id: ' @ViewBag.id' })
+                         .then(function (response) {
+                             if (JSON.parse(response.data).FXSWMenuGetResponse != undefined) {
+                                 this.menus = JSON.parse(response.data).FXSWMenuGetResponse.menus
+                                 this.handleSelect(this.menus[0].id, null)
+                             }
+                         }.bind(this))
+                         .catch(function (error) { })
                 },
                 handleSelect: function (key, keyPath) {
                     var tempMenu = []

@@ -121,7 +121,7 @@
             <div class="tool tool-search" v-on:click="showSearchInput" style="margin-left:6px;">
                 <div class="search-img icon-img"></div>
             </div>
-            <div class="tool tool-kuangx" v-on:click="">
+            <div class="tool tool-kuangx" v-on:click="drawRectangleFun">
                 <div class="kuangx-img icon-img"></div>
             </div>
             <div class="tool tool-ceju" v-on:click="measureDistance">
@@ -274,6 +274,8 @@
                 vectorUnit: null,   //显示测量的长度
                 vectorLayerTmp: null,   //临时点显示的图层
                 vectorX: null,   //删除
+                vectorLayerKX: null,    //框选
+                drawRectangle: null,    //画框
                 closeSelect: null,
                 lineMeasure: null, //测量长度
                 areaMeasure: null, //测量面积
@@ -303,6 +305,7 @@
                 markers: [],
                 lonlat:'',       //点击地图获取的坐标点
                 showInput: true,
+                ss:0,
             }
         },
         mounted: function () { 
@@ -342,6 +345,10 @@
                 this.vectorLine.removeAllFeatures();
                 this.vectorLayerTmp.removeAllFeatures();
                 this.vectorX.removeAllFeatures();
+                this.proNos = [];
+                this.currentPage = 1;
+                this.vectorLayerKX.removeAllFeatures();
+                this.getDataEvent();
             },
             measureDistance: function () {
                 this.vectorUnit.removeAllFeatures();
@@ -382,11 +389,16 @@
                 this.vectorX = new SuperMap.Layer.Vector("删除");
                 this.vectorUnit = new SuperMap.Layer.Vector("unit");
                 this.vectorLayerTmp = new SuperMap.Layer.Vector("临时图层");
+                this.vectorLayerKX = new SuperMap.Layer.Vector("框选");
+                this.drawRectangle = new SuperMap.Control.DrawFeature(this.vectorLayerKX, SuperMap.Handler.Box);
+        	    this.drawRectangle.events.on({
+                    "featureadded": this.drawRectangleCompleted
+                });
                 this.closeSelect = new SuperMap.Control.SelectFeature(this.vectorX, {
                     onSelect: this.onCloseFeatureSelect
                 });
                 this.layers = [baselayer,this.markerLayer,this.vectorLayer,this.vectorLine,this.vectorUnit,
-                    this.vectorLayerTmp,this.vectorX];
+                    this.vectorLayerTmp,this.vectorX,this.vectorLayerKX];
                 baselayer.events.on({ "layerInitialized": this.addLayers });
                 this.map.events.on({ "zoomend": this.mapIsZoomend });
                 this.map.events.on({ "click": this.mapClickEvent });
@@ -421,6 +433,7 @@
             //加载图层信息
             addLayers: function () {
                 this.map.addLayers(this.layers);
+                this.map.addControl(this.drawRectangle);
                 this.map.addControl(this.closeSelect);
                 this.map.addControl(this.gcctSelect);
                 this.map.addControl(this.lineMeasure);
@@ -430,6 +443,59 @@
             },
             mapClickEvent: function(e){
                 this.lonlat = this.map.getLonLatFromPixel(new SuperMap.Pixel(e.clientX, e.clientY));
+            },
+            drawRectangleFun:function(){
+                //先清除上次的显示结果
+                this.vectorLayerKX.removeAllFeatures();
+                this.currentPage = 1;
+                this.drawRectangle.activate();
+            },
+            drawRectangleCompleted: function(obj) {
+                var style = {
+                    strokeColor: "#304DBE",
+                    strokeWidth: 1,
+                    pointerEvents: "visiblePainted",
+                    fillColor: "#304DBE",
+                    fillOpacity: 0.5
+                };
+                
+                var feature = obj.feature;
+                feature.style = style;
+                this.vectorLayerKX.addFeatures(feature);
+                var bounds = feature.geometry.bounds;
+                var GetFeaturesByBoundsParameters, getFeaturesByGeometryService;
+                GetFeaturesByBoundsParameters = new SuperMap.REST.GetFeaturesByBoundsParameters({
+                    datasetNames: ["gcct0514:gcct_pt", "gcct0514:gcct_ln", "gcct0514:gcct_pl"],
+                    spatialQueryMode:SuperMap.REST.SpatialQueryMode.INTERSECT,
+                    bounds: bounds
+                });
+                getFeaturesByGeometryService = new SuperMap.REST.GetFeaturesByBoundsService(this.gcctRestDataUrl, {
+                    eventListeners: {
+                        "processCompleted": this.processCompletedDraw,
+                        "processFailed": this.processFailedDraw
+                    }
+                });
+                getFeaturesByGeometryService.processAsync(GetFeaturesByBoundsParameters);
+            },
+            processCompletedDraw: function(getFeaturesEventArgs){
+                this.drawRectangle.deactivate();
+                var i, len, features, result = getFeaturesEventArgs.result;
+                let tempArr = [];
+                if (result && result.features) {
+                    features = result.features;
+                    for (i=0, len=features.length; i<len; i++) {
+                        let fea = features[i];
+                        if ($.inArray(fea.data.S_PROJECT_NO, tempArr) == -1) {
+                            tempArr.push(fea.data.S_PROJECT_NO);
+                        }
+                    }
+                    console.log(tempArr);
+                    this.proNos = tempArr;
+                    this.getDataEvent();
+                }
+            },
+            processFailedDraw: function(e){
+                console.log(e.error.errorMsg);
             },
             onGcctFeatureSelect: function(e) {
                 let proNo = e.data.S_PROJECT_NO;
@@ -498,6 +564,7 @@
                 }
             },
             dateChange: function (val) {
+                this.currentPage = 1;
                 //后台获取数据
                 this.getDataEvent();
             },
@@ -522,20 +589,18 @@
             },
             //条件筛选加载表格中的数据
             getTableData: function (url, param) {
-                var _this = this;
                 axios.post(url, param).then(function (response) {
                      var li = JSON.parse(response.data);
                      var datas = li.EnginPandectGetResponse.engin_pandect_list;
-                     _this.tableData = datas;
-                     console.log(_this.tableData);
-                     _this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
-                     _this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
-                     _this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
-                     _this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
-                     _this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
-                     _this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
-                     _this.initTab();    //根据条件增加或减少Tab标签页
-                     _this.getMapDBData();   //获取数据库数据（地图使用）
+                     this.tableData = datas;
+                     this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
+                     this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
+                     this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
+                     this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
+                     this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
+                     this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
+                     this.initTab();    //根据条件增加或减少Tab标签页
+                     this.getMapDBData();   //获取数据库数据（地图使用）
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -594,7 +659,11 @@
                 }
                 var years = yearArr.join("','");
                 var status = statusArr.join("','");
-                var querySQL = " S_TOWN in ('" + towns + "') and N_YEAR in ('" + years + "') and N_TYPE in ('" + status + "')";
+                var querySQL = " S_TOWN in ('" + towns + "') and N_YEAR in ('" + years 
+                             + "') and N_TYPE in ('" + status + "') ";
+                //if(this.proNos.length>0){
+                //    querySQL += " S_PROJECT_NO in ('" + this.proNos.join("','") + "')";
+                //}
                 var getFeatureParam, getFeatureBySQLService, getFeatureBySQLParams;
                 getFeatureParam = new SuperMap.REST.FilterParameter({
                     //name: "gcct_pt@gcct0514",
@@ -604,7 +673,7 @@
                     queryParameter: getFeatureParam,
                     datasetNames: ["gcct0514:gcct_pt", "gcct0514:gcct_ln", "gcct0514:gcct_pl"],
                     fromIndex: 0,
-                    toIndex: 500
+                    toIndex: -1
                 });
                 if (paraNum == 0) {
                     getFeatureBySQLService = new SuperMap.REST.GetFeaturesBySQLService(this.gcctRestDataUrl, {
@@ -626,7 +695,7 @@
             //渲染图层
             processCompleted2: function(e){
                 //设置草图图层的优先级到最大，否则无法选中上面的feature
-                this.map.setLayerIndex(this.vectorLayer,6);
+                this.map.setLayerIndex(this.vectorLayer,7);
                 this.vectorLayer.removeAllFeatures();
                 var obj = e.result.features;
                 let features = [];
@@ -637,7 +706,7 @@
                 this.vectorLayer.addFeatures(features);
                 this.vectorDataList = obj;
                 this.gcctSelect.activate();     //打开vectorLayer图层上的草图选择事件
-                console.log(this.vectorLayer.features);
+                //console.log(this.vectorLayer.features);
             },
             //加载数据
             processCompleted: function (e) {
@@ -900,6 +969,7 @@
                 $(".hideRight").hide();
                 $(".search-input-div").hide();
                 $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                this.proNm = '';
                 this.showInput = true;
                 $(".map_tools").animate({ width: "hide" }, "normal", function () {
                     $(".showRight").show();
@@ -933,12 +1003,9 @@
             },
             //搜索的点击事件
             clickSearchBtn: function() {
-                console.log(this.proNm);
-                if(this.proNm == ''){
-
-                }else{
-                    this.getDataEvent();
-                }
+                this.currentPage = 1;
+                //console.log(this.proNm);
+                this.getDataEvent();
             },
             //街镇全选框的事件
             handleCheckAllChange: function (val) {
@@ -995,7 +1062,7 @@
             },
             //最终双击结束
             handleMeasure: function (event) {
-                this.map.setLayerIndex(this.vectorX,6);
+                this.map.setLayerIndex(this.vectorX,7);
                 this.lineMeasure.deactivate();
                 this.vectorLayerTmp.removeAllFeatures();
                 //获取最后的点
@@ -1204,6 +1271,8 @@
                     $(".search-input-div").hide();
                     $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
                     this.showInput = true;
+                    this.proNm = '';
+                    this.getDataEvent();
                 }
             },
         }
