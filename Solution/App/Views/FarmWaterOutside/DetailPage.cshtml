@@ -595,8 +595,8 @@
             }
             this.setSize();
             this.reSize();
-            this.getProjectData('/FarmlandWater/GetDetail', { id: this.s_id });
-            this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.s_id, s_type: "工程图纸" });
+            this.getProjectData('/FarmWaterOutside/GetDetail', { id: this.s_id });
+            this.getProjectFile('/FarmWaterOutside/GetProjectFileData', { id: this.s_id, s_type: "工程图纸" });
         },
         computed: {
         },
@@ -673,7 +673,7 @@
                 if (tab.label == "工程图纸") {
                     tab.label = "图纸";
                 }
-                this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.s_id, s_type: tab.label });
+                this.getProjectFile('/FarmWaterOutside/GetProjectFileData', { id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
 

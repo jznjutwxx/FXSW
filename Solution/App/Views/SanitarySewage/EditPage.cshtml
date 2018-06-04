@@ -2,12 +2,17 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "EditPage";
-}
 
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
+}
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
+
 <div id="edit">
-    <div id="editForm">
-        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="editForm" ref="editForm" class="demo-ruleForm" v-bind:rules="rules">
+    <div style="display:none;">@type</div>
+
+    <div id="formData">
+        <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
                 <el-row class="el-row">
                     <el-col v-bind:span="24">
@@ -17,17 +22,17 @@
                 <el-row class="el-row" type="flex">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程名称:" prop="S_NAME">
-                            <el-input v-model="editForm.S_NAME" size="mini"></el-input>
+                            <el-input v-model="formData.S_NAME" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程编号:" prop="S_PROJECT_NO">
-                            <el-input v-model="editForm.S_PROJECT_NO" size="mini"></el-input>
+                            <el-input v-model="formData.S_PROJECT_NO" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="年度:" prop="N_YEAR">
-                            <el-date-picker v-model="editForm.N_YEAR"
+                            <el-date-picker v-model="formData.N_YEAR"
                                             type="year"
                                             placeholder="选择年份" class="selCss" size="mini">
                             </el-date-picker>
@@ -42,18 +47,16 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程状态:" prop="N_PACE_STATUS">
-                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
-                            <el-select v-model="editForm.N_PACE_STATUS" class="selCss" size="mini">
-                                <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                            <el-select v-model="formData.N_PACE_STATUS" class="selCss" size="mini">
+                                <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="所属镇:" prop="s_town">
-                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
-                            <el-select v-model="editForm.S_TOWN" class="selCss" size="mini">
-                                <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                            <el-select v-model="formData.S_TOWN" class="selCss" size="mini">
+                                <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -62,13 +65,13 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="16" class="colCss">
                         <el-form-item label="工程地址:" prop="S_ADDRESS">
-                            <el-input v-model="editForm.S_ADDRESS" size="mini" style="width:127%;"></el-input>
+                            <el-input v-model="formData.S_ADDRESS" size="mini" style="width:127%;"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            <el-select v-model="editForm.S_LEGAL_PERSON" class="selCss" size="mini">
-                                <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="formData.S_LEGAL_PERSON" class="selCss" size="mini">
+                                <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
@@ -77,28 +80,27 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
-                            <el-select v-model="editForm.S_UNIT_DESIGN" class="selCss" size="mini">
-                                <el-option v-for="item in DesignUnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="formData.S_UNIT_DESIGN" class="selCss" size="mini">
+                                <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="施工单位:">
-                            <el-input v-model="editForm.S_UNIT_BUILD" size="mini"></el-input>
+                            <el-input v-model="formData.S_UNIT_BUILD" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="监理单位:">
-                            <el-input v-model="editForm.S_UNIT_SUPERVISE" size="mini"></el-input>
+                            <el-input v-model="formData.S_UNIT_SUPERVISE" size="mini"></el-input>
                         </el-form-item>
                     </el-col>
                 </el-row>
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="估算总投资:" prop="N_RECKON_TOTAL_AMT">
-                            <el-input v-model="editForm.N_RECKON_TOTAL_AMT" size="mini">
+                            <el-input v-model="formData.N_RECKON_TOTAL_AMT" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -109,7 +111,7 @@
                 <el-row class="el-row ">
                     <el-col v-bind:span="24" style="height:90px;">
                         <el-form-item label="备注:">
-                            <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" resize="none" v-model="editForm.S_REMARK" style="width:136%;padding-top:10px;">
+                            <el-input type="textarea" placeholder="请输入内容" v-bind:rows="3" resize="none" v-model="formData.S_REMARK" style="width:136%;padding-top:10px;">
                             </el-input>
                         </el-form-item>
                     </el-col>
@@ -124,7 +126,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="村组数量:" prop="N_CZSL">
-                            <el-input v-model="editForm.N_CZSL" size="mini">
+                            <el-input v-model="formData.N_CZSL" size="mini">
                                 <template slot="append">
                                     个
                                 </template>
@@ -133,7 +135,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="总户数:" prop="N_ZHS">
-                            <el-input v-model="editForm.N_ZHS" size="mini">
+                            <el-input v-model="formData.N_ZHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -142,7 +144,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="就地处理户数:" prop="N_JDCLHS">
-                            <el-input v-model="editForm.N_JDCLHS" size="mini">
+                            <el-input v-model="formData.N_JDCLHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -153,7 +155,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="市政纳管户数:" prop="N_SZNGHS">
-                            <el-input v-model="editForm.N_SZNGHS" size="mini">
+                            <el-input v-model="formData.N_SZNGHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -162,7 +164,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="就地处理站:" prop="N_JDCLZ">
-                            <el-input v-model="editForm.N_JDCLZ" size="mini">
+                            <el-input v-model="formData.N_JDCLZ" size="mini">
                                 <template slot="append">
                                     座
                                 </template>
@@ -171,7 +173,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="管网长度:" prop="N_GWCD">
-                            <el-input v-model="editForm.N_GWCD" size="mini">
+                            <el-input v-model="formData.N_GWCD" size="mini">
                                 <template slot="append">
                                     公里
                                 </template>
@@ -182,7 +184,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="新翻建化粪池:" prop="N_XFJHFC">
-                            <el-input v-model="editForm.N_XFJHFC" size="mini">
+                            <el-input v-model="formData.N_XFJHFC" size="mini">
                                 <template slot="append">
                                     座
                                 </template>
@@ -200,7 +202,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="总投资:" prop="N_TOTAL_INVEST">
-                            <el-input v-model="editForm.N_TOTAL_INVEST" size="mini">
+                            <el-input v-model="formData.N_TOTAL_INVEST" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -209,7 +211,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程直接费:" prop="N_ENGIN_COST">
-                            <el-input v-model="editForm.N_ENGIN_COST" size="mini">
+                            <el-input v-model="formData.N_ENGIN_COST" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -218,7 +220,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="独立费用:" prop="N_INDEPENDENT_COST">
-                            <el-input v-model="editForm.N_INDEPENDENT_COST" size="mini">
+                            <el-input v-model="formData.N_INDEPENDENT_COST" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -229,7 +231,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="预备费:" prop="N_PREP_COST">
-                            <el-input v-model="editForm.N_PREP_COST" size="mini">
+                            <el-input v-model="formData.N_PREP_COST" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -238,7 +240,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="景观等费用:" prop="N_SIGHT_COST">
-                            <el-input v-model="editForm.N_SIGHT_COST" size="mini">
+                            <el-input v-model="formData.N_SIGHT_COST" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -256,7 +258,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="市补:" prop="N_SUBSIDY_CITY">
-                            <el-input v-model="editForm.N_SUBSIDY_CITY" size="mini">
+                            <el-input v-model="formData.N_SUBSIDY_CITY" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -265,7 +267,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="区配套:" prop="N_SUBSIDY_DISTRICT">
-                            <el-input v-model="editForm.N_SUBSIDY_DISTRICT" size="mini">
+                            <el-input v-model="formData.N_SUBSIDY_DISTRICT" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -274,7 +276,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="镇配套:" prop="N_SUBSIDY_TOWN">
-                            <el-input v-model="editForm.N_SUBSIDY_TOWN" size="mini">
+                            <el-input v-model="formData.N_SUBSIDY_TOWN" size="mini">
                                 <template slot="append">
                                     万元
                                 </template>
@@ -292,7 +294,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="村组数量:" prop="N_WCCZSL">
-                            <el-input v-model="editForm.N_WCCZSL" size="mini">
+                            <el-input v-model="formData.N_WCCZSL" size="mini">
                                 <template slot="append">
                                     个
                                 </template>
@@ -301,7 +303,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="总户数:" prop="N_WCZHS">
-                            <el-input v-model="editForm.N_WCZHS" size="mini">
+                            <el-input v-model="formData.N_WCZHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -310,7 +312,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="就地处理户数:" prop="N_WCJDCLHS">
-                            <el-input v-model="editForm.N_WCJDCLHS" size="mini">
+                            <el-input v-model="formData.N_WCJDCLHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -321,7 +323,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="市政纳管户数:" prop="N_WCSZNGHS">
-                            <el-input v-model="editForm.N_WCSZNGHS" size="mini">
+                            <el-input v-model="formData.N_WCSZNGHS" size="mini">
                                 <template slot="append">
                                     户
                                 </template>
@@ -330,7 +332,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="就地处理站:" prop="N_WCJDCLZ">
-                            <el-input v-model="editForm.N_WCJDCLZ" size="mini">
+                            <el-input v-model="formData.N_WCJDCLZ" size="mini">
                                 <template slot="append">
                                     座
                                 </template>
@@ -339,7 +341,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="管网长度:" prop="N_WCGWCD">
-                            <el-input v-model="editForm.N_WCGWCD" size="mini">
+                            <el-input v-model="formData.N_WCGWCD" size="mini">
                                 <template slot="append">
                                     公里
                                 </template>
@@ -350,7 +352,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="新翻建化粪池:" prop="N_WCXFJHFC">
-                            <el-input v-model="editForm.N_WCXFJHFC" size="mini">
+                            <el-input v-model="formData.N_WCXFJHFC" size="mini">
                                 <template slot="append">
                                     座
                                 </template>
@@ -360,11 +362,11 @@
                 </el-row>
             </div>
             <div id="appFiles">
-                <el-row type="flex">
-                    <div class="blueTitle"></div>
-                    <div class="titlecss">补充信息</div>
+                <el-row class="el-row">
+                    <el-col v-bind:span="24">
+                        <div class="blueTitle"></div><div class="appTitle">补充信息</div>
+                    </el-col>
                 </el-row>
-
                 <el-row>
                     <el-col v-bind:span="24">
                         <el-form-item label="工程图纸上传:">
@@ -381,7 +383,6 @@
                                        v-bind:disabled="isFinish"
                                        v-bind:before-upload="beforeAvatarUpload">
                                 <el-button slot="trigger" size="small" type="primary" v-bind:disabled="isFinish">选取文件</el-button>
-                                @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                                 <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                             </el-upload>
                         </el-form-item>
@@ -393,10 +394,10 @@
                             <el-button type="text" v-on:click="showgcctMapEdit" v-bind:disabled="isFinish">工程位置草图</el-button>
                         </el-form-item>
                     </el-col>
-                    <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
-                        <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo v-on:draftstatus="setDraftStatus"></com-gcctmap-edit>
-                    </el-dialog>
                 </el-row>
+                <el-dialog title="编辑工程位置草图" v-bind:visible.sync="mapEditDialogVisible" width="70%" top="6vh">
+                    <com-gcctmap-edit v-bind:style="{height:gccteditmapheight+'px'}" ref="gcctedit" v-bind:gcctinfo=this.gcctinfo v-on:draftstatus="setDraftStatus"></com-gcctmap-edit>
+                </el-dialog>
                 <el-row>
                     <el-col v-bind:span="24">
                         <el-form-item label="工程图片上传:">
@@ -425,17 +426,17 @@
         </el-form>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button v-on:click="cancel" size="small"> 取消</el-button>
-        <el-button type="primary" v-on:click="edit('editForm')" size="small" v-bind:disabled="isFinish">保存</el-button>
+        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
+        <el-button type="primary" v-on:click="saveData('formData')" v-bind:disabled="isFinish" size="small">保存</el-button>
     </div>
 </div>
 @Html.Partial("~/Views/components/gcctMap/com_gcctEdit.cshtml")
+
 <script>
     new Vue({
         el: '#edit',
         data: function () {
             var checkNum = function (rule, value, callback) {
-                //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
                 var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
                 if (value != '' && value != 'undefind' && value != null) {
                     if (!reNum.test(value)) {
@@ -448,22 +449,7 @@
                 }
             };
             return {
-                yYear: moment().format('YYYY'),
-                YearOption: [],
-                staticsOptions: [],
-                xzqhOptions: [],
-                LegalPerOption: [],
-                DesignUnitOption: [],
-                drawingFiles: [],
-                pictureFiles: [],
-                drawingFilesAdd: [],
-                pictureFilesAdd: [],
-                filesData: [],
-                dialogImageUrl: '',
-                dialogVisible: false,
-                isFinish: false,
-                mapEditDialogVisible: false,
-                gccteditmapheight: document.documentElement.clientHeight - 200,
+                loading:null,
                 gcctinfo: {
                     S_PROJECT_NO: "",
                     N_PACE_STATUS: "",
@@ -478,7 +464,17 @@
                     N_RECKON_TOTAL_AMT: "",
                     REMARK: ""
                 },
-                editForm: {
+                isPersonDisable: false,
+                isUnitDisable: false,
+                yYear: moment().format('YYYY'),
+                YearOption: [],
+                StatusOption: [],
+                TownOption: [],
+                PersonOption: [],
+                UnitOption: [],
+                isFinish: false,
+
+                formData: {
                     S_ID: '',
                     S_NAME: '',
                     N_TYPE: '',
@@ -516,8 +512,17 @@
                     N_WCGWCD: '',
                     N_WCXFJHFC: '',
                     REMOVE_PIC_IDS: '',
-                    N_DRAFT: '',
+                    N_DRAFT: ''
                 },
+                drawingFiles: [],
+                pictureFiles: [],
+                drawingFilesAdd: [],
+                pictureFilesAdd: [],
+                filesData: [],
+                dialogImageUrl: '',
+                dialogVisible: false,
+                mapEditDialogVisible: false,
+                gccteditmapheight: document.documentElement.clientHeight - 200,
                 rules: {
                     S_NAME: [
                         { required: true, message: '请输入工程名称', trigger: 'blur' }
@@ -606,21 +611,19 @@
                     N_WCXFJHFC: [
                         { validator: checkNum, trigger: 'blur' }
                     ],
-                },
-            }
+                }
+            };
         },
         components: {
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
-            var t = this.GetId();
-            this.GetDetail("/SanitarySewage/GetDetail", { id: t.id });
-
-            //this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
-            this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
-            this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
-            this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
-            this.getDesignUnit("/FarmlandWater/GetDesignUnit", null);
+            this.loading = this.$loading({
+                lock: true,
+                text: '数据加载中...',
+                target: document.querySelector('body')
+            });
+            this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
             });
@@ -632,178 +635,166 @@
         },
         methods: {
             setDraftStatus: function (param) {
-                this.editForm.N_DRAFT = param.n_draft;
+                this.formData.n_draft = param.n_draft;
             },
             bindGCCTData: function () {
-                this.gcctinfo.S_PROJECT_NO = this.editForm.S_PROJECT_NO;
-                this.gcctinfo.N_PACE_STATUS = this.editForm.N_PACE_STATUS;
-                this.gcctinfo.N_YEAR = this.editForm.N_YEAR;
-                this.gcctinfo.N_YEAR = this.editForm.N_TYPE;
-                this.gcctinfo.S_LEGAL_PERSON = this.editForm.S_LEGAL_PERSON;
-                this.gcctinfo.S_TOWN = this.editForm.S_TOWN;
-                this.gcctinfo.S_ADDRESS = this.editForm.S_ADDRESS;
-                this.gcctinfo.S_UNIT_DESIGN = this.editForm.S_UNIT_DESIGN;
-                this.gcctinfo.S_UNIT_BUILD = this.editForm.S_UNIT_BUILD;
-                this.gcctinfo.S_UNIT_SUPERVISE = this.editForm.S_UNIT_SUPERVISE;
-                this.gcctinfo.N_RECKON_TOTAL_AMT = this.editForm.N_RECKON_TOTAL_AMT;
-                this.gcctinfo.REMARK = this.editForm.S_REMARK;
+                this.gcctinfo.S_PROJECT_NO = this.formData.s_project_no;
+                this.gcctinfo.N_PACE_STATUS = this.formData.n_pace_status;
+                this.gcctinfo.N_YEAR = this.formData.n_year;
+                this.gcctinfo.N_TYPE = this.formData.n_type;
+                this.gcctinfo.S_LEGAL_PERSON = this.formData.s_legal_person;
+                this.gcctinfo.S_TOWN = this.formData.s_town;
+                this.gcctinfo.S_ADDRESS = this.formData.s_address;
+                this.gcctinfo.S_UNIT_DESIGN = this.formData.s_unit_design;
+                this.gcctinfo.S_UNIT_BUILD = this.formData.s_unit_build;
+                this.gcctinfo.S_UNIT_SUPERVISE = this.formData.s_unit_supervise;
+                this.gcctinfo.N_RECKON_TOTAL_AMT = this.formData.n_reckon_total_amt;
+                this.gcctinfo.REMARK = this.formData.s_remark;
             },
             showgcctMapEdit: function () {
                 this.bindGCCTData();
                 this.mapEditDialogVisible = true;
             },
-            getYear: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.YearOption = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getTown: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.xzqhOptions = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getStatics: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.staticsOptions = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getLegalPerson: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      this.LegalPerOption = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getDesignUnit: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      this.DesignUnitOption = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            changeYear: function (param) {
-                this.editForm.N_YEAR = param;
-            },
-            changeStatics: function (param) {
-                this.editForm.N_PACE_STATUS = param;
-            },
-            changeXzqh: function (param) {
-                this.editForm.S_TOWN = param;
-            },
-            changeLegalper: function (param) {
-                this.editForm.S_LEGAL_PERSON = param;
-            },
-            changeDesignUnit: function (param) {
-                this.editForm.S_UNIT_DESIGN = param;
-            },
+            init: function () {
+                var s_id = this.getRequest().id;
+                axios.all([
+                    axios.post('/SanitarySewage/GetDictionary', { Type: "工程状态" }),
+                    axios.post('/SanitarySewage/GetDictionary', { Type: "街镇" }),
+                    axios.post('/SanitarySewage/GetLegalPerson', null),
+                    axios.post('/SanitarySewage/GetDesignUnit', null),
+                    axios.post('/SanitarySewage/GetDetail', { id: s_id })
+                ]).then(axios.spread(function (statusResp, townResp, personResp, unitResp,dataResp) {
+                    // 上面两个请求都完成后，才执行这个回调方法
+                    this.getStatus(statusResp.data)
+                    this.getTown(townResp.data)
+                    this.getLegalPerson(personResp.data)
+                    this.getDesignUnit(unitResp.data)
+                    this.getProjectData(dataResp.data);
+                    this.loading.close();
+                }.bind(this)))
 
-            cancel: function () {
-                window.location.href = "/SanitarySewage/Index";
             },
-            GetId: function () {
-                var url = window.location.search;
-                var theRequest = new Object();
-                if (url.indexOf("?") != -1) {
-                    var str = url.substr(1);
-                    strs = str.split("&");
-                    for (var i = 0; i < strs.length; i++) {
-                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+            getStatus: function (data) {
+                var tempData = JSON.parse(data);
+                this.StatusOption = tempData.DictionaryGetResponse.list;
+            },
+            getTown: function (data) {
+                var tempData = JSON.parse(data);
+                this.TownOption = tempData.DictionaryGetResponse.list;
+            },
+            getLegalPerson: function (data) {
+                var tempData = JSON.parse(data);
+                this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
+            },
+            getDesignUnit: function (data) {
+                var tempData = JSON.parse(data);
+                this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
+            },
+            filterStatus: function (name) {
+                this.StatusOption.forEach(function (value, index, array) {
+                    if ('@type' == "person") {
+                        this.isPersonDisable = true;
+                        this.isUnitDisable = false;
+                    }
+                    if (value.s_cd_value == name) {
+                        this.formData.N_PACE_STATUS = value.s_cd_key
+                        return
+                    }
+                }.bind(this))
+            },
+            filterLegal: function (name) {
+                this.PersonOption.forEach(function (value, index, array) {
+                    if ('@type' == "person") {
+                        this.isPersonDisable = true;
+                        this.isUnitDisable = false;
+                    }
+                    if (value.s_name == name) {
+                        this.formData.S_LEGAL_PERSON = value.s_id
+                        return
+                    }
+
+                }.bind(this))
+            },
+            filterUnit: function (name) {
+                this.UnitOption.forEach(function (value, index, array) {
+                    if ('@type' == "unit") {
+                        this.isPersonDisable = false;
+                        this.isUnitDisable = true;
+                    }
+                    if (value.s_name == name) {
+                        this.formData.S_UNIT_DESIGN = value.s_id
+                        return
+                    }
+                }.bind(this))
+            },
+            getProjectData: function (data) {
+                var tempData = JSON.parse(data);
+                var replyData = tempData.EnginSewageGetResponse.info.EnginMainSewage;
+                var capitalData = tempData.EnginSewageGetResponse.info.EnginCapitalSewage;
+                var investData = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage;
+                var finishData = tempData.EnginSewageGetResponse.info.EnginCompleteSewage;
+
+                this.formData.S_ID = tempData.EnginSewageGetResponse.info.s_id;
+                this.formData.S_NAME = tempData.EnginSewageGetResponse.info.s_name;
+                this.formData.S_PROJECT_NO = tempData.EnginSewageGetResponse.info.s_project_no;
+                this.formData.N_YEAR = tempData.EnginSewageGetResponse.info.n_year.toString();
+                this.yYear = tempData.EnginSewageGetResponse.info.n_year.toString();
+                this.formData.S_TOWN = tempData.EnginSewageGetResponse.info.s_town;
+                this.formData.S_ADDRESS = tempData.EnginSewageGetResponse.info.s_address;
+                this.formData.S_LEGAL_PERSON = tempData.EnginSewageGetResponse.info.s_legal_person;
+                this.formData.S_UNIT_DESIGN = tempData.EnginSewageGetResponse.info.s_unit_design;
+                this.formData.S_UNIT_BUILD = tempData.EnginSewageGetResponse.info.s_unit_build;
+                this.formData.S_UNIT_SUPERVISE = tempData.EnginSewageGetResponse.info.s_unit_supervise;
+                this.formData.N_RECKON_TOTAL_AMT = tempData.EnginSewageGetResponse.info.n_reckon_total_amt;
+                this.formData.S_REMARK = tempData.EnginSewageGetResponse.info.s_remark;
+
+                this.formData.N_CZSL = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_czsl;
+                this.formData.N_ZHS = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_zhs;
+                this.formData.N_JDCLHS = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_jdclhs;
+                this.formData.N_SZNGHS = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_sznghs;
+                this.formData.N_JDCLZ = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_jdclz;
+                this.formData.N_GWCD = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_gwcd;
+                this.formData.N_XFJHFC = tempData.EnginSewageGetResponse.info.EnginMainSewage.n_xfjhfc;
+
+                this.formData.N_TOTAL_INVEST = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage.n_total_invest;
+                this.formData.N_ENGIN_COST = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage.n_engin_cost;
+                this.formData.N_INDEPENDENT_COST = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage.n_independent_cost;
+                this.formData.N_PREP_COST = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage.n_prep_cost;
+                this.formData.N_SIGHT_COST = tempData.EnginSewageGetResponse.info.EnginInvestmentSewage.n_sight_cost;
+
+                this.formData.N_SUBSIDY_CITY = tempData.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_city;
+                this.formData.N_SUBSIDY_DISTRICT = tempData.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_district;
+                this.formData.N_SUBSIDY_TOWN = tempData.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_town;
+
+                this.formData.N_WCCZSL = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_czsl;
+                this.formData.N_WCZHS = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_zhs;
+                this.formData.N_WCJDCLHS = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclhs;
+                this.formData.N_WCSZNGHS = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_sznghs;
+                this.formData.N_WCJDCLZ = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclz;
+                this.formData.N_WCGWCD = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
+                this.formData.N_WCXFJHFC = tempData.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
+                var files = tempData.EnginSewageGetResponse.info.FileUploaderList;
+
+                if (tempData.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
+                    this.isFinish = true;
+                } else {
+                    this.isFinish = false;
+                }
+                for (var i = 0; i < files.length; i++) {
+                    var temp = { name: files[i].s_file_name, url: files[i].s_path, uid: files[i].s_id }
+                    if (files[i].s_type == '图纸') {
+                        this.drawingFiles.push(temp);
+                    }
+                    if (files[i].s_type == '图片') {
+                        this.pictureFiles.push(temp);
                     }
                 }
-                return theRequest;
+                this.filterStatus(tempData.EnginSewageGetResponse.info.n_pace_status);
+                this.filterLegal(tempData.EnginSewageGetResponse.info.s_legal_person);
+                this.filterUnit(tempData.EnginSewageGetResponse.info.s_unit_design);
             },
-            GetDetail: function (url, id) {
-                axios.post(url, id)
-                 .then(function (response) {
-                     var li = JSON.parse(response.data);
-                     this.editForm.S_ID = li.EnginSewageGetResponse.info.s_id;
-                     this.editForm.S_NAME = li.EnginSewageGetResponse.info.s_name;
-                     this.editForm.S_PROJECT_NO = li.EnginSewageGetResponse.info.s_project_no;
-                     this.editForm.N_YEAR = li.EnginSewageGetResponse.info.n_year.toString();
-                     this.yYear = li.EnginSewageGetResponse.info.n_year.toString();
-                     this.editForm.S_TOWN = li.EnginSewageGetResponse.info.s_town;
-                     this.editForm.S_ADDRESS = li.EnginSewageGetResponse.info.s_address;
-                     this.editForm.S_LEGAL_PERSON = li.EnginSewageGetResponse.info.s_legal_person;
-                     this.editForm.S_UNIT_DESIGN = li.EnginSewageGetResponse.info.s_unit_design;
-                     this.editForm.S_UNIT_BUILD = li.EnginSewageGetResponse.info.s_unit_build;
-                     this.editForm.S_UNIT_SUPERVISE = li.EnginSewageGetResponse.info.s_unit_supervise;
-                     this.editForm.N_RECKON_TOTAL_AMT = li.EnginSewageGetResponse.info.n_reckon_total_amt;
-                     this.editForm.S_REMARK = li.EnginSewageGetResponse.info.s_remark;
-
-                     this.editForm.N_CZSL = li.EnginSewageGetResponse.info.EnginMainSewage.n_czsl;
-                     this.editForm.N_ZHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_zhs;
-                     this.editForm.N_JDCLHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclhs;
-                     this.editForm.N_SZNGHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_sznghs;
-                     this.editForm.N_JDCLZ = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclz;
-                     this.editForm.N_GWCD = li.EnginSewageGetResponse.info.EnginMainSewage.n_gwcd;
-                     this.editForm.N_XFJHFC = li.EnginSewageGetResponse.info.EnginMainSewage.n_xfjhfc;
-                     
-                     this.editForm.N_TOTAL_INVEST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_total_invest;
-                     this.editForm.N_ENGIN_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_engin_cost;
-                     this.editForm.N_INDEPENDENT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_independent_cost;
-                     this.editForm.N_PREP_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_prep_cost;
-                     this.editForm.N_SIGHT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_sight_cost;
-
-                     this.editForm.N_SUBSIDY_CITY = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_city;
-                     this.editForm.N_SUBSIDY_DISTRICT = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_district;
-                     this.editForm.N_SUBSIDY_TOWN = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_town;
-
-                     this.editForm.N_WCCZSL = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_czsl;
-                     this.editForm.N_WCZHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_zhs;
-                     this.editForm.N_WCJDCLHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclhs;
-                     this.editForm.N_WCSZNGHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_sznghs;
-                     this.editForm.N_WCJDCLZ = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclz;
-                     this.editForm.N_WCGWCD = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
-                     this.editForm.N_WCXFJHFC = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
-                     if (li.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
-                         this.isFinish = true;
-                     } else {
-                         this.isFinish = false;
-                     }
-                     var files = li.EnginSewageGetResponse.info.FileUploaderList;
-                     for (var i = 0; i < files.length; i++) {
-                         var temp = { name: files[i].s_file_name, url: files[i].s_path, uid: files[i].s_id }
-                         if (files[i].s_type == '图纸') {
-                             this.drawingFiles.push(temp);
-                         }
-                         if (files[i].s_type == '图片') {
-                             this.pictureFiles.push(temp);
-                         }
-                     }
-                     this.StatusToNum(li.EnginSewageGetResponse.info.n_pace_status);
-                 }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            edit: function (formName) {
-                this.editForm.N_YEAR = new Date(this.editForm.N_YEAR).getFullYear();
+            saveData: function (formName) {
+                this.formData.N_YEAR = new Date(this.formData.N_YEAR).getFullYear();
                 this.$refs[formName].validate(function (valid) {
                     if (valid) {
                         var drawing = '';
@@ -818,38 +809,31 @@
                                 picture = this.pictureFilesAdd[i].name + ',' + picture
                             }
                         }
-                        axios.post('/SanitarySewage/Edit', { param: JSON.stringify(this.editForm), drawingFiles: drawing, pictureFiles: picture })
-                          .then(function (response) {
-                              var datas = JSON.parse(response.data);
-                              var tempR = datas.EnginSewageUpdateResponse.result;
-                              if (tempR) {
-                                  this.editForm.N_YEAR = this.yYear;
-                                  window.location.href = "/SanitarySewage/Index";
-                              } else {
-                                  this.$message.error('保存失败！' + TempR);
-                                  this.editForm.N_YEAR = this.yYear;
-                              }
-                          }.bind(this))
-                          .catch(function (error) {
-                              console.log(error);
-                          });
+                        axios.post('/SanitarySewage/Edit', {
+                            param: JSON.stringify(this.formData), drawingFiles: drawing,
+                            pictureFiles: picture
+                        })
+                           .then(function (response) {
+                               var datas = JSON.parse(response.data);
+                               var tempR = datas.EnginSewageUpdateResponse.result;
+                               this.formData.N_YEAR = this.yYear;
+                               if (tempR) {
+                                   window.location.href = "/SanitarySewage/Index";
+                               } else {
+                                   this.$message.error('保存失败！' + TempR);
+                               }
+                           }.bind(this))
+                           .catch(function (error) {
+                               this.formData.N_YEAR = this.yYear;
+                               console.log(error);
+                           });
                     } else {
+                        this.formData.N_YEAR = this.yYear;
                         console.log('error submit!!');
-                        this.editForm.N_YEAR = this.yYear;
                         return false;
                     }
                 }.bind(this));
-               // axios.post('/SanitarySewage/Edit',{ param: JSON.stringify(this.editForm) }
-               //).then(function (response) {
-               //    debugger
-               //    var datas = JSON.parse(response.data);
-               //    if (datas.EnginSewageUpdateResponse.result == true) {
-               //        alert("修改成功！");
-               //        window.location.href = "/SanitarySewage/Index";
-               //    }
-               //});
             },
-
             beforeAvatarUpload: function (file) {
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
                 if (fileType == 'exe') {
@@ -869,9 +853,7 @@
                 }
             },
             beforeImagesUpload: function (file) {
-
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-                //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
                     this.$message({
                         message: '不支持上传该类型文件！',
@@ -897,10 +879,10 @@
                     cancelButtonText: '取消',
                     type: 'warning'
                 }).then(function () {
-                    if (this.editForm.REMOVE_PIC_IDS == "") {
-                        this.editForm.REMOVE_PIC_IDS = file.uid;
+                    if (this.formData.remove_pic_ids == "") {
+                        this.formData.remove_pic_ids = file.uid;
                     } else {
-                        this.editForm.REMOVE_PIC_IDS += "," + file.uid
+                        this.formData.remove_pic_ids += "," + file.uid
                     }
                     this.$message({
                         type: 'success',
@@ -912,9 +894,6 @@
                         message: '已取消删除！'
                     });
                 });
-            },
-            handleRemove: function (file, fileList) {
-                console.log(file, fileList);
             },
             handleRemoveDrawing: function (file, fileList) {
                 for (var i = 0; i < this.drawingFilesAdd.length; i++) {
@@ -930,22 +909,19 @@
                     }
                 }
             },
+
             getDrawing: function (file, fileList) {
                 this.drawingFiles = fileList;
-                //this.drawingFilesAdd = fileList.slice(0 - (fileList.length - this.drawingFilesL))
-                //console.log(this.file);
             },
             getPicture: function (file, fileList) {
                 this.pictureFiles = fileList;
-                //console.log(this.file);
             },
             handlePreview: function (file) {
-                //console.log(file);
                 this.dialogImageUrl = file.url;
                 this.dialogVisible = true;
             },
             upSucess: function (response, file, fileList) {
-                debugger
+
                 var temp = { name: file.name, url: file.url }
                 this.drawingFilesAdd.push(temp)
                 this.$message({
@@ -964,36 +940,25 @@
             upError: function (err, file, fileList) {
                 this.$message.error('上传失败！' + err);
             },
-            StatusToNum: function (status) {
-                switch (status) {
-                    case '工前准备':
-                        this.editForm.N_PACE_STATUS = 1;
-                        break;
-                    case '开工':
-                        this.editForm.N_PACE_STATUS = 10;
-                        break;
-                    case '完工':
-                        this.editForm.N_PACE_STATUS = 20;
-                        break;
-                    case '完工验收':
-                        this.editForm.N_PACE_STATUS = 30;
-                        break;
-                    case '决算审批':
-                        this.editForm.N_PACE_STATUS = 40;
-                        break;
-                    case '竣工验收':
-                        this.editForm.N_PACE_STATUS = 50;
-                        break;
-                    case '工程完结':
-                        this.editForm.N_PACE_STATUS = 60;
-                        break;
-                    default:
-                        break;
-                }
+            openIndex: function () {
+                window.location.href = "/SanitarySewage/Index";
             },
-        }
+            getRequest: function () {
+                var url = window.location.search; //获取url中"?"符后的字串
+                var theRequest = new Object();
+                if (url.indexOf("?") != -1) {
+                    var str = url.substr(1);
+                    strs = str.split("&");
+                    for (var i = 0; i < strs.length; i++) {
+                        theRequest[strs[i].split("=")[0]] = decodeURI(strs[i].split("=")[1]);
+                    }
+                }
+                return theRequest;
+            }
+        },
     });
 </script>
+
 
 <style>
     #edit {
@@ -1002,7 +967,7 @@
         overflow-x: hidden;
     }
 
-    #editForm {
+    #formData {
         padding: 10px 20px 10px 20px;
         margin-bottom: 60px;
     }
@@ -1071,4 +1036,3 @@
         padding: 10px 5px;
     }
 </style>
-

@@ -223,9 +223,10 @@
                     if (this.menuTree.length > 0 && this.menuTree[0].id === menus[0].id) {
                         return
                     }
+                    debugger
                     this.resetTab()
                     this.menuTree = menus
-                    if (this.menuTree[0].url == "" || this.menuTree[0].url == undefined) {
+                    if (this.menuTree[0].url == undefined || this.menuTree[0].url.trim() == "") {
                         this.isShow = true
                     } else {
                         this.isShow = false

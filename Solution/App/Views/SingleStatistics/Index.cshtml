@@ -45,7 +45,6 @@
         },
 
         mounted: function () {
-            debugger
             this.created();
             this.beforeDestory();
         },
@@ -59,7 +58,6 @@
             },
             submitInfo:function() {
                 // 表单验证方法
-                debugger
                 this.$refs.form.validate(function (result) {
                     if (result) {
                         alert("验证成功！");

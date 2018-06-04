@@ -11,6 +11,7 @@
                 type: Object,
                 default: function () {
                     return {
+                        tooltip: {},
                         color: [],
                         title: {},
                         legend: {},
@@ -28,6 +29,7 @@
         data: function () {
             return {
                 options: {
+                    tooltip: {},
                     color: [],
                     title: {
                         text: '',
@@ -61,6 +63,7 @@
                 }.bind(this));
             },
             updateCharts: function (option) {
+                this.options.tooltip = option.tooltip
                 this.options.color = option.color
                 this.options.title = option.title
                 this.options.legend = option.legend

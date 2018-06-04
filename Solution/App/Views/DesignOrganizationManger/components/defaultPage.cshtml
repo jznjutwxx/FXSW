@@ -20,7 +20,7 @@
                 </el-form-item>            
             </el-form>           
         </div>
-        <el-table v-bind:data="sjdwData" highlight-current-row v-bind:border='true' v-bind:height="tableHeight" v-bind:stripe="true" ref="sjdwtable">
+        <el-table v-bind:data="sjdwData"  v-loading="loading"  highlight-current-row v-bind:border='true' v-bind:height="tableHeight" v-bind:stripe="true" ref="sjdwtable">
             <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
             </el-table-column>
             <el-table-column property="s_name" label="设计单位名称" header-align="center" align="left">
@@ -46,195 +46,7 @@
         data: function () {
             return {
                 promptMessage: "请输入设计单位名称",
-                sjdwData: [{
-                    id: "0gdhsh44444hhedh",
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: "mima0",
-                    nf: "2017",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-
-                }, {
-                    id: "1gdhsh44444hhedh",
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima1',
-                    nf: "2018",
-                    town: "海湾",
-                    gzclass: "骨干河道",
-                }, {
-                    id: "2gdhsh44444hhedh",
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima2',
-                    nf: "2010",
-                    town: "庄行",
-                    gzclass: "骨干河道",
-                }, {
-                    id: "3gdhsh44444hhedh",
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima3',
-                    nf: "2014",
-                    town: "南桥",
-                    gzclass: "骨干河道",
-
-                }, {
-                    sjdwmc: "上海网波软件",
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    nf: "2015",
-                    town: "金汇",
-                    gzclass: "骨干河道",
-
-                }, {
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima5',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    s_name: "上海网波软件股份有限公司",
-                    s_account: "wavenet2018",
-                    engin_name: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima6',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    sjdwmc: "上海股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima7',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    sjdwmc: "上海税务局",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima8',
-                    nf: "2015",
-                    town: "拓林",
-                    gzclass: "骨干河道",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima9'
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima10'
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima11'
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-                    mm: 'mima12'
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, {
-                    sjdwmc: "上海网波软件股份有限公司",
-                    zh: "wavenet2018",
-                    glgz: "奉贤一期、奉贤二期、奉贤三期",
-
-                }, ],
+                sjdwData: [],
                 sjdwTotalCount: 0,
                 currentPage: 1,
                 pagesize: 6,
@@ -243,6 +55,7 @@
                 nowEditData: null,//当前编辑的数据
                 tableHeight: document.documentElement.clientHeight - (53 + 34),
                 sjdwName: "",
+                loading:true,
             }
         },
         components: {
@@ -291,11 +104,13 @@
             queryDesignOrganization: function () {
                 //不输入设计单位名称默认查询所有
                 const vm = this;
+                vm.loading = true;
                 axios.post("/DesignOrganizationManger/queryDesignOrganization", { currentPage: this.currentPage, page_size: this.pagesize, sjdwName: this.sjdwName }).then(function (response) {
                     debugger;
                     var resultArry = JSON.parse(response.data).EnginUnitListGetResponse;
                     vm.sjdwTotalCount = resultArry.totalCount;
                     vm.sjdwData = resultArry.engin_unit_person_list;
+                    vm.loading = false;
                 });
             },
             //删除设计单位

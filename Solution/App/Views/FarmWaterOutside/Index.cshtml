@@ -10,7 +10,7 @@
     <farmwateroutside-query v-on:emit-event="getEmitEvent" ref="farmwaterOutsideQuery"></farmwateroutside-query>
     <div id="tableData">
         <el-table v-bind:data="tableData"
-                  v-bind:height="height"
+                  v-bind:height="height" v-loading="loading"
                   border
                   stripe
                   style="width: 100%"
@@ -81,6 +81,7 @@
     new Vue({
         el: '#app',
         data: {
+            loading: true,
             height: 0,
             total: 0, //默认数据总数
             pageSize: 10,//每页的数据条数
@@ -157,8 +158,10 @@
             },
 
             setTableData: function (url, param) {
+                this.loading = true,
                 axios.post(url, param)
                  .then(function (response) {
+                     this.loading = false;
                      var li = JSON.parse(response.data);
                      var datas = li.EnginListGetResponse.engin_list;
                      this.tableData = datas;

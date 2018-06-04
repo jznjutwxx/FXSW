@@ -443,7 +443,7 @@
         <div style="padding:20px 0 0 20px;">
             <el-tabs value="drawing" type="card" v-on:tab-click="handleClick">
                 <el-tab-pane label="工程图纸" name="drawing">
-                    <el-table v-bind:data="projectFile" border stripe style="width: 100%;" max-height="300" class="tableCss" >
+                    <el-table v-bind:data="drawingData" border stripe style="width: 100%;" max-height="300" class="tableCss" >
                         <el-table-column type="index" label="序号" header-align="center" align="center" width="60"></el-table-column>
                         <el-table-column prop="s_file_name" label="文件名称" header-align="center" align="center"></el-table-column>
                         <el-table-column prop="s_person" label="上传人" header-align="center" align="center"></el-table-column>
@@ -571,6 +571,7 @@
             investData: [],
             finishData: [],
             imgData: [],
+            drawingData: [],
             projectFile: [
                 //{
                 //    "s_id": "D102247D6F2145258A2D3748E0E9306E",
@@ -601,7 +602,7 @@
             this.setSize();
             this.reSize();
             this.getProjectData('/BackboneRiverway/GetOneProjectData', { s_id: this.s_id });
-            this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "图纸" });
+            //this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: "图纸" });
         },
         computed: {
         },
@@ -636,8 +637,10 @@
                           if (pictureLists[i].s_type !== undefined && pictureLists[i].s_type == '图片') {
                               this.imgData.push(pictureLists[i]);
                           }
+                          if (pictureLists[i].s_type !== undefined && pictureLists[i].s_type == '图纸') {
+                              this.drawingData.push(pictureLists[i]);
+                          }
                       }
-
                       if (this.imgData.length == 0) {
                           this.imgData = placeholder;
                       }
@@ -677,12 +680,11 @@
                 this.gcctinfo.REMARK = this.detildata.s_remark;
             },
             handleClick: function (tab, event) {
-                //
-                //console.log(tab, event);
                 if (tab.label == "工程图纸") {
-                    tab.label = "图纸";
+                    return;
+                } else {
+                    this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
                 }
-                this.getProjectFile('/BackboneRiverway/GetProjectFileData', { s_id: this.s_id, s_type: tab.label });
             },
             setSize: function () {
                 

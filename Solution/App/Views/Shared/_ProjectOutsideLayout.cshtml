@@ -220,7 +220,7 @@
                     }
                     this.resetTab()
                     this.menuTree = menus
-                    if (this.menuTree[0].url == "" || this.menuTree[0].url == undefined) {
+                    if (this.menuTree[0].url == undefined || this.menuTree[0].url.trim() == "") {
                         this.isShow = true
                     } else {
                         this.isShow = false

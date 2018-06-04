@@ -32,7 +32,7 @@ namespace App.Controllers.Main
         public ActionResult Project(string id)
         {
             ViewData["username"] = Session["name"] != null ? Session["name"].ToString() : "";
-            ViewData["id"] = id;
+            ViewData["id"] = Session["pid"] = Session["pid"] != null ? Session["pid"] : id;
             return View();
         }
 
@@ -40,7 +40,7 @@ namespace App.Controllers.Main
         public ActionResult Hydrology(string id)
         {
             ViewData["username"] = Session["name"] != null ? Session["name"].ToString() : "";
-            ViewData["id"] = id;
+            ViewData["id"] = Session["hid"] = Session["hid"] != null ? Session["hid"] : id;
             return View();
         }
 

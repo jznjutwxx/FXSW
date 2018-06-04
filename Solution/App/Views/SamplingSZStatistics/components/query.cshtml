@@ -1,59 +1,80 @@
-﻿<script type="x-text/template" id="query">
-    <div class="query">
-        <el-row style="margin:10px 0px 10px 24px; min-width:1000px;">
-            <el-col v-bind:span="8">
-                <span>所属镇:</span>
-                <el-select v-model="town" placeholder="请选择">
-                    <el-option v-for="item in towns"
-                               v-bind:key="item.value"
-                               v-bind:label="item.label"
-                               v-bind:value="item.value">
-                    </el-option>
-                </el-select>
-            </el-col>
-            <el-col v-bind:span="8">
-                <span>水质监测任务:</span>
-                <el-select v-model="task" placeholder="请选择" size="small">
-                    <el-option v-for="item in tasks"
-                               v-bind:value="item">
-                    </el-option>
-                </el-select>
-            </el-col>
-            <el-col v-bind:span="8">
-                <span>站点名称:</span>
-                <el-select v-model="level" placeholder="请选择" size="small">
-                    <el-option v-for="item in levels"
-                               v-bind:value="item">
-                    </el-option>
-                </el-select>
-            </el-col>
-        </el-row>
+﻿
+<script type="text/x-template" id="query">
+    <div id="appquery">
+        <div class="query">
+            <el-form v-bind:inline="true" size="small">
+                <el-form-item label="所属镇：">
+                    <el-select v-model="townValue" class="selCss">
+                        <el-option v-for="item in townOption" 
+                                   v-bind:key="item.s_cd_value" 
+                                   v-bind:label="item.s_cd_value" 
+                                   v-bind:value="item.s_cd_value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
-        <el-row style="margin:15px 0 0 10px;min-width:1000px;">
-            <el-col v-bind:span="8">
-                <span>统计类型:</span>
-                <el-radio-group v-model="radio2">
-                    <el-radio label="3">逐日</el-radio>
-                    <el-radio label="6">逐月</el-radio>
-                    <el-radio label="9">逐年</el-radio>
-                </el-radio-group>
-            </el-col>
+                <el-form-item label="水质监测任务：">
+                    <el-select v-model="waterValue" class="selCss">
+                        <el-option v-for="item in waterOption" 
+                                   v-bind:key="item.s_sz_value" 
+                                   v-bind:label="item.s_sz_value" 
+                                   v-bind:value="item.s_sz_value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
 
-                <el-col v-bind:span="8">
-                    <el-button icon="el-icon-arrow-left" v-on:click="preMonth" size="small">上一月</el-button>
-                    <el-date-picker v-model="monthValue" style="width:120px;" size="small"
-                                    type="month"
-                                    value-format="yyyy-MM"
-                                    placeholder="选择月"
-                                    key="key-date">
+                <el-form-item label="站点名称：" style="margin-left:10px;">
+                    <el-select v-model="gradeValue" class="selCss">
+                        <el-option v-for="item in gradeOption" 
+                                   v-bind:key="item.key" 
+                                   v-bind:label="item.value" 
+                                   v-bind:value="item.key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+
+
+                <el-form-item label="统计类别：" style="margin-left:10px;">
+                    <el-radio-group v-model="querychoose" size="small">
+                        <el-radio label="zy">逐月</el-radio>
+                        <el-radio label="zn">逐年</el-radio>
+                    </el-radio-group>
+                </el-form-item>
+                
+                <el-form-item label="日期：" v-if="querychoose ==='zy'" style="margin-left:10px;">
+                    <el-button icon="el-icon-arrow-left" v-on:click="preYear">上一年</el-button>
+                    <el-date-picker v-model="yearValue" style="width:120px;"
+                                    type="year"
+                                    value-format="yyyy"
+                                    placeholder="选择年"
+                                    key="key-year">
                     </el-date-picker>
-                    <el-button v-on:click="nextMonth" size="small">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
-                </el-col>
-                <el-col v-bind:span="8">
-                    <el-button type="primary" icon="el-icon-search" v-on:click="getQyjlData" size="small">查询</el-button>
-                    <el-button type="primary" icon="el-icon-upload2" size="small">导出</el-button>
-                </el-col>
-</el-row>
+                    <el-button v-on:click="nextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+                </el-form-item>
+
+                <el-form-item label="日期：" v-else-if="querychoose ==='zn'" style="margin-left:10px;">
+                    <el-date-picker v-model="startYearValue" style="width:120px;"
+                                    type="year"
+                                    value-format="yyyy"
+                                    placeholder="选择年"
+                                    key="key-year">
+                    </el-date-picker>
+                    <el-date-picker v-model="endYearValue"style="width:250px;"
+                                    type="year"
+                                    value-format="yyyy"
+                                    placeholder="选择年"
+                                    range-separator="至"
+                                    start-placeholder="开始日期"
+                                    end-placeholder="结束日期">
+                    </el-date-picker>
+                </el-form-item>
+
+                <el-form-item style="margin-left:10px;">
+                    <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent">查询</el-button>
+                    <el-button type="primary" icon="el-icon-search">导出</el-button>
+                </el-form-item>
+            </el-form>
+        </div>
     </div>
 </script>
 
@@ -64,53 +85,108 @@
         template: '#query',
         data: function () {
             return {
-                town:[],
-                towns: [{
-                    value: "1",
-                    label: "庄行镇",
-                    },{ value: "2",
-                    label: "南桥镇"},{
-                    value: "3",
-                    label: "拓林镇",
-                    }],
-                levels:[],
-                level: '',
-                gNameNum: '',
-                radio2:'3',
+                param: {
+                    town: '',
+                    grade: '',
+                    choose: '',
+                    month: '',
+                    year: '',
+                    startYearValue: '',
+                    endYearValue: '',
+                },
+                value6: '',
+                townValue: '',
+                waterValue:'',
+                gradeValue: 'all',
+                townOption: [{ "s_cd_key": "南桥镇", "s_cd_value": "南桥镇" },
+                             { "s_cd_key": "青村镇", "s_cd_value": "青村镇" }
+                             ],
+                waterOption: [{ "s_sk_key": "南桥镇", "s_sz_value": "重污染" },
+                             { "s_sk_key": "南桥镇", "s_sz_value": "水功能" },
+                             { "s_sk_key": "南桥镇", "s_sz_value": "清洁水" },
+                             ],
+                gradeOption: [{ "key": "all", "value": "金汇港北闸内" },
+                              { "key": "sqj", "value": "南桥新城" },
+                              { "key": "zj", "value": "南桥" }],
+                querychoose: 'zy',
+                startYearValue: moment().add(-8, "y").format("YYYY"),
+                endYearValue: moment().format("YYYY"),
+                yearValue: moment().format('YYYY'),
             }
+        },
+        mounted: function() {
+            //this.init();
         },
         components: {
             'com-select': comSelect
         },
-        watch: {
-            type: function (val, oldVal) {
-                this.emitEvent()
-            }
-        },
         methods: {
-            emitEvent: function () {
-
+            init: function () {
+                //
             },
-
-            changeChecked: function () {
-                this.$parent.changeChecked()
-            }
+            getTown: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      this.townOption = tempData.DictionaryGetResponse.list;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            emitEvent: function () {
+                this.param.town = this.townValue;
+                this.param.grade = this.gradeValue;
+                this.param.choose = this.querychoose;
+                this.param.year = this.yearValue;
+                this.$emit('emit-event', this.param);
+            },
+            preYear: function () {
+                this.yearValue = moment(this.yearValue, "YYYY").subtract(1, 'y').format('YYYY')
+            },
+            nextYear: function () {
+                this.yearValue = moment(this.yearValue, "YYYY").add(1, 'y').format('YYYY')
+            },
         }
     })
 </script>
 
 <style>
-    .query {
+    #appquery .query {
         font-size: 14px;
         padding: 10px 20px 0px 20px;
         border-bottom: 1px solid #dcdcdc;
     }
 
-    .butcx {
-        margin-left: 50px;
+    #appquery .selCss {
+        width: 120px;
     }
 
-    .tjwd {
-        margin-left: 50px;
+    #appquery .txtInput {
+        float: left;
+        padding-right: 20px;
     }
+
+    #appquery .btnSel {
+        height: 32px;
+        padding-left: 20px;
+        padding-top: -3px;
+    }
+
+    #appquery .btnImport {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        border: 0px;
+    }
+
+        #appquery .btnImport:focus {
+            background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        }
+
+        #appquery .btnImport:hover {
+            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+        }
 </style>
+

@@ -38,21 +38,21 @@
                     <el-menu v-bind:style="{height:height}" v-bind:default-active="activeTreeIndex" background-color="#003e93" text-color="#fff" active-text-color="#409eff">
                         <el-submenu v-bind:index="item.id" v-if="!item.children" v-for="item in menuTree" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                         <el-submenu v-bind:index="item.id" v-else-if="item.children&&!item.children[0].children" v-for="item in menuTree" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                         <el-submenu v-else-if="item.children&&item.children[0].children" v-bind:index="item.id" v-for="item in menuTree[0].children" v-bind:key="item.id">
                             <template slot="title">
-                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+item.icon+')'}"></i>{{item.name}}
+                                <i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+item.icon+')'}"></i>{{item.name}}
                             </template>
-                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/gc_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
+                            <el-menu-item v-bind:index="child.id" v-bind:key="child.id" v-for="child in item.children" v-on:click="changeMenu(child)"><i class="icon-title" v-bind:style="{backgroundImage:'url(../../Images/sw_main/'+child.icon+')'}"></i>{{child.name}}</el-menu-item>
                         </el-submenu>
                     </el-menu>
                 </el-aside>
@@ -219,7 +219,7 @@
                     }
                     this.resetTab()
                     this.menuTree = menus
-                    if (this.menuTree[0].url == "" || this.menuTree[0].url == undefined) {
+                    if (this.menuTree[0].url == undefined || this.menuTree[0].url.trim() == "") {
                         this.isShow = true
                     } else {
                         this.isShow = false

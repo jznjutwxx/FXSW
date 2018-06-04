@@ -119,7 +119,7 @@
                 });
             },
             setTableData: function (url, param) {
-                this.loading = true,
+                this.loading = true;
                 this.params = param;
                 axios.post(url, param)
                   .then(function (response) {
@@ -151,7 +151,6 @@
                 }).then(function () {
                     axios.post("/BackboneRiverway/DeleteProjectData", { s_id: id })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginCoreUpdateResponse.result) {
                           this.$message({
@@ -161,7 +160,6 @@
                       } else {
                           this.$message.error('删除失败！' + tempData.EnginCoreUpdateResponse.result);
                       }
-                      debugger
                       this.setTableData('/ZXRiverway/GetProjectData', this.params)
                   }.bind(this))
                   .catch(function (error) {

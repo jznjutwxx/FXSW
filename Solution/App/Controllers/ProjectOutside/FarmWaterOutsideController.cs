@@ -354,7 +354,15 @@ namespace App.Controllers
 
             return result.ToString().ToUpper();
         }
+        public JsonResult GetDetail(string id)
+        {
+            string method = "wavenet.fxsw.engin.farm.get";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_id", id);
 
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
         public JsonResult GetProjectFileData(string id, string s_type)
         {
             // 接口

@@ -81,12 +81,12 @@
                 leftheight: document.documentElement.clientHeight - 32,
                 marginHeight: 0,
                 marginWidth: 0,
-                marginCHeight:0,
+                marginCHeight: 0,
                 param: {},
                 lineLegendData: ['计划用水量', '实际用水量'],
                 lineGridTop: '28%',
                 lineyAxisName: '亿（m³）',
-                radarRadius:85,
+                radarRadius: 85,
                 lineOption: null,
                 GYpieOption: null,
                 SHpieOption: null,
@@ -126,7 +126,7 @@
                 this.resize();
                 this.setSize();
             },
-            
+
             setData: function (url, param) {
                 this.setLineData(url, param);
                 this.setGYPieData(url, param);
@@ -143,15 +143,15 @@
                         legend: {
                             selectedMode: false,
                             data: this.lineLegendData,
-                           // data: ['计划用水量', '实际用水量'],
+                            // data: ['计划用水量', '实际用水量'],
                             textStyle: {
                                 color: '#ffffff'
                             },
-                            top:10
+                            top: 10
                         },
                         grid: {
                             top: this.lineGridTop,
-                            left: '4%', 
+                            left: '4%',
                             right: '10%'
                         },
                         xAxis: {
@@ -172,7 +172,7 @@
                                     color: '#3d4997',
                                 }
                             },
-                            axisTick: { show:false },
+                            axisTick: { show: false },
                         },
                         yAxis: {
                             type: 'value',
@@ -219,7 +219,7 @@
                                 //        show: true,
                                 //        position: 'top'
                                 //    }
-                               // }
+                                // }
                             }
                         ]
                     };
@@ -230,9 +230,9 @@
                   });
             },
             setGYPieData: function (url, param) {
-               // this.$children[5].charts.showLoading();
+                // this.$children[5].charts.showLoading();
                 axios.post(url).then(function (response) {
-                 //   this.$children[5].charts.hideLoading();
+                    //   this.$children[5].charts.hideLoading();
                     this.GYpieOption = {
                         color: ['#1486FD', '#849BE2'],
                         title: {
@@ -242,11 +242,11 @@
                                 color: '#ffffff',
                                 fontWeight: 'normal'
                             },
-                            x:'center',
-                            y:'center'
+                            x: 'center',
+                            y: 'center'
                         },
                         grid: {
-                            top:'0'
+                            top: '0'
                         },
                         series: [
                             {
@@ -279,7 +279,7 @@
             setSHPieData: function (url, param) {
                 //this.$children[5].charts.showLoading();
                 axios.post(url).then(function (response) {
-                   // this.$children[5].charts.hideLoading();
+                    // this.$children[5].charts.hideLoading();
                     this.SHpieOption = {
                         color: ['#BD64E5', '#849BE2'],
                         title: {
@@ -323,9 +323,9 @@
                   });
             },
             setNYpieData: function (url, param) {
-               // this.$children[6].charts.showLoading();
+                // this.$children[6].charts.showLoading();
                 axios.post(url).then(function (response) {
-                //    this.$children[6].charts.hideLoading();
+                    //    this.$children[6].charts.hideLoading();
                     this.NYpieOption = {
                         color: ['#04C9A8', '#849BE2'],
                         tooltip: {
@@ -386,39 +386,58 @@
                             fontWeight: 'normal',
                             fontSize: 14
                         },
-                        radar: [
-                            {
-                                indicator: [
-                                    {text: '综合', max: 100}, // max: '100%'
+                        polar: [
+                    {
+                        nameGap: 2, // 图中工艺等字距离图的距离
+                        center: ['50%', '50%'], // 图的位置
+                        indicator: [
+                                    { text: '综合', max: 100 }, // max: '100%'
                                     { text: '管水网7项', max: 100 },
-                                    {text: '出水厂非常规64项', max: 100  },
+                                    { text: '出水厂非常规64项', max: 100 },
                                     { text: '出水厂常规42项', max: 100 },
                                     { text: '原水29项', max: 100 }
-                                ],
-                                radius:this.radarRadius,
-                                center: ['50%', '50%'],
+                        ],
+                        radius: this.radarRadius,
+                        axisLine: {            // 坐标轴线
+                            show: false        // 默认显示，属性show控制显示与否
+                        },
+                        splitArea: {
+                            show: true,
+                            areaStyle: {
+                                color: ["#15748f"]  // 图表背景网格的颜色
                             }
-
+                        },
+                        splitLine: {
+                            show: true,
+                            lineStyle: {
+                                width: 1,
+                                color: '#0fbbc5' // 图表背景网格线的颜色
+                            }
+                        }
+                    }
                         ],
                         series: [
-                            {
-                                type: 'radar',
-                                radarIndex: 0,
-                                label: {
-                                    normal: {
-                                        show: true,
-                                        position: 'inner',
-                                        formatter: "{c}%",
-
-                                    }
-                                },
-                                data: [
-                                    {
-                                        value: [95, 80, 95, 90, 93],
-                                        name: '第三季度水质汇总'
-                                    }
-                                ]
-                            }
+                   {
+                       type: 'radar',
+                       symbol: "none", // 去掉图表中各个图区域的边框线拐点
+                       itemStyle: {
+                           normal: {
+                               color: "rgba(0,0,0,0)", // 图表中各个图区域的边框线拐点颜色
+                               lineStyle: {
+                                   color: "#deff00" // 图表中各个图区域的边框线颜色
+                               },
+                               areaStyle: {
+                                   type: 'default'
+                               }
+                           }
+                       },
+                       data: [
+                                  {
+                                      value: [95, 80, 55, 90, 93],
+                                      name: '第三季度水质汇总'
+                                  }
+                       ]
+                   }
                         ]
                     }
                     radarChart.setOption(radarOption);
@@ -443,12 +462,13 @@
                 var contentH = docH - 50;
 
                 this.height = contentH / 3;
-                if (docH<=550) {
+                console.log(docH);
+                if (docH <= 768) {
                     this.lineLegendData = [];
                     this.lineGridTop = '12%';
                     this.lineyAxisName = '';
                     this.radarRadius = 40;
-                } else if (docH >= 900) {
+                }else if (docH >= 992) {
                     this.radarRadius = 100;
                 }
             }
@@ -478,7 +498,7 @@
    #leftContent .topdiv {
         height: 17%;
         width: 99%;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
     }
 
     .title {
@@ -541,7 +561,7 @@
         height: 40%;
         width: 99%;
         position: relative;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
     }
 
     .piediv {
@@ -588,7 +608,7 @@
         height: 38%;
         width: 99%;
         position: absolute;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
         bottom: 0;
     }
 

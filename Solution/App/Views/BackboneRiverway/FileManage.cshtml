@@ -462,7 +462,6 @@
                 }).then(function () {
                     axios.post("/BackboneRiverway/DeleteFile", { file_ids: id })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginFileDelResponse.result) {
                           this.$message({
@@ -541,7 +540,6 @@
                 }
             },
             StatusToNum: function (status) {
-                debugger
                 switch (status) {
                     case '工前准备':
                         this.formData.n_pace_status = 1;

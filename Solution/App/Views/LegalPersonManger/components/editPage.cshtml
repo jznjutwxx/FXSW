@@ -30,7 +30,7 @@
                     <el-option v-for="item in projectsClass" v-bind:value="item.value" v-bind:key="item.key">
                     </el-option>
                 </el-select>
-                <el-button type="primary" icon="el-icon-search" class="btnSel" plain>查询</el-button>
+                <el-button type="primary" icon="el-icon-search" class="btnSel" plain  v-on:click="queryProjct_edit">查询</el-button>
             </div>
             <el-transfer v-model="selectedProjecKey" v-bind:data="allProjectsNameData" v-bind:titles="projectTitiles" v-bind:left-default-checked="[]" v-on:change="rightSelectChange">
 

@@ -327,7 +327,6 @@
             getDetail: function (url, id) {
                 axios.post(url, id)
                   .then(function (response) {
-                      debugger
                       var li = JSON.parse(response.data);
                   
                       this.num = li.EnginFarmGetResponse.info.s_project_no;
@@ -463,7 +462,6 @@
                 }).then(function () {
                     axios.post("/FarmlandWater/DeleteFile", { file_ids: id })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginFileDelResponse.result) {
                           this.$message({
@@ -511,10 +509,10 @@
                 window.location.href = '/Uploader/Download?pathid=1';
             },
             saveStatus: function () {
-                this.formData.N_PACE_STATUS = this.kkkk;
+
+                //this.formData.N_PACE_STATUS = this.kkkk;
                 axios.post('/FarmlandWater/SaveProjectStatus', { param: JSON.stringify(this.formData) })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginFarmUpdateResponse.result) {
                           this.$message({
@@ -537,7 +535,6 @@
                     window.location = "Index";
             },
             StatusToNum: function (status) {
-                debugger
                 switch (status) {
                     case '工前准备':
                         this.formData.N_PACE_STATUS = 1;

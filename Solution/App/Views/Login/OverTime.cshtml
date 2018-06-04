@@ -48,21 +48,23 @@
     <div class="tipInfo">
         <div class="in">
             <div class="textThis">
-                <h2>登陆已过期，请返回重新登陆...</h2>
-                <p><span>页面自动<a id="href" href="/Login/Index">系统登录页面</a></span><span>等待<b id="wait">6</b>秒</span></p>
+                <h2>登陆已过期，请重新登陆...</h2>
+                @*<p><span>页面自动<a id="href" href="/Login/Index">系统登录页面</a></span><span>等待<b id="wait">6</b>秒</span></p>*@
+                <p style="padding-bottom:30px;"><a id="href" href="/Login/Index">系统登录页面</a></p>
+                <p style="padding-top:0;"><a id="href" href="/Login/ProjectOutside">法人或设计单位登录页面</a></p>
                 <script type="text/javascript">
-                            (function() {
-                                var wait = document.getElementById('wait')
-                                var href = document.getElementById('href').href
-                                var interval = setInterval(function() {
-                                    var time = --wait.innerHTML;
-                                    if (time <= 0) {
-                                        location.href = href;
-                                        clearInterval(interval);
-                                    }
-                                    ;
-                                }, 1000);
-                            })();
+                            //(function() {
+                            //    var wait = document.getElementById('wait')
+                            //    var href = document.getElementById('href').href
+                            //    var interval = setInterval(function() {
+                            //        var time = --wait.innerHTML;
+                            //        if (time <= 0) {
+                            //            location.href = href;
+                            //            clearInterval(interval);
+                            //        }
+                            //        ;
+                            //    }, 1000);
+                            //})();
                 </script>
             </div>
         </div>

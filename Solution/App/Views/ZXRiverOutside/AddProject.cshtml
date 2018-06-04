@@ -742,7 +742,7 @@
             },
             getLegalPerson: function (url, param) {
                 axios.post(url, param)
-                  .then(function (response) {debugger
+                  .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
                       if ('@type' == "person") {
@@ -764,7 +764,6 @@
             getDesignUnit: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
                       if ('@type' == "unit") {
@@ -868,9 +867,7 @@
                 }
             },
             beforeImagesUpload: function (file) {
-                debugger
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-                //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
                     this.$message({
                         message: '不支持上传该类型文件！',

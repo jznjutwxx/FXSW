@@ -8,7 +8,7 @@
     <com-query v-on:emit-event="getEmitEvent" ref="smallQuery"></com-query>
     <div id="tableData">
         <el-table v-bind:data="tableData"
-                  v-bind:height="height"
+                  v-bind:height="height" v-loading="loading"
                   border
                   stripe
                   style="width: 100%"
@@ -83,6 +83,7 @@
                 height: '0px',
                 float: 'left',
             },
+            loading: true,
             height: '0px',
             tableData: [],
             total: 0, //默认数据总数
@@ -111,9 +112,11 @@
                 });
             },
             setTableData: function (url, param) {
+                this.loading = true,
                 this.params = param;
                 axios.post(url, param)
                   .then(function (response) {
+                      this.loading = false;
                       var tempData = JSON.parse(response.data);
                       this.tableData = tempData.EnginListGetResponse.engin_list;
                       this.total = tempData.EnginListGetResponse.totalCount;

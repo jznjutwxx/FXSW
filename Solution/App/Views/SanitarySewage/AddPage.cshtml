@@ -1,10 +1,15 @@
 ﻿@{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "生活污水新增页面";
+
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 
 <div id="add">
+    <div style="display:none;">@type</div>
+
     <div id="addForm">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="addForm" ref="addForm" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
@@ -41,7 +46,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程状态:" prop="N_PACE_STATUS">
-                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
                             <el-select v-model="addForm.N_PACE_STATUS" class="selCss" size="mini">
                                 <el-option v-for="item in staticsOptions" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                                 </el-option>
@@ -50,7 +54,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="所属镇:" prop="s_town">
-                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
                             <el-select v-model="addForm.S_TOWN" class="selCss" size="mini">
                                 <el-option v-for="item in xzqhOptions" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                                 </el-option>
@@ -66,7 +69,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            <el-select v-model="addForm.S_LEGAL_PERSON" class="selCss" size="mini">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="addForm.S_LEGAL_PERSON" class="selCss" size="mini">
                                 <el-option v-for="item in LegalPerOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -76,8 +79,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
-                            <el-select v-model="addForm.S_UNIT_DESIGN" class="selCss" size="mini">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="addForm.S_UNIT_DESIGN" class="selCss" size="mini">
                                 <el-option v-for="item in DesignUnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -379,7 +381,6 @@
                                        v-bind:before-remove="beforeRemove"
                                        v-bind:before-upload="beforeAvatarUpload">
                                 <el-button slot="trigger" size="small" type="primary">选取文件</el-button>
-                                @*<el-button style="margin-left: 10px;" size="small" type="success" v-on:click="submitUpload">上传到服务器</el-button>*@
                                 <span class="el-upload__tip">（支持word、jpg、png、dwg、zip、rar等格式文件上传；支持多文件上传；文件大小应在10M以内）</span>
                             </el-upload>
                         </el-form-item>
@@ -432,7 +433,6 @@
         el: '#add',
         data: function () {
             var checkNum = function (rule, value, callback) {
-                //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
                 var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
                 if (value != '') {
                     if (!reNum.test(value)) {
@@ -459,6 +459,8 @@
                     N_RECKON_TOTAL_AMT: "",
                     REMARK: ""
                 },
+                isPersonDisable: false,
+                isUnitDisable: false,
                 drawingFiles: '',
                 pictureFiles: '',
                 dialogImageUrl: '',
@@ -607,7 +609,6 @@
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
-            //this.getYear("/FarmlandWater/GetDictionary", { type: "年度" });
             this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
             this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
             this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
@@ -644,17 +645,6 @@
                 this.bindGCCTData();
                 this.mapAddDialogVisible = true;
             },
-            getYear: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.YearOption = datas;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
             getTown: function (url, type) {
                 axios.post(url, type)
                   .then(function (response) {
@@ -685,7 +675,18 @@
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
                       this.LegalPerOption = datas;
-                      //this.addForm.S_LEGAL_PERSON = this.LegalPerOption[0].s_id;
+
+                      if ('@type' == "person") {
+                          this.isPersonDisable = true;
+                          this.isUnitDisable = false;
+                          var selectPerson = "";
+                          selectPerson = this.LegalPerOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.addForm.S_LEGAL_PERSON = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -697,7 +698,18 @@
                       var tempData = JSON.parse(response.data);
                       var datas = tempData.EnginUnitListGetResponse.engin_unit_person_list;
                       this.DesignUnitOption = datas;
-                      //this.addForm.S_UNIT_DESIGN = this.DesignUnitOption[0].s_id;
+
+                      if ('@type' == "unit") {
+                          this.isPersonDisable = false;
+                          this.isUnitDisable = true;
+                          var selectUnit = "";
+                          selectUnit = this.DesignUnitOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.addForm.S_UNIT_DESIGN = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -760,17 +772,6 @@
                         return false;
                     }
                 }.bind(this));
-
-                //axios.post('/SanitarySewage/Add',
-                //    { param: JSON.stringify(this.addForm) }
-                //    ).then(function (response) {
-                //    debugger
-                //    var datas = JSON.parse(response.data);
-                //    if (datas.EnginSewageReportResponse.result == true) {
-                //        alert("新增成功！");
-                //        window.location.href = "/SanitarySewage/Index";
-                //    }
-                //});
             },
             beforeAvatarUpload: function (file) {
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
@@ -791,9 +792,7 @@
                 }
             },
             beforeImagesUpload: function (file) {
-                debugger
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
-                //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {
                     this.$message({
                         message: '不支持上传该类型文件！',

@@ -13,7 +13,7 @@
         <div id="leftcontent">
             <header class="title">
                 <span>综合监测筛选</span>
-                <span class="smallZt">(共</span><span class="smallZt figure">30</span><span class="smallZt">条数据)</span>
+                <span class="smallZt">(共</span><span class="smallZt figure">{{finalMapData.length}}</span><span class="smallZt">条数据)</span>
             </header>
             <div id="jzSelect">
                 <!--indeterminate 属性用以表示 checkbox 的不确定状态，一般用于实现全选的效果-->
@@ -147,7 +147,7 @@
                 checkAll: false,
                 checkedTwons: ['庄行镇', '柘林镇', '南桥镇', '青村镇','金汇镇', '奉城镇', '四团镇', '海湾镇','西渡街道','奉浦街道','金海社区','海湾旅游区'],
                 isIndeterminate: false,
-                twons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇'],
+                twons: ['庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇', '西渡街道', '奉浦街道', '金海社区', '海湾旅游区'],
                 zdjcxm: ['雨量', '水位', '流量', '风速风向', '水质监测'],  //自动检测项目
                 nowxm:'雨量',//当前项目
                 jclx: "zdjcd",
@@ -217,7 +217,15 @@
                 debugger;
                 this.checkedTwons = val ? this.twons : [];//
                 this.isIndeterminate = false; //当全选或者全不选时，不确定性为false
-                this.getJCdate();
+                if (val) {
+                    //全选
+                    this.getJCdate();
+                } else {
+                    //全取消选择
+                    this.belowTableTitle = "未选街镇";
+                    this.finalMapData = [];
+                    this.dataToFather();
+                }
             },
             //具体街镇change事件
             handleCheckedTwonsChange: function (value) {
@@ -226,7 +234,14 @@
                 this.checkAll = (checkedCount === this.twons.length);
                 this.isIndeterminate = (checkedCount > 0 && checkedCount < this.twons.length);
                 //后台取数据
-                this.getJCdate();
+                if (checkedCount == 0) {
+                    this.belowTableTitle = "未选街镇";
+                    this.finalMapData = [];
+                    this.dataToFather();
+                } else {
+                    this.getJCdate();
+                }
+               
 
             },
             //自动、人工监测点tab页的切换事件

@@ -96,7 +96,7 @@ namespace App.Controllers
             string method = "wavenet.fxsw.sampling.point.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", "1");  //请求第几页的数据
-            paramDictionary.Add("page_size", "4"); //当前页的数据条数  9999
+            paramDictionary.Add("page_size", "9999"); //当前页的数据条数  9999
             paramDictionary.Add("s_town", twons); //所选街镇
             paramDictionary.Add("s_task", jcrw);  //监测任务
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);

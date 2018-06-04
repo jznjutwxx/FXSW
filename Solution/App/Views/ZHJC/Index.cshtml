@@ -15,6 +15,32 @@
     <comzhjcleft v-on:get-data="getLeftData" ref="leftComponent">
 
     </comzhjcleft>
+    @* 在地图上增加工具栏（搜索，框选，测距，测面，清除） *@
+    <div class="map_tools">
+        <div class="tool tool-search" v-on:click="showSearchInput" style="margin-left:6px;">
+            <div class="search-img icon-img" ></div>
+        </div>
+        <div class="tool tool-ceju" @*v-on:click="measureDistance"*@>
+            <div class="ceju-img icon-img"></div>
+        </div>
+        <div class="tool tool-cemian" @*v-on:click="measureArea"*@>
+            <div class="cemian-img icon-img"></div>
+        </div>
+        <div class="tool tool-clear" @*v-on:click="clearFeature"*@>
+            <div class="clear-img icon-img"></div>
+        </div>
+    </div>
+    <div class="hideRight" ref="hideRi" title="隐藏" v-on:click="hideRight">
+        <img src="/Images/gczl/btn_right.png" alt="隐藏" />
+    </div>
+    <div class="showRight" ref="" title="展开" v-on:click="showRight">
+        <img src="/Images/gczl/btn_left.png" alt="展开" />
+    </div>
+    <div class="search-input-div">
+        <el-input placeholder="请输入河道名称"  size="mini" class="input_text">
+            <el-button slot="append" icon="el-icon-search" v-on:click="searchRiverName"></el-button>
+        </el-input>
+    </div>
     <!--地图监测点图例-->
     <div id="jcdLegend" style="position: absolute;z-index: 1500;right:50px;bottom:406px;" v-show="jcdLegendShow">
         <div id="ylLegend" v-show="ylLegendShow" style="background:url(/Images/zhjc/legend/img_ylLegend.png) no-repeat;width: 299px;height: 182px;">
@@ -44,35 +70,41 @@
                 <div class="titlebg"></div>
                 <el-tabs v-model="activeName" v-on:tab-click="handleClick">
                     <el-tab-pane label="雨量趋势图" name="ylBar">
-                        <com_bar v-bind:option="barOption" class="ysCharts" ref="ylbar"></com_bar>
-                        <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
-                            <el-table-column prop="time" label="时间" width="110">
-                            </el-table-column>
-                            <el-table-column prop="value" label="雨量" width="100">
-                            </el-table-column>
-                        </el-table>
+                        <div v-show="ylbarShow">
+                            <com_bar v-bind:option="barOption" class="ysCharts" ref="ylbar"></com_bar>
+                            <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
+                                <el-table-column prop="time" label="时间" width="110">
+                                </el-table-column>
+                                <el-table-column prop="value" label="雨量" width="100">
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="水位趋势图" name="swLine">
-                        <com_line v-bind:option="swLineOption" class="ysCharts" ref="swline"></com_line>
-                        <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
-                            <el-table-column prop="time" label="时间" width="110">
-                            </el-table-column>
-                            <el-table-column prop="value" label="水位" width="100">
-                            </el-table-column>
-                        </el-table>
+                        <div v-show="swlineShow">
+                            <com_line v-bind:option="swLineOption" class="ysCharts" ref="swline"></com_line>
+                            <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
+                                <el-table-column prop="time" label="时间" width="110">
+                                </el-table-column>
+                                <el-table-column prop="value" label="水位" width="100">
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </el-tab-pane>
                     <el-tab-pane label="流量趋势图" name="llLine">
-                        <com_line v-bind:option="llLineOption" class="ysCharts" ref="llline"></com_line>
-                        <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
-                            <el-table-column prop="time" label="时间" width="110">
-                            </el-table-column>
-                            <el-table-column prop="value" label="流量" width="100">
-                            </el-table-column>
-                        </el-table>
+                        <div v-show="lllineShow">
+                            <com_line v-bind:option="llLineOption" class="ysCharts" ref="llline"></com_line>
+                            <el-table v-bind:data="zdjcdTableData" border style="width: 211px" height='417'>
+                                <el-table-column prop="time" label="时间" width="110">
+                                </el-table-column>
+                                <el-table-column prop="value" label="流量" width="100">
+                                </el-table-column>
+                            </el-table>
+                        </div>
                     </el-tab-pane>
                 </el-tabs>
                 <!--按天查询区域-->
-                <div id="tiemSelect">
+                <div id="tiemSelect" v-show="tiemSelectShow">
                     <el-button icon="el-icon-arrow-left" v-on:click="preDay">上一天</el-button>
                     <el-date-picker v-model="zdjcdTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd" v-on:change="dayChange">
                     </el-date-picker>
@@ -104,7 +136,7 @@
                 <table id="szqsTable" border="1" cellpadding="0" cellspacing="0"></table>
                 <div id="yearSelect">
                     <el-button icon="el-icon-arrow-left" v-on:click="preYear">上一年</el-button>
-                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份"  value-format="yyyy" v-on:change="yearChange">
+                    <el-date-picker v-model="yearVlue" type="year" placeholder="选择年份" value-format="yyyy" v-on:change="yearChange">
                     </el-date-picker>
                     <el-button v-on:click="nextYear">下一年<i class="el-icon-arrow-right el-icon--right"></i></el-button>
                     <el-button type="primary" icon="el-icon-upload2">导出</el-button>
@@ -189,22 +221,22 @@
         <!--自动监测点(雨量)表格 7-7-->
         <div v-show="zdjcd_yl_table" class="zdjcdTableDiv">
             <el-table ref="zdjcdTable" v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"   header-align="center" align="center">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
+                <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
+                <el-table-column property="area" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
+                <el-table-column property="gldw" label="管理单位" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="yl" label="实时雨量(mm)"  header-align="center" align="right">
+                <el-table-column property="yl" label="实时雨量(mm)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
+                <el-table-column property="time" label="上报时间" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
+                <el-table-column property="status" label="设备状态" header-align="center" align="center">
                 </el-table-column>
             </el-table>
-            <el-pagination samll layout="total,prev, pager, next, jumper"  v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
+            <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
         </div>
         <!--自动监测点(水位)表格 14 -7-->
@@ -214,15 +246,15 @@
                 </el-table-column>
                 <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
+                <el-table-column property="area" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
+                <el-table-column property="gldw" label="管理单位" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="sw" label="水位(m)"  header-align="center" align="right">
+                <el-table-column property="sw" label="水位(m)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
+                <el-table-column property="time" label="上报时间" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
+                <el-table-column property="status" label="设备状态" header-align="center" align="center">
                 </el-table-column>
             </el-table>
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
@@ -231,19 +263,19 @@
         <!--自动监测点(流量)表格 21-7-->
         <div v-show="zdjcd_ll_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
+                <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
+                <el-table-column property="area" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
+                <el-table-column property="gldw" label="管理单位" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="ll" label="流量(m³)"  header-align="center" align="right">
+                <el-table-column property="ll" label="流量(m³)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
+                <el-table-column property="time" label="上报时间" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
+                <el-table-column property="status" label="设备状态" header-align="center" align="center">
                 </el-table-column>
             </el-table>
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
@@ -252,21 +284,21 @@
         <!--自动监测点(风速风向)表格 29-8-->
         <div v-show="zdjcd_fsfx_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
+                <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
+                <el-table-column property="area" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="gldw" label="管理单位"  header-align="center" align="left">
+                <el-table-column property="gldw" label="管理单位" header-align="center" align="left">
                 </el-table-column>
                 <el-table-column property="result" label="风速(m/s)" header-align="center" align="right">
                 </el-table-column>
                 <el-table-column property="result2" label="风向(°)" header-align="center" align="right">
                 </el-table-column>
-                <el-table-column property="time" label="上报时间"  header-align="center" align="center">
+                <el-table-column property="time" label="上报时间" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="status" label="设备状态"  header-align="center" align="center">
+                <el-table-column property="status" label="设备状态" header-align="center" align="center">
                 </el-table-column>
             </el-table>
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
@@ -275,18 +307,18 @@
         <!--自动监测点(水质监测)表格 36 -7-->
         <div v-show="zdjcd_szjc_table" class="zdjcdTableDiv">
             <el-table v-bind:data="leftData.slice((currentPage-1)*pagesize,currentPage*pagesize)" highlight-current-row style="width: 100%;margin-top:6px;" v-bind:border='true' v-bind:stripe="true">
-                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index"  header-align="center" align="center">
+                <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' property="index" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="stationname" label="站点名称"  header-align="center" align="left">
+                <el-table-column property="stationname" label="站点名称" header-align="center" align="left">
                 </el-table-column>
-                <el-table-column property="area" label="所属街镇"  header-align="center" align="center">
+                <el-table-column property="area" label="所属街镇" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="暂无" label="所属河道"  header-align="center" align="left">
+                <el-table-column property="暂无" label="所属河道" header-align="center" align="left">
                     <!--暂无数据-->
                 </el-table-column>
-                <el-table-column property="time" label="时间"  header-align="center" align="center">
+                <el-table-column property="time" label="时间" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column label="监测信息"  header-align="center" align="center">
+                <el-table-column label="监测信息" header-align="center" align="center">
                     <!--跳转到别的系统-->
                 </el-table-column>
                 <el-table-column property="status" label="设备状态" header-align="center" align="center">
@@ -312,13 +344,13 @@
                 </el-table-column>
                 <el-table-column property="n_last_quality" label="水质抽检结果" header-align="center" align="center">
                 </el-table-column>
-                <el-table-column property="t_last_sampling_time" label="上报时间"  header-align="center" align="center">
+                <el-table-column property="t_last_sampling_time" label="上报时间" header-align="center" align="center">
                     <!--暂无数据，用的是取样时间-->
                 </el-table-column>
-                <el-table-column property="dbqk" label="达标情况"  header-align="center" align="center">
+                <el-table-column property="dbqk" label="达标情况" header-align="center" align="center">
                     <!--暂无数据-->
                 </el-table-column>
-                <el-table-column property="ck" label="查看"  header-align="center" align="center">
+                <el-table-column property="ck" label="查看" header-align="center" align="center">
             </el-table>
             <el-pagination samll layout="total,prev, pager, next, jumper" v-on:current-change="current_change" v-bind:current-page="currentPage" v-bind:page-size="pagesize" v-bind:total="leftData.length">
             </el-pagination>
@@ -338,12 +370,12 @@
             map: null,
             layers: [],
             baselayer: null,
-            riverlayer:null,//河流图层
+            riverlayer: null,//河流图层
             vectorLayer: null,
             fsfxVectorLayer: null,//风速风向图层
             jcdMarkersLayer: null, //监测点图层
-            fxbaselayerurl: "http://172.18.1.208:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu",
-            riverLayerUrl:"http://222.66.154.70:8090/iserver/services/map-ugcv5-fxst200005032/rest/maps/fxst2000_0503",
+            fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-ZHJC/rest/maps/ZHJC",
+            riverLayerUrl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-fxst200005033/rest/maps/fxst2000_0503",
             leftData: [], //左边筛选后拿到的数据,这个数据要展示在下方表格中，单击地图上的点后要展示部分属性
             leftJclx: "",
             infowin: null,
@@ -354,6 +386,10 @@
             swLineOption: null, //水位图
             llLineOption: null,//流量图
             llLiNEOption: null,
+            ylbarShow: true,
+            swlineShow: true,
+            lllineShow: true,
+            tiemSelectShow: true,
             zdjcdTime: moment().format('YYYY-MM-DD'),
             yearVlue: moment().format('YYYY'), //人工水质趋势
             qyjlStartTime: moment().format('YYYY-MM-DD'),   //人工取样记录
@@ -376,7 +412,7 @@
             szqsLineOption: null,
             /*人工取样点取样记录弹窗数据*/
             qyjlData: [],   /*后台获取的人工取样点取样记录数据*/
-            qyjlDialogVisible: false,       
+            qyjlDialogVisible: false,
             //控制自动监测点表格的显示
             zdjcd_yl_table: true,
             zdjcd_sw_table: false,
@@ -390,6 +426,7 @@
             hideBelowBtn: true,
             currentPage: 1,
             pagesize: 4,  //每个分页显示的数
+            isShowSearchInput:true,  //是否要显示搜索框
         },
         components: {
             "comzhjcleft": com_zhjcleft,
@@ -434,11 +471,12 @@
                 });
                 //this.map.size = new SuperMap.Size(1920, 900);
                 this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto", isBaseLayer: true });
-                this.riverlayer = new SuperMap.Layer.TiledDynamicRESTLayer("奉贤河流", this.riverLayerUrl, null, { maxResolution: "auto", isBaseLayer: true });
+                this.riverlayer = new SuperMap.Layer.TiledDynamicRESTLayer("奉贤河流", this.riverLayerUrl, null, { maxResolution: "auto", isBaseLayer: false });
+                this.riverlayer.setOpacity(0.2);
                 this.vectorLayer = new SuperMap.Layer.Vector("查询高亮图层");
                 this.fsfxVectorLayer = new SuperMap.Layer.Vector("风速风向图层");
                 this.jcdMarkersLayer = new SuperMap.Layer.Markers("监测点图层");
-                this.layers = [this.riverlayer, this.vectorLayer, this.fsfxVectorLayer, this.jcdMarkersLayer]; //this.baselayer, 
+                this.layers = [this.baselayer, this.riverlayer, this.vectorLayer, this.fsfxVectorLayer, this.jcdMarkersLayer]; //this.baselayer,
                 this.drawPolygon = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Polygon);
                 //图层控制器
                 var layerSwitcher = new SuperMap.Control.LayerSwitcher();
@@ -457,26 +495,26 @@
                 //this.map.size = new SuperMap.Size(1920,900);
                 this.map.addLayers(this.layers);
                 this.map.setCenter(new SuperMap.LonLat(121.56, 30.9));
-                    if (window.screen.width <= 1024 && window.screen.height<=1366) {
-                        this.map.zoomTo(0);
-                        $("#belowContent").css("height", "200px");
-                        $(".el-table").css("font-size", "12px");
-                        //this.pagesize = 2;                    
-                    }
-                    else if (1024 < window.screen.width && window.screen.width <= 1280) {
-                        this.map.zoomTo(1);
-     
-                    }
-                    else if (1280 < window.screen.width && window.screen.width <= 1366) {
-                        this.map.zoomTo(1);
-                    }
-                    else if (1366 < window.screen.width && window.screen.width <= 1600) {
-                        this.map.zoomTo(1);
+                if (window.screen.width <= 1024 && window.screen.height <= 1366) {
+                    this.map.zoomTo(0);
+                    $("#belowContent").css("height", "200px");
+                    $(".el-table").css("font-size", "12px");
+                    //this.pagesize = 2;
+                }
+                else if (1024 < window.screen.width && window.screen.width <= 1280) {
+                    this.map.zoomTo(1);
 
-                    }
-                    else {
-                        this.map.zoomTo(2);
-                    }             
+                }
+                else if (1280 < window.screen.width && window.screen.width <= 1366) {
+                    this.map.zoomTo(1);
+                }
+                else if (1366 < window.screen.width && window.screen.width <= 1600) {
+                    this.map.zoomTo(1);
+
+                }
+                else {
+                    this.map.zoomTo(2);
+                }
             },
             initMapExtent: function () {
                 this.map.zoomTo(0);
@@ -518,12 +556,13 @@
             },
             //取得需要展示的坐标点数据
             getLeftData: function (leftData, bleowTableTitle, jclx) {
+                this.closeInfoWin();
                 this.leftData = leftData;  //筛选后的数据
                 console.log(this.leftData);
                 this.belowTitle = bleowTableTitle; //下方表格显示的title
                 this.leftJclx = jclx;
                 this.showJcdLegend();
-
+                debugger;
                 setTimeout(this.showPointOnMap, 100); //延迟调用
             },
             //把左边筛选结果数据展示到地图上
@@ -533,6 +572,7 @@
                 var markers = [];
                 var vm = this;
                 /*------------------------后台真实数据的方法开始-----------------------------------*/
+                var no_quality_attr_count = 0;
                 for (var i = 0; i < this.leftData.length; i++) {
                     var item = this.leftData[i];
                     var size = new SuperMap.Size(28, 33);
@@ -659,6 +699,12 @@
                         vm.zdjcd_ll_table = false;
                         vm.zdjcd_fsfx_table = false;
                         vm.zdjcd_szjc_table = false;
+                        //console.log(item.n_last_quality);
+                        //if (!item.n_last_quality) {
+                        //    no_quality_attr_count++;
+                        //    continue;
+                        //}
+                        picUrl = "/Images/zhjc/rgqyd/btn_暂用.png";
                         switch (item.n_last_quality) {
                             case "II类": picUrl = "/Images/zhjc/rgqyd/btn_erlei.png";
                                 break;
@@ -683,10 +729,11 @@
                     //给所有的marker注册单击事件
                     markers[i].events.on({ "click": this.showInfo });
                 }
-                /*------------------------后台真实数据的方法结束-----------------------------------*/         
+                /*------------------------后台真实数据的方法结束-----------------------------------*/
             },
             //单击地图上的点展示信息
             showInfo: function (e) {
+                debugger;
                 this.closeInfoWin();
                 var lon = e.object.lonlat.lon, lat = e.object.lonlat.lat;
                 var that = this;
@@ -717,7 +764,7 @@
                 else {                             //人工取样点
                     this.mapJcdPopTitle = nowPtAttr.s_name; //断面名字
                     contentHTML += "<div id='ptPopTitle'><span style='margin-left:20px;'>" + "</span><div><div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + this.mapJcdPopTitle + "</span></div>";
-                    contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>上次取样时间</td><td class='secondlist'>" + nowPtAttr.t_last_sampling_time.slice(0, nowPtAttr.t_last_sampling_time.length - 3) + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + nowPtAttr.所属河道 + "</td></tr><tr><td class='firtlist'>取样点地址</td><td class='secondlist'>" + nowPtAttr.s_sampling_address + "</td></tr><tr><td class='firtlist'>取样操作员</td><td class='secondlist'>" + nowPtAttr.s_sampling_operator + "</td></tr><tr><td class='firtlist'>取样结果</td><td class='secondlist'>" + nowPtAttr.n_last_quality + "</td></tr></table>";
+                    contentHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>上次取样时间</td><td class='secondlist'>" + (nowPtAttr.t_last_sampling_time = nowPtAttr.t_last_sampling_time == undefined ? "" : nowPtAttr.t_last_sampling_time.slice(0, nowPtAttr.t_last_sampling_time.length - 3)) + "</td></tr><tr><td class='firtlist'>所属河道</td><td class='secondlist'>" + (nowPtAttr.所属河道 == undefined ? "" : nowPtAttr.所属河道) + "</td></tr><tr><td class='firtlist'>取样点地址</td><td class='secondlist'>" + (nowPtAttr.s_sampling_address == undefined ? "" : nowPtAttr.s_sampling_address) + "</td></tr><tr><td class='firtlist'>取样操作员</td><td class='secondlist'>" + (nowPtAttr.s_sampling_operator = nowPtAttr.s_sampling_operator == undefined ? "" : nowPtAttr.s_sampling_operator) + "</td></tr><tr><td class='firtlist'>取样结果</td><td class='secondlist'>" + (nowPtAttr.n_last_quality = nowPtAttr.n_last_quality == undefined ? "" : nowPtAttr.n_last_quality) + "</td></tr></table>";
                     contentHTML += "<input type='button' value='' id='showRgqydSzqs'><input type='button' value='' id='showRgqydQyjl'>" + "</div>";
                     //动态拼接水质趋势表格数据
                     szqsTableHTML = "<tr><td style='width:100px;height:60px;'> <div style='margin-left:45px;font-size:13px;'>采样日期</div><hr style='transform:rotate(31deg);height:1px; border:none;background-color:black;width:117px;position:absolute;left:-9px;top:22px;' /><span style='font-size: 13px;margin-left: -36px'>检测项目</sapn></td>";
@@ -728,7 +775,7 @@
                     szqsTableHTML += "<tr><td>水质类别</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td><td>II类</td></tr>";
                     szqsTableHTML += "<tr><td>环比变化</td><td>持平</td><td>持平</td><td>持平</td><td>恶化</td><td>持平</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td><td>恶化</td></tr>";
                 }
-                /***------------------------------后台取数据的方法结束------------------------------------------------------------------------------------------*/    
+                /***------------------------------后台取数据的方法结束------------------------------------------------------------------------------------------*/
                 //初始化FramedCloud类
                 var framedCloud = new SuperMap.Popup.FramedCloud(
                  "ptInfo", //id
@@ -767,7 +814,7 @@
             showRgqydSzqs: function (szqsTableHTML) {
                 this.closeInfoWin();
                 this.szqsDialogVisible = true;
-                this.activeName = 'szqsLine';       
+                this.activeName = 'szqsLine';
                 this.noticeMsg = '铁浓度平均值为5mg/L,同比........';
                 var nowMarkerLonlat = "经纬度坐标";
                 setTimeout(function () {
@@ -779,6 +826,7 @@
                 }, 100);
             },
             showRgqydQyjl: function (nowPt) { //人工取样点取样记录  nowPt--当前站点
+                debugger;
                 this.closeInfoWin();
                 var vm = this;
                 vm.qyjlStartTime = moment().format('YYYY-MM-DD');
@@ -869,6 +917,9 @@
             //显示自动检测点的运行曲线
             showZdjcdYxqx: function (nowPtAttr) {
                 this.closeInfoWin();
+                this.barOption = null;
+                this.swLineOption = null;
+                this.llLineOption = null;//流量
                 this.zdjcdDialogVisible = true;
                 this.activeName = "ylBar";
                 setTimeout(function () {
@@ -879,19 +930,35 @@
             },
             //tab分页上的单击事件
             handleClick: function (tab, event) {
-                // this.initEchartData();
+                this.setChartDatas();
                 //设置提示信息
                 if (this.activeName == "ylBar") {
-                    this.noticeMsg = "雨量图";
-                    this.zdjcdTableData = this.yslDatas.yl_diagram;
-
+                    if (this.yslDatas.yl_diagram && this.yslDatas.yl_diagram.length) {
+                        this.noticeMsg = this.yslDatas.yl_msg;
+                        this.tiemSelectShow = true;
+                    } else {
+                        this.tiemSelectShow = false;
+                        this.noticeMsg = "没有雨量数据!";
+                    }
                 } else if (this.activeName == "swLine") {
-                    this.noticeMsg = "水位图";
-                    this.zdjcdTableData = this.yslDatas.sw_diagram;
+                    if (this.yslDatas.sw_diagram && this.yslDatas.sw_diagram.length) {
+                        // this.noticeMsg = "5月30日4时最高水位为2.6m(超警戒)。";
+                        this.noticeMsg = this.yslDatas.sw_msg;
+                        this.tiemSelectShow = true;
+                    } else {
+                        this.tiemSelectShow = false;
+                        this.noticeMsg = "没有水位数据!";
+                    }
                 }
                 else if (this.activeName == "llLine") {
-                    this.noticeMsg = "流量图";
-                    this.zdjcdTableData = this.yslDatas.ll_diagram;
+                    if (this.yslDatas.ll_diagram && this.yslDatas.ll_diagram.length) {
+                        //this.noticeMsg = "5月30日累计流量173m³。";
+                        this.noticeMsg = this.yslDatas.ll_msg;
+                        this.tiemSelectShow = true;
+                    } else {
+                        this.tiemSelectShow = false;
+                        this.noticeMsg = "没有流量数据!";
+                    }
                 }
             },
             //关闭dialog弹框时的回调
@@ -915,41 +982,80 @@
                 }
                 axios.post('/ZHJC/getZdjcdChartData', { zdName: stationname, startTime: sTime, endTime: eTime }).then(function (response) {
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
-                    vm.setChartDatas(vm.yslDatas);
+                    vm.setChartDatas();
                 }).bind(this).catch(function (error) {
                     console.log(error);
                 });
             },
-            setChartDatas: function (yslDatas) {
-                if (yslDatas.sw_diagram && yslDatas.sw_diagram.length) {
-                    //水位数据
-                    var swTime = [], swValue = [];
-                    for (var i = 0; i < yslDatas.sw_diagram.length; i++) {
-                        swTime.push(yslDatas.sw_diagram[i].time.slice(11, 13));
-                        swValue.push(yslDatas.sw_diagram[i].value);
-                    }
-                    this.setSwLineData(swTime, swValue);
-                    this.zdjcdTableData = yslDatas.sw_diagram;
-                }
-                if (yslDatas.yl_diagram && yslDatas.yl_diagram.length) {
+            setChartDatas: function () {
+                debugger;
+                var yslDatas = this.yslDatas;
+                if (this.activeName == "ylBar" && this.barOption == null) {
+                    this.$refs.ylbar.charts.showLoading();
                     //雨量
-                    var ylTime = [], ylValue = [];
-                    for (var i = 0; i < yslDatas.yl_diagram.length; i++) {
-                        ylTime.push(yslDatas.yl_diagram[i].time.slice(11, 13));
-                        ylValue.push(yslDatas.yl_diagram[i].value);
+                    if (yslDatas.yl_diagram && yslDatas.yl_diagram.length) {
+                        var ylTime = [], ylValue = [];
+                        for (var i = 0; i < yslDatas.yl_diagram.length; i++) {
+                            ylTime.push(yslDatas.yl_diagram[i].time.slice(11, 13));
+                            ylValue.push(yslDatas.yl_diagram[i].value);
+                        }
+                        this.ylbarShow = true;
+                        this.tiemSelectShow = true;
+                        this.setBarData(ylTime, ylValue);
+                        this.noticeMsg = this.yslDatas.yl_msg;
+
+                    } else {
+                        this.ylbarShow = false;
+                        this.tiemSelectShow = false;
+                        this.setBarData([], []);
+                        this.noticeMsg = "没有雨量数据！";
                     }
-                    this.setBarData(ylTime, ylValue);
-                    this.zdjcdTableData = yslDatas.yl_diagram;
+
+                } else if (this.activeName == "swLine" && this.swLineOption == null) {
+                    //水位数据
+                    this.$refs.swline.charts.showLoading();
+                    if (yslDatas.sw_diagram && yslDatas.sw_diagram.length) {
+                        var swTime = [], swValue = [];
+                        for (var i = 0; i < yslDatas.sw_diagram.length; i++) {
+                            swTime.push(yslDatas.sw_diagram[i].time.slice(11, 13));
+                            swValue.push(yslDatas.sw_diagram[i].value);
+                        }
+                        this.swlineShow = true;
+                        this.tiemSelectShow = true;
+                        this.setSwLineData(swTime, swValue);
+                        this.noticeMsg = this.yslDatas.sw_msg;
+
+                    } else {
+                        this.swlineShow = false;
+                        this.tiemSelectShow = false;
+                        this.setSwLineData([], []);
+                        this.noticeMsg = "没有水位数据！";
+
+                    }
+
                 }
-                if (yslDatas.ll_diagram && yslDatas.ll_diagram.length) {
+                else if (this.activeName == "llLine" && this.llLineOption == null) {
                     //流量
-                    var llTime = [], llValue = [];
-                    for (var i = 0; i < yslDatas.ll_diagram.length; i++) {
-                        llTime.push(yslDatas.ll_diagram[i].time.slice(11, 13));
-                        llValue.push(yslDatas.ll_diagram[i].value);
+                    this.$refs.llline.charts.showLoading();
+                    if (yslDatas.ll_diagram && yslDatas.ll_diagram.length) {
+                        var llTime = [], llValue = [];
+                        for (var i = 0; i < yslDatas.ll_diagram.length; i++) {
+                            llTime.push(yslDatas.ll_diagram[i].time.slice(11, 13));
+                            llValue.push(yslDatas.ll_diagram[i].value);
+                        }
+                        this.lllineShow = true;
+                        this.tiemSelectShow = true;
+                        this.setLlLineData(llTime, llValue);
+                        this.noticeMsg = this.yslDatas.ll_msg;
+
+
+                    } else {
+                        this.lllineShow = false;
+                        this.tiemSelectShow = false;
+                        this.setLlLineData([], []);
+                        this.noticeMsg = "没有流量数据！";
+
                     }
-                    this.setLlLineData(llTime, llValue);
-                    this.zdjcdTableData = yslDatas.ll_diagram;
                 }
             },
             //取样图表数据
@@ -1007,7 +1113,7 @@
                     },
                     yAxis: {
                         type: 'value',
-                        name: '雨量(单位：cm)',
+                        name: '雨量(单位：mm)',
                         min: 0,  //设置y轴的最小值
                         nameTextStyle: {
                             color: 'black',
@@ -1042,7 +1148,7 @@
                                     show: true,
                                     position: 'top',
                                     formatter: '{c}',
-                                    color: '#ffffff'
+                                    color: 'blcak'
                                 }
                             }
                         }
@@ -1101,7 +1207,7 @@
                         data: swTime,//['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', '6时', '8时'],
                     },
                     yAxis: {
-                        name: '水位(单位：cm)',
+                        name: '水位(单位：m)',
                         nameTextStyle: {  //坐标轴名称的样式
                             color: 'black',
                             padding: 12
@@ -1176,7 +1282,7 @@
                         data: ['8时', '10时', '12时', '14时', '16时', '18时', '20时', '22时', '0时', '4时', ],
                     },
                     yAxis: {
-                        name: '流量(单位：cm)',
+                        name: '流量(单位：m³)',
                         nameTextStyle: {  //坐标轴名称的样式
                             color: 'black',
                             padding: 12
@@ -1215,122 +1321,122 @@
             },
             //人工取样点水质趋势折线图
             setSzqsLineData: function () {
-                       //this.$refs.szqsLine.charts.showLoading();
-                      //this.$refs.szqsLine.charts.hideLoading();
-                      this.szqsLineOption = {
-                          color: '#50a6ff',
-                          title: {
-                              left: 'center',
-                              //text: '水位逐时统计',
-                              textStyle: {
-                                  color: 'black',
-                                  fontSize: 16,
-                                  fontWeight: 'normal'
-                              }
-                          },
-                          legend: {
-                              data: ['铁', '猛', '氨氮'],
-                              textStyle: {
-                                  color: ' ',
-                                  fontFamily: "宋体",
-                                  fontSize: "12"
-                              },
-                              // 控制图例文字的颜色，空串时，文字颜色为图例颜色
-                              textStyle: {
-                                  color: "black",
-                                  fontFamily: "宋体",
-                                  fontSize: "12",
-                              }
-                          },
+                //this.$refs.szqsLine.charts.showLoading();
+                //this.$refs.szqsLine.charts.hideLoading();
+                this.szqsLineOption = {
+                    color: '#50a6ff',
+                    title: {
+                        left: 'center',
+                        //text: '水位逐时统计',
+                        textStyle: {
+                            color: 'black',
+                            fontSize: 16,
+                            fontWeight: 'normal'
+                        }
+                    },
+                    legend: {
+                        data: ['铁', '猛', '氨氮'],
+                        textStyle: {
+                            color: ' ',
+                            fontFamily: "宋体",
+                            fontSize: "12"
+                        },
+                        // 控制图例文字的颜色，空串时，文字颜色为图例颜色
+                        textStyle: {
+                            color: "black",
+                            fontFamily: "宋体",
+                            fontSize: "12",
+                        }
+                    },
 
-                          xAxis: {
-                              type: 'category',
-                              //name: '时间',//坐标轴名称
-                              nameLocation: 'center',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  //padding:5
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'blcak'
-                                  }
-                              },
-                              /******凸显X轴*****/
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
-                              data: ['1月1日', '2月1日', '3月1日', '4月1日', '5月1日', '6月1日', '7月1日', '8月1日', '9月1日', '10月1日', '11月1日', '12月1日'],
-                          },
-                          yAxis: {
-                              name: '单位：(mg/L)',
-                              nameTextStyle: {  //坐标轴名称的样式
-                                  color: 'black',
-                                  padding: 12
-                              },
-                              axisLabel: {  //坐标轴刻度标签的相关设置
-                                  textStyle: {
-                                      color: 'black'
-                                  }
-                              },
-                              type: 'value',
-                              //axisLine: {
-                              //    lineStyle: {
-                              //        color: 'black',
-                              //        width: 2,
-                              //    }
-                              //},
+                    xAxis: {
+                        type: 'category',
+                        //name: '时间',//坐标轴名称
+                        nameLocation: 'center',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            //padding:5
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'blcak'
+                            }
+                        },
+                        /******凸显X轴*****/
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
+                        data: ['1月1日', '2月1日', '3月1日', '4月1日', '5月1日', '6月1日', '7月1日', '8月1日', '9月1日', '10月1日', '11月1日', '12月1日'],
+                    },
+                    yAxis: {
+                        name: '单位：(mg/L)',
+                        nameTextStyle: {  //坐标轴名称的样式
+                            color: 'black',
+                            padding: 12
+                        },
+                        axisLabel: {  //坐标轴刻度标签的相关设置
+                            textStyle: {
+                                color: 'black'
+                            }
+                        },
+                        type: 'value',
+                        //axisLine: {
+                        //    lineStyle: {
+                        //        color: 'black',
+                        //        width: 2,
+                        //    }
+                        //},
 
-                          },
-                          series: [
-                              {
-                                  name: '铁',
-                                  type: 'line',
-                                  //barWidth: '60%',
-                                  data: [10, 20, 30, 15, 18, 25, 37, 5, 6, 8, 15, 7, ],
-                                  itemStyle: {
-                                      normal: {
-                                          color: '#26c692',  //设置折线点的颜色
-                                          lineStyle: {
-                                              color: '#26c692' //设置折线的颜色
-                                          }
-                                      }
-                                  },
-                              },
-                               {
-                                   name: '猛',
-                                   type: 'line',
-                                   //barWidth: '60%',
-                                   data: [40, 60, 48, 52, 55, 61, 58, 47, 35, 41, 56, 30, ],
-                                   itemStyle: {
-                                       normal: {
-                                           color: '#ff5600',  //设置折线点的颜色
-                                           lineStyle: {
-                                               color: '#ff5600' //设置折线的颜色
-                                           }
-                                       }
-                                   },
-                               },
-                                {
-                                    name: '氨氮',
-                                    type: 'line',
-                                    //barWidth: '60%',
-                                    data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
-                                    itemStyle: {
-                                        normal: {
-                                            color: '#6328b7',  //设置折线点的颜色
-                                            lineStyle: {
-                                                color: '#6328b7' //设置折线的颜色
-                                            }
-                                        }
-                                    },
+                    },
+                    series: [
+                        {
+                            name: '铁',
+                            type: 'line',
+                            //barWidth: '60%',
+                            data: [10, 20, 30, 15, 18, 25, 37, 5, 6, 8, 15, 7, ],
+                            itemStyle: {
+                                normal: {
+                                    color: '#26c692',  //设置折线点的颜色
+                                    lineStyle: {
+                                        color: '#26c692' //设置折线的颜色
+                                    }
                                 }
+                            },
+                        },
+                         {
+                             name: '猛',
+                             type: 'line',
+                             //barWidth: '60%',
+                             data: [40, 60, 48, 52, 55, 61, 58, 47, 35, 41, 56, 30, ],
+                             itemStyle: {
+                                 normal: {
+                                     color: '#ff5600',  //设置折线点的颜色
+                                     lineStyle: {
+                                         color: '#ff5600' //设置折线的颜色
+                                     }
+                                 }
+                             },
+                         },
+                          {
+                              name: '氨氮',
+                              type: 'line',
+                              //barWidth: '60%',
+                              data: [10, 95, 100, 100, 100, 100, 100, 100, 100, 80, 85, 70, ],
+                              itemStyle: {
+                                  normal: {
+                                      color: '#6328b7',  //设置折线点的颜色
+                                      lineStyle: {
+                                          color: '#6328b7' //设置折线的颜色
+                                      }
+                                  }
+                              },
+                          }
 
-                          ]
-                      }
+                    ]
+                }
             },
             /*----------------------------------获取时间的方法----------------------------------------------------*/
             preYear: function () {
@@ -1339,13 +1445,15 @@
             nextYear: function () {
                 this.yearVlue = moment(this.yearVlue, "YYYY").add(1, 'y').format('YYYY')
             },
-            yearChange:function(){
+            yearChange: function () {
 
             },
             preDay: function () {
                 //上一天
                 var vm = this;
-                debugger;
+                this.barOption = null;
+                this.swLineOption = null;
+                this.llLineOption = null;//流量
                 var nowDay = this.zdjcdTime;
                 this.zdjcdTime = moment(this.zdjcdTime, "YYYY-MM-DD").subtract(1, 'days').format('YYYY-MM-DD');
                 var sTime = this.zdjcdTime + " 08:00:00";
@@ -1353,22 +1461,26 @@
                 axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
                     debugger
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
-                    vm.setChartDatas(vm.yslDatas);
+                    vm.setChartDatas();
                 }).bind(this).catch(function (error) {
                     console.log(error);
                 });
             },
             nextDay: function () {
                 var vm = this;
+                this.barOption = null;
+                this.swLineOption = null;
+                this.llLineOption = null;//流量
                 //下一天
-                var nowDay = this.zdjcdTime;
+                //var nowDay = this.zdjcdTime;
                 this.zdjcdTime = moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD');
-                var sTime = nowDay + " 08:00:00";
-                var eTime = this.zdjcdTime + " 08:00:00";
+                // var sTime = nowDay + " 08:00:00";
+                var sTime = this.zdjcdTime + " 08:00:00";
+                var eTime = moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD') + " 08:00:00";
                 axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
                     debugger
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
-                    vm.setChartDatas(vm.yslDatas);
+                    vm.setChartDatas();
                 }).bind(this).catch(function (error) {
                     console.log(error);
                 });
@@ -1376,18 +1488,21 @@
             //在日期里面选择了的时候
             dayChange: function () {
                 var vm = this;
+                this.barOption = null;
+                this.swLineOption = null;
+                this.llLineOption = null;//流量
                 var nowDay = this.zdjcdTime;
-                var nextDay= moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD');
+                var nextDay = moment(this.zdjcdTime, "YYYY-MM-DD").add(1, 'days').format('YYYY-MM-DD');
                 var sTime = nowDay + " 08:00:00";
                 var eTime = nextDay + " 08:00:00";
                 axios.post('/ZHJC/getZdjcdChartData', { zdName: vm.jcdStationName, startTime: sTime, endTime: eTime }).then(function (response) {
                     debugger
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
-                    vm.setChartDatas(vm.yslDatas);
+                    vm.setChartDatas();
                 }).bind(this).catch(function (error) {
                     console.log(error);
                 });
-             },
+            },
             getDateStr: function (addDay) {
                 var date = new Date();
                 //date对象的setDate()方法，参数可以超出常规的1 ~ 31日期范围，也可以为负数，Date对象内部会自动转换为对应的日期。
@@ -1434,7 +1549,7 @@
                     });
                     $.each($('.zdjcdTableDiv tbody .el-table_5_column_35'), function (index, item) {
                         item.children[0].innerHTML = '<a href="http://www.shanghai.gov.cn/nw2/nw2314/nw2315/nw15343/u21aw1220763.html" style="color:#2288f1;text-decoration:none; " >查看详情</a>';
-                    })              
+                    })
                 }
                 else if (this.rgqyd_table) {  //人工取样点
                     //II, III,  IV, V,  VI, el-table_2_column_15
@@ -1446,7 +1561,7 @@
                         else if (item.children[0].innerHTML == 'III类') {
                             item.children[0].style.color = '#f1c3ad'
                         }
-                        else if (item.children[0].innerHTML == 'IV类') {       
+                        else if (item.children[0].innerHTML == 'IV类') {
                             item.children[0].style.color = '#ec2727'
                         }
                         else if (item.children[0].innerHTML == 'V类') {
@@ -1483,9 +1598,51 @@
                         vm.showRgqydQyjl();
                     });
                 }
-            }
-        },
-
+            },
+            hideRight: function () {
+                $(".hideRight").hide();
+                $(".search-input-div").hide();
+                $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                this.proNm = '';
+                this.isShowSearchInput = true;
+                $(".map_tools").animate({ width: "hide" }, "normal", function () {
+                    $(".showRight").show();
+                })
+            },
+            showRight: function () {
+                $(".showRight").hide();
+                $(".map_tools").animate({ width: "show" }, "normal", function () {
+                    $(".hideRight").show();
+                })
+            },
+            //显示搜索框
+            showSearchInput: function () {
+                if (this.isShowSearchInput) {
+                    $(".search-input-div").show();
+                    const vm = this;
+                    $(".input_text").keydown(function (e) {
+                        if (e.keyCode == 13) {
+                            vm.searchRiverName();
+                        }
+                    });
+                    $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
+                    this.isShowSearchInput = false;
+                } else {
+                    $(".search-input-div").hide();
+                    $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                    $(".tool-search").hover(function () {
+                        $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
+                    }, function () {
+                        $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                    });
+                    this.isShowSearchInput = true;
+                }
+            },
+            //搜索河道的点击事件
+            searchRiverName: function () {          
+                alert("搜索河道")
+            },
+        }
     })
 </script>
 <style scoped>
@@ -1505,7 +1662,7 @@
         width: 100%;
         height: 100%;
         overflow: hidden;
-        border: #b9b9b9 1px solid;  
+        border: #b9b9b9 1px solid;
     }
 
     #ptInfo, #ptInfo_contentDiv, #ptInfo_GroupDiv {
@@ -1708,7 +1865,7 @@
     }
 
     #szqsTable {
-        width: 100%;
+        width: 100%;.map_tools
         height: 230px;
         margin-top: 10px;
         position: relative;
@@ -1746,6 +1903,7 @@
     #qyjlBtnRange {
         margin-left: 20px;
     }
+
     #qyjlSelect .qyjlDatePicker {
         width: 200px;
     }
@@ -1805,9 +1963,98 @@
         line-height: 32px;
         color: white;
     }
-    .el-table__body-wrapper{
-      overflow-y: auto !important;
-      height: 192px ;/*!important;*/
+
+    .el-table__body-wrapper {
+        overflow-y: auto !important;
+        height: 192px; /*!important;*/
+    }
+      .map_tools{
+        position: absolute;
+        height:32px;
+        width:300px;
+        top:5px;
+        right:16px;
+        z-index: 2048;
+        background: white;
+        border:1px solid #cccccc;
+        line-height: 32px;
+    }
+    .map_tools .tool{
+        display:inline-block;
+        text-align: center;
+        width: 62px;
+        height: 100%;
+        text-align: center;
+    }
+    .tool .icon-img{
+        display:inline-block;
+        padding:0px;
+        width:54px;
+        height:18px;
+        margin-top: 7px;
+    }
+    /* 搜索 */
+    .search-img{
+        background: url(/Images/gczl/gjl/ico-search-normal.png) no-repeat;
+        cursor:pointer
+    }
+    .tool-search:hover>.search-img{
+        background: url(/Images/gczl/gjl/ico-search-active.png) no-repeat;
+          cursor:pointer
+    }
+    /* 测距 */
+    .ceju-img{
+        background: url(/Images/gczl/gjl/ico-ceju-normal.png) no-repeat;
+          cursor:pointer
+    }
+    .tool-ceju:hover>.ceju-img{
+        background: url(/Images/gczl/gjl/ico-ceju-active.png) no-repeat;
+          cursor:pointer
+    }
+    /* 测面 */
+    .cemian-img{
+        background: url(/Images/gczl/gjl/ico-cemian-normal.png) no-repeat;
+          cursor:pointer
+    }
+    .tool-cemian:hover>.cemian-img{
+        background: url(/Images/gczl/gjl/ico-cemian-active.png) no-repeat;
+          cursor:pointer
+    }
+    /* 清除 */
+    .clear-img{
+        background: url(/Images/gczl/gjl/ico-clear-normal.png) no-repeat;
+          cursor:pointer
+    }
+    .tool-clear:hover>.clear-img{
+        background: url(/Images/gczl/gjl/ico-clear-active.png) no-repeat;
+          cursor:pointer
+    }
+       .hideRight {
+        position: absolute;
+        z-index: 2050;
+        right: 17px;
+        top: 6px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+    }
+    .showRight {
+        position: absolute;
+        z-index: 2050;
+        right: 17px;
+        top: 5px;
+        width: 22px;
+        text-align: center;
+        height: 32px;
+        display: none;
+    }
+     .search-input-div{
+        position: absolute;
+        z-index:2048;
+        top:42px;
+        right: 88px;
+        width: 231px;
+        display:none;
     }
     /*.zdjcdTableDiv th, .zdjcdTableDiv td, #rgqydTableDiv th, #rgqydTableDiv td {
         text-align: center;

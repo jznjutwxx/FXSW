@@ -118,7 +118,7 @@
             },
 
             setTableData: function (url, param) {
-                this.loading = true,
+                this.loading = true;
                 axios.post(url, param)
                  .then(function (response) {
                      this.loading = false;
@@ -143,7 +143,6 @@
                     this.delForm.S_ID = id;
                     axios.post("/SanitarySewage/DelData", { id: this.delForm.S_ID })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginSewageUpdateResponse.result) {
                           this.$message({
@@ -173,11 +172,12 @@
             },
             currentChange: function (val) {
                 this.currentPage = val;
-                this.params.Page = val;
+                this.params.page = val;
                 this.setData('/SanitarySewage/GetTabData', this.params);
             },
 
             sizeChange: function (val) {
+                debugger
                 this.pageSize = val;
                 this.params.pageSize = val;
                 this.setData('/SanitarySewage/GetTabData', this.params);

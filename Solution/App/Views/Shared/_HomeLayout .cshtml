@@ -31,7 +31,7 @@
                 </ul>
             </el-header>
             <el-container>
-                <iframe ref="mainFrame" src="" width="100%" v-bind:height="frameHeight" frameborder="0" scrolling="auto" id="google_ads_frame2" name="google_ads_frame2" marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" allowfullscreen="true"></iframe>
+                <iframe name="mainFrame" v-bind:src="src" width="100%" v-bind:height="frameHeight" frameborder="0" scrolling="auto"  marginwidth="0" marginheight="0" vspace="0" hspace="0" allowtransparency="true" allowfullscreen="true"></iframe>
             </el-container>
             <el-footer style="height:30px;">
                 <span>版权所有：奉贤水务局</span>
@@ -45,6 +45,7 @@
             el: '#main',
             template: '#mainpage',
             data: {
+                src: '',
                 activeIndex: '',
                 menus: [],
                 frameHeight: (document.documentElement.clientHeight - 109) + 'px'
@@ -92,7 +93,7 @@
                     }
                 },
                 changeMenu: function (url) {
-                    this.$refs.mainFrame.src = url
+                    this.src = url
                 },
                 getMenus: function () {
                     this.menus = [{
@@ -144,6 +145,7 @@
         .el-container {
             height: 100%;
             border: 0px solid #eee;
+            background-color:#051266;
         }
 
         .el-header {

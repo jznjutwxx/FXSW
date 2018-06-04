@@ -21,7 +21,7 @@
             </el-form>           
         </div>
         <div id="out-table">
-            <el-table v-bind:data="frData"    highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" v-bind:height="tableHeight">
+            <el-table v-bind:data="frData"   v-loading="loading"    highlight-current-row style="width:100%;" v-bind:border='true' v-bind:stripe="true" v-bind:height="tableHeight">
                 <el-table-column type="index" v-bind:index="indexOrder" width="100" label='序号' header-align="center" align="center">
                 </el-table-column>
                 <el-table-column property="s_name" label="法人姓名" header-align="center" align="center">
@@ -56,7 +56,8 @@
                 addpage_visible: false,
                 editpage_visible: false,
                 nowEditData: null,//当前编辑的数据
-                frName:"",
+                frName: "",
+                loading:true,
             }
         },
         components: {
@@ -88,7 +89,6 @@
                 this.dataToFather();
             },
             showEditPage: function (scope) {
-                debugger;
                 var rowInfo = scope.row;//当前行信息
                 var index = scope.$index; //当前行在数据数组中的序号，0开始
                 this.nowEditData = this.frData[index];
@@ -103,11 +103,12 @@
             queryFRinfo: function () {
                 //this.$message("查询法人姓名");
                 const vm = this;
-                axios.post("/LegalPersonManger/queryFrInfo", { currentPage: this.currentPage, pagesize: this.pagesize, frName: this.frName }).then(function (response) {
-                    debugger;
+                vm.loading = true;
+                axios.post("/LegalPersonManger/queryFrInfo", { currentPage: this.currentPage, pagesize: this.pagesize, frName: this.frName }).then(function (response) {      
                     var result = JSON.parse(response.data).EnginLegalPersonListGetResponse;   //totalCount  engin_unit_person_list
                     vm.frData = result.engin_unit_person_list;
                     vm.frTotalCount = result.totalCount;
+                    vm.loading = false;
                     
                  })
             },

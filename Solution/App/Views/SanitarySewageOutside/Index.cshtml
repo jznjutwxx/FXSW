@@ -142,7 +142,6 @@
                     this.delForm.S_ID = id;
                     axios.post("/SanitarySewageOutside/DelData", { id: this.delForm.S_ID })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginSewageUpdateResponse.result) {
                           this.$message({

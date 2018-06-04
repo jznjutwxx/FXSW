@@ -23,10 +23,18 @@ namespace App.Controllers
         }
         public ActionResult AddPage()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult EditPage()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult DetailPage()
@@ -44,6 +52,9 @@ namespace App.Controllers
         //,string town
         public JsonResult GetTabData(string page,string pageSize, string sYear, string eYear, string status, string town, string NameNum)
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            //调用接口
             string method = "wavenet.fxsw.engin.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", page);
@@ -55,6 +66,9 @@ namespace App.Controllers
             paramDictionary.Add("s_town", town);//城镇
             paramDictionary.Add("s_name", NameNum);//工程名
             paramDictionary.Add("s_project_no", NameNum);//工程编号
+
+            paramDictionary.Add("s_account", token);//账号"1132131"
+            paramDictionary.Add("s_account_type", type);//unit  person
 
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
@@ -124,17 +138,6 @@ namespace App.Controllers
             arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param); //转成实体对象
 
     IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            //系统级参数设置
-            //paramDictionary.Add(APP_KEY, "1005");
-            //paramDictionary.Add(SESSION, "DEEACA5342B646A7BE08740438C20810");
-            //paramDictionary.Add(METHOD, "wavenet.fxsw.engin.farm.report");
-            //paramDictionary.Add(FORMAT, "json");
-            //paramDictionary.Add(VERSION, "1");
-            //paramDictionary.Add(TIMESTAMP, DateTime.UtcNow.ToString("yyyy-MM-dd HH:mm:ss"));
-            //paramDictionary.Add(UTC_OFFSET, "+00:00");
-            //paramDictionary.Add(SIGN_METHOD, "md5");
-            //paramDictionary.Add(MAC, "78:D6:F0:00:D8:97");
-
             var method = "wavenet.fxsw.engin.farm.report";
 
             //基本信息
@@ -213,14 +216,7 @@ namespace App.Controllers
                     fileParams.Add("picture_file" + (i + 1), path + Files[i]);
                 }
             }
-
-            // paramDictionary.Add(SIGN, GetSignature(paramDictionary, "77A8799C9E43"));
-
-            //WebUtils webPost = new WebUtils();
-            //string url = "http://localhost:5627/Router.aspx";
-            // string url = "http://222.66.154.70:8079/Router.aspx";
-            //string url = "http://218.1.67.12:8081/Router.aspx";
-            string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);// webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams); 
+            string sss = CookieHelper.GetData(Request, method, paramDictionary, fileParams);
             return Json(sss);
         }
         public ActionResult Edit(string param, string drawingFiles, string pictureFiles)
@@ -517,15 +513,7 @@ namespace App.Controllers
 
             // paramDictionary.Add("remove_pic_ids", "3156467F238740B59C6650828698B2A2,BA4D7B0736564E05B51F181F9BB6F9B9");//删除的图片ID
             //paramDictionary.Add("is_delete", "0");//是否删除 1删除
-
-            Dictionary<string, string> fileParams = new Dictionary<string, string>();
-            fileParams.Add("picture_file", @"D:\timg (2).jpg");
-            fileParams.Add("picture_file2", @"D:\Paul .jpg");
-            fileParams.Add("picture_file3", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file4", @"D:\Paul .jpg");
-            fileParams.Add("picture_file5", @"D:\timg (1).jpg");
-            fileParams.Add("picture_file6", @"D:\Paul .jpg");
-            fileParams.Add("picture_file7", @"D:\timg (1).jpg");
+            
             #endregion
 
             // 调用接口

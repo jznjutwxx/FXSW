@@ -141,7 +141,7 @@
             <img src="/Images/gczl/btn_left.png" alt="展开" />
         </div>
         <div class="search-input-div">
-            <el-input placeholder="请输入工程名称" v-model="proNm" size="mini">
+            <el-input placeholder="请输入工程名称" v-model="proNm" size="mini" class="input_text">
                 <el-button slot="append" icon="el-icon-search" v-on:click="clickSearchBtn"></el-button>
             </el-input>
         </div>
@@ -438,7 +438,7 @@
                 this.map.addControl(this.gcctSelect);
                 this.map.addControl(this.lineMeasure);
                 this.map.addControl(this.areaMeasure);
-                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+                this.map.setCenter(new SuperMap.LonLat(121.52, 30.84), 0);
                 //this.addMarkerPoints();//加载marker标注点
             },
             mapClickEvent: function(e){
@@ -449,8 +449,10 @@
                 this.vectorLayerKX.removeAllFeatures();
                 this.currentPage = 1;
                 this.drawRectangle.activate();
+                $("#showMap").css("cursor","crosshair");
             },
             drawRectangleCompleted: function(obj) {
+                $("#showMap").css("cursor","url(/Scripts/SuperMap/theme/images/cursors/Pan.cur),default");
                 var style = {
                     strokeColor: "#304DBE",
                     strokeWidth: 1,
@@ -589,18 +591,19 @@
             },
             //条件筛选加载表格中的数据
             getTableData: function (url, param) {
+                var _this = this;
                 axios.post(url, param).then(function (response) {
                      var li = JSON.parse(response.data);
                      var datas = li.EnginPandectGetResponse.engin_pandect_list;
-                     this.tableData = datas;
-                     this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
-                     this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
-                     this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
-                     this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
-                     this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
-                     this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
-                     this.initTab();    //根据条件增加或减少Tab标签页
-                     this.getMapDBData();   //获取数据库数据（地图使用）
+                     _this.tableData = datas;
+                     _this.filterTitleVal = li.EnginPandectGetResponse.engin_pandect_count.allcount;
+                     _this.GGCount = li.EnginPandectGetResponse.engin_pandect_count.ggcount;
+                     _this.ZXXCount = li.EnginPandectGetResponse.engin_pandect_count.zxcount;
+                     _this.XXNTCount = li.EnginPandectGetResponse.engin_pandect_count.xxcount;
+                     _this.NCSHCount = li.EnginPandectGetResponse.engin_pandect_count.nccount;
+                     _this.QTSLCount = li.EnginPandectGetResponse.engin_pandect_count.qtcount;
+                     _this.initTab();    //根据条件增加或减少Tab标签页
+                     _this.getMapDBData();   //获取数据库数据（地图使用）
                  }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -608,21 +611,22 @@
             },
             //获取数据库数据（地图）
             getMapDBData:function() {
+                var _this = this;
                 axios.post('/ProOverView/GetMapData', {
-                    sYear: this.dateBeginParam, eYear: this.dateEndParam,
-                    status: this.checkPros.join(','), towns: this.checkTwons.join(","),
-                    proNm: this.proNm, proNos: this.proNos.join(","),
-                    ctFlag: this.ctFlag
+                    sYear: _this.dateBeginParam, eYear: _this.dateEndParam,
+                    status: _this.checkPros.join(','), towns: _this.checkTwons.join(","),
+                    proNm: _this.proNm, proNos: _this.proNos.join(","),
+                    ctFlag: _this.ctFlag
                 }).then(function (response) {
                     var li = JSON.parse(response.data);
                     var datas = li.EnginPandectGetResponse.engin_pandect_list;
-                    this.mapDbData = datas;
-                    var zom = this.map.getZoom();
+                    _this.mapDbData = datas;
+                    var zom = _this.map.getZoom();
                     if (zom >= 3) {
-                        this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                        _this.getFeaturesBySQL(1);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
                     } else {
-                        this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
-                        this.gcctSelect.deactivate();     //注销vectorLayer图层上的草图选择事件
+                        _this.getFeaturesBySQL(0);    //根据条件筛选地图空间数据(0取数据，否则渲染图层)
+                        _this.gcctSelect.deactivate();     //注销vectorLayer图层上的草图选择事件
                     }
                 }.bind(this))
                   .catch(function (error) {
@@ -1017,6 +1021,7 @@
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
                     this.markerLayer.clearMarkers();
+                    this.hideDown();
                 }
             },
             //具体街镇change事件
@@ -1031,6 +1036,7 @@
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
                     this.markerLayer.clearMarkers();
+                    this.hideDown();
                 };
             },
             //工程分布全选的事件
@@ -1044,6 +1050,7 @@
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
                     this.markerLayer.clearMarkers();
+                    this.hideDown();
                 }
             },
             //具体的工程分布的改变（change）事件
@@ -1058,6 +1065,7 @@
                     this.filterTitleVal = '0';
                     this.editableTabs2 = [];
                     this.markerLayer.clearMarkers();
+                    this.hideDown();
                 };
             },
             //最终双击结束
@@ -1254,7 +1262,7 @@
                 $('.tuli_img').toggle();
             },
             refreshMap: function () {   //复原地图
-                this.map.setCenter(new SuperMap.LonLat(121.56, 30.9), 0);
+                this.map.setCenter(new SuperMap.LonLat(121.52, 30.84), 0);
             },
             mapZoomBig: function () {
                 this.map.zoomTo(this.map.getZoom() + 1);
@@ -1265,11 +1273,22 @@
             showSearchInput:function(){
                 if(this.showInput){
                     $(".search-input-div").show();
+                    var _this = this;
+                    $(".input_text").keydown(function(e){
+                        if (e.keyCode == 13) {  
+                            _this.clickSearchBtn();
+                        }  
+                    });
                     $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
                     this.showInput = false;
                 }else{
                     $(".search-input-div").hide();
                     $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                    $(".tool-search").hover(function() {
+                        $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
+                    },function() {
+                        $(".search-img").css("background","url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
+                    });
                     this.showInput = true;
                     this.proNm = '';
                     this.getDataEvent();
@@ -1342,6 +1361,9 @@
         height:270px;
         background-color: #ffffff;
         /*border:1px solid #0026ff;*/
+    }
+    .proTable a{
+        cursor: pointer;
     }
 
     /*表格显示工程名称信息样式*/

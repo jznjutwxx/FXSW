@@ -19,10 +19,18 @@ namespace App.Controllers
         }
         public ActionResult AddPage()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult EditPage()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
         public ActionResult DetailPage()
@@ -37,9 +45,47 @@ namespace App.Controllers
         {
             return Json(new { result = "ok" });
         }
-        //,string town
+        public JsonResult GetLegalPerson()
+        { //string page,string pagesize,string name
+            string method = "wavenet.fxsw.engin.legal.person.list.get";
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("page", "1");
+            paramDictionary.Add("page_size", "20");
+            //   paramDictionary.Add("s_name", "红");//名称
+
+            //调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
+        public JsonResult GetDesignUnit()
+        { //string page,string pagesize,string name
+            string method = "wavenet.fxsw.engin.unit.list.get";
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("page", "1");
+            paramDictionary.Add("page_size", "20");
+            //  paramDictionary.Add("s_name", "网");//名称";
+
+            //调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
+        public JsonResult GetDictionary(string type)
+        {
+            string method = "wavenet.fxsw.dictionary.get";
+            // 接口所需传递的参数
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("s_type", type);
+            //调用接口
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
         public JsonResult GetTabData(string page, string pagesize, string sYear, string eYear, string status, string town, string NameNum)
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+
             string method = "wavenet.fxsw.engin.list.get";
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
             paramDictionary.Add("page", page);
@@ -51,6 +97,8 @@ namespace App.Controllers
             paramDictionary.Add("s_town", town);//城镇
             paramDictionary.Add("s_name", NameNum);//工程名
             paramDictionary.Add("s_project_no", NameNum);//工程编号
+            paramDictionary.Add("s_account", token);//账号"1132131"
+            paramDictionary.Add("s_account_type", type);//unit  person
 
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);

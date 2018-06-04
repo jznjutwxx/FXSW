@@ -2,9 +2,14 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程管理-工程新增";
+
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
 }
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="add">
+    <div style="display:none;">@type</div>
+
     <div id="addForm">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" :model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
@@ -26,11 +31,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="年度:" prop="n_year">
-                            @*<el-input v-model="formData.n_year" size="mini"></el-input>*@
-                            @*<el-select v-model="formData.n_year" class="selCss" size="mini">
-                                <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
-                                </el-option>
-                            </el-select>*@
                             <el-date-picker v-model="formData.n_year"
                                             type="year" 
                                             placeholder="选择年份" class="selCss" size="mini">
@@ -46,7 +46,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程状态:" prop="n_pace_status">
-                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
                             <el-select v-model="formData.n_pace_status" class="selCss" size="mini">
                                 <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                                 </el-option>
@@ -55,7 +54,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="所属镇:" prop="s_town">
-                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
                             <el-select v-model="formData.s_town" class="selCss" size="mini">
                                 <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                                 </el-option>
@@ -71,8 +69,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            @*<el-input v-model="formData.s_legal_person" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="formData.s_legal_person" class="selCss" size="mini">
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -82,8 +79,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_unit_design" class="selCss" size="mini">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="formData.s_unit_design" class="selCss" size="mini">
                                 <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -475,7 +471,6 @@
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
         <el-button plain v-on:click="openIndex" size="small">取消</el-button>
-        @*<el-button type="primary" v-on:click="saveData">保存</el-button>*@
         <el-button type="primary" v-on:click="saveData('formData')" size="small">保存</el-button>
     </div>
 </div>
@@ -486,7 +481,6 @@
         el: '#add',
         data: function () {
             var checkNum = function (rule, value, callback) {
-                //var reNum = /^[+]{0,1}(\d+)$|^[+]{0,1}(\d+\.\d+)$/;//正数
                 var reNum = /^([0-9][0-9]{7}|[0-9]{1,7})(\.[0-9][0-9]?)?$/;
                 if (value != '') {
                     if (!reNum.test(value)) {
@@ -499,6 +493,8 @@
                 }
             };
             return {
+                isPersonDisable: true,
+                isUnitDisable: false,
                 s_type: '',
                 YearOption: [],
                 StatusOption: [],
@@ -751,7 +747,18 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      //this.formData.s_legal_person = this.PersonOption[0].s_id;
+                     
+                      if ('@type' == "person") {
+                          this.isPersonDisable = true;
+                          this.isUnitDisable = false;
+                          var selectPerson = "";
+                          selectPerson = this.PersonOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.formData.s_legal_person = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -762,7 +769,18 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      //this.formData.s_unit_design = this.UnitOption[0].s_id;
+                     
+                      if ('@type' == "unit") {
+                          this.isPersonDisable = false;
+                          this.isUnitDisable = true;
+                          var selectUnit = "";
+                          selectUnit = this.UnitOption.filter(function (item) {
+                              if (item.s_account == '@token') {
+                                  return item.s_id;
+                              }
+                          });
+                          this.formData.s_unit_design = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                      }
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -783,11 +801,9 @@
                 return theRequest;
             },
             saveData: function (formName) {
-                //alert(this.formData.n_year)
                 this.formData.n_year = new Date(this.formData.n_year).getFullYear();
                 this.$refs[formName].validate(function (valid) {
                     if (valid) {
-                        //alert(this.formData.n_year);
                         var drawing = '';
                         var picture = '';
                         if (this.drawingFiles != '')
@@ -805,7 +821,6 @@
                         axios.post('/BackboneRiverway/SaveProjectData',
                             { param: JSON.stringify(this.formData), drawingFiles: drawing, pictureFiles: picture })
                           .then(function (response) {
-                              //var tempData = JSON.parse(response.data);
                               var tempData = eval('(' + response.data + ')');
                               var tempR = tempData.EnginCoreReportResponse.result;
                               if (tempR) {
@@ -852,7 +867,6 @@
                 }
             },
             beforeImagesUpload: function (file) {
-                debugger
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
                 //image/png, image/jpg, image/jpeg, image/gif
                 if (fileType != 'png' && fileType != 'jpg' && fileType != 'jpeg' && fileType != 'gif') {

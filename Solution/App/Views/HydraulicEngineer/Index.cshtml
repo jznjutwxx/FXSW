@@ -112,7 +112,7 @@
                 });
             },
             setTableData: function (url, param) {
-                this.loading = true,
+                this.loading = true;
                 this.params = param;
                 axios.post(url, param)
                   .then(function (response) {
@@ -144,7 +144,6 @@
                 }).then(function () {
                     axios.post("/HydraulicEngineer/DeleteProjectData", { s_id: id })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginOtherUpdateResponse.result) {
                           this.$message({
@@ -154,7 +153,6 @@
                       } else {
                           this.$message.error('删除失败！' + tempData.EnginOtherUpdateResponse.result);
                       }
-                      debugger
                       this.setTableData('/HydraulicEngineer/GetProjectData', this.params)
                   }.bind(this))
                   .catch(function (error) {

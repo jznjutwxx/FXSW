@@ -652,7 +652,6 @@
             getProjectFile: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       this.projectFile = tempData.EnginFileManagerListGetResponse.file_list;
                   }.bind(this))

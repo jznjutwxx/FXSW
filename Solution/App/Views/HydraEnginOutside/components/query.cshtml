@@ -1,0 +1,223 @@
+﻿
+<script type="text/x-template" id="query">
+    <div id="appquery">
+        <div class="query">
+            <el-form v-bind:inline="true" size="small">
+                <el-form-item label="年度:">
+                    <el-date-picker v-model="startYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsS">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="至">
+                    <el-date-picker v-model="endYearValue" style="width:120px;"
+                                    type="year"
+                                    placeholder="选择年份" v-bind:picker-options="pickerOptionsE">
+                    </el-date-picker>
+                </el-form-item>
+                <el-form-item label="工程状态:">
+                    <el-select v-on:change="changeStatus" v-model="gStatus" class="selCss">
+                        <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item label="所属镇:">
+                    <el-select v-on:change="changeTown" v-model="gTown" class="selCss">
+                        <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
+                        </el-option>
+                    </el-select>
+                </el-form-item>
+                <el-form-item>
+                    <el-input placeholder="请输入工程名称/工程编号"
+                              prefix-icon="el-icon-search" size="small" v-model="gNameNum" clearable>
+                    </el-input>
+                </el-form-item>
+                <el-form-item style="padding-left:20px;">
+                    <el-button type="primary" icon="el-icon-search" v-on:click="emitEvent" class="btnSel">查询</el-button>
+                </el-form-item>
+                <el-form-item>
+                    <el-button type="primary" class="btnAdd" v-on:click="addProject"></el-button>
+                    <el-button type="primary" class="btnDown"></el-button>
+                    <el-button type="primary" class="btnImport"></el-button>
+                </el-form-item>
+            </el-form>
+        </div>
+    </div>
+</script>
+
+<script>
+    var comquery = ({
+        template: '#query',
+        data: function () {
+            return {
+                param: {
+                    startYear: '',
+                    endYear: '',
+                    Status: '',
+                    Town: '',
+                    NameNum: '',
+                },
+                startYearValue: moment().format('YYYY'),
+                endYearValue: moment().format('YYYY'),
+                StatusOption: [],
+                TownOption: [],
+                gStatus: '',
+                gTown: '',
+                gNameNum: '',
+                pickerOptionsS: {
+                    disabledDate: function (time) {
+                        if (this.endYearValue != "" && this.endYearValue != null && this.endYearValue != undefined) {
+                            return time.getTime() > Date.now() || time.getTime() > new Date(this.endYearValue);
+                        } else {
+                            return time.getTime() > Date.now();
+                        }
+                    }.bind(this)
+                },
+                pickerOptionsE: {
+                    disabledDate: function (time) {
+                        return time.getTime() < new Date(this.startYearValue) || time.getTime() > Date.now();
+                    }.bind(this)
+                },
+
+            }
+        },
+        mounted: function () {
+            this.init();
+        },
+        methods: {
+            init: function () {
+                this.getStatus("/HydraEnginOutside/GetSelect", { Type: "工程状态" });
+                this.getTown("/HydraEnginOutside/GetSelect", { Type: "街镇" });
+            },
+            getStatus: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.StatusOption = tempData.DictionaryGetResponse.list;
+                      //this.gStatus = this.StatusOption[0].s_cd_key;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getTown: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      //var datas = tempData.DictionaryGetResponse.list;
+                      this.TownOption = tempData.DictionaryGetResponse.list;
+                      //this.gTown = this.TownOption[0].s_cd_value;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            emitEvent: function () {
+                var sYear = new Date(this.startYearValue).getFullYear();
+                var eYear = new Date(this.endYearValue).getFullYear();
+                if (sYear == '1970') {
+                    sYear = '';
+                }
+                if (eYear == '1970') {
+                    eYear = '';
+                }
+                this.param.startYear = sYear;
+                this.param.endYear = eYear;
+                this.param.Status = this.gStatus;
+                this.param.Town = this.gTown;
+                this.param.NameNum = this.gNameNum;
+                this.$emit('emit-event', this.param)
+            },
+            addProject: function () {
+                window.location = "/HydraEnginOutside/Add?id=gg";
+            },
+            changeStatus: function (param) {
+                this.gStatus = param;
+            },
+            changeTown: function (param) {
+                this.gTown = param;
+            },
+            getData: function () { }
+        }
+    })
+</script>
+
+<style>
+    #appquery .query {
+        font-size: 14px;
+        padding: 10px 20px 0px 20px;
+    }
+
+    #appquery .centerQuery {
+        padding: 10px 20px 10px 20px;
+        float: left;
+    }
+
+    #appquery .selCss {
+        width: 120px;
+    }
+
+    #appquery .txtInput {
+        float: left;
+        padding-right: 20px;
+    }
+
+    #appquery .btnSel {
+        height: 32px;
+        padding-left: 20px;
+        padding-top: -3px;
+    }
+
+    #appquery .btnAdd {
+        width: 73px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        border: 0px;
+    }
+
+        #appquery .btnAdd:focus {
+            background-image: url(/Images/gcgl/btn_xinzeng_normal.png);
+        }
+
+        #appquery .btnAdd:hover {
+            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+        }
+
+        #appquery .btnAdd:active {
+            background-image: url(/Images/gcgl/btn_xinzeng_active.png);
+        }
+
+    #appquery .btnDown {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        border: 0px;
+    }
+
+        #appquery .btnDown:focus {
+            background-image: url(/Images/gcgl/btn_mobanxz_normal.png);
+        }
+
+        #appquery .btnDown:hover {
+            background-image: url(/Images/gcgl/btn_mobanxz_active.png);
+        }
+
+    #appquery .btnImport {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        border: 0px;
+    }
+
+        #appquery .btnImport:focus {
+            background-image: url(/Images/gcgl/btn_piliangdr_normal.png);
+        }
+
+        #appquery .btnImport:hover {
+            background-image: url(/Images/gcgl/btn_piliangdr_active.png);
+        }
+</style>

@@ -20,6 +20,10 @@ namespace App.Controllers
 
         public ActionResult Edit()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
 
@@ -30,6 +34,10 @@ namespace App.Controllers
 
         public ActionResult Add()
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
+            ViewBag.type = type;
+            ViewBag.token = token;
             return View();
         }
 
@@ -95,10 +103,11 @@ namespace App.Controllers
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
             return Json(authorization);
         }
-
-        //public JsonResult GetProjectData(string Page, string Size, string Name, string ProjectID, string startYear, string endYear, string Status, string Town)
+        
         public JsonResult GetProjectData(string Page, string pageSize, string startYear, string endYear, string Status, string Town, string NameNum)
         {
+            var token = CookieHelper.ReadCookie("token");//获取当前登录的账户
+            var type = CookieHelper.ReadCookie("type");
             // 接口
             string method = "wavenet.fxsw.engin.list.get";
 
@@ -114,6 +123,8 @@ namespace App.Controllers
             paramDictionary.Add("n_pace_status", Status);//工程状态1：工前准备 10:开工 20:完工 30:完工验收 40:决算审批 50:竣工验收 60:工程完结	
             paramDictionary.Add("s_town", Town);//城镇
 
+            paramDictionary.Add("s_account", token);//账号"1132131"
+            paramDictionary.Add("s_account_type", type);//unit  person
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);
 

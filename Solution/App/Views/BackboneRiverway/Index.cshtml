@@ -116,7 +116,7 @@
                 });
             },
             setTableData: function (url, param) {
-                this.loading = true,
+                this.loading = true;
                 this.params = param;
                 axios.post(url, param)
                   .then(function (response) {

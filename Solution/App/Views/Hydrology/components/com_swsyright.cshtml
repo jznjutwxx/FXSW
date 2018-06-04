@@ -121,7 +121,6 @@
             getCZnum: function (url, param) {
                 axios.post(url, param)
                  .then(function (response) {
-                     debugger
                      var li = JSON.parse(response.data);
                      this.CZdatas = li.StatisticsStationDistributionGetResponse.statistics_station_distribution_count_list;
                      this.czxxnum = li.StatisticsStationDistributionGetResponse.statistics_station_distribution_info_list;
@@ -164,7 +163,6 @@
             setBarData: function () {
                 // 基于准备好的dom，初始化echarts实例
                 var barChart = echarts.init(document.getElementById('barCharts'));
-    debugger
                 var dataShadow = [];
                 var yMax = 500;
                 for (var i = 0; i < this.YLnames.length; i++) {
@@ -398,7 +396,7 @@
         width: 99%;
         bottom: 0;
         position: absolute;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
     }
         .tablecss::-webkit-scrollbar
         {
@@ -447,14 +445,14 @@
     .topdiv2 {
         height: 25%;
         position: relative;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
         width: 99%;
     }
 
     .bardiv2 {
         height: 35%;
         position: relative;
-        border: 1px solid #0146b2;
+        border: 1px solid #2979e5;
         width: 99%;
     }
 </style>

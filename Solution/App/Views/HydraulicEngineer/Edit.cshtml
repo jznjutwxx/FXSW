@@ -2,10 +2,15 @@
 @{
     Layout = "~/Views/Shared/_Layout.cshtml";
     ViewBag.Title = "工程管理-工程编辑";
+
+    string type = ViewData["type"].ToString();
+    string token = ViewData["token"].ToString();
 }
 
 <script src="~/Scripts/SuperMap/libs/SuperMap.Include.js"></script>
 <div id="edit">
+    <div style="display:none;">@type</div>
+
     <div id="editForm">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" :model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
@@ -27,11 +32,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="年度:" prop="n_year">
-                            @*<el-input v-model="formData.n_year" size="mini"></el-input>*@
-                            @*<el-select v-model="formData.n_year" class="selCss" size="mini">
-                            <el-option v-for="item in YearOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
-                            </el-option>
-                        </el-select>*@
                             <el-date-picker v-model="formData.n_year"
                                             type="year"
                                             placeholder="选择年度" class="selCss" size="mini" v-bind:disabled="isFinish">
@@ -47,7 +47,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="工程状态:" prop="n_pace_status">
-                            @*<el-input v-model="formData.n_pace_status" size="mini"></el-input>*@
                             <el-select v-model="formData.n_pace_status" class="selCss" size="mini" v-bind:disabled="isFinish">
                                 <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                                 </el-option>
@@ -56,7 +55,6 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="所属镇:" prop="s_town">
-                            @*<el-input v-model="formData.s_town" size="mini"></el-input>*@
                             <el-select v-model="formData.s_town" class="selCss" size="mini" v-bind:disabled="isFinish">
                                 <el-option v-for="item in TownOption" v-bind:key="item.s_cd_value" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                                 </el-option>
@@ -72,8 +70,7 @@
                     </el-col>
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="项目法人:">
-                            @*<el-input v-model="formData.s_legal_person" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_legal_person" class="selCss" size="mini" v-bind:disabled="isFinish">
+                            <el-select id="sellegal" v-bind:disabled="isPersonDisable" v-model="formData.s_legal_person" class="selCss" size="mini">
                                 <el-option v-for="item in PersonOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -83,8 +80,7 @@
                 <el-row class="el-row">
                     <el-col v-bind:span="8" class="colCss">
                         <el-form-item label="设计单位:">
-                            @*<el-input v-model="formData.s_unit_design" size="mini"></el-input>*@
-                            <el-select v-model="formData.s_unit_design" class="selCss" size="mini" v-bind:disabled="isFinish">
+                            <el-select id="selunit" v-bind:disabled="isUnitDisable" v-model="formData.s_unit_design" class="selCss" size="mini">
                                 <el-option v-for="item in UnitOption" v-bind:key="item.s_id" v-bind:label="item.s_name" v-bind:value="item.s_id">
                                 </el-option>
                             </el-select>
@@ -384,6 +380,8 @@
                     N_RECKON_TOTAL_AMT: "",
                     REMARK: ""
                 },
+                isPersonDisable: false,
+                isUnitDisable: false,
                 YearOption: [],
                 StatusOption: [],
                 TownOption: [],
@@ -512,31 +510,17 @@
             },
             init: function () {
                 var s_id = this.getRequest().id;
-                //this.getYear("/HydraulicEngineer/GetSelect", { Type: "年度" });
                 this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
                 this.getTown("/HydraulicEngineer/GetSelect", { Type: "街镇" });
                 this.getLegalPerson("/HydraulicEngineer/GetLegalPerson", null);
                 this.getDesignUnit("/HydraulicEngineer/GetDesignUnit", null);
                 this.getProjectData('/HydraulicEngineer/GetOneProjectData', { s_id: s_id });
             },
-            getYear: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.YearOption = tempData.DictionaryGetResponse.list;
-                      //this.formData.n_year = this.YearOption[0].s_cd_key;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
             getStatus: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      //var datas = tempData.DictionaryGetResponse.list;
                       this.StatusOption = tempData.DictionaryGetResponse.list;
-                      //this.formData.n_pace_status = this.StatusOption[0].s_cd_key;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -547,7 +531,6 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.TownOption = tempData.DictionaryGetResponse.list;
-                      //this.formData.s_town = this.TownOption[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -558,7 +541,6 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      //this.formData.s_town = this.TownOption[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -569,16 +551,54 @@
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
                       this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      //this.formData.s_town = this.TownOption[0].s_cd_value;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
+            filterStatus: function (name) {
+                this.StatusOption.forEach(function (value, index, array) {
+                    if ('@type' == "person") {
+                        this.isPersonDisable = true;
+                        this.isUnitDisable = false;
+                    }
+                    if (value.s_cd_value == name) {
+                        this.formData.n_pace_status = value.s_cd_key
+                        return
+                    }
+                }.bind(this))
+            },
+            filterLegal: function (name) {
+                this.PersonOption.forEach(function (value, index, array) {
+                    if ('@type' == "person") {
+                        this.isPersonDisable = true;
+                        this.isUnitDisable = false;
+                    }
+                    if (value.s_name == name) {
+                        this.formData.s_legal_person = value.s_id
+                        return
+                    }
+
+                }.bind(this))
+            },
+            filterUnit: function (name) {
+                this.UnitOption.forEach(function (value, index, array) {
+                    if ('@type' == "unit") {
+                        this.isPersonDisable = false;
+                        this.isUnitDisable = true;
+                    }
+                    if (value.s_name == name) {
+                        this.formData.s_unit_design = value.s_id
+                        return
+                    }
+                }.bind(this))
+            },
             getProjectData: function (url, s_id) {
                 axios.post(url, s_id)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
+                      var ss = tempData.EnginOtherGetResponse.info.n_pace_status;
+                      this.StatusToNum(ss);
 
                       var replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
                       var capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
@@ -601,7 +621,7 @@
                       this.formData.s_remark = tempData.EnginOtherGetResponse.info.s_remark;
                       this.formData.n_draft = tempData.EnginOtherGetResponse.info.n_draft;
                       this.formData.n_type = tempData.EnginOtherGetResponse.info.n_type;
-                      
+
                       this.formData.s_content = replyData.s_content;
                       this.formData.s_gkpf = replyData.s_gkpf;
                       this.formData.s_cspf = replyData.s_cspf;
@@ -617,7 +637,7 @@
                       this.formData.n_subsidy_city = capitalData.n_subsidy_city;
                       this.formData.n_subsidy_district = capitalData.n_subsidy_district;
                       this.formData.n_subsidy_town = capitalData.n_subsidy_town;
-                      
+
                       this.formData.s_complete_content = finishData.s_complete_content;
 
                       var files = tempData.EnginOtherGetResponse.info.FileUploaderList;
@@ -635,9 +655,9 @@
                               this.pictureFiles.push(temp);
                           }
                       }
-                      debugger
-                      var ss = tempData.EnginOtherGetResponse.info.n_pace_status;
-                      this.StatusToNum(ss);
+                      this.filterStatus(tempData.EnginOtherGetResponse.info.n_pace_status)
+                      this.filterLegal(tempData.EnginOtherGetResponse.info.s_legal_person);
+                      this.filterUnit(tempData.EnginOtherGetResponse.info.s_unit_design);
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -680,7 +700,7 @@
                         return false;
                     }
                 }.bind(this));
-                
+
             },
             beforeAvatarUpload: function (file) {
                 var fileType = file.name.substring(file.name.lastIndexOf('.') + 1);
@@ -778,7 +798,6 @@
                 this.dialogVisible = true;
             },
             upSucess: function (response, file, fileList) {
-                debugger
                 var temp = { name: file.name, url: file.url }
                 this.drawingFilesAdd.push(temp)
                 this.$message({

@@ -10,15 +10,16 @@
     <div id="tableData">
         <template>
             <el-table v-bind:data="tableData"
+                      v-bind:height="height"
                       stripe
                       border
                       style="width: 100%;"
-                      v-bind:height="tableHeight">
-                <el-table-column prop="id"
+                      class="tableCss">
+                <el-table-column type="index"
                                  label="序号"
                                  width="60" 
                                  header-align="center"
-                                 align="center">
+                                 align="center" >
                 </el-table-column>
                 <el-table-column prop="hdid"
                                  label="河道编号"
@@ -45,16 +46,23 @@
                                  header-align="center"
                                  align="center">
                 </el-table-column>
-                <el-table-column prop="sz"
-                                 label="水质类别" 
+                <el-table-column label="水质类别" 
                                  header-align="center"
                                  align="left">
+                    <template scope="scope">
+                        <span style="color:#20a335" v-if="scope.row.s_type=== 'Ⅱ'"><img src="~/Images/swzxt/Ⅱ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                        <span style="color:#f30303" v-else-if="scope.row.s_type=== 'Ⅲ'"><img src="~/Images/swzxt/Ⅲ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                        <span style="color:#f6c503" v-else-if="scope.row.s_type=== 'Ⅳ'"><img src="~/Images/swzxt/Ⅳ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                        <span style="color:#f42d8e" v-else-if="scope.row.s_type=== 'Ⅴ'"><img src="~/Images/swzxt/Ⅴ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                        <span style="color:#343434" v-else-if="scope.row.s_type=== '劣Ⅴ'"><img src="~/Images/swzxt/劣Ⅴ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                        <span v-else>-</span>
+                    </template>
                 </el-table-column>
             </el-table>
         </template>
       
     </div>
-    <div style="text-align:right;padding-top:10px;">
+    <div style="text-align:left;padding-top:10px;">
         <el-pagination @@size-change="sizeChange" @@current-change="currentChange" layout="total, sizes, prev, pager, next, jumper" v-bind:current-page.sync="currentPage" v-bind:page-size="pageSize" v-bind:page-sizes="[10, 20, 30, 40, 50]" v-bind:total="total">
         </el-pagination>
     </div>
@@ -74,45 +82,28 @@
                 height: '0px',
                 float: 'left',
             },
-            height: '0px',
-          // tableData: [],
-            tableData: [{
-                id: '1',
-                hdid: 'SHFXHD0010213678',
-                name: '张翁庙机口河',
-                hz:'王大锤',
-                dm: '肖南路淀港河桥',
-                ssz: '龙港镇',
-                sz: 'V类',
-            }, {
-                id: '2',
-                hdid: 'SHFXHD0010213678',
-                name: '张翁庙机口河',
-                hz: '王大锤',
-                dm: '肖南路淀港河桥',
-                ssz: '南桥镇',
-                sz: '劣V类',
-            }, {
-                id: '3',
-                hdid: 'SHFXHD0010213678',
-                name: '张翁庙机口河',
-                hz: '王大锤',
-                dm: '肖南路淀港河桥',
-                ssz: '木港镇',
-                sz: 'IV类',
-            }, ],
+            height: '0',
+            //tableData: [],
+            tableData: [{ 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': 'Ⅲ' },
+                      { 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': 'Ⅱ' },
+                      { 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': 'Ⅳ' },
+                      { 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': '劣Ⅴ' },
+                      { 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': 'Ⅱ' },
+                      { 'hdid': 'SHFXHD0010213678', 'name': '张翁庙机口河', 'hz': '王大锤', 'dm': '大菜场横泾港桥', 'ssz': '南桥镇', 's_type': 'Ⅴ' }],
             total: 0, //默认数据总数
             pageSize: 10,//每页的数据条数
             currentPage: 1,//默认开始页面
             params: []
         },
         components: {
-            "singlechannelsztj-query": query,
+            "singlechannelsztj-query": query, 
         },
-        mounted: function () {
-            this.setSize()
-            this.resize()
-            this.setTableData('/SingleChannelSztj/GetProjectData', { Page: this.currentPage, pageSize: this.pageSize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '', Town: '', NameNum: '' });
+        mounted: function () { 
+            setTimeout(function () {
+                this.setSize();
+            }.bind(this), 200)
+            this.resize();
+            //this.setTableData('/SingleChannelSztj/GetProjectData', { Page: this.currentPage, pageSize: this.pageSize, startYear: moment().format("YYYY"), endYear: moment().format("YYYY"), Status: '', Town: '', NameNum: '' });
             ////this.$refs.smallQuery.gStatus   this.$refs.smallQuery.gTown
         },
         methods: {
@@ -121,19 +112,19 @@
             },
           
             getEmitEvent: function (param) {
-                this.setTableData('/SingleChannelSztj/GetProjectData', {
-                    Page: this.currentPage, pageSize: this.pageSize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town, NameNum: param.NameNum,
-                });
+                //this.setTableData('/SingleChannelSztj/GetProjectData', {
+                //    Page: this.currentPage, pageSize: this.pageSize, startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town, NameNum: param.NameNum,
+                //});
             },
             setTableData: function (url, param) {
                 this.params = param;
                 axios.post(url, param)
                   .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      //var datas = tempData.EnginListGetResponse.engin_list;
-                      this.tableData = tempData.EnginListGetResponse.engin_list;
-                      this.total = tempData.EnginListGetResponse.totalCount;
-                  }.bind(this))
+                      //this.loading = false;
+                      //    var tempData = JSON.parse(response.data);
+                      //    //var datas = tempData.EnginListGetResponse.engin_list;
+                      //    this.tableData = tempData.EnginListGetResponse.engin_list;
+                  } .bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
@@ -168,115 +159,11 @@
 
 
 <style scoped>
-    html, body, #app {
-        width: 100%;
-        height: 100%;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-    }
-
-    header {
-        font-size: 14px;
-        font-family: 宋体;
-        color: #333333;
-        border-bottom: 1px solid #b9b9b9;
-        height: 100px;
-        width: 100%;
-    }
-
-        header .el-select .el-input__inner {
-            width: 150px;
-            height: 32px;
-        }
-
-    .el-input__inner {
-        height: 32px;
-    }
-
-    header .el-button {
-        padding: 8px 16px;
-    }
-
-    header .el-input__icon {
-        line-height: 32px;
-    }
-
-    .el-table thead {
+    #tableData th {
         background-color: #F5F5F5;
     }
-
-    tbody .el-table_1_column_7 {
-        /*color: blue;*/
-        color:#f42d8e;
-    }
-
-    .el-dialog {
-        height: 600px;
-        width: 900px;
-        position: relative;
-    }
-
-    .el-dialog__header {
-        background-color: #2288f1;
-        padding: 10px 20px;
-    }
-
-    .titlebg {
-        background-color: white;
-        width: 5px;
-        height: 18px;
-        position: absolute;
-        top: 13px;
-        left: 9px;
-    }
-
-    .el-dialog__headerbtn .el-dialog__close {
-        color: white;
-    }
-
-        .el-dialog__headerbtn .el-dialog__close:hover {
-            color: white;
-            background-color: #6eb1f6;
-        }
-
-    .el-dialog__headerbtn {
-        top: 13px;
-        right: 16px;
-    }
-
-    .el-dialog__title {
-        color: white; 
-    }
-
-    #qyjlSelect {
-        margin: -10px 0 12px 0px;
-    }
-
-        #qyjlSelect .sqqyjltext {
-            margin-right: 30px;
-            font-size: 16px;
-            color: #666666;
-            font-family: 'Microsoft YaHei';
-        }
-
-        #qyjlSelect .el-button {
-            padding: 8px 15px;
-        }
-
-        #qyjlSelect .el-input__icon {
-            line-height: 34px;
-        }
-
-        #qyjlSelect .el-date-editor.el-input, .el-date-editor.el-input__inner {
-            width: 200px;
-        }
-
-    .el-table--border {
-        margin-bottom: 4px;
-    }
-
-    .el-pagination {
-        float: right;
+     #app .typeImg {
+        width:13px;
+        height:15px;
     }
 </style>

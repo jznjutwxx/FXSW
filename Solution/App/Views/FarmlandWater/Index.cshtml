@@ -160,7 +160,7 @@
             },
 
             setTableData: function (url, param) {
-                this.loading = true,
+                this.loading = true;
                 axios.post(url, param)
                  .then(function (response) {
                      this.loading = false;
@@ -212,9 +212,10 @@
             },
 
             currentChange: function (val) {
+                debugger
                 this.currentPage = val;
-                this.params.Page = val;
-                 this.setData('/FarmlandWater/GetTabData', this.params);
+                this.params.page = val;
+                this.setData('/FarmlandWater/GetTabData', this.params);
             },
 
             sizeChange: function (val) {

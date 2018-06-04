@@ -5,37 +5,248 @@
 
 <div id="demo">
     <come-query v-on:emit-event="getEmitEvent" ref="comeQuery"></come-query>
-    @*<com-bar v-bind:option="barOption" v-bind:style="[styles]"></com-bar>*@
-
+    <com-bar v-bind:option="barOption" v-bind:style="[styles]"></com-bar>
+    <div id="demoTable">
+        <el-table v-bind:data="tableData"
+                  v-bind:height="height"
+                  v-loading="loading"
+                  border
+                  stripe
+                  style="width: 100%"
+                  class="tableCss">
+            <el-table-column type="index"
+                             label="序号"
+                             header-align="center"
+                             align="center"
+                             width="60">
+            </el-table-column>
+            <el-table-column prop="h_name"
+                             label="河道名称"
+                             header-align="center"
+                             align="left">
+            </el-table-column>
+            <el-table-column  prop="d_name"
+                             label="断面名称"
+                             header-align="center"
+                             align="left">
+            </el-table-column>
+            <el-table-column prop="s_source"
+                             header-align="center"
+                             align="left"
+                             label="来源">
+            </el-table-column>
+            <el-table-column prop="l_num"
+                             header-align="center"
+                             align="left"
+                             label="劣五类超标项目（超标倍数）">
+            </el-table-column>
+            <el-table-column header-align="center"
+                             align="left"
+                             label="水质类别">
+                <template scope="scope">
+                    <span style="color:#20a335" v-if="scope.row.s_type=== 'Ⅱ'"><img src="~/Images/swzxt/Ⅱ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                    <span style="color:#f30303" v-else-if="scope.row.s_type=== 'Ⅲ'"><img src="~/Images/swzxt/Ⅲ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                    <span style="color:#f6c503" v-else-if="scope.row.s_type=== 'Ⅳ'"><img src="~/Images/swzxt/Ⅳ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                    <span style="color:#f42d8e" v-else-if="scope.row.s_type=== 'Ⅴ'"><img src="~/Images/swzxt/Ⅴ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                    <span style="color:#343434" v-else-if="scope.row.s_type=== '劣Ⅴ'"><img src="~/Images/swzxt/劣Ⅴ类.png" class="typeImg" />{{scope.row.s_type}}</span>
+                    <span v-else>-</span>
+                </template>
+            </el-table-column>
+            <el-table-column header-align="center"
+                             align="left"
+                             v-bind:label="tabLabel">
+                <template scope="scope">
+                    <span style="color:green" v-if="scope.row.s_status=== '好转'">{{scope.row.s_status}}</span>
+                    <span style="color:red" v-else-if="scope.row.s_status=== '恶化'">{{scope.row.s_status}}</span>
+                    <span v-else>{{scope.row.s_status}}</span>
+                    @*<span style="color:#20a335" v-else="scope.row.s_type=== '劣Ⅴ'">{{scope.row.s_type}}</span>*@
+                </template>
+            </el-table-column>
+        </el-table>
+    </div>
 </div>
 
 @Html.Partial("~/Views/GGHDWaterAnalyze/components/com_query.cshtml")
-@*@Html.Partial("~/Views/components/echarts/com_bar.cshtml")*@
+@Html.Partial("~/Views/GGHDWaterAnalyze/components/com_bar.cshtml")
 
 <script>
     new Vue({
         el: '#demo',
         data: {
             styles: {
-                width: '90%',
+                width: '97%',
                 height: '0px',
-                float: 'left',
             },
+            params: {
+                town: '',
+                grade: '',
+                choose: '',
+                month: '',
+                year: '',
+            },
+            height: '0px',
+            barOption: null,
+            //barDate1: '',
+            //barDate2: '',
+            loading: false,
+            tableData: [],
+            tabLabel: '',
         },
         components: {
             'come-query': query,
-            //'com-bar': comBar,
+            'com-bar': comBar,
             //'com-base-table': comBaseTable,
         },
+        mounted: function () {
+            this.init();
+            //this.getEmitEvent();
+        },
         methods: {
-
+            init: function () {
+                setTimeout(function () {
+                    this.setSize();
+                    this.getEmitEvent({ town: '', grade: 'all', choose: 'yb', month: moment().format('YYYY-MM'), year: moment().format('YYYY') });
+                }.bind(this), 200)
+                this.resize();
+            },
             getEmitEvent: function (param) {
+                this.params = param;
+                this.setBarData("/GGHDWaterAnalyze/GetData", param);
+                this.setTableData("/GGHDWaterAnalyze/GetData", param);
+                //alert(param.town + "," + param.grade + "," + param.choose + "," + param.month + "," + param.year);
+            },
+            setBarData: function (url, param) {
+                this.$children[1].charts.showLoading();
+                if (param.choose == 'yb') {
+                    var barDate1 = moment(param.month, "YYYY-MM").subtract(1, 'M').format('YYYY-MM')
+                    var barDate2 = param.month;
+                }
+                if (param.choose == 'nb') {
+                    var barDate1 = moment(param.year, "YYYY").subtract(1, 'Y').format('YYYY');
+                    var barDate2 = param.year;
+                }
+                axios.post(url, param).then(function (response) {
+                    this.$children[1].charts.hideLoading();
+                    var d1 = { data: [20, 50, 80, 0], legend: barDate1 }
+                    var d2 = { data: [30, 60, 100, 10], legend: barDate2 }
+                    this.barOption = {
+                        title: {
+                            left: 'center',
+                            text: "骨干河道水质情况",
+                            textStyle: {
+                                color: '#333333',
+                                fontWeight: 'normal',
+                                fontSize: 16,
+                                fontFamily: '微软雅黑',
+                            }
+                        },
+                        color: ['#50a6ff', '#ed7d31'],
+                        tooltip: {
+                            trigger: 'axis',
+                            show: true,
+                            formatter: '{b}<br />{a0}: {c0}%<br />{a1}: {c1}%',
+                        },
+                        legend: {
+                            data: [d1.legend, d2.legend],
+                            orient: 'vertical',
+                            x: 'right',
+                            y: 'center',
+                        },
+                        xAxis: {
+                            type: 'category',
+                            data: ['III类', 'Ⅳ类', 'Ⅴ类', '劣Ⅴ类'],
+                            axisLabel: {
+                                //rotate: 50 
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLine: {
+                                show: false
+                            },
+                        },
+                        yAxis: {
+                            type: 'value',
+                            max: 100.00,
+                            axisLine: {
+                                show: false
+                            },
+                            axisTick: {
+                                show: false
+                            },
+                            axisLabel: {
+                                formatter: '{value} %',
+                                textStyle: {
+                                    color: '#333333',
+                                    fontSize: 14,
+                                }
+                            }
+                        },
+                        series: [
+                            {
+                                name: barDate1,
+                                type: 'bar',
+                                data: d1.data,
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top',
+                                        formatter: '{c}%'
+                                    }
+                                },
+                            },
+                            {
+                                name: barDate2,
+                                type: 'bar',
+                                data: d2.data,
+                                label: {
+                                    normal: {
+                                        show: true,
+                                        position: 'top',
+                                        formatter: '{c}%'
+                                    },
+                                },
+                            }
+                        ],
 
+                        //label: {
+                        //    show: true,
+                        //    position: 'top',
+                        //    //formatter: function (a, b, c) {
+                        //    //    return c + '%'
+                        //    //}
+                        //},
+                    }
+
+                }.bind(this))
+              .catch(function (error) {
+                  console.log(error);
+              });
+            },
+            setTableData: function (url, param) {
+                this.loading = true;
+                if (param.choose == 'yb') {
+                    this.tabLabel = '与上月对比';
+                }
+                if (param.choose == 'nb') {
+                    this.tabLabel = '与去年对比';
+                }
+                axios.post(url, param).then(function (response) {
+                    this.loading = false;
+                    this.tableData = [{ 'h_name': '巨潮港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': 'Ⅱ', 's_status': '持平' }, { 'h_name': '南沙港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': 'Ⅲ', 's_status': '好转' },
+                        { 'h_name': '贝港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': 'Ⅳ', 's_status': '好转' },
+                        { 'h_name': '中港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': 'Ⅴ', 's_status': '恶化' },
+                        { 'h_name': '金汇港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': '劣Ⅴ', 's_status': '恶化' },
+                        { 'h_name': '南门港', 'd_name': '大叶公路巨潮港桥', 's_source': '黄浦江', 'l_num': '氨氮(0.24)', 's_type': '劣Ⅴ', 's_status': '持平' }];
+                }.bind(this))
+              .catch(function (error) {
+                  console.log(error);
+              });
             },
             setSize: function () {
                 var docH = document.documentElement.clientHeight
                 var queryH = this.$refs.comeQuery.$el.clientHeight
-                var contentH = docH - queryH - 40
+                var contentH = docH - queryH
                 this.styles.height = (contentH / 2) + 'px'
                 this.height = contentH / 2
             },
@@ -49,5 +260,11 @@
 </script>
 
 <style>
-
+    #demoTable th {
+        background-color: #F5F5F5;
+    }
+    #demoTable .typeImg {
+        width:13px;
+        height:15px;
+    }
 </style>

@@ -334,7 +334,6 @@
                 axios.post(url, s_id)
                   .then(function (response) {
                       var li = JSON.parse(response.data);
-                      debugger
                       this.num = li.EnginSewageGetResponse.info.s_project_no;
                       this.type = li.EnginSewageGetResponse.info.n_type;
                       this.Status = li.EnginSewageGetResponse.info.n_pace_status;
@@ -470,7 +469,6 @@
                 }).then(function () {
                     axios.post("/SanitarySewage/DeleteFile", { file_ids: id })
                   .then(function (response) {
-                      debugger
                       var tempData = JSON.parse(response.data);
                       if (tempData.EnginFileDelResponse.result) {
                           this.$message({
@@ -544,7 +542,6 @@
                 window.location = "Index";
             },
             StatusToNum: function (status) {
-                debugger
                 switch (status) {
                     case '工前准备':
                         this.formData.N_PACE_STATUS = 1;

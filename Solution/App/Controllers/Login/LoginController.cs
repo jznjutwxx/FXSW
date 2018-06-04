@@ -67,6 +67,7 @@ namespace App.Controllers
                     CookieHelper.WriteCookie("unit_name", signInResponse.SignInAuthorizationFXSWRightResponse.unit_name, 0);
                     CookieHelper.WriteCookie("token", signInResponse.SignInAuthorizationFXSWRightResponse.token, 0);
                     CookieHelper.WriteCookie("role", signInResponse.SignInAuthorizationFXSWRightResponse.role, 0);
+                    CookieHelper.WriteCookie("type", "", 0);
                 }
             }
             return Json(new { name=name, result=result });

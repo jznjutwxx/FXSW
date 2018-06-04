@@ -1,0 +1,255 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    ViewBag.Title = "潮位预报上报";
+}
+
+<div id="app">
+    <div class="query">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item label="站点:">
+                <el-select v-model="site" placeholder="请选择站点">
+                    <el-option v-for="item in siteOptions" v-bind:key="item.id" v-bind:label="item.name" v-bind:value="item.id">
+                    </el-option>
+                </el-select>
+            </el-form-item>
+            <el-form-item label="年份:">
+                <el-date-picker v-model="year"
+                                type="year"
+                                placeholder="请选择年份">
+                </el-date-picker>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-search" v-on:click="query">查询</el-button>
+            </el-form-item>
+            <el-form-item class="form-item-import">
+                <el-upload name ="tidalFile"
+                           action="/TidalLevel/Upload"
+                           v-bind:on-success="success"
+                           v-bind:show-file-list="false">
+                    <el-button type="primary" class="btnImport"></el-button>
+                </el-upload>
+            </el-form-item>
+        </el-form>
+    </div>
+    <el-table v-bind:data="data" border stripe v-loading="loading"  v-bind:height="height">
+        <el-table-column  label="月份"
+                         fixed
+                          header-align="center"
+                          align="center"
+                          width="100">
+            <el-table-column prop="date"
+                             label="日期"
+                             fixed
+                             header-align="center"
+                             align="center"
+                             width="100">
+            </el-table-column>
+        </el-table-column>
+        <el-table-column label="六月份"
+                         header-align="center"
+                         align="center">
+            <el-table-column prop="junTidalTime1"
+                             label="潮时"
+                              header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="junTidalHeight1"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="junTidalTime2"
+                             label="潮时"
+                              header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="junTidalHeight2"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+        </el-table-column>
+        <el-table-column label="七月份"
+                         header-align="center"
+                         align="center">
+            <el-table-column prop="julTidalTime1"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="julTidalHeight1"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="julTidalTime2"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="julTidalHeight2"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+        </el-table-column>
+        <el-table-column label="八月份"
+                         header-align="center"
+                         align="center">
+            <el-table-column prop="augTidalTime1"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="augTidalHeight1"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="augTidalTime2"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="augTidalHeight2"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+        </el-table-column>
+        <el-table-column label="九月份"
+                         header-align="center"
+                         align="center">
+            <el-table-column prop="sepTidalTime1"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="sepTidalHeight1"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="sepTidalTime2"
+                             label="潮时"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+            <el-table-column prop="sepTidalHeight2"
+                             label="潮高"
+                             header-align="center"
+                             align="center">
+            </el-table-column>
+        </el-table-column>
+    </el-table>
+</div>
+
+
+<script>
+    new Vue({
+        el: '#app',
+        data: {
+            loading: true,
+            height:document.documentElement.clientHeight - 75,
+            site: '',
+            year: moment().format('YYYY'),
+            siteOptions: null,
+            data:[]
+        },
+        mounted: function () {
+            this.resize()
+            this.getSites('/TidalLevel/GetSites', null)
+            this.query()
+        },
+        methods: {
+            query: function () {
+                this.getData('/TidalLevel/GetData', { site: this.site, year: this.year })
+            },
+            getSites: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+                      this.siteOptions = [{
+                          id: '1',
+                          name: '杭州湾金汇港南闸（外）站'
+                      }, {
+                          id: '2',
+                          name: '黄浦江金汇港北闸（外）站 '
+                      }]
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            getData: function (url, param) {
+                axios.post(url, param)
+                  .then(function (response) {
+
+                      for (var i = 0; i < 31; i++) {
+                          var item = {
+                              id: i,
+                              date: i,
+                              junTidalTime1: '4:37:55',
+                              junTidalHeight1: '4.59',
+                              junTidalTime2: '4:37:55',
+                              junTidalHeight2: '4.59',
+                              julTidalTime1: '4:37:55',
+                              julTidalHeight1: '4.59',
+                              julTidalTime2: '4:37:55',
+                              julTidalHeight2: '4.59',
+                              augTidalTime1: '4:37:55',
+                              augTidalHeight1: '4.59',
+                              augTidalTime2: '4:37:55',
+                              augTidalHeight2: '4.59',
+                              sepTidalTime1: '4:37:55',
+                              sepTidalHeight1: '4.59',
+                              sepTidalTime2: '4:37:55',
+                              sepTidalHeight2: '4.59',
+                          }
+                          this.data.push(item);
+                      }
+                      this.loading = false
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+            success: function (response, file, fileList) {
+                debugger
+            },
+            setSize: function () {
+                this.height = document.documentElement.clientHeight - 75
+            },
+            resize: function () {
+                $(window).resize(function () {
+                    this.setSize()
+                }.bind(this));
+            },
+        }
+
+    });
+</script>
+
+<style scoped>
+    #app .query {
+        font-size: 14px;
+        padding: 10px 20px 0px 20px;
+    }
+    #app .query .form-item-import{
+        margin-top:1px;
+    }
+    #app .query .btnImport {
+        width: 100px;
+        height: 32px;
+        padding-left: 20px;
+        background-image: url(../../Images/gcgl/btn_piliangdr_normal.png);
+        border: 0px;
+    }
+
+    #app .query .btnImport:focus {
+        background-image: url(../../Images/gcgl/btn_piliangdr_normal.png);
+    }
+
+    #app .query .btnImport:hover {
+        background-image: url(../../Images/gcgl/btn_piliangdr_active.png);
+    }
+</style>

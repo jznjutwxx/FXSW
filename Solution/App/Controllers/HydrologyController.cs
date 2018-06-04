@@ -86,5 +86,19 @@ namespace App.Controllers
 
             return Json(authorization);
         }
+        /// <summary>
+        /// 测站-雨量、水位、流量曲线图接口
+        /// </summary>
+        /// <returns></returns>
+        public JsonResult getStationChartData(string stationName, string startTime, string endTime)
+        {
+            string method = "wavenet.fxsw.ylsw.diagram.get";
+            IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
+            paramDictionary.Add("name", stationName);
+            paramDictionary.Add("time_begin", startTime);
+            paramDictionary.Add("time_end", endTime);
+            string authorization = CookieHelper.GetData(Request, method, paramDictionary);
+            return Json(authorization);
+        }
     }
 }

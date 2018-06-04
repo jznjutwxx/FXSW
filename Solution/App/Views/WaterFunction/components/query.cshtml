@@ -1,0 +1,58 @@
+﻿<script type="text/x-template" id="query">
+    <div class="query">
+        <el-form v-bind:inline="true" size="small">
+            <el-form-item v-if="choose ==='1'">
+                <el-button icon="el-icon-arrow-left" v-on:click="getLastMonth">上一月</el-button>
+                <el-date-picker v-model="monthValue" style="width:120px;"
+                                type="month"
+                                value-format="yyyy-MM"
+                                placeholder="选择月份">
+                </el-date-picker>
+                <el-button v-on:click="getNextMonth">下一月<i class="el-icon-arrow-right el-icon--right"></i></el-button>
+            </el-form-item>
+            <el-form-item>
+                <el-button type="primary" icon="el-icon-upload2">导出</el-button>
+            </el-form-item>
+        </el-form>
+    </div>
+</script>
+
+<script>
+    var query = {
+        template: '#query',
+        data: function () {
+            return {
+                param: {
+                    monthValue: '',
+                },
+                monthValue: moment().format("YYYY-MM"),
+                choose: "1",
+            }
+        },
+        components: {
+            
+        },
+        mounted: function () {
+            this.init();
+        },
+        watch: {
+        },
+        methods: {
+            init: function () {
+
+            },
+            getLastMonth: function () { //点击 上一月
+                this.monthValue = moment(this.monthValue, "YYYY-MM").subtract(1, "M").format("YYYY-MM");
+            },
+            getNextMonth: function () { //点击 下一月
+                this.monthValue = moment(this.monthValue, "YYYY-MM").add(1, "M").format("YYYY-MM");
+            }
+        }
+    };
+</script>
+
+<style>
+    .query{
+        padding-left: 35%;
+    }
+</style>
