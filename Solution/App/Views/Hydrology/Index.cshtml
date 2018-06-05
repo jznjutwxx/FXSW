@@ -251,6 +251,9 @@
             },
         },
         methods: {
+            test:function(){
+                alert("ok");
+            },
             initMap: function () {
                 //this.map = new SuperMap.Map("mapContainer", { allOverlays: true });
                 this.map = new SuperMap.Map("mapContainer", {
@@ -305,11 +308,12 @@
                         vm.drawPoint.activate();
                     },
                     out: function (currentFeature) {
-                        // vm.drawPoint.deactivate();
+                      
                     },
                     click: function (currentFeature) {
-                        //vm.drawPoint.activate();  //鼠标双击选择
+                      
                         //alert(1);
+                        this.test();
                     },
                     clickout: function (lastFeature) {
 
@@ -390,8 +394,6 @@
             },
             //放大
             mapZoomToBig: function () {
-                // this.map.getZoom();
-                debugger;
                 this.map.zoomTo(this.map.getZoom() + 1)
             },
             mapZoomToSmall: function () {
@@ -410,7 +412,6 @@
                 //var lonlat = this.map.getLonLatFromPixel(new SuperMap.Pixel(e.clientX, e.clientY));
                 //var extent = this.map.getExtent();
                 //if (this.mapTitle != '测站统计') {
-                //    debugger;
                 this.drawPoint.activate();
                 //} else {
                 //    this.drawPoint.deactivate();
@@ -555,7 +556,6 @@
                     fillOpacity: "1"
                 };
                 if (result) {
-                    debugger;
                     var features = result.recordsets[0].features
                     // console.log(features);
                     for (var i = 0; i < features.length; i++) {
@@ -634,7 +634,6 @@
                 this.representativeMarkersLayer.clearMarkers();
                 var that = this;
                 axios.post('/Hydrology/getCZnum', { s_area: "" }).then(function (response) {
-                    debugger;
                     var result = JSON.parse(response.data).StatisticsStationDistributionGetResponse;
                     that.AllCZDetailInfo = result.statistics_station_distribution_info_list; //各个测站详细信息
                     var town_czNum = result.statistics_area_count_list;    //各个镇的测站数
@@ -851,7 +850,6 @@
             },
             //在marke上单击时触发
             showPop: function (e) {
-                debugger;
                 //this.barOption = null;
                 //this.swLineOption = null;
                 //this.llLineOption = null;//流量
@@ -873,7 +871,6 @@
             },
             //初始化加载图形数据的方法
             initEchartData: function (stationname) {
-                debugger;
                 const vm = this;
                 vm.yslDatas = [];
                 var hours = (new Date()).getHours();
@@ -890,7 +887,6 @@
                 this.queryChartStartTime = sTime;
                 this.queryChartEndTime = eTime;
                 axios.post('/Hydrology/getStationChartData', { stationName: this.nowStationName, startTime: sTime, endTime: eTime }).then(function (response) {
-                    debugger;
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
                     vm.setChartDatas();
                 }).bind(this).catch(function (error) {
@@ -935,7 +931,6 @@
                 done();
             },
             setChartDatas: function () {
-                debugger;
                 var yslDatas = this.yslDatas;
                 if (this.activeName == "ylBar") {
                     //this.$refs.ylbar.charts.showLoading();
@@ -1020,7 +1015,6 @@
             },
             //雨量图
             setBarData: function (ylTime, ylValue) {
-                debugger;
                 //this.$refs.ylbar.charts.hideLoading();
                 this.barOption = {
                     color: '#50a6ff',
@@ -1311,7 +1305,6 @@
             //根据时间范围去筛选图标数据
             queryDateRangeCharts: function () {
                 //最多查48小时
-                debugger;
                 var hourDiff = this.GetDateDiff(this.queryChartStartTime, this.queryChartEndTime, "hour");
                 if (hourDiff > 48) {
                     this.$message("查询的时间超过了48小时，请重新选择查询的时间段！");
@@ -1325,9 +1318,7 @@
                 //this.barOption = null;
                 //this.swLineOption = null;
                 //this.llLineOption = null;//流量
-                debugger;
                 axios.post('/Hydrology/getStationChartData', { stationName: this.nowStationName, startTime: this.queryChartStartTime, endTime: this.queryChartEndTime }).then(function (response) {
-                    debugger;
                     vm.yslDatas = JSON.parse(response.data).YLSWDiagramGetResponse; //雨量、水位、流量数据
                     vm.setChartDatas();
                 }).bind(this).catch(function (error) {
@@ -1340,7 +1331,6 @@
                 endTime = endTime.replace(/\-/g, "/");
                 //将计算间隔类性字符转换为小写
                 diffType = diffType.toLowerCase();
-                debugger;
                 var sTime = new Date(startTime); //开始时间
                 var eTime = new Date(endTime); //结束时间
                 //作为除数的数字

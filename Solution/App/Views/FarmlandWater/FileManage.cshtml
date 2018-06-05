@@ -9,7 +9,7 @@
         <el-form v-bind:inline="true" size="small">
             <el-form-item label="项目编号：">
                 <span style="padding-right:30px;">
-                    {{formData.S_PROJECT_NO}}
+                    {{S_PROJECT_NO}}
                 </span>
             </el-form-item>
             <el-form-item label="工程分类：">
@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item label="工程状态：">
                 <span style="padding-right:30px;">
-                    <el-select class="selCss" v-model="formData.N_PACE_STATUS" v-bind:disabled="isFinish">
+                    <el-select class="selCss" v-model="N_PACE_STATUS" v-bind:disabled="isFinish" v-on:change="saveStatus">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
@@ -242,8 +242,8 @@
         </el-collapse>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>
+        <el-button plain v-on:click="openIndex" size="small">返回</el-button>
+        @*<el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>*@
         <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish">工程完结</el-button>
     </div>
 </div>
@@ -253,6 +253,8 @@
         el: '#app',
         data: {
             ID: '',
+            S_PROJECT_NO: '',
+            N_PACE_STATUS: '',
             StatusOption: [],
             projectFile: [],
             height: '200',
@@ -261,48 +263,6 @@
             isShow: false,
             tableName: '',
             Status: '',
-            formData: {
-                S_ID: '',
-                S_NAME: '',
-                S_PROJECT_NO: '',
-                N_TYPE: '',
-                N_YEAR: '',
-                N_PACE_STATUS: 0,
-                S_TOWN: '',
-                S_ADDRESS: '',
-                S_LEGAL_PERSON: '',
-                S_UNIT_DESIGN: '',
-                S_UNIT_BUILD: '',
-                S_UNIT_SUPERVISE: '',
-                N_RECKON_TOTAL_AMT: '',
-                S_REMARK: '',
-                N_GGSL: '',
-                N_GGMJ: '',
-                N_BZZS: '',
-                N_BZTT: '',
-                N_DXQD: '',
-                N_DC: '',
-                N_DXH: '',
-                N_CQMQ: '',
-                N_XFJDL: '',
-                N_TOTAL_INVEST: '',
-                N_ENGIN_COST: '',
-                N_INDEPENDENT_COST: '',
-                N_PREP_COST: '',
-                N_SIGHT_COST: '',
-                N_SUBSIDY_CITY: '',
-                N_SUBSIDY_DISTRICT: '',
-                N_SUBSIDY_TOWN: '',
-                N_WCGGSL: '',
-                N_WCGGMJ: '',
-                N_WCBZZS: '',
-                N_WCBZTT: '',
-                N_WCDXQD: '',
-                N_WCDC: '',
-                N_WCDXH: '',
-                N_WCCQMQ: '',
-                N_WCXFJDL: '',
-            },
             kkkk:0
         },
         components: {
@@ -329,53 +289,10 @@
                   .then(function (response) {
                       var li = JSON.parse(response.data);
                   
-                      this.num = li.EnginFarmGetResponse.info.s_project_no;
-                      this.type = li.EnginFarmGetResponse.info.n_type;
+                      this.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
                       this.Status = li.EnginFarmGetResponse.info.n_pace_status;
                       this.tableName = li.EnginFarmGetResponse.info.n_pace_status;
                       this.getProjectFile('/FarmlandWater/GetProjectFileData', { id: this.ID, s_type: this.Status });
-
-                      this.formData.S_ID = li.EnginFarmGetResponse.info.s_id;
-                      this.formData.S_NAME = li.EnginFarmGetResponse.info.s_name;
-                      this.formData.S_PROJECT_NO = li.EnginFarmGetResponse.info.s_project_no;
-                      this.formData.N_TYPE = li.EnginFarmGetResponse.info.n_type;
-                      this.formData.N_YEAR = li.EnginFarmGetResponse.info.n_year;
-                      this.formData.S_TOWN = li.EnginFarmGetResponse.info.s_town;
-                      this.formData.S_ADDRESS = li.EnginFarmGetResponse.info.s_address;
-                      this.formData.S_LEGAL_PERSON = li.EnginFarmGetResponse.info.s_legal_person;
-                      this.formData.S_UNIT_DESIGN = li.EnginFarmGetResponse.info.s_unit_design;
-                      this.formData.S_UNIT_BUILD = li.EnginFarmGetResponse.info.s_unit_build;
-                      this.formData.S_UNIT_SUPERVISE = li.EnginFarmGetResponse.info.s_unit_supervise;
-                      this.formData.N_RECKON_TOTAL_AMT = li.EnginFarmGetResponse.info.n_reckon_total_amt;
-                      this.formData.S_REMARK = li.EnginFarmGetResponse.info.s_remark;
-
-                      this.formData.N_GGSL = li.EnginFarmGetResponse.info.EnginMainFarm.n_ggsl;
-                      this.formData.N_GGMJ = li.EnginFarmGetResponse.info.EnginMainFarm.n_ggmj;
-                      this.formData.N_BZZS = li.EnginFarmGetResponse.info.EnginMainFarm.n_bzzs;
-                      this.formData.N_BZTT = li.EnginFarmGetResponse.info.EnginMainFarm.n_bztt;
-                      this.formData.N_DXQD = li.EnginFarmGetResponse.info.EnginMainFarm.n_dxqd;
-                      this.formData.N_DC = li.EnginFarmGetResponse.info.EnginMainFarm.n_dc;
-                      this.formData.N_DXH = li.EnginFarmGetResponse.info.EnginMainFarm.n_dxh;
-                      this.formData.N_CQMQ = li.EnginFarmGetResponse.info.EnginMainFarm.n_cqmq;
-                      this.formData.N_XFJDL = li.EnginFarmGetResponse.info.EnginMainFarm.n_xfjdl;
-
-                      this.formData.N_TOTAL_INVEST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_total_invest;
-                      this.formData.S_UNIT_DESIGN = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_engin_cost;
-                      this.formData.N_INDEPENDENT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_independent_cost;
-                      this.formData.N_PREP_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_prep_cost;
-                      this.formData.N_SIGHT_COST = li.EnginFarmGetResponse.info.EnginInvestmentFarm.n_sight_cost;
-                      this.formData.N_SUBSIDY_CITY = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_city;
-                      this.formData.N_SUBSIDY_DISTRICT = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_district;
-                      this.formData.N_SUBSIDY_TOWN = li.EnginFarmGetResponse.info.EnginCapitalFarm.n_subsidy_town;
-                      this.formData.N_WCGGSL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggsl;
-                      this.formData.N_WCGGMJ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_ggmj;
-                      this.formData.N_WCBZZS = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_bzzs;
-                      this.formData.N_WCBZTT = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_bztt;
-                      this.formData.N_WCDXQD = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxqd;
-                      this.formData.N_WCDC = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dc;
-                      this.formData.N_WCDXH = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_dxh;
-                      this.formData.N_WCCQMQ = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_cqmq;
-                      this.formData.N_WCXFJDL = li.EnginFarmGetResponse.info.EnginCompleteFarm.n_complete_xfjdl;
 
                       if (li.EnginFarmGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
@@ -511,16 +428,16 @@
             saveStatus: function () {
 
                 //this.formData.N_PACE_STATUS = this.kkkk;
-                axios.post('/FarmlandWater/SaveProjectStatus', { param: JSON.stringify(this.formData) })
+                axios.post('/FarmlandWater/SaveProjectStatus', { s_id: this.ID, n_pace_status: this.N_PACE_STATUS })
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      if (tempData.EnginFarmUpdateResponse.result) {
+                      if (tempData.EnginStatusUpdateResponse.result) {
                           this.$message({
-                              message: '保存成功！',
+                              message: '更新工程状态成功！',
                               type: 'success'
                           });
                       } else {
-                          this.$message.error('保存失败！' + tempData.EnginFileDelResponse.result);
+                          this.$message.error('更新工程状态失败！' + tempData.EnginStatusUpdateResponse.result);
                       }
                   }.bind(this))
                   .catch(function (error) {
@@ -537,25 +454,25 @@
             StatusToNum: function (status) {
                 switch (status) {
                     case '工前准备':
-                        this.formData.N_PACE_STATUS = 1;
+                        this.N_PACE_STATUS = 1;
                         break;
                     case '开工':
-                        this.formData.N_PACE_STATUS = 10;
+                        this.N_PACE_STATUS = 10;
                         break;
                     case '完工':
-                        this.formData.N_PACE_STATUS = 20;
+                        this.N_PACE_STATUS = 20;
                         break;
                     case '完工验收':
-                        this.formData.N_PACE_STATUS = 30;
+                        this.N_PACE_STATUS = 30;
                         break;
                     case '决算审批':
-                        this.formData.N_PACE_STATUS = 40;
+                        this.N_PACE_STATUS = 40;
                         break;
                     case '竣工验收':
-                        this.formData.N_PACE_STATUS = 50;
+                        this.N_PACE_STATUS = 50;
                         break;
                     case '工程完结':
-                        this.formData.N_PACE_STATUS = 60;
+                        this.N_PACE_STATUS = 60;
                         break;
                     default:
                         break;

@@ -30,14 +30,16 @@
         data: function () {
             return {
                 url1: 'http://222.66.154.70:8090/iserver/services/map-ugcv5-FengXianJiChuDiTu/rest/maps/FengXianJiChuDiTu', //基础底图
-                //url2: 'http://localhost:8090/iserver/services/map-gcct04202/rest/maps/gcctdxm0420_test', //工程草图地图服务
-                //url3: 'http://localhost:8090/iserver/services/data-gcct04202/rest/data/datasources/gcct0420/datasets/', //草图编辑数据服务
-                //url4: 'http://localhost:8090/iserver/services/data-gcct04202/rest/data',
+
+                //test
+                url2: 'http://222.66.154.70:8090/iserver/services/map-gcct05142/rest/maps/gcctMap', //工程草图地图服务
+                url3: 'http://222.66.154.70:8090/iserver/services/data-gcct05142/rest/data/datasources/gcct0514/datasets/', //草图编辑数据服务
+                url4: 'http://222.66.154.70:8090/iserver/services/data-gcct05142/rest/data',
 
 
-                url2: 'http://222.66.154.70:8090/iserver/services/map-gcct0514/rest/maps/gcctMap', //工程草图地图服务
-                url3: 'http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data/datasources/gcct0514/datasets/', //草图编辑数据服务
-                url4: 'http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data',
+                //url2: 'http://222.66.154.70:8090/iserver/services/map-gcct0514/rest/maps/gcctMap', //工程草图地图服务
+                //url3: 'http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data/datasources/gcct0514/datasets/', //草图编辑数据服务
+                //url4: 'http://222.66.154.70:8090/iserver/services/data-gcct0514/rest/data',
                 map: null,
                 drawPoint: null, //画点
                 drawLine: null, //画线
@@ -268,12 +270,12 @@
                     features = {
                         fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
                             "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
-                            "N_RECKON_TOTAL_AMT", "REMARK"
+                            "N_RECKON_TOTAL_AMT", "REMARK", "S_NAME"
                         ],
                         fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
                             this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
                             .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
-                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK,""
                         ],
                         geometry: geometry
                     };
@@ -325,12 +327,12 @@
                     features = {
                         fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
                             "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
-                            "N_RECKON_TOTAL_AMT", "REMARK"
+                            "N_RECKON_TOTAL_AMT", "REMARK", "S_NAME"
                         ],
                         fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
                             this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
                             .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
-                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK,""
                         ],
                         geometry: geometry
                     };
@@ -381,12 +383,12 @@
                     features = {
                         fieldNames: ["S_PROJECT_NO", "N_PACE_STATUS", "N_YEAR", "N_TYPE", "S_LEGAL_PERSON",
                             "S_TOWN", "S_ADDRESS", "S_UNIT_DESIGN", "S_UNIT_BUILD", "S_UNIT_SUPERVISE",
-                            "N_RECKON_TOTAL_AMT", "REMARK"
+                            "N_RECKON_TOTAL_AMT", "REMARK","S_NAME"
                         ],
                         fieldValues: [this.gcctinfo.S_PROJECT_NO, this.gcctinfo.N_PACE_STATUS, this.gcctinfo.N_YEAR,
                             this.gcctinfo.N_TYPE, this.gcctinfo.S_LEGAL_PERSON, this.gcctinfo.S_TOWN, this.gcctinfo
                             .S_ADDRESS, this.gcctinfo.S_UNIT_DESIGN, this.gcctinfo.S_UNIT_BUILD, this.gcctinfo
-                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK
+                            .S_UNIT_SUPERVISE, this.gcctinfo.N_RECKON_TOTAL_AMT, this.gcctinfo.REMARK,""
                         ],
                         geometry: geometry
                     };

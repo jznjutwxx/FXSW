@@ -24,7 +24,10 @@
             <el-form-item class="form-item-import">
                 <el-upload name ="tidalFile"
                            action="/TidalLevel/Upload"
+                           v-bind:before-upload="beforeUpload"
                            v-bind:on-success="success"
+                           v-bind:on-error="error"
+                           accept="application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
                            v-bind:show-file-list="false">
                     <el-button type="primary" class="btnImport"></el-button>
                 </el-upload>
@@ -33,7 +36,7 @@
     </div>
     <el-table v-bind:data="data" border stripe v-loading="loading"  v-bind:height="height">
         <el-table-column  label="月份"
-                         fixed
+                          fixed
                           header-align="center"
                           align="center"
                           width="100">
@@ -163,6 +166,7 @@
         },
         methods: {
             query: function () {
+                this.loading = true
                 this.getData('/TidalLevel/GetData', { site: this.site, year: this.year })
             },
             getSites: function (url, param) {
@@ -175,6 +179,7 @@
                           id: '2',
                           name: '黄浦江金汇港北闸（外）站 '
                       }]
+                      this.site = this.siteOptions[0].id
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
@@ -183,8 +188,8 @@
             getData: function (url, param) {
                 axios.post(url, param)
                   .then(function (response) {
-
-                      for (var i = 0; i < 31; i++) {
+                      this.data = []
+                      for (var i = 1; i < 32; i++) {
                           var item = {
                               id: i,
                               date: i,
@@ -213,8 +218,40 @@
                       console.log(error);
                   });
             },
+            beforeUpload: function (file) {
+                var isXLS = file.type === 'application/vnd.ms-excel';
+                var isXLSX = file.type === 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+                if (!isXLS && !isXLSX ) {
+                    this.$message({
+                        type: 'warning',
+                        message: '格式不正确!'
+                    });
+                    return false
+                }
+                this.loading = true
+            },
             success: function (response, file, fileList) {
-                debugger
+                var res = JSON.parse(response)
+                if (res != undefined && res.TidePredictionImportResponse != undefined && res.TidePredictionImportResponse.result == true) {
+                    this.$message({
+                        type: 'success',
+                        message: '导入成功!'
+                    });
+                } else {
+                    this.$message({
+                        type: 'error',
+                        message: '导入失败!'
+                    });
+                }
+                this.loading = false
+            },
+            error: function (err, file, fileList) {
+                this.$message({
+                    type: 'error',
+                    message: '导入失败!'
+                });
+                this.loading = false
+                console.log(err)
             },
             setSize: function () {
                 this.height = document.documentElement.clientHeight - 75

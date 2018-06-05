@@ -9,17 +9,17 @@
         <el-form v-bind:inline="true" size="small">
             <el-form-item label="工程编号：">
                 <span style="padding-right:30px;">
-                    {{formData.S_PROJECT_NO}}
+                    {{S_PROJECT_NO}}
                 </span>
             </el-form-item>
             <el-form-item label="工程分类：">
                 <span style="padding-right:30px;">
-                    {{formData.N_TYPE}}
+                    {{N_TYPE}}
                 </span>
             </el-form-item>
             <el-form-item label="工程状态：">
                 <span style="padding-right:30px;">
-                    <el-select class="selCss" v-model="formData.N_PACE_STATUS" v-bind:disabled="isFinish">
+                    <el-select class="selCss" v-model="N_PACE_STATUS" v-bind:disabled="isFinish" v-on:change="saveStatus">
                         <el-option v-for="item in StatusOption" v-bind:key="item.s_cd_key" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_key">
                         </el-option>
                     </el-select>
@@ -249,8 +249,8 @@
         </el-collapse>
     </div>
     <div id="appBtn" style="width:100%;text-align:center;position:fixed;bottom:0;left:0;height:60px;">
-        <el-button plain v-on:click="openIndex" size="small">取消</el-button>
-        <el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>
+        <el-button plain v-on:click="openIndex" size="small">返回</el-button>
+        @*<el-button type="primary" v-on:click="saveStatus" v-bind:disabled="isFinish" size="small">保存</el-button>*@
         <el-button type="primary" v-show="isShow" v-on:click="projectFinish" v-bind:disabled="isFinish" size="small">工程完结</el-button>
     </div>
 </div>
@@ -260,6 +260,9 @@
         el: '#app',
         data: {
             s_id: '',
+            S_PROJECT_NO: '',
+            N_TYPE: '',
+            N_PACE_STATUS: '',
             StatusOption: [],
             projectFile: [],
             height: '200',
@@ -268,44 +271,6 @@
             isShow: false,
             tableName: '',
             Status: '',
-            formData: {
-                S_ID: '',
-                S_NAME: '',
-                N_TYPE: '',
-                S_PROJECT_NO: '',
-                N_YEAR: '',
-                N_PACE_STATUS: '',
-                S_TOWN: '',
-                S_ADDRESS: '',
-                S_LEGAL_PERSON: '',
-                S_UNIT_DESIGN: '',
-                S_UNIT_BUILD: '',
-                S_UNIT_SUPERVISE: '',
-                N_RECKON_TOTAL_AMT: '',
-                S_REMARK: '',
-                N_CZSL: '',
-                N_ZHS: '',
-                N_JDCLHS: '',
-                N_SZNGHS: '',
-                N_JDCLZ: '',
-                N_GWCD: '',
-                N_XFJHFC: '',
-                N_TOTAL_INVEST: '',
-                N_ENGIN_COST: '',
-                N_INDEPENDENT_COST: '',
-                N_PREP_COST: '',
-                N_SIGHT_COST: '',
-                N_SUBSIDY_CITY: '',
-                N_SUBSIDY_DISTRICT: '',
-                N_SUBSIDY_TOWN: '',
-                N_WCCZSL: '',
-                N_WCZHS: '',
-                N_WCJDCLHS: '',
-                N_WCSZNGHS: '',
-                N_WCJDCLZ: '',
-                N_WCGWCD: '',
-                N_WCXFJHFC: '',
-            },
         },
         components: {
 
@@ -334,51 +299,11 @@
                 axios.post(url, s_id)
                   .then(function (response) {
                       var li = JSON.parse(response.data);
-                      this.num = li.EnginSewageGetResponse.info.s_project_no;
-                      this.type = li.EnginSewageGetResponse.info.n_type;
+                      this.S_PROJECT_NO = li.EnginSewageGetResponse.info.s_project_no;
+                      this.N_TYPE = li.EnginSewageGetResponse.info.n_type;
                       this.Status = li.EnginSewageGetResponse.info.n_pace_status;
                       this.tableName = li.EnginSewageGetResponse.info.n_pace_status;
                       this.getProjectFile('/SanitarySewage/GetProjectFileData', { id: this.s_id, s_type: this.Status });
-
-                      this.formData.S_ID = li.EnginSewageGetResponse.info.s_id;
-                      this.formData.S_NAME = li.EnginSewageGetResponse.info.s_name;
-                      this.formData.S_PROJECT_NO = li.EnginSewageGetResponse.info.s_project_no;
-                      this.formData.N_TYPE = li.EnginSewageGetResponse.info.n_type;
-                      this.formData.N_YEAR = li.EnginSewageGetResponse.info.n_year;
-                      this.formData.S_TOWN = li.EnginSewageGetResponse.info.s_town;
-                      this.formData.S_ADDRESS = li.EnginSewageGetResponse.info.s_address;
-                      this.formData.S_LEGAL_PERSON = li.EnginSewageGetResponse.info.s_legal_person;
-                      this.formData.S_UNIT_DESIGN = li.EnginSewageGetResponse.info.s_unit_design;
-                      this.formData.S_UNIT_BUILD = li.EnginSewageGetResponse.info.s_unit_build;
-                      this.formData.S_UNIT_SUPERVISE = li.EnginSewageGetResponse.info.s_unit_supervise;
-                      this.formData.N_RECKON_TOTAL_AMT = li.EnginSewageGetResponse.info.n_reckon_total_amt;
-                      this.formData.S_REMARK = li.EnginSewageGetResponse.info.s_remark;
-
-                      this.formData.N_CZSL = li.EnginSewageGetResponse.info.EnginMainSewage.n_czsl;
-                      this.formData.N_ZHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_zhs;
-                      this.formData.N_JDCLHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclhs;
-                      this.formData.N_SZNGHS = li.EnginSewageGetResponse.info.EnginMainSewage.n_sznghs;
-                      this.formData.N_JDCLZ = li.EnginSewageGetResponse.info.EnginMainSewage.n_jdclz;
-                      this.formData.N_GWCD = li.EnginSewageGetResponse.info.EnginMainSewage.n_gwcd;
-                      this.formData.N_XFJHFC = li.EnginSewageGetResponse.info.EnginMainSewage.n_xfjhfc;
-
-                      this.formData.N_TOTAL_INVEST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_total_invest;
-                      this.formData.S_UNIT_DESIGN = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_engin_cost;
-                      this.formData.N_INDEPENDENT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_independent_cost;
-                      this.formData.N_PREP_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_prep_cost;
-                      this.formData.N_SIGHT_COST = li.EnginSewageGetResponse.info.EnginInvestmentSewage.n_sight_cost;
-
-                      this.formData.N_SUBSIDY_CITY = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_city;
-                      this.formData.N_SUBSIDY_DISTRICT = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_district;
-                      this.formData.N_SUBSIDY_TOWN = li.EnginSewageGetResponse.info.EnginCapitalSewage.n_subsidy_town;
-
-                      this.formData.N_WCCZSL = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_czsl;
-                      this.formData.N_WCZHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_zhs;
-                      this.formData.N_WCJDCLHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclhs;
-                      this.formData.N_WCSZNGHS = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_sznghs;
-                      this.formData.N_WCJDCLZ = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_jdclz;
-                      this.formData.N_WCGWCD = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_gwcd;
-                      this.formData.N_WCXFJHFC = li.EnginSewageGetResponse.info.EnginCompleteSewage.n_complete_xfjhfc;
 
                       if (li.EnginSewageGetResponse.info.n_pace_status == '工程完结') {
                           this.isFinish = true;
@@ -518,16 +443,16 @@
                 window.location.href = '/Uploader/Download?pathid=1';
             },
             saveStatus: function () {
-                axios.post('/SanitarySewage/SaveProjectStatus', { param: JSON.stringify(this.formData) })
+                axios.post('/SanitarySewage/SaveProjectStatus', { s_id: this.s_id, n_pace_status: this.N_PACE_STATUS })
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      if (tempData.EnginSewageUpdateResponse.result) {
+                      if (tempData.EnginStatusUpdateResponse.result) {
                           this.$message({
-                              message: '保存成功！',
+                              message: '更新工程状态成功！',
                               type: 'success'
                           });
                       } else {
-                          this.$message.error('保存失败！' + tempData.EnginSewageUpdateResponse.result);
+                          this.$message.error('更新工程状态失败！' + tempData.EnginStatusUpdateResponse.result);
                       }
                   }.bind(this))
                   .catch(function (error) {
@@ -544,25 +469,25 @@
             StatusToNum: function (status) {
                 switch (status) {
                     case '工前准备':
-                        this.formData.N_PACE_STATUS = 1;
+                        this.N_PACE_STATUS = 1;
                         break;
                     case '开工':
-                        this.formData.N_PACE_STATUS = 10;
+                        this.N_PACE_STATUS = 10;
                         break;
                     case '完工':
-                        this.formData.N_PACE_STATUS = 20;
+                        this.N_PACE_STATUS = 20;
                         break;
                     case '完工验收':
-                        this.formData.N_PACE_STATUS = 30;
+                        this.N_PACE_STATUS = 30;
                         break;
                     case '决算审批':
-                        this.formData.N_PACE_STATUS = 40;
+                        this.N_PACE_STATUS = 40;
                         break;
                     case '竣工验收':
-                        this.formData.N_PACE_STATUS = 50;
+                        this.N_PACE_STATUS = 50;
                         break;
                     case '工程完结':
-                        this.formData.N_PACE_STATUS = 60;
+                        this.N_PACE_STATUS = 60;
                         break;
                     default:
                         break;

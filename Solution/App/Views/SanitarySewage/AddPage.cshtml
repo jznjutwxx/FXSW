@@ -445,6 +445,7 @@
                 }
             };
             return {
+                loading: null,
                 gcctinfo: {
                     S_PROJECT_NO: "",
                     N_PACE_STATUS: "",
@@ -609,11 +610,13 @@
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
-            this.getTown("/FarmlandWater/GetDictionary", { type: "街镇" });
-            this.getStatics("/FarmlandWater/GetDictionary", { type: "工程状态" });
-            this.getLegalPerson("/FarmlandWater/GetLegalPerson", null);
-            this.getDesignUnit("/FarmlandWater/GetDesignUnit", null);
+            this.loading = this.$loading({
+                lock: true,
+                text: '数据加载中...',
+                target: document.querySelector('body')
+            });
 
+            this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
             });
@@ -624,6 +627,21 @@
             },
         },
         methods: {
+            init: function () {
+                axios.all([
+                    axios.post('/SanitarySewage/GetDictionary', { type: "工程状态" }),
+                    axios.post("/SanitarySewage/GetDictionary", { type: "街镇" }),
+                    axios.post("/SanitarySewage/GetLegalPerson", null),
+                    axios.post("/SanitarySewage/GetDesignUnit", null),
+                ]).then(axios.spread(function (statusResp, townResp, personResp, unitResp) {
+                    // 上面两个请求都完成后，才执行这个回调方法
+                    this.getStatics(statusResp.data)
+                    this.getTown(townResp.data)
+                    this.getLegalPerson(personResp.data)
+                    this.getDesignUnit(unitResp.data)
+                    this.loading.close();
+                }.bind(this)))
+            },
             setDraftStatus: function (param) {
                 this.addForm.N_DRAFT = param.n_draft;
             },
@@ -645,75 +663,46 @@
                 this.bindGCCTData();
                 this.mapAddDialogVisible = true;
             },
-            getTown: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.xzqhOptions = datas;
-                      this.addForm.S_TOWN = this.xzqhOptions[0].s_cd_value;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getStatics: function (url, type) {
-                axios.post(url, type)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.DictionaryGetResponse.list;
-                      this.staticsOptions = datas;
-                      this.addForm.N_PACE_STATUS = this.staticsOptions[0].s_cd_key;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
-            },
-            getLegalPerson: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                      this.LegalPerOption = datas;
 
-                      if ('@type' == "person") {
-                          this.isPersonDisable = true;
-                          this.isUnitDisable = false;
-                          var selectPerson = "";
-                          selectPerson = this.LegalPerOption.filter(function (item) {
-                              if (item.s_account == '@token') {
-                                  return item.s_id;
-                              }
-                          });
-                          this.addForm.S_LEGAL_PERSON = selectPerson.length > 0 ? selectPerson[0].s_id : ""
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+              getStatics: function (data) {
+                var tempData = JSON.parse(data);
+                this.staticsOptions = tempData.DictionaryGetResponse.list;
             },
-            getDesignUnit: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var datas = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                      this.DesignUnitOption = datas;
+            getTown: function (data) {
+                var tempData = JSON.parse(data);
+                this.xzqhOptions = tempData.DictionaryGetResponse.list;
+            },
 
-                      if ('@type' == "unit") {
-                          this.isPersonDisable = false;
-                          this.isUnitDisable = true;
-                          var selectUnit = "";
-                          selectUnit = this.DesignUnitOption.filter(function (item) {
-                              if (item.s_account == '@token') {
-                                  return item.s_id;
-                              }
-                          });
-                          this.addForm.S_UNIT_DESIGN = selectUnit.length > 0 ? selectUnit[0].s_id : ""
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+             getLegalPerson: function (data) {
+                var tempData = JSON.parse(data);
+                this.LegalPerOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
+
+                if ('@type' == "person") {
+                    this.isPersonDisable = true;
+                    this.isUnitDisable = false;
+                    var selectPerson = "";
+                    selectPerson = this.LegalPerOption.filter(function (item) {
+                        if (item.s_account == '@token') {
+                            return item.s_id;
+                        }
+                    });
+                    this.addForm.S_LEGAL_PERSON = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                }
+            },
+            getDesignUnit: function (data) {
+                var tempData = JSON.parse(data);
+                this.DesignUnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
+                if ('@type' == "unit") {
+                    this.isPersonDisable = false;
+                    this.isUnitDisable = true;
+                    var selectUnit = "";
+                    selectUnit = this.DesignUnitOption.filter(function (item) {
+                        if (item.s_account == '@token') {
+                            return item.s_id;
+                        }
+                    });
+                    this.addForm.S_UNIT_DESIGN = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                }
             },
             changeYear: function (param) {
                 this.addForm.N_YEAR = param;

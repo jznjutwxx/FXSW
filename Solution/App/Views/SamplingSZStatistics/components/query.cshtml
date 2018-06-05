@@ -6,9 +6,7 @@
                 <el-form-item label="所属镇：">
                     <el-select v-model="townValue" class="selCss">
                         <el-option v-for="item in townOption" 
-                                   v-bind:key="item.s_cd_value" 
-                                   v-bind:label="item.s_cd_value" 
-                                   v-bind:value="item.s_cd_value">
+                                   v-bind:key="item.s_cd_key2" v-bind:label="item.s_cd_value" v-bind:value="item.s_cd_value">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -16,7 +14,7 @@
                 <el-form-item label="水质监测任务：">
                     <el-select v-model="waterValue" class="selCss">
                         <el-option v-for="item in waterOption" 
-                                   v-bind:key="item.s_sz_value" 
+                                   v-bind:key="item.s_sk_key" 
                                    v-bind:label="item.s_sz_value" 
                                    v-bind:value="item.s_sz_value">
                         </el-option>
@@ -24,11 +22,11 @@
                 </el-form-item>
 
                 <el-form-item label="站点名称：" style="margin-left:10px;">
-                    <el-select v-model="gradeValue" class="selCss">
-                        <el-option v-for="item in gradeOption" 
-                                   v-bind:key="item.key" 
+                    <el-select v-model="siteValue" class="selCss">
+                        <el-option v-for="item in siteOption" 
+                                    v-bind:key="item.key" 
                                    v-bind:label="item.value" 
-                                   v-bind:value="item.key">
+                                   v-bind:value="item.value">
                         </el-option>
                     </el-select>
                 </el-form-item>
@@ -87,7 +85,7 @@
             return {
                 param: {
                     town: '',
-                    grade: '',
+                    site: '',
                     choose: '',
                     month: '',
                     year: '',
@@ -97,17 +95,18 @@
                 value6: '',
                 townValue: '',
                 waterValue:'',
-                gradeValue: 'all',
-                townOption: [{ "s_cd_key": "南桥镇", "s_cd_value": "南桥镇" },
-                             { "s_cd_key": "青村镇", "s_cd_value": "青村镇" }
+                siteValue: '',
+                townOption: [],
+                waterOption: [{ "s_sk_key": "0", "s_sz_value": "清洁水" },
+                             { "s_sk_key": "1", "s_sz_value": "进水" },
+                             { "s_sk_key": "2", "s_sz_value": "水功能" },
+                             { "s_sk_key": "3", "s_sz_value": "来水" },
+                             { "s_sk_key": "4", "s_sz_value": "劣5类" },
+                             { "s_sk_key": "5", "s_sz_value": "其他" },
+                              { "s_sk_key": "6", "s_sz_value": "重污染" },
+                             { "s_sk_key": "7", "s_sz_value": "黑臭" }
                              ],
-                waterOption: [{ "s_sk_key": "南桥镇", "s_sz_value": "重污染" },
-                             { "s_sk_key": "南桥镇", "s_sz_value": "水功能" },
-                             { "s_sk_key": "南桥镇", "s_sz_value": "清洁水" },
-                             ],
-                gradeOption: [{ "key": "all", "value": "金汇港北闸内" },
-                              { "key": "sqj", "value": "南桥新城" },
-                              { "key": "zj", "value": "南桥" }],
+                siteOption: [],
                 querychoose: 'zy',
                 startYearValue: moment().add(-8, "y").format("YYYY"),
                 endYearValue: moment().format("YYYY"),
@@ -115,30 +114,49 @@
             }
         },
         mounted: function() {
-            //this.init();
+            this.init();
         },
         components: {
             'com-select': comSelect
         },
         methods: {
             init: function () {
-                //
+                this.getTown("/SamplingSZStatistics/GetDictionary", { type: "街镇" });
+                this.getPointSite("/SamplingSZStatistics/GetPointSite", { town: "柘林镇", task: "劣5类" });
             },
-            getTown: function (url, param) {
-                axios.post(url, param)
+            getTown: function (url, type) {
+                axios.post(url, type)
                   .then(function (response) {
                       var tempData = JSON.parse(response.data);
-                      this.townOption = tempData.DictionaryGetResponse.list;
+                      var datas = tempData.DictionaryGetResponse.list;
+                      this.townOption = datas;
                   }.bind(this))
                   .catch(function (error) {
                       console.log(error);
                   });
             },
+            getPointSite: function (url, type) {
+                axios.post(url, type)
+                  .then(function (response) {
+                      var tempData = JSON.parse(response.data);
+                      var datas = tempData.StatisticsSinglePointSiteResponse.key_value;
+                      this.siteOption = datas;
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
+
             emitEvent: function () {
                 this.param.town = this.townValue;
-                this.param.grade = this.gradeValue;
+                this.param.site = this.siteValue;
+                if (this.querychoose == 'zy') {
+                    this.param.year = this.yearValue;
+                } else if (this.querychoose == 'zn') {
+                    this.param.startYearValue = this.startYearValue;
+                    this.param.endYearValue = this.endYearValue;
+                }
                 this.param.choose = this.querychoose;
-                this.param.year = this.yearValue;
                 this.$emit('emit-event', this.param);
             },
             preYear: function () {

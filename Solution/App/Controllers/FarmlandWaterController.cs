@@ -452,69 +452,16 @@ namespace App.Controllers
 
             return Json(authorization);
         }
-        public JsonResult SaveProjectStatus(string param)
+        public JsonResult SaveProjectStatus(string s_id, string n_pace_status)
         {
-            //转成实体对象
-            T_ENGIN_INFO arr = new T_ENGIN_INFO();
-            arr = JsonHelper.JSONToObject<T_ENGIN_INFO>(param);
 
             // 接口
-            string method = "wavenet.fxsw.engin.farm.update";
+            string method = "wavenet.fxsw.status.update";
+
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            #region
-            //基本信息   
-            paramDictionary.Add("s_id", arr.S_ID); //id
-            paramDictionary.Add("s_name", arr.S_NAME);
-            paramDictionary.Add("s_project_no", arr.S_PROJECT_NO);
-            paramDictionary.Add("n_year", arr.N_YEAR);//年度
-            paramDictionary.Add("n_pace_status", arr.N_PACE_STATUS);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收
-            paramDictionary.Add("s_town", arr.S_TOWN);//所属镇
-            paramDictionary.Add("s_address", arr.S_ADDRESS);
-            paramDictionary.Add("s_legal_person", arr.S_LEGAL_PERSON);//项目法人
-            paramDictionary.Add("s_unit_design", arr.S_UNIT_DESIGN);//设计单位
-            paramDictionary.Add("s_unit_build", arr.S_UNIT_BUILD);
-            paramDictionary.Add("s_unit_supervise", arr.S_UNIT_SUPERVISE);
-            paramDictionary.Add("n_reckon_total_amt", arr.N_RECKON_TOTAL_AMT);
-            paramDictionary.Add("s_remark", arr.S_REMARK);
-
-            //批复工程量
-            paramDictionary.Add("n_ggsl", arr.N_GGSL);//灌区数量
-            paramDictionary.Add("n_ggmj", arr.N_GGMJ);//灌区面积
-            paramDictionary.Add("n_bzzs", arr.N_BZZS);//泵站座数
-            paramDictionary.Add("n_bztt", arr.N_BZTT);//泵站台套
-            paramDictionary.Add("n_dxqd", arr.N_DXQD);//地下渠道
-            paramDictionary.Add("n_dc", arr.N_DC);//渡槽
-            paramDictionary.Add("n_dxh", arr.N_DXH);//倒虹吸
-            paramDictionary.Add("n_cqmq", arr.N_CQMQ);//衬砌明渠
-            paramDictionary.Add("n_xfjdl", arr.N_WCXFJDL);//新翻建道路
-
-            //概算投资
-            paramDictionary.Add("n_total_invest", arr.N_TOTAL_INVEST);//总投资
-            paramDictionary.Add("n_engin_cost", arr.N_ENGIN_COST);//工程直接费
-            paramDictionary.Add("n_independent_cost", arr.N_INDEPENDENT_COST);//独立费用
-            paramDictionary.Add("n_prep_cost", arr.N_PREP_COST);//预备费
-            paramDictionary.Add("n_sight_cost", arr.N_SIGHT_COST);//景观等费用
-            //资金配套组成
-            paramDictionary.Add("n_subsidy_city", arr.N_SUBSIDY_CITY);//市补
-            paramDictionary.Add("n_subsidy_district", arr.N_SUBSIDY_DISTRICT);//区配套
-            paramDictionary.Add("n_subsidy_town", arr.N_SUBSIDY_TOWN);//镇配套
-
-            //完成工程量
-            paramDictionary.Add("n_complete_ggsl", arr.N_WCGGSL);//灌区数量
-            paramDictionary.Add("n_complete_ggmj", arr.N_WCGGMJ);//灌区面积
-            paramDictionary.Add("n_complete_bzzs", arr.N_WCBZZS);//泵站座数
-            paramDictionary.Add("n_complete_bztt", arr.N_WCBZTT);//泵站台套
-            paramDictionary.Add("n_complete_dxqd", arr.N_WCDXQD);//地下渠道
-            paramDictionary.Add("n_complete_dc", arr.N_WCDC);//渡槽
-            paramDictionary.Add("n_complete_dxh", arr.N_WCDXH);//倒虹吸
-            paramDictionary.Add("n_complete_cqmq", arr.N_WCCQMQ);//衬砌明渠
-            paramDictionary.Add("n_complete_xfjdl", arr.N_WCXFJDL);//新翻建道路
-
-            // paramDictionary.Add("remove_pic_ids", "3156467F238740B59C6650828698B2A2,BA4D7B0736564E05B51F181F9BB6F9B9");//删除的图片ID
-            //paramDictionary.Add("is_delete", "0");//是否删除 1删除
-            
-            #endregion
+            paramDictionary.Add("s_id", s_id); //id
+            paramDictionary.Add("n_pace_status", n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);

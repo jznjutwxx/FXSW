@@ -5,52 +5,18 @@
 
 
 <div id="app">
-    <singlechannelsztj-query v-on:emit-event="getEmitEvent" ref="SingleChannelsztjQuery"></singlechannelsztj-query>
+    <samplingszstatistics-query v-on:emit-event="getEmitEvent" ref="samplingszstatisticsQuery"></samplingszstatistics-query>
     <com-line v-bind:option="lineOption" ref="line" style="width:100%;height:350px;  "></com-line>
-    <div id="tableData">
+    <div id="table">
         <template>
-            <el-table v-bind:data="tableData"
+            <el-table v-loading="loading" v-bind:data="tableData"
                       stripe
                       border
                       style="width: 100%"
-                      v-bind:height="tableHeight">
-                <el-table-column prop="id"
-                                 label="序号"
-                                 width="180">
-                </el-table-column>
-                <el-table-column prop="yi"
-                                 label="1月">
-                </el-table-column>
-                <el-table-column prop="er"
-                                 label="2月">
-                </el-table-column>
-                <el-table-column prop="san"
-                                 label="3月">
-                </el-table-column>
-                <el-table-column prop="si"
-                                 label="4月">
-                </el-table-column>
-                <el-table-column prop="wu"
-                                 label="5月">
-                </el-table-column>
-                <el-table-column prop="liu"
-                                 label="6月">
-                </el-table-column>
-                <el-table-column prop="qi"
-                                 label="7月">
-                </el-table-column>
-                <el-table-column prop="ba"
-                                 label="8月">
-                </el-table-column>
-                <el-table-column prop="jiu"
-                                 label="9月">
-                </el-table-column>
-                <el-table-column prop="shi"
-                                 label="10月">
-                </el-table-column>
-                <el-table-column prop="shiyi"
-                                 label="11月">
-                </el-table-column>
+                      v-bind:height="height">
+                <el-table-column label="检测项目/检测日期"></el-table-column>
+                <el-table-column v-bind:label="month.yf" v-for="(month, index) in tableData" v-bind:key="tableData.yf">{{month.yf}}</el-table-column>
+                
             </el-table>
         </template>
     </div>
@@ -69,134 +35,121 @@
                 height: '0px',
                 float: 'left',
             },
-            height: '0px',
-          // tableData: [],
-            tableData: [{
-                id: '1',
-                yi: '1月',
-                er: '2月',
-                san:'3月',
-                si: '4月',
-                wu: '5月',
-                liu: '6月',
-                qi: '7月',
-                ba: '8月',
-                jiu: '9月',
-                shi: '10月',
-                shiyi: '11月',
-            }, {
-                id: '1',
-                yi: '1月',
-                er: '2月',
-                san: '3月',
-                si: '4月',
-                wu: '5月',
-                liu: '6月',
-                qi: '7月',
-                ba: '8月',
-                jiu: '9月',
-                shi: '10月',
-                shiyi: '11月',
-            }, {
-                id: '1',
-                yi: '1月',
-                er: '2月',
-                san: '3月',
-                si: '4月',
-                wu: '5月',
-                liu: '6月',
-                qi: '7月',
-                ba: '8月',
-                jiu: '9月',
-                shi: '10月',
-                shiyi: '11月',
-            }, ],
-         
+            loading: true,
+            height: 0,
+            tableData:[],
             params: [],
             lineOption: null,
         },
         components: {
-            "singlechannelsztj-query": query,
+            "samplingszstatistics-query": query,
             "com-line": comLine
         },
         mounted: function () {
-            this.setSize();
-            this.resize();
+            this.init();
+            this.setSize()
+            this.resize()
         },
         methods: {
             init: function () {
-                this.setLineData();
+                this.setData("/SamplingSZStatistics/GetData", { type:'', zdname: '', date: '' });
             },
-            indexMethod: function (index) {
-                return (index + 1) + (this.currentPage - 1) ;
+            setData: function (url, param) {
+                this.params = param;
+                this.setLineData(url, param)
+                this.setTableData(url, param)
             },
-            
             getEmitEvent: function (param) {
-                this.setTableData('/SingleChannelSztj/GetProjectData', {
-                    Page: this.currentPage,  startYear: param.startYear, endYear: param.endYear, Status: param.Status, Town: param.Town, NameNum: param.NameNum,
-                });
+                debugger
+                this.setTableData('/SamplingSZStatistics/GetData', param);
+                this.setLineData("/SamplingSZStatistics/GetLineData", param);
             },
-            setLineData: function () {
-                this.lineOption = {
-                    title: {
-                        text: '大叶公路巨潮港桥-水质逐月统计'
-                    },
-                    tooltip: {
-                        trigger: 'axis'
-                    },
-                    legend: {
-                        data: ['铁（mg/L）', '锰（mg/L）', '氨氮（mg/L）']
-                    },
-                    toolbox: {
-                        show: true,
-                        feature: {
-                            dataZoom: {
-                                yAxisIndex: 'none'
-                            },
-                            dataView: { readOnly: false },
-                            magicType: { type: ['line', 'bar'] },
-                            restore: {},
-                            saveAsImage: {}
-                        }
-                    },
-                    xAxis: {
-                        type: 'category',
-                        boundaryGap: false,
-                        data: ['1月1日', '2月1日', '3月1日', '4月1日', '5月1日', '6月1日', '7月1日', '8月1日', '9月1日', '10月1日', '12月1日', '12月1日']
-                    },
-                    yAxis: {
-                        type: 'value',
-                        axisLabel: {
-                            formatter: '{value} °C'
-                        }
-                    },
-                    series: [
-                        {
-                            name: '铁（mg/L)',
-                            type: 'line',
-                            data: [8, 10, 13, 16, 10, 16, 6],
-                        },
-                        {
-                            name: '锰（mg/L）',
-                            type: 'line',
-                            data: [1, 6, 2, 5, 3, 2, 0],
-                        },
-                        {
-                            name: '氨氮（mg/L）',
-                            type: 'line',
-                            data: [11, 11, 15, 13, 12, 13, 10],
-                        },
-                    ]
-                };
+            setLineData: function (url, param) {
+                console.log(param);
+                var _this = this;
+                this.$children[1].charts.showLoading();
+                axios.post(url)
+                  .then(function (response) {
+                      _this.$children[1].charts.hideLoading();
+                      _this.lineOption = {
+                          color: ['blue', 'red', 'gray'],
+                          title: {
+                              left: 'center',
+                              text: '大叶公路巨潮港桥-水质逐月统计',
+                          },
+                          tooltip: {
+                              trigger: 'axis'
+                          },
+                          legend: {
+                              bottom: 0,
+                              data: ['铁(mg/L)', '锰(mg/L)', '氨氮(mg/L)']
+                          },
+                          grid: {
+                              left: '3%',
+                              right: '4%',
+                              bottom: '8%',
+                              containLabel: true
+                          },
+                          xAxis: {
+                              type: 'category',
+                              boundaryGap: false,
+                              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
+                          },
+                          yAxis: {
+                              type: 'value'
+                          },
+                          series: [
+                              {
+                                  name: '铁(mg/L)',
+                                  type: 'line',
+                                  stack: '总量',
+                                  data: [12, 13.2, 10, 14, 9, 2, 10, 12, 12, 10, 1,9, 6]
+                              },
+                              {
+                                  name: '锰(mg/L)',
+                                  type: 'line',
+                                  stack: '总量',
+                                  data: [12, 12, 10, 4,9,2,8, 12, 12, 10, 1, 9]
+                              },
+                              {
+                                  name: '氨氮(mg/L)',
+                                  type: 'line',
+                                  stack: '总量',
+                                  data: [10, 12, 10, 1, 1, 2, 10, 12, 15, 10, 1, 9]
+                              }
+                          ]
+                      };
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
             },
-            //setData: function (url, param) {
-            //    this.setLineData(url, param);
-            //},
+            setTableData: function (url, param) {
+                this.loading = true;
+                axios.post(url, param)
+                 .then(function (response) {
+                     this.loading = false;
+                     var li = JSON.parse(response.data);
+                    // var datas = li.EnginListGetResponse.engin_list;
+                     //this.tableData = datas;
+                   //  this.total = li.EnginListGetResponse.totalCount;
+                 }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+                //this.tableData = [{ 'yf': '1月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'IV类', 'HBchange': '持平' },
+                //          { 'yf': '2月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'IV类', 'HBchange': '持平' },
+                //          { 'yf': '3月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'V类', 'HBchange': '持平' },
+                //          { 'yf': '4月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'VI类', 'HBchange': '持平' },
+                //          { 'yf': '5月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'IV类', 'HBchange': '持平' },
+                //         { 'yf': '6月', 'Fe': '6.2', 'Mn': '1.9', 'Ad': '3', 'szType': 'IV类', 'HBchange': '持平' }];
+            },
             setSize: function () {
                 var docH = document.documentElement.clientHeight
-                var queryH = this.$refs.SingleChannelsztjQuery.$el.clientHeight
-                var contentH = docH - queryH - 40
-                this.height = contentH - 5
+                var queryH = this.$refs.samplingszstatisticsQuery.$el.clientHeight
+                var contentH = docH - queryH - 50
+                this.height = contentH / 2;
+                console.log(this.height);
             },
             resize: function () {
                 $(window).resize(function () {

@@ -67,6 +67,19 @@ namespace App.Common
             catch (Exception ex){ }
             return authorization;
         }
+
+        public static string GetData(HttpRequestBase Request, string method, IDictionary<string, string> paramDictionary, Dictionary<string, HttpPostedFileBase> files)
+        {
+            var authorizationParams = getParams(Request, method);
+
+            var authorization = "";
+            try
+            {
+                authorization = AuthorizationUtils.Authorization(authorizationParams, paramDictionary, files);
+            }
+            catch (Exception ex) { }
+            return authorization;
+        }
         #endregion
 
         #region 获取服务端登录返回的验证参数

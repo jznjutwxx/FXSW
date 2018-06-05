@@ -24,6 +24,16 @@ namespace App.Controllers
         {
             return Json(new { result = "ok"});
         }
-        
+
+        public JsonResult Upload()
+        {
+            return Json(new { result = "ok" });
+        }
+
+
+        public JsonResult Save(string s,HttpPostedFileBase[] file)
+        {
+            return Json(new { result = "ok" });
+        }
     }
 }

@@ -12,6 +12,14 @@
         <i class="el-icon-upload"></i>
         <div class="el-upload__text">将文件拖到此处，或<em>点击上传</em></div>
     </el-upload>
+    <el-upload action="/Home/Upload"
+               v-bind:before-upload="beforeUpload"
+               multiple
+               v-bind:file-list="fileList">
+        <el-button size="small" type="primary">点击上传</el-button>
+    </el-upload>
+
+    <el-button size="small" type="primary" v-on:click="save">保存</el-button>
     <el-table v-bind:data="results" border style="width:100%;margin-top:20px;">
         <el-table-column v-for="item of headers" v-bind:prop="item"  v-bind:label="item"  v-bind:key="item">
         </el-table-column>
@@ -24,6 +32,8 @@
     new Vue({
         el: '#app',
         data: {
+            uploadForm: new FormData(),   // 一个formdata
+            fileList:[],
             results: null,
             headers:null
         },
@@ -31,6 +41,26 @@
 
         },
         methods: {
+            beforeUpload: function (file) {
+                debugger
+                this.uploadForm.append('file[]', file)
+            },
+            save: function () {
+                debugger
+                //formData = new FormData()
+                //for (var i = 0; i < this.fileList.length; i++) {
+                //    formData.append('file[]', this.fileList[i])
+                //}
+                this.uploadForm.append('s', "sssss")
+
+                axios.post("/Home/Save", this.uploadForm)
+                  .then(function (response) {
+
+                  }.bind(this))
+                  .catch(function (error) {
+                      console.log(error);
+                  });
+            },
             success: function (response, file, fileList) {
                 debugger
                 var reader = new FileReader();

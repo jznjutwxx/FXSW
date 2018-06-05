@@ -41,8 +41,9 @@
                              label="劣五类超标项目（超标倍数）">
             </el-table-column>
             <el-table-column header-align="center"
-                             align="left"
-                             label="水质类别">
+                             align="center"
+                             label="水质类别"
+                             width="150">
                 <template scope="scope">
                     <span style="color:#20a335" v-if="scope.row.s_type=== 'Ⅱ'"><img src="~/Images/swzxt/Ⅱ类.png" class="typeImg" />{{scope.row.s_type}}</span>
                     <span style="color:#f30303" v-else-if="scope.row.s_type=== 'Ⅲ'"><img src="~/Images/swzxt/Ⅲ类.png" class="typeImg" />{{scope.row.s_type}}</span>
@@ -53,8 +54,9 @@
                 </template>
             </el-table-column>
             <el-table-column header-align="center"
-                             align="left"
-                             v-bind:label="tabLabel">
+                             align="center"
+                             v-bind:label="tabLabel"
+                             width="150">
                 <template scope="scope">
                     <span style="color:green" v-if="scope.row.s_status=== '好转'">{{scope.row.s_status}}</span>
                     <span style="color:red" v-else-if="scope.row.s_status=== '恶化'">{{scope.row.s_status}}</span>

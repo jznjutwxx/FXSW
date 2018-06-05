@@ -152,7 +152,7 @@
                 nowxm:'雨量',//当前项目
                 jclx: "zdjcd",
                 checkedZdzt: ['正常', '设备异常'],
-                checkedSzjcrw: ["重污染", "黑臭", "清洁水", "进出水", '水功能', '劣五类'],
+                checkedSzjcrw: ["重污染", "黑臭", "清洁水", "进出水", '水功能', '劣五类'],  //进水,来水
                 finalMapData: [],//最后地图和表格中展示的数据
                 belowTableTitle: "",//下方表格的title
             };
@@ -292,7 +292,9 @@
                     }
                 }
                 else if (vm.jclx == 'rgqyd') {
+                    debugger;
                     var rgqydjcrw = vm.checkedSzjcrw.join(',');
+                     rgqydjcrw= rgqydjcrw.replace(/进出水/, '进水,出水');
                     vm.belowTableTitle = "人工取样点";
                     axios.post('/ZHJC/getRgqydData', { jcrw: rgqydjcrw, twons: strTwons }).then(function (response) {
                         debugger

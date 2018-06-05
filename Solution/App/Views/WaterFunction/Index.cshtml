@@ -4,66 +4,46 @@
 }
 
 
-@*<div id="app">
-    <waterfunction-query ref="WaterFunctionQuery"></waterfunction-query>
-    <com-line v-bind:option="lineOption" ref="line" style="width:100%;height:350px;  "></com-line>
+<div id="app">
+    <home-query ref="homeQuery"></home-query>
     <div id="tableData">
         <template>
             <el-table v-bind:data="tableData"
                       stripe
                       border
-                      style="width: 100%" v-bind:height="tableHeight">  
-                <el-table-column prop="id"
-                                 label="序号"
+                      style="width: 100%" v-bind:height="height"
+                      v-bind:span-method="objectSpanMethod"
+                      v-bind:summary-method="getSummaries" show-summary>
+                <el-table-column label="序号"
                                  width="180" type="index">
                 </el-table-column>
-                <el-table-column prop="yi"
-                                 label="1月">
+                <el-table-column prop="sgnq"
+                                 label="水功能区">
                 </el-table-column>
-                <el-table-column prop="er"
-                                 label="2月">
+                <el-table-column prop="jcdm"
+                                 label="监测断面">
                 </el-table-column>
-                <el-table-column prop="san"
-                                 label="3月">
+                <el-table-column prop="szmb"
+                                 label="水质目标">
                 </el-table-column>
-                <el-table-column prop="si"
-                                 label="4月">
+                <el-table-column prop="gmsy"
+                                 label="高锰酸盐指数">
                 </el-table-column>
-                <el-table-column prop="wu"
-                                 label="5月">
+                <el-table-column prop="ad"
+                                 label="氨氮">
                 </el-table-column>
-                <el-table-column prop="liu"
-                                 label="6月">
+                <el-table-column prop="szlb"
+                                 label="综合水质类别">
                 </el-table-column>
-                <el-table-column prop="qi"
-                                 label="7月">
-                </el-table-column>
-                <el-table-column prop="ba"
-                                 label="8月">
-                </el-table-column>
-                <el-table-column prop="jiu"
-                                 label="9月">
-                </el-table-column>
-                <el-table-column prop="shi"
-                                 label="10月">
-                </el-table-column>
-                <el-table-column prop="shiyi"
-                                 label="11月">
+                <el-table-column prop="dbqk"
+                                 label="达标情况">
                 </el-table-column>
             </el-table>
         </template>
     </div>
-</div>*@
-
-<div id="app">
-    <home-query ref="homeQuery"></home-query>
-    <com-line v-bind:option="lineOption" v-bind:style="styles"></com-line>
-    <com-base-table v-bind:height="height" v-bind:tabledatas="tableData"></com-base-table>
 </div>
 
 @Html.Partial("~/Views/WaterFunction/components/query.cshtml")
-@Html.Partial("~/Views/components/echarts/com_line.cshtml")
-@Html.Partial("~/Views/components/tables/com_base_table.cshtml")
 
 <script>
     new Vue({
@@ -74,13 +54,7 @@
                 width: '100%'
             },
             height: 0,
-            lineOption: null,
-            barOption: null,
-            pieOption: null,
-            tableData: {
-                tableKey: [],
-                tableData: []
-            }
+            tableData: []
         },
         computed: {
         },
@@ -88,8 +62,6 @@
         },
         components: {
             'home-query': query,
-            'com-base-table': comBaseTable,
-            'com-line': comLine,
         },
         mounted: function () {
             this.init();
@@ -101,140 +73,56 @@
                 this.setData("/SingleStatistics/GetData", null);
             },
             setData: function (url, param) {
-                this.setLineData(url, param)
                 this.setTableData(url, param)
-            },
-            setLineData: function (url, param) {
-                var _this = this;
-                this.$children[1].charts.showLoading();
-                axios.post(url)
-                  .then(function (response) {
-                      _this.$children[1].charts.hideLoading();
-                      _this.lineOption = {
-                          color: ['blue', 'red', 'gray'],
-                          title: {
-                              text: '大叶公路巨潮港桥-水质逐月统计',
-                          },
-                          tooltip: {
-                              trigger: 'axis'
-                          },
-                          legend: {
-                              data: ['铁(mg/L)', '锰(mg/L)', '氨氮(mg/L)']
-                          },
-                          grid: {
-                              left: '3%',
-                              right: '4%',
-                              bottom: '3%',
-                              containLabel: true
-                          },
-                          xAxis: {
-                              type: 'category',
-                              boundaryGap: false,
-                              data: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月']
-                          },
-                          yAxis: {
-                              type: 'value'
-                          },
-                          series: [
-                              {
-                                  name: '铁(mg/L)',
-                                  type: 'line',
-                                  stack: '总量',
-                                  data: [120, 132, 101, 134, 90, 230, 210, 120, 132, 101, 134, 90, 230]
-                              },
-                              {
-                                  name: '锰(mg/L)',
-                                  type: 'line',
-                                  stack: '总量',
-                                  data: [220, 182, 191, 90, 230, 210, 120, 132, 101, 234, 290, 330, 310]
-                              },
-                              {
-                                  name: '氨氮(mg/L)',
-                                  type: 'line',
-                                  stack: '总量',
-                                  data: [150, 232, 201, 154, 190, 330, 410, 90, 230, 210, 120, 132, 101]
-                              }
-                          ]
-                      };
-                  })
-                  .catch(function (error) {
-                      console.log(error);
-                  });
             },
             setTableData: function (url, param) {
                 var _this = this;
                 axios.post(url)
                   .then(function (response) {
                       if (!param) {
-                          _this.tableData = {
-                              tableKey: [
-                                  {
-                                      name: '序号',
-                                      type: 'index',
-                                      width: '150'
-                                  }, {
-                                      name: '日期',
-                                      value: 'date'
-                                  }, {
-                                      name: '姓名',
-                                      value: 'name'
-                                  }, {
-                                      name: '地址',
-                                      value: 'address'
-                                  }],
-                              tableData: [{
-                                  date: '2016-05-02',
-                                  name: '王小虎',
-                                  address: '上海市普陀区金沙江路 1518 弄'
+                          _this.tableData=[{
+                                  sgnq: '南竹港上海过度区',
+                                  jcdm: '大叶公路桥',
+                                  szmb: 'III',
+                                  gmsy: '1.65',
+                                  ad: '6',
+                                  szlb: 'V类',
+                                  dbqk: '不达标',
                               }, {
-                                  date: '2016-05-04',
-                                  name: '王小虎',
-                                  address: '上海市普陀区金沙江路 1517 弄'
+                                  sgnq: '金汇港上海过度区',
+                                  jcdm: '大叶公路桥',
+                                  szmb: 'III',
+                                  gmsy: '1.65',
+                                  ad: '6',
+                                  szlb: 'V类',
+                                  dbqk: '达标',
                               }, {
-                                  date: '2016-05-01',
-                                  name: '王小虎',
-                                  address: '上海市普陀区金沙江路 1519 弄'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '王小虎',
-                                  address: '上海市普陀区金沙江路 1516 弄'
+                                  sgnq: '金汇港上海过度区23',
+                                  jcdm: '大叶公路桥',
+                                  szmb: 'III',
+                                  gmsy: '1.65',
+                                  ad: '6',
+                                  szlb: 'V类',
+                                  dbqk: '达标',
                               }]
-                          }
                       } else {
-                          _this.tableData = {
-                              tableKey: [
-                                  {
-                                      name: '序号',
-                                      type: 'index',
-                                      width: '150'
-                                  }, {
-                                      name: '日期',
-                                      value: 'date'
-                                  }, {
-                                      name: '姓名',
-                                      value: 'name'
-                                  }, {
-                                      name: '地址',
-                                      value: 'address'
-                                  }],
-                              tableData: [{
-                                  date: '2016-05-02',
-                                  name: '张小龙',
-                                  address: '杭州市西湖区金沙江路 1518 弄'
+                              _this.tableData= [{
+                                  sgnq: '金汇港上海过度区',
+                                  jcdm: '大叶公路桥',
+                                  szmb: 'III',
+                                  gmsy: '1.65',
+                                  ad: '6',
+                                  szlb: 'V类',
+                                  dbqk: '达标',
                               }, {
-                                  date: '2016-05-04',
-                                  name: '张小龙',
-                                  address: '杭州市西湖区金沙江路 1517 弄'
-                              }, {
-                                  date: '2016-05-01',
-                                  name: '张小龙',
-                                  address: '杭州市西湖区金沙江路 1519 弄'
-                              }, {
-                                  date: '2016-05-03',
-                                  name: '张小龙',
-                                  address: '杭州市西湖区金沙江路 1516 弄'
+                                  sgnq: '金汇港上海过度区23',
+                                  jcdm: '大叶公路桥',
+                                  szmb: 'III',
+                                  gmsy: '1.65',
+                                  ad: '6',
+                                  szlb: 'V类',
+                                  dbqk: '达标',
                               }]
-                          }
                       }
                   })
                   .catch(function (error) {
@@ -242,6 +130,52 @@
                   });
 
             },
+            arraySpanMethod: function (row, column, rowIndex, columnIndex) {
+                debugger
+                //if (rowIndex === 5) {
+                //    if (columnIndex === 0) {
+                //        return [1, 2];
+                //    } else if (columnIndex === 1) {
+                //        return [0, 0];
+                //    }
+                //}
+            },
+            objectSpanMethod:function(row, column, rowIndex, columnIndex ) {
+                debugger
+                if (columnIndex === 0) {
+                    if (rowIndex % 2 === 0) {
+                        return {
+                            rowspan: 2,
+                            colspan: 1
+                        };
+                    } else {
+                        return {
+                            rowspan: 0,
+                            colspan: 0
+                        };
+                    }
+                }
+            },
+            getSummaries: function(param) {
+                const { columns, data } = param;
+                const sums = [];
+                columns.forEach((column, index) => {
+                    if (index === 0) {
+                        sums[index] = '总达标率';
+                        return;
+                    }
+                    const values = data.map(item => Number(item[column.property]));
+                    if (!values.every(value => isNaN(value))) {
+                        sums[index] = values.reduce((prev, curr) => {
+                            const value = Number(curr);
+                           
+                        }, 0);
+                        sums[index] = ' %';
+                    }
+                });
+
+                return sums;
+                },
             resize: function () {
                 $(window).resize(function () {
                     this.setSize()
@@ -258,3 +192,8 @@
     })
 </script>
 
+<style>
+    .el-table__body-wrapper, .el-table__footer-wrapper, .el-table__header-wrapper{
+        height:auto !important;
+    }
+</style>

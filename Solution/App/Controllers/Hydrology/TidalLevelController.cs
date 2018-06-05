@@ -1,4 +1,5 @@
-﻿using System;
+﻿using App.Common;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -28,33 +29,30 @@ namespace App.Controllers.Hydrology
         public JsonResult Upload(HttpPostedFileBase tidalFile)
         {
             var result = UpFiles(tidalFile);
-            return Json(new { result = result });
+            return Json(result.Data);
         }
 
-        public string UpFiles(HttpPostedFileBase tidalFile)
+        public JsonResult UpFiles(HttpPostedFileBase tidalFile)
         {
             String result = "error";
-            string path = System.Configuration.ConfigurationManager.AppSettings["uploadPath"] + "\\";
-            string classname = RouteData.Route.GetRouteData(this.HttpContext).Values["controller"].ToString() + "\\" + DateTime.Now.ToString("yyyy-MM-dd") + "\\";
-            path += classname;
-            try
+            if (Request.Files.Count > 0)
             {
-                if (Request.Files.Count > 0)
+                for (int i = 0; i < Request.Files.Count; i++)
                 {
-                    if (!Directory.Exists(path))
-                    {
-                        Directory.CreateDirectory(path);
-                    }
-                    tidalFile.SaveAs(path + tidalFile.FileName);
+                    result = InsertData("picture_file", Request.Files[i]);
                 }
-                result = "success";
             }
-            catch (Exception ex)
-            {
-                result = ex.Message;
-            }
+            return Json(result);
+        }
 
-            return result;
+        private string InsertData(string type,HttpPostedFileBase tidalFile)
+        {
+            string method = "wavenet.fxsw.tide.prediction.import";
+            IDictionary<string, string> dic = new Dictionary<string, string>();
+            Dictionary<string, HttpPostedFileBase> fileParams = new Dictionary<string, HttpPostedFileBase>();
+            fileParams.Add(type, tidalFile);
+            var authorization = CookieHelper.GetData(Request, method, dic, fileParams);
+            return authorization;
         }
     }
 }

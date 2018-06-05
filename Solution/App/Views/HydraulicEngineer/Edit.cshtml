@@ -365,6 +365,7 @@
                 }
             };
             return {
+                loading: null,
                 yYear: moment().format('YYYY'),
                 gcctinfo: {
                     S_PROJECT_NO: "",
@@ -476,6 +477,11 @@
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
+            this.loading = this.$loading({
+                lock: true,
+                text: '数据加载中...',
+                target: document.querySelector('body')
+            });
             this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
@@ -510,51 +516,37 @@
             },
             init: function () {
                 var s_id = this.getRequest().id;
-                this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
-                this.getTown("/HydraulicEngineer/GetSelect", { Type: "街镇" });
-                this.getLegalPerson("/HydraulicEngineer/GetLegalPerson", null);
-                this.getDesignUnit("/HydraulicEngineer/GetDesignUnit", null);
-                this.getProjectData('/HydraulicEngineer/GetOneProjectData', { s_id: s_id });
+                axios.all([
+                    axios.post('/HydraulicEngineer/GetSelect', { Type: "工程状态" }),
+                    axios.post('/HydraulicEngineer/GetSelect', { Type: "街镇" }),
+                    axios.post('/HydraulicEngineer/GetLegalPerson', null),
+                    axios.post('/HydraulicEngineer/GetDesignUnit', null),
+                    axios.post('/HydraulicEngineer/GetOneProjectData', { s_id: s_id })
+                ]).then(axios.spread(function (statusResp, townResp, personResp, unitResp, dataResp) {
+                    // 上面两个请求都完成后，才执行这个回调方法
+                    this.getStatus(statusResp.data)
+                    this.getTown(townResp.data)
+                    this.getLegalPerson(personResp.data)
+                    this.getDesignUnit(unitResp.data)
+                    this.getProjectData(dataResp.data);
+                    this.loading.close();
+                }.bind(this)));
             },
-            getStatus: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.StatusOption = tempData.DictionaryGetResponse.list;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getStatus: function (data) {
+                var tempData = JSON.parse(data);
+                this.StatusOption = tempData.DictionaryGetResponse.list;
             },
-            getTown: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.TownOption = tempData.DictionaryGetResponse.list;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getTown: function (data) {
+                var tempData = JSON.parse(data);
+                this.TownOption = tempData.DictionaryGetResponse.list;
             },
-            getLegalPerson: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getLegalPerson: function (data) {
+                var tempData = JSON.parse(data);
+                this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
             },
-            getDesignUnit: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getDesignUnit: function (data) {
+                var tempData = JSON.parse(data);
+                this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
             },
             filterStatus: function (name) {
                 this.StatusOption.forEach(function (value, index, array) {
@@ -593,75 +585,69 @@
                     }
                 }.bind(this))
             },
-            getProjectData: function (url, s_id) {
-                axios.post(url, s_id)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      var ss = tempData.EnginOtherGetResponse.info.n_pace_status;
-                      this.StatusToNum(ss);
+            getProjectData: function (data) {
+                var tempData = JSON.parse(data);
+                //var ss = tempData.EnginOtherGetResponse.info.n_pace_status;
+                //this.StatusToNum(ss);
 
-                      var replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
-                      var capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
-                      var investData = tempData.EnginOtherGetResponse.info.EnginInvestmentOther;
-                      var finishData = tempData.EnginOtherGetResponse.info.EnginCompleteOther;
+                var replyData = tempData.EnginOtherGetResponse.info.EnginMainOther;
+                var capitalData = tempData.EnginOtherGetResponse.info.EnginCapitalOther;
+                var investData = tempData.EnginOtherGetResponse.info.EnginInvestmentOther;
+                var finishData = tempData.EnginOtherGetResponse.info.EnginCompleteOther;
 
-                      this.formData.s_id = tempData.EnginOtherGetResponse.info.s_id;
-                      this.formData.s_name = tempData.EnginOtherGetResponse.info.s_name;
-                      this.formData.s_project_no = tempData.EnginOtherGetResponse.info.s_project_no;
-                      this.formData.n_year = tempData.EnginOtherGetResponse.info.n_year.toString();
-                      this.yYear = tempData.EnginOtherGetResponse.info.n_year.toString();
-                      this.formData.s_town = tempData.EnginOtherGetResponse.info.s_town;
-                      this.formData.s_address = tempData.EnginOtherGetResponse.info.s_address;
-                      this.formData.s_legal_person = tempData.EnginOtherGetResponse.info.s_legal_person;
-                      this.formData.s_unit_design = tempData.EnginOtherGetResponse.info.s_unit_design;
-                      this.formData.s_unit_build = tempData.EnginOtherGetResponse.info.s_unit_build;
-                      this.formData.s_unit_supervise = tempData.EnginOtherGetResponse.info.s_unit_supervise;
-                      this.formData.n_reckon_total_amt = tempData.EnginOtherGetResponse.info.n_reckon_total_amt;
-                      this.formData.n_water_area = tempData.EnginOtherGetResponse.info.n_water_area;
-                      this.formData.s_remark = tempData.EnginOtherGetResponse.info.s_remark;
-                      this.formData.n_draft = tempData.EnginOtherGetResponse.info.n_draft;
-                      this.formData.n_type = tempData.EnginOtherGetResponse.info.n_type;
+                this.formData.s_id = tempData.EnginOtherGetResponse.info.s_id;
+                this.formData.s_name = tempData.EnginOtherGetResponse.info.s_name;
+                this.formData.s_project_no = tempData.EnginOtherGetResponse.info.s_project_no;
+                this.formData.n_year = tempData.EnginOtherGetResponse.info.n_year.toString();
+                this.yYear = tempData.EnginOtherGetResponse.info.n_year.toString();
+                this.formData.s_town = tempData.EnginOtherGetResponse.info.s_town;
+                this.formData.s_address = tempData.EnginOtherGetResponse.info.s_address;
+                //this.formData.s_legal_person = tempData.EnginOtherGetResponse.info.s_legal_person;
+                //this.formData.s_unit_design = tempData.EnginOtherGetResponse.info.s_unit_design;
+                this.formData.s_unit_build = tempData.EnginOtherGetResponse.info.s_unit_build;
+                this.formData.s_unit_supervise = tempData.EnginOtherGetResponse.info.s_unit_supervise;
+                this.formData.n_reckon_total_amt = tempData.EnginOtherGetResponse.info.n_reckon_total_amt;
+                this.formData.n_water_area = tempData.EnginOtherGetResponse.info.n_water_area;
+                this.formData.s_remark = tempData.EnginOtherGetResponse.info.s_remark;
+                this.formData.n_draft = tempData.EnginOtherGetResponse.info.n_draft;
+                this.formData.n_type = tempData.EnginOtherGetResponse.info.n_type;
 
-                      this.formData.s_content = replyData.s_content;
-                      this.formData.s_gkpf = replyData.s_gkpf;
-                      this.formData.s_cspf = replyData.s_cspf;
-                      this.formData.s_zjpw = replyData.s_zjpw;
+                this.formData.s_content = replyData.s_content;
+                this.formData.s_gkpf = replyData.s_gkpf;
+                this.formData.s_cspf = replyData.s_cspf;
+                this.formData.s_zjpw = replyData.s_zjpw;
 
-                      this.formData.n_total_invest = investData.n_total_invest;
-                      this.formData.n_engin_cost = investData.n_engin_cost;
-                      this.formData.n_independent_cost = investData.n_independent_cost;
-                      this.formData.n_prep_cost = investData.n_prep_cost;
-                      this.formData.n_sight_cost = investData.n_sight_cost;
-                      this.formData.n_build_cost = investData.n_build_cost;
+                this.formData.n_total_invest = investData.n_total_invest;
+                this.formData.n_engin_cost = investData.n_engin_cost;
+                this.formData.n_independent_cost = investData.n_independent_cost;
+                this.formData.n_prep_cost = investData.n_prep_cost;
+                this.formData.n_sight_cost = investData.n_sight_cost;
+                this.formData.n_build_cost = investData.n_build_cost;
 
-                      this.formData.n_subsidy_city = capitalData.n_subsidy_city;
-                      this.formData.n_subsidy_district = capitalData.n_subsidy_district;
-                      this.formData.n_subsidy_town = capitalData.n_subsidy_town;
+                this.formData.n_subsidy_city = capitalData.n_subsidy_city;
+                this.formData.n_subsidy_district = capitalData.n_subsidy_district;
+                this.formData.n_subsidy_town = capitalData.n_subsidy_town;
 
-                      this.formData.s_complete_content = finishData.s_complete_content;
+                this.formData.s_complete_content = finishData.s_complete_content;
 
-                      var files = tempData.EnginOtherGetResponse.info.FileUploaderList;
-                      if (tempData.EnginOtherGetResponse.info.n_pace_status == '工程完结') {
-                          this.isFinish = true;
-                      } else {
-                          this.isFinish = false;
-                      }
-                      for (var i = 0; i < files.length; i++) {
-                          var temp = { name: files[i].s_file_name, url: files[i].s_path, uid: files[i].s_id }
-                          if (files[i].s_type == '图纸') {
-                              this.drawingFiles.push(temp);
-                          }
-                          if (files[i].s_type == '图片') {
-                              this.pictureFiles.push(temp);
-                          }
-                      }
-                      this.filterStatus(tempData.EnginOtherGetResponse.info.n_pace_status)
-                      this.filterLegal(tempData.EnginOtherGetResponse.info.s_legal_person);
-                      this.filterUnit(tempData.EnginOtherGetResponse.info.s_unit_design);
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+                var files = tempData.EnginOtherGetResponse.info.FileUploaderList;
+                if (tempData.EnginOtherGetResponse.info.n_pace_status == '工程完结') {
+                    this.isFinish = true;
+                } else {
+                    this.isFinish = false;
+                }
+                for (var i = 0; i < files.length; i++) {
+                    var temp = { name: files[i].s_file_name, url: files[i].s_path, uid: files[i].s_id }
+                    if (files[i].s_type == '图纸') {
+                        this.drawingFiles.push(temp);
+                    }
+                    if (files[i].s_type == '图片') {
+                        this.pictureFiles.push(temp);
+                    }
+                }
+                this.filterStatus(tempData.EnginOtherGetResponse.info.n_pace_status)
+                this.filterLegal(tempData.EnginOtherGetResponse.info.s_legal_person);
+                this.filterUnit(tempData.EnginOtherGetResponse.info.s_unit_design);
             },
             saveData: function (formName) {
                 this.formData.n_year = new Date(this.formData.n_year).getFullYear();

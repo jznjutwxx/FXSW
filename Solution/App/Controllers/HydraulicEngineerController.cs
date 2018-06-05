@@ -199,58 +199,15 @@ namespace App.Controllers
             return Json(authorization);
         }
 
-        public JsonResult UpdateProjectStatus(string param)
+        public JsonResult UpdateProjectStatus(string s_id, string n_pace_status)
         {
-            //转成实体对象
-            OtherRiverwayInfo Arr = new OtherRiverwayInfo();
-            Arr = JsonHelper.JSONToObject<OtherRiverwayInfo>(param);
-
             // 接口
-            string method = "wavenet.fxsw.engin.other.update";
+            string method = "wavenet.fxsw.status.update";
 
             // 接口所需传递的参数
             IDictionary<string, string> paramDictionary = new Dictionary<string, string>();
-            paramDictionary.Add("s_id", Arr.s_id); //id
-            paramDictionary.Add("s_name", Arr.s_name);
-            paramDictionary.Add("s_project_no", Arr.s_project_no);
-            paramDictionary.Add("n_year", Arr.n_year);//年度
-            paramDictionary.Add("n_pace_status", Arr.n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
-            paramDictionary.Add("s_town", Arr.s_town);//所属镇
-            paramDictionary.Add("s_address", Arr.s_address);//项目法人
-            paramDictionary.Add("s_legal_person", Arr.s_legal_person);
-            paramDictionary.Add("s_unit_design", Arr.s_unit_design);//设计单位
-            paramDictionary.Add("s_unit_build", Arr.s_unit_build);
-            paramDictionary.Add("s_unit_supervise", Arr.s_unit_supervise);
-            paramDictionary.Add("n_reckon_total_amt", Arr.n_reckon_total_amt);//估计总投资
-            paramDictionary.Add("n_water_area", Arr.n_water_area);//新增水面积
-            paramDictionary.Add("n_draft", Arr.n_draft);//是否有草图 1.有 0.没有
-            paramDictionary.Add("s_remark", Arr.s_remark);
-
-
-            //批复工程量
-            paramDictionary.Add("s_content", Arr.s_content);//批复工程内容
-            paramDictionary.Add("s_gkpf", Arr.s_gkpf);//工可批复
-            paramDictionary.Add("s_cspf", Arr.s_cspf);//初设批复
-            paramDictionary.Add("s_zjpw", Arr.s_zjpw);//资金批文
-
-            //概算投资
-            paramDictionary.Add("n_total_invest", Arr.n_total_invest);//总投资
-            paramDictionary.Add("n_engin_cost", Arr.n_engin_cost);//工程直接费
-            paramDictionary.Add("n_independent_cost", Arr.n_independent_cost);//独立费用
-            paramDictionary.Add("n_prep_cost", Arr.n_prep_cost);//预备费
-            paramDictionary.Add("n_sight_cost", Arr.n_sight_cost);//景观等费用
-            paramDictionary.Add("n_build_cost", Arr.n_build_cost);//建设用地费
-
-            //资金配套组成
-            paramDictionary.Add("n_subsidy_city", Arr.n_subsidy_city);//市补
-            paramDictionary.Add("n_subsidy_district", Arr.n_subsidy_district);//区配套
-            paramDictionary.Add("n_subsidy_town", Arr.n_subsidy_town);//镇配套
-
-            //完成工程量
-            paramDictionary.Add("s_complete_content", Arr.s_complete_content);//完成工程量
-
-            paramDictionary.Add("remove_pic_ids", "");
-            paramDictionary.Add("is_delete", "0");//是否删除 1删除
+            paramDictionary.Add("s_id", s_id); //id
+            paramDictionary.Add("n_pace_status", n_pace_status);//工程状态 1:工前准备,10:开工,20:完工,30:完工验收,40:决算审批,50:竣工验收,60:工程完结
 
             // 调用接口
             string authorization = CookieHelper.GetData(Request, method, paramDictionary);

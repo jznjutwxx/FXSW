@@ -10,7 +10,7 @@
 <div id="add">
     <div style="display:none;">@type</div>
 
-    <div id="addForm">
+    <div id="formData">
         <el-form v-bind:inline="true" label-position="right" label-width="100px" v-bind:model="formData" ref="formData" class="demo-ruleForm" v-bind:rules="rules">
             <div id="appBasic">
                 <el-row class="el-row">
@@ -357,7 +357,8 @@
                 }
             };
             return {
-                isPersonDisable: true,
+                loading: null,
+                isPersonDisable: false,
                 isUnitDisable: false,
                 mapAddDialogVisible: false,
                 gccteditmapheight: document.documentElement.clientHeight - 200,
@@ -465,6 +466,11 @@
             "com-gcctmap-edit": comgcctmapEdit
         },
         mounted: function () {
+            this.loading = this.$loading({
+                lock: true,
+                text: '数据加载中...',
+                target: document.querySelector('body')
+            });
             this.init();
             $(window).resize(function () {
                 this.gccteditmapheight = document.documentElement.clientHeight - 200;
@@ -501,76 +507,58 @@
                 this.mapAddDialogVisible = true;
             },
             init: function () {
-                this.getStatus("/HydraulicEngineer/GetSelect", { Type: "工程状态" });
-                this.getTown("/HydraulicEngineer/GetSelect", { Type: "街镇" });
-                this.getLegalPerson("/HydraulicEngineer/GetLegalPerson", null);
-                this.getDesignUnit("/HydraulicEngineer/GetDesignUnit", null);
+                axios.all([
+                    axios.post('/HydraulicEngineer/GetSelect', { type: "工程状态" }),
+                    axios.post("/HydraulicEngineer/GetSelect", { type: "街镇" }),
+                    axios.post("/HydraulicEngineer/GetLegalPerson", null),
+                    axios.post("/HydraulicEngineer/GetDesignUnit", null),
+                ]).then(axios.spread(function (statusResp, townResp, personResp, unitResp) {
+                    // 上面两个请求都完成后，才执行这个回调方法
+                    this.getStatics(statusResp.data)
+                    this.getTown(townResp.data)
+                    this.getLegalPerson(personResp.data)
+                    this.getDesignUnit(unitResp.data)
+                    this.loading.close();
+                }.bind(this)))
             },
-            getStatus: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.StatusOption = tempData.DictionaryGetResponse.list;
-                      this.formData.n_pace_status = this.StatusOption[0].s_cd_key;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getStatics: function (data) {
+                var tempData = JSON.parse(data);
+                this.StatusOption = tempData.DictionaryGetResponse.list;
             },
-            getTown: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.TownOption = tempData.DictionaryGetResponse.list;
-                      this.formData.s_town = this.TownOption[0].s_cd_value;
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getTown: function (data) {
+                var tempData = JSON.parse(data);
+                this.TownOption = tempData.DictionaryGetResponse.list;
             },
-            getLegalPerson: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
+            getLegalPerson: function (data) {
+                var tempData = JSON.parse(data);
+                this.PersonOption = tempData.EnginLegalPersonListGetResponse.engin_unit_person_list;
 
-                      if ('@type' == "person") {
-                          this.isPersonDisable = true;
-                          this.isUnitDisable = false;
-                          var selectPerson = "";
-                          selectPerson = this.PersonOption.filter(function (item) {
-                              if (item.s_account == '@token') {
-                                  return item.s_id;
-                              }
-                          });
-                          this.formData.s_legal_person = selectPerson.length > 0 ? selectPerson[0].s_id : ""
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+                if ('@type' == "person") {
+                    this.isPersonDisable = true;
+                    this.isUnitDisable = false;
+                    var selectPerson = "";
+                    selectPerson = this.PersonOption.filter(function (item) {
+                        if (item.s_account == '@token') {
+                            return item.s_id;
+                        }
+                    });
+                    this.formData.s_legal_person = selectPerson.length > 0 ? selectPerson[0].s_id : ""
+                }
             },
-            getDesignUnit: function (url, param) {
-                axios.post(url, param)
-                  .then(function (response) {
-                      var tempData = JSON.parse(response.data);
-                      this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
-
-                      if ('@type' == "unit") {
-                          this.isPersonDisable = false;
-                          this.isUnitDisable = true;
-                          var selectUnit = "";
-                          selectUnit = this.UnitOption.filter(function (item) {
-                              if (item.s_account == '@token') {
-                                  return item.s_id;
-                              }
-                          });
-                          this.formData.s_unit_design = selectUnit.length > 0 ? selectUnit[0].s_id : ""
-                      }
-                  }.bind(this))
-                  .catch(function (error) {
-                      console.log(error);
-                  });
+            getDesignUnit: function (data) {
+                var tempData = JSON.parse(data);
+                this.UnitOption = tempData.EnginUnitListGetResponse.engin_unit_person_list;
+                if ('@type' == "unit") {
+                    this.isPersonDisable = false;
+                    this.isUnitDisable = true;
+                    var selectUnit = "";
+                    selectUnit = this.UnitOption.filter(function (item) {
+                        if (item.s_account == '@token') {
+                            return item.s_id;
+                        }
+                    });
+                    this.formData.s_unit_design = selectUnit.length > 0 ? selectUnit[0].s_id : ""
+                }
             },
             getRequest: function () {
                 var url = window.location.search; //获取url中"?"符后的字串
@@ -737,7 +725,7 @@
         overflow-x: hidden;
     }
 
-    #addForm {
+    #formData {
         padding: 10px 20px 10px 20px;
         margin-bottom: 60px;
     }

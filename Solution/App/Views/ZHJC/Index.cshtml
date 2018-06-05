@@ -15,31 +15,19 @@
     <comzhjcleft v-on:get-data="getLeftData" ref="leftComponent">
 
     </comzhjcleft>
-    @* 在地图上增加工具栏（搜索，框选，测距，测面，清除） *@
-    <div class="map_tools">
-        <div class="tool tool-search" v-on:click="showSearchInput" style="margin-left:6px;">
-            <div class="search-img icon-img" ></div>
-        </div>
-        <div class="tool tool-ceju" @*v-on:click="measureDistance"*@>
-            <div class="ceju-img icon-img"></div>
-        </div>
-        <div class="tool tool-cemian" @*v-on:click="measureArea"*@>
-            <div class="cemian-img icon-img"></div>
-        </div>
-        <div class="tool tool-clear" @*v-on:click="clearFeature"*@>
-            <div class="clear-img icon-img"></div>
-        </div>
-    </div>
-    <div class="hideRight" ref="hideRi" title="隐藏" v-on:click="hideRight">
-        <img src="/Images/gczl/btn_right.png" alt="隐藏" />
-    </div>
-    <div class="showRight" ref="" title="展开" v-on:click="showRight">
-        <img src="/Images/gczl/btn_left.png" alt="展开" />
-    </div>
-    <div class="search-input-div">
-        <el-input placeholder="请输入河道名称"  size="mini" class="input_text">
-            <el-button slot="append" icon="el-icon-search" v-on:click="searchRiverName"></el-button>
-        </el-input>
+    <!--搜索河流或者监测点-->
+    <div id="seachRiverOrJCD">
+        <el-radio-group v-model="radio" size="small" v-on:change="radioLabelChange">
+            <el-radio-button label="河流"></el-radio-button>
+            <el-radio-button label="监测点"></el-radio-button>
+        </el-radio-group>
+        <el-dropdown v-on:command="dropdownCommand" size="small" trigger="click" v-on:visible-change="visibleChange">
+            <el-input v-model="hlNameOrjcdName" v-bind:placeholder="riverOrJCDname" size="small"></el-input>
+            <el-dropdown-menu slot="dropdown">
+                <el-dropdown-item v-for="item in riverOrJCDinfo" v-bind:command="item">{{item}}</el-dropdown-item>
+            </el-dropdown-menu>
+        </el-dropdown>
+        <el-button type="primary" icon="el-icon-search" size="small" v-on:click="searchRiverOrJCD">搜索</el-button>
     </div>
     <!--地图监测点图例-->
     <div id="jcdLegend" style="position: absolute;z-index: 1500;right:50px;bottom:406px;" v-show="jcdLegendShow">
@@ -370,12 +358,11 @@
             map: null,
             layers: [],
             baselayer: null,
-            riverlayer: null,//河流图层
-            vectorLayer: null,
+            vectorLayer: null, //查询河流高亮图层
             fsfxVectorLayer: null,//风速风向图层
             jcdMarkersLayer: null, //监测点图层
-            fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-ZHJC/rest/maps/ZHJC",
-            riverLayerUrl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-fxst200005033/rest/maps/fxst2000_0503",
+            queryJCDMarkersLayer: null,//查询到的监测点，高亮显示图层
+            fxbaselayerurl: "http://222.66.154.70:8090/iserver/services/map-ugcv5-ZHJC20180604/rest/maps/ZHJC20180604",
             leftData: [], //左边筛选后拿到的数据,这个数据要展示在下方表格中，单击地图上的点后要展示部分属性
             leftJclx: "",
             infowin: null,
@@ -426,7 +413,13 @@
             hideBelowBtn: true,
             currentPage: 1,
             pagesize: 4,  //每个分页显示的数
-            isShowSearchInput:true,  //是否要显示搜索框
+            radio: '河流',//默认选中那个radio
+            riverOrJCDname: "请输入河流名字", //默认的提示信息
+            hlNameOrjcdName: "",
+            onlyQueryRiverName: true,//是否查询河流名字
+            riverOrJCDinfo: [],  //['奉贤区', '庄行镇', '柘林镇', '南桥镇', '青村镇', '金汇镇', '奉城镇', '四团镇', '海湾镇', '西渡街道 ', '奉浦街道', '金海社区', '海湾旅游区'],//河流或者监测点信息
+            selectFeature: null,//选择vector的feature的工具
+            riverCenterLonlat: null//选中的河流的中心点坐标
         },
         components: {
             "comzhjcleft": com_zhjcleft,
@@ -471,12 +464,11 @@
                 });
                 //this.map.size = new SuperMap.Size(1920, 900);
                 this.baselayer = new SuperMap.Layer.TiledDynamicRESTLayer("2016年奉贤基础底图", this.fxbaselayerurl, null, { maxResolution: "auto", isBaseLayer: true });
-                this.riverlayer = new SuperMap.Layer.TiledDynamicRESTLayer("奉贤河流", this.riverLayerUrl, null, { maxResolution: "auto", isBaseLayer: false });
-                this.riverlayer.setOpacity(0.2);
-                this.vectorLayer = new SuperMap.Layer.Vector("查询高亮图层");
+                this.vectorLayer = new SuperMap.Layer.Vector("查询河流高亮图层");
                 this.fsfxVectorLayer = new SuperMap.Layer.Vector("风速风向图层");
                 this.jcdMarkersLayer = new SuperMap.Layer.Markers("监测点图层");
-                this.layers = [this.baselayer, this.riverlayer, this.vectorLayer, this.fsfxVectorLayer, this.jcdMarkersLayer]; //this.baselayer,
+                this.queryJCDMarkersLayer = new SuperMap.Layer.Markers("查询到的监测点");
+                this.layers = [this.baselayer, this.fsfxVectorLayer, this.jcdMarkersLayer, this.vectorLayer, this.queryJCDMarkersLayer]; //this.baselayer,
                 this.drawPolygon = new SuperMap.Control.DrawFeature(this.vectorLayer, SuperMap.Handler.Polygon);
                 //图层控制器
                 var layerSwitcher = new SuperMap.Control.LayerSwitcher();
@@ -488,8 +480,33 @@
                 mousePosition.separator = "/纬度:";
                 // this.map.addControl(mousePosition, new SuperMap.Pixel(10, 500));
                 //this.map.addControl(this.drawPolygon);
-                //this.baselayer.events.on({ "layerInitialized": this.addLayers });
-                this.riverlayer.events.on({ "layerInitialized": this.addLayers });
+                this.baselayer.events.on({ "layerInitialized": this.addLayers });
+                const vm = this;
+                var callbacks = {
+                    over: function (currentFeature) {
+
+                    },
+                    out: function (currentFeature) {
+
+                    },
+                    click: function (currentFeature) {
+                        vm.showRiverAttribute(currentFeature);
+                    },
+                    clickout: function (lastFeature) {
+
+                    },
+                    rightclick: function (currentFeature) {
+                    },
+                    dblclick: function (currentFeature) {
+                    }
+                };
+                this.selectFeature = new SuperMap.Control.SelectFeature(this.vectorLayer, {
+                    callbacks: callbacks,
+                    repeat: true,
+                    allowSelectTheSameFeature: true,
+                });
+                this.map.addControl(this.selectFeature);
+                this.selectFeature.activate();
             },
             addLayers: function () {
                 //this.map.size = new SuperMap.Size(1920,900);
@@ -556,6 +573,11 @@
             },
             //取得需要展示的坐标点数据
             getLeftData: function (leftData, bleowTableTitle, jclx) {
+                if (this.$refs.leftComponent.jclx == "zdjcd" && this.radio == "监测点") {
+                    this.riverOrJCDname = "请输入自动监测点名字";
+                } else if (this.$refs.leftComponent.jclx == "rgqyd" && this.radio == "监测点") {
+                    this.riverOrJCDname = "请输入人工取样点名字";
+                }
                 this.closeInfoWin();
                 this.leftData = leftData;  //筛选后的数据
                 console.log(this.leftData);
@@ -1032,7 +1054,6 @@
                         this.noticeMsg = "没有水位数据！";
 
                     }
-
                 }
                 else if (this.activeName == "llLine" && this.llLineOption == null) {
                     //流量
@@ -1599,49 +1620,171 @@
                     });
                 }
             },
-            hideRight: function () {
-                $(".hideRight").hide();
-                $(".search-input-div").hide();
-                $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
-                this.proNm = '';
-                this.isShowSearchInput = true;
-                $(".map_tools").animate({ width: "hide" }, "normal", function () {
-                    $(".showRight").show();
-                })
-            },
-            showRight: function () {
-                $(".showRight").hide();
-                $(".map_tools").animate({ width: "show" }, "normal", function () {
-                    $(".hideRight").show();
-                })
-            },
-            //显示搜索框
-            showSearchInput: function () {
-                if (this.isShowSearchInput) {
-                    $(".search-input-div").show();
-                    const vm = this;
-                    $(".input_text").keydown(function (e) {
-                        if (e.keyCode == 13) {
-                            vm.searchRiverName();
-                        }
-                    });
-                    $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
-                    this.isShowSearchInput = false;
+            //搜索河道或者监测点的点击事件
+            searchRiverOrJCD: function () {
+                if (this.radio == "河流") {
+                    this.queryRiverBySql();
                 } else {
-                    $(".search-input-div").hide();
-                    $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
-                    $(".tool-search").hover(function () {
-                        $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-active.png) no-repeat");
-                    }, function () {
-                        $(".search-img").css("background", "url(/Images/gczl/gjl/ico-search-normal.png) no-repeat");
-                    });
-                    this.isShowSearchInput = true;
+                    this.queryJCD();
                 }
             },
-            //搜索河道的点击事件
-            searchRiverName: function () {          
-                alert("搜索河道")
+            queryRiverBySql: function () {
+                var url = "http://222.66.154.70:8090/iserver/services/data-ZongHeJianCe-YongYuChaXunDeHeLiu-/rest/data";
+                var querySql = "";
+                if (this.onlyQueryRiverName) {
+                    querySql = "水体名 like '%" + this.hlNameOrjcdName + "%'";
+                } else {
+                    querySql = "水体名='" + this.hlNameOrjcdName + "'";
+                }
+                var filterPar = new SuperMap.REST.FilterParameter({
+                    attributeFilter: querySql,  //筛选条件
+                });
+                var getFeatureBySQLpar = new SuperMap.REST.GetFeaturesBySQLParameters({
+                    queryParameter: filterPar,
+                    datasetNames: ["transform:totalST"], //数据源：数据集
+                    returnContent: true,
+                    fromIndex: 0,
+                    toIndex: -1,
+                });
+                var myGetFeaturesBySQLService = new SuperMap.REST.GetFeaturesBySQLService(url, {
+                    eventListeners: {
+                        "processCompleted": this.sqlCompleted,
+                        "processFailed": this.sqlFailed
+                    }
+                });
+                myGetFeaturesBySQLService.processAsync(getFeatureBySQLpar);
             },
+            sqlCompleted: function (queryEventArgs) {
+                debugger;
+                this.vectorLayer.removeAllFeatures();
+                var riverStyle = {
+                    strokeColor: "black",
+                    strokeWidth: 0,
+                    fillColor: "red",
+                    fillOpacity: "1"
+                };
+                var result = queryEventArgs.result;
+                var count = result.featureCount; //符合条件的名字数量
+                var features = result.features; //河道信息
+                if (this.onlyQueryRiverName) {
+                    //仅查询河流名字
+                    var riverName = [];
+                    for (var i = 0; i < features.length; i++) {
+                        riverName.push(features[i].attributes.水体名);
+
+                    }
+                    this.riverOrJCDinfo = riverName;
+                } else {
+                    this.riverCenterLonlat = queryEventArgs.originResult.features[0].geometry.center;//中心坐标点
+                    for (var i = 0; i < features.length; i++) {
+                        features[i].style = riverStyle;
+                        this.vectorLayer.addFeatures(features[i]);
+                    }
+                    this.onlyQueryRiverName = true;
+                    this.map.setCenter(new SuperMap.LonLat(this.riverCenterLonlat.x, this.riverCenterLonlat.y), 8);
+                }
+            },
+            sqlFailed: function (e) {
+                alert(e.error.errorMsg);
+            },
+            queryJCD: function () {
+                var jcdName = this.hlNameOrjcdName;
+                //查询到的高亮的监测点用一个亮色的图来表示
+                if (this.$refs.leftComponent.jclx == "zdjcd") {
+                    axios.post()
+                } else {
+                    //查询人工取样点
+                }
+                this.highlightShowSeclctJCD();
+            },
+            //高亮显示查询到的监测点        
+            highlightShowSeclctJCD: function () {
+                this.queryJCDMarkersLayer.clearMarkers();
+                var size = new SuperMap.Size(28, 33);
+                var offset = new SuperMap.Pixel(-(size.w / 2), -size.h);
+                var picUrl = "/Images/zhjc/jcdSelect.png"; //高亮显示监测点的图片
+                var icon = new SuperMap.Icon(picUrl, size, offset);
+                if (this.$refs.leftComponent.jclx == "zdjcd") {
+                    //查询自动监测点
+                    var lon = 121.5676847, lat = 30.9505406;
+                    var marker = new SuperMap.Marker(new SuperMap.LonLat(lon, lat), icon);
+                    marker.events.on({ "click": this.showInfo });
+                    this.queryJCDMarkersLayer.addMarker(marker);
+                    this.map.setCenter(new SuperMap.LonLat(lon, lat), 8);
+                } else {
+                    //查询人工取样点
+                    var lon = 121.57647222, lat = 30.94708055;
+                    var marker = new SuperMap.Marker(new SuperMap.LonLat(lon, lat), icon);
+                    marker.events.on({ "click": this.showInfo });
+                    this.queryJCDMarkersLayer.addMarker(marker);
+                    this.map.setCenter(new SuperMap.LonLat(lon, lat), 8);
+                }
+            },
+            radioLabelChange: function (label) {
+                debugger;
+                if (label == "监测点") {
+                    this.hlNameOrjcdName = "";
+                    this.hlNameOrjcdName = "";
+                    this.riverOrJCDinfo = [];
+                    if (this.$refs.leftComponent.jclx == "zdjcd") {
+                        this.riverOrJCDname = "请输入自动监测点名字";
+                    } else {
+                        this.riverOrJCDname = "请输入人工取样点名字";
+                    }
+                }
+                else {
+                    this.hlNameOrjcdName = "";
+                    this.riverOrJCDname = "请输入河流名字";
+                    this.riverOrJCDinfo = [];
+                }
+
+            },
+            //检测点下拉菜单，菜单项的选择（单击）事件
+            dropdownCommand: function (command) {
+                this.hlNameOrjcdName = command;
+                if (this.radio == "河流") {
+                    //定位到河流高亮显示
+                    this.onlyQueryRiverName = false;
+                    this.queryRiverBySql();
+                } else {
+                    //定位到监测点
+                    this.highlightShowSeclctJCD();
+                }
+
+            },
+            visibleChange: function (visble) {
+                if (visble && this.riverOrJCDinfo.length == 0) {
+                    console.log("暂无数据");
+                }
+            },
+            //显示河流属性
+            showRiverAttribute: function (currentFeature) {
+                debugger;
+                this.closeInfoWin();
+                var riverName = currentFeature.attributes.水体名;
+                var sjbm = currentFeature.attributes.水体编;
+                var riverRank = currentFeature.attributes.等级;
+                var riverLeng = parseFloat(currentFeature.attributes.长度).toFixed(2) + "m";
+                var riverArer = parseFloat(currentFeature.attributes.SMAREA).toFixed(2) + "㎡";
+                var featureClass = currentFeature.attributes.分类;
+                var riverAttrHTML = "<div  id='ptPop'><div id='ptPopTitle'><span style='margin-left:20px;'>" + "</span><div><div id='bgColor'><div style='width: 5px;height: 13px;background-color: white; position: absolute;left: 10px;top: 11px;'></div><span style='margin-left:20px;'>" + riverName + "</span></div>"
+                riverAttrHTML += "<table  cellspacing='0' border='1' cellpadding='0'><tr><td class='firtlist'>市级编码</td><td class='secondlist' style='font-size:13px;'>" + sjbm + "</td></tr><tr><td class='firtlist'>河道等级</td><td class='secondlist'>" + riverRank + "</td></tr><tr><td class='firtlist'>河道长度</td><td class='secondlist'>" + riverLeng + "</td></tr><tr><td class='firtlist'>水面积</td><td class='secondlist'>" + riverArer + "</td></tr><tr><td class='firtlist'>分类</td><td class='secondlist'>" + featureClass + "</td></tr></table>";
+                riverAttrHTML += "<input type='button'  id='showDmszpj'>" + "</div>";
+                var lonlat = new SuperMap.LonLat(this.riverCenterLonlat.x, this.riverCenterLonlat.y);
+                //初始化FramedCloud类
+                var framedCloud = new SuperMap.Popup.FramedCloud(
+                 "ptInfo", //id
+                  lonlat,
+                  null,
+                  riverAttrHTML,
+                  null,
+                  true,
+                  null,
+                  true
+                 );
+                this.infowin = framedCloud;
+                this.map.addPopup(framedCloud);
+            }
         }
     })
 </script>
@@ -1865,8 +2008,7 @@
     }
 
     #szqsTable {
-        width: 100%;.map_tools
-        height: 230px;
+        width: 100%;
         margin-top: 10px;
         position: relative;
         text-align: center;
@@ -1968,95 +2110,33 @@
         overflow-y: auto !important;
         height: 192px; /*!important;*/
     }
-      .map_tools{
-        position: absolute;
-        height:32px;
-        width:300px;
-        top:5px;
-        right:16px;
-        z-index: 2048;
-        background: white;
-        border:1px solid #cccccc;
-        line-height: 32px;
-    }
-    .map_tools .tool{
-        display:inline-block;
-        text-align: center;
-        width: 62px;
-        height: 100%;
-        text-align: center;
-    }
-    .tool .icon-img{
-        display:inline-block;
-        padding:0px;
-        width:54px;
-        height:18px;
-        margin-top: 7px;
-    }
-    /* 搜索 */
-    .search-img{
-        background: url(/Images/gczl/gjl/ico-search-normal.png) no-repeat;
-        cursor:pointer
-    }
-    .tool-search:hover>.search-img{
-        background: url(/Images/gczl/gjl/ico-search-active.png) no-repeat;
-          cursor:pointer
-    }
-    /* 测距 */
-    .ceju-img{
-        background: url(/Images/gczl/gjl/ico-ceju-normal.png) no-repeat;
-          cursor:pointer
-    }
-    .tool-ceju:hover>.ceju-img{
-        background: url(/Images/gczl/gjl/ico-ceju-active.png) no-repeat;
-          cursor:pointer
-    }
-    /* 测面 */
-    .cemian-img{
-        background: url(/Images/gczl/gjl/ico-cemian-normal.png) no-repeat;
-          cursor:pointer
-    }
-    .tool-cemian:hover>.cemian-img{
-        background: url(/Images/gczl/gjl/ico-cemian-active.png) no-repeat;
-          cursor:pointer
-    }
-    /* 清除 */
-    .clear-img{
-        background: url(/Images/gczl/gjl/ico-clear-normal.png) no-repeat;
-          cursor:pointer
-    }
-    .tool-clear:hover>.clear-img{
-        background: url(/Images/gczl/gjl/ico-clear-active.png) no-repeat;
-          cursor:pointer
-    }
-       .hideRight {
-        position: absolute;
-        z-index: 2050;
-        right: 17px;
-        top: 6px;
-        width: 22px;
-        text-align: center;
-        height: 32px;
-    }
-    .showRight {
-        position: absolute;
-        z-index: 2050;
-        right: 17px;
-        top: 5px;
-        width: 22px;
-        text-align: center;
-        height: 32px;
-        display: none;
-    }
-     .search-input-div{
-        position: absolute;
-        z-index:2048;
-        top:42px;
-        right: 88px;
-        width: 231px;
-        display:none;
-    }
     /*.zdjcdTableDiv th, .zdjcdTableDiv td, #rgqydTableDiv th, #rgqydTableDiv td {
         text-align: center;
     }*/
+    #seachRiverOrJCD {
+        position: absolute;
+        top: 15px;
+        right: 80px;
+        z-index: 2048;
+    }
+
+    .el-dropdown-menu {
+        overflow: auto;
+    }
+
+    #seachRiverOrJCD .el-input {
+        width: 193px;
+    }
+
+    #showDmszpj {
+        width: 126px;
+        height: 32px;
+        background: url(/Images/zhjc/btn_duanmszpj_normal.png);
+        margin: 10px 0 0 50px;
+        border: none;
+    }
+
+        #showDmszpj:hover {
+            background: url(/Images/zhjc/btn_duanmszpj_active.png);
+        }
 </style>

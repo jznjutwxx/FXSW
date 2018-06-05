@@ -65,6 +65,27 @@ namespace App.Common
             return sss;
         }
 
+        public static string Authorization(AuthorizationParams authorizationParams, IDictionary<string, string> dic, Dictionary<string, HttpPostedFileBase> files)
+        {
+            // 基本参数
+            var paramDictionary = getParams(authorizationParams, dic);
+
+            // 文件参数
+            IDictionary<string, FileItem> fileParams = new Dictionary<string, FileItem>();
+            foreach (string file in files.Keys)
+            {
+                byte[] byteFile = new byte[files[file].InputStream.Length];
+                files[file].InputStream.Read(byteFile, 0, (int)files[file].InputStream.Length);
+                FileItem item = new FileItem(files[file].FileName, byteFile);
+                fileParams[file] = item;
+            }
+
+            WebUtils webPost = new WebUtils();
+            string url = authorizationParams.URL;
+            string sss = webPost.Post(url, Encoding.UTF8, null, paramDictionary, fileParams);
+            return sss;
+        }
+
         /// <summary>
         /// 获取服务端登录返回的参数，以及各式话业务参数
         /// </summary>

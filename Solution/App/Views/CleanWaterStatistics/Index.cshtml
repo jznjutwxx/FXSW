@@ -55,7 +55,8 @@
             </el-table-column>
             <el-table-column header-align="center"
                              align="center"
-                             label="水质类别">
+                             label="水质类别"
+                             width="150">
                 <template scope="scope">
                     <span style="color:#20a335" v-if="scope.row.s_type=== 'Ⅱ'"><img src="~/Images/swzxt/Ⅱ类.png" class="typeImg" />{{scope.row.s_type}}</span>
                     <span style="color:#f30303" v-else-if="scope.row.s_type=== 'Ⅲ'"><img src="~/Images/swzxt/Ⅲ类.png" class="typeImg" />{{scope.row.s_type}}</span>
@@ -68,11 +69,13 @@
             <el-table-column prop="s_date"
                              header-align="center"
                              align="center"
-                             label="取样时间">
+                             label="取样时间"
+                             width="150">
             </el-table-column>
             <el-table-column header-align="center"
                              align="center"
-                             label="达标情况">
+                             label="达标情况"
+                             width="150">
                 <template scope="scope">
                     <span style="color:#07d34f;" v-if="scope.row.s_status=== '达标'">{{scope.row.s_status}}</span>
                     <span style="color:red" v-else-if="scope.row.s_status=== '未达标'">{{scope.row.s_status}}</span>
@@ -128,11 +131,10 @@
             },
             getEmitEvent: function (param) {
                 this.params = param;
-                alert(this.params.choose + "/" + this.params.month + "/" + this.params.year);
+                ///alert(this.params.choose + "/" + this.params.month + "/" + this.params.year);
                 this.setBarData("/CleanWaterStatistics/GetData", param);
                 this.setPieData("/CleanWaterStatistics/GetData", param);
                 this.setTableData("/CleanWaterStatistics/GetData", param);
-                //alert(param.town + "," + param.grade + "," + param.choose + "," + param.month + "," + param.year);
             },
             setBarData: function (url, param) {
                 axios.post(url, param).then(function (response) {
